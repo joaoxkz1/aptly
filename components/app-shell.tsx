@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   GraduationCap,
   History,
   LayoutDashboard,
+  LogOut,
   PenLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
@@ -30,8 +33,42 @@ function Logo() {
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function SignOutButton() {
+  const router = useRouter();
+  const [supabase] = useState(() => createClient());
+  const [busy, setBusy] = useState(false);
+
+  async function signOut() {
+    if (busy) return;
+    setBusy(true);
+    await supabase.auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  }
+
+  return (
+    <button
+      type="button"
+      aria-label="Sign out"
+      title="Sign out"
+      onClick={signOut}
+      disabled={busy}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+    >
+      <LogOut className="h-4 w-4" />
+    </button>
+  );
+}
+
+export function AppShell({
+  children,
+  email,
+}: {
+  children: React.ReactNode;
+  email?: string | null;
+}) {
   const pathname = usePathname();
+  const displayName = email ? email.split("@")[0] : "Account";
 
   return (
     <div className="flex min-h-dvh">
@@ -58,12 +95,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <div className="mt-auto flex items-center justify-between px-1">
-          <div className="text-xs text-muted-foreground">
-            <p className="font-medium text-foreground">Joao</p>
-            <p>IB Diploma · Year 2</p>
+        <div className="mt-auto flex items-center justify-between gap-2 px-1">
+          <div className="min-w-0 text-xs text-muted-foreground">
+            <p className="truncate font-medium capitalize text-foreground">{displayName}</p>
+            <p className="truncate">{email ?? "Signed in"}</p>
           </div>
-          <ThemeToggle />
+          <div className="flex shrink-0 items-center gap-1">
+            <ThemeToggle />
+            <SignOutButton />
+          </div>
         </div>
       </aside>
 
@@ -71,7 +111,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur md:hidden">
           <Logo />
-          <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <SignOutButton />
+          </div>
         </header>
 
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-10">

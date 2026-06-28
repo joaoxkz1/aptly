@@ -3,67 +3,101 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Attempt } from "./types";
 import { buildSeedAttempts } from "./seed";
+import { createClient } from "./supabase/client";
+import {
+  clearAttempts,
+  fetchAttempts,
+  insertAttempt,
+  seedAttempts,
+} from "./supabase/attempts";
 
-const KEY = "aptly.attempts.v1";
+// In-tab signal so every mounted hook refetches after a mutation.
 const CHANGE_EVENT = "aptly:attempts-changed";
 
-function read(): Attempt[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (raw === null) {
-      const seed = buildSeedAttempts();
-      window.localStorage.setItem(KEY, JSON.stringify(seed));
-      return sortDesc(seed);
-    }
-    return sortDesc(JSON.parse(raw) as Attempt[]);
-  } catch {
-    return [];
-  }
-}
-
-function sortDesc(attempts: Attempt[]): Attempt[] {
-  return [...attempts].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-}
-
-function write(attempts: Attempt[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(attempts));
+function broadcast() {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 /**
- * Single source of truth for attempts. Seeds demo data on first visit,
- * keeps every mounted component in sync via a window event.
+ * Single source of truth for attempts, now backed by Supabase.
+ * The public API is unchanged from the localStorage version, so every page
+ * keeps working untouched. Row Level Security scopes all reads/writes to the
+ * signed-in user; a brand-new user starts with an empty list (Option A).
  */
 export function useAttempts() {
+  const [supabase] = useState(() => createClient());
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const sync = () => setAttempts(read());
-    sync();
-    setReady(true);
-    window.addEventListener(CHANGE_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(CHANGE_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+    let active = true;
 
-  const addAttempt = useCallback((attempt: Attempt) => {
-    write([attempt, ...read()]);
-  }, []);
+    const load = async () => {
+      try {
+        const rows = await fetchAttempts(supabase);
+        if (active) setAttempts(rows);
+      } catch {
+        if (active) setAttempts([]);
+      } finally {
+        if (active) setReady(true);
+      }
+    };
+
+    const onChange = () => {
+      void load();
+    };
+    window.addEventListener(CHANGE_EVENT, onChange);
+
+    // Fires INITIAL_SESSION once the client has loaded the session from
+    // cookies, then on sign-in/out — guaranteeing we query with a valid token.
+    const { data: authSub } = supabase.auth.onAuthStateChange(() => {
+      void load();
+    });
+
+    return () => {
+      active = false;
+      window.removeEventListener(CHANGE_EVENT, onChange);
+      authSub.subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const addAttempt = useCallback(
+    (attempt: Attempt) => {
+      // Optimistic prepend for instant UX; persist in the background and
+      // broadcast so all hooks resync with the authoritative server rows.
+      setAttempts((prev) => [attempt, ...prev]);
+      void (async () => {
+        try {
+          await insertAttempt(supabase, attempt);
+        } finally {
+          broadcast();
+        }
+      })();
+    },
+    [supabase]
+  );
 
   const clearAll = useCallback(() => {
-    write([]);
-  }, []);
+    setAttempts([]);
+    void (async () => {
+      try {
+        await clearAttempts(supabase);
+      } finally {
+        broadcast();
+      }
+    })();
+  }, [supabase]);
 
   const resetDemo = useCallback(() => {
-    write(buildSeedAttempts());
-  }, []);
+    void (async () => {
+      try {
+        await clearAttempts(supabase);
+        await seedAttempts(supabase, buildSeedAttempts());
+      } finally {
+        broadcast();
+      }
+    })();
+  }, [supabase]);
 
   return { attempts, ready, addAttempt, clearAll, resetDemo };
 }

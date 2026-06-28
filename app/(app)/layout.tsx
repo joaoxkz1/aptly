@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import { geistSans, geistMono } from "../fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppShell } from "@/components/app-shell";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Aptly — IB Study Analytics Copilot",
@@ -20,11 +11,17 @@ export const metadata: Metadata = {
     "Submit answers, get rubric-style feedback, track mistakes by topic, and know exactly what to study next.",
 };
 
-export default function RootLayout({
+export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Route protection is enforced in the proxy; here we only read the
+  // verified email to display it in the shell.
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const email = typeof data?.claims?.email === "string" ? data.claims.email : null;
+
   return (
     <html
       lang="en"
@@ -33,7 +30,7 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <AppShell email={email}>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>
