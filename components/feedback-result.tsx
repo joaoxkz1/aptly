@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "@/components/score-ring";
+import { MarkSummary } from "@/components/assessment/mark-summary";
+import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import type { Attempt } from "@/lib/types";
 
@@ -29,25 +31,34 @@ export function FeedbackResult({
   onTryAnother: () => void;
 }) {
   const f = attempt.feedback;
+  const assessment = attempt.assessment ?? null;
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Score header */}
-      <Card className="overflow-hidden">
-        <div className="flex flex-col items-center gap-5 bg-gradient-to-br from-accent/70 to-card p-6 sm:flex-row sm:items-center">
-          <ScoreRing score={f.score} size={96} />
-          <div className="text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Grade band
-            </p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-tight">{f.band}</h2>
-            <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
-              <Badge className={SUBJECT_BADGE[attempt.subject]}>{attempt.subject}</Badge>
-              <Badge>{attempt.topic}</Badge>
+      {assessment !== null ? (
+        <>
+          {/* Assessment-aware header + per-category breakdown */}
+          <MarkSummary assessment={assessment} subject={attempt.subject} topic={attempt.topic} />
+          <MarkBreakdown assessment={assessment} />
+        </>
+      ) : (
+        /* Legacy header (no assessment) — unchanged */
+        <Card className="overflow-hidden">
+          <div className="flex flex-col items-center gap-5 bg-gradient-to-br from-accent/70 to-card p-6 sm:flex-row sm:items-center">
+            <ScoreRing score={f.score} size={96} />
+            <div className="text-center sm:text-left">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Grade band
+              </p>
+              <h2 className="mt-1 text-2xl font-semibold tracking-tight">{f.band}</h2>
+              <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
+                <Badge className={SUBJECT_BADGE[attempt.subject]}>{attempt.subject}</Badge>
+                <Badge>{attempt.topic}</Badge>
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Strengths */}

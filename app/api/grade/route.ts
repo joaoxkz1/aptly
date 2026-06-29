@@ -2,13 +2,13 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getOpenAI } from "@/lib/ai/openai";
-import { getRubric } from "@/lib/ai/rubric";
+import { getRubric } from "@/lib/ai/rubric.economics";
 import {
-  FEEDBACK_JSON_SCHEMA,
-  buildInstructions,
-  buildUserInput,
-  validateFeedback,
-} from "@/lib/ai/feedback-schema";
+  GRADE_RESULT_JSON_SCHEMA,
+  buildAssessmentInstructions,
+  buildAssessmentUserInput,
+  validateGradeResult,
+} from "@/lib/ai/assessment-schema";
 import {
   GRADING_MODEL,
   MAX_ANSWER_CHARS,
@@ -71,6 +71,9 @@ export async function POST(request: Request) {
     return fail(422, "subject_unsupported");
   }
 
+  // Commit 1 is text-only: no image is ever sent to the model.
+  const hasImageAttachment = false;
+
   // 4. One OpenAI request, with a hard timeout. Fail closed on any problem.
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -83,15 +86,18 @@ export async function POST(request: Request) {
         max_output_tokens: MAX_OUTPUT_TOKENS,
         // No tools: no web search, no file search, no code interpreter, no files.
         input: [
-          { role: "developer", content: buildInstructions() },
-          { role: "user", content: buildUserInput(subject, t, q, a, rubric) },
+          { role: "developer", content: buildAssessmentInstructions() },
+          {
+            role: "user",
+            content: buildAssessmentUserInput(subject, t, q, a, rubric, hasImageAttachment),
+          },
         ],
         text: {
           format: {
             type: "json_schema",
-            name: "aptly_feedback",
+            name: "aptly_grade_result",
             strict: true,
-            schema: FEEDBACK_JSON_SCHEMA,
+            schema: GRADE_RESULT_JSON_SCHEMA,
           },
         },
       },
@@ -114,9 +120,12 @@ export async function POST(request: Request) {
       return fail(502, "grading_failed");
     }
 
-    // Throws if incomplete/invalid -> caught below -> generic failure.
-    const feedback = validateFeedback(parsed);
-    return NextResponse.json({ feedback });
+    // Throws if incomplete/impossible/invalid -> caught below -> generic failure.
+    const { feedback, assessment } = validateGradeResult(parsed, {
+      hasImageAttachment,
+      question: q,
+    });
+    return NextResponse.json({ feedback, assessment });
   } catch {
     // Intentionally no logging of answer/key/raw response/headers.
     return fail(502, "grading_failed");

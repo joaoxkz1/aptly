@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label, Select, Textarea } from "@/components/ui/field";
 import { FeedbackResult } from "@/components/feedback-result";
 import { SUBJECTS, TOPICS } from "@/lib/subjects";
-import type { Attempt, Feedback, Subject } from "@/lib/types";
+import type { Assessment, Attempt, Feedback, Subject } from "@/lib/types";
 import {
   MAX_ANSWER_CHARS,
   MAX_QUESTION_CHARS,
@@ -123,7 +123,10 @@ export default function SubmitPage() {
         return;
       }
 
-      const { feedback } = (await res.json()) as { feedback: Feedback };
+      const { feedback, assessment } = (await res.json()) as {
+        feedback: Feedback;
+        assessment?: Assessment | null;
+      };
       setResult({
         id: newId(),
         createdAt: new Date().toISOString(),
@@ -132,6 +135,7 @@ export default function SubmitPage() {
         question: q,
         answer: a,
         feedback,
+        assessment: assessment ?? null,
       });
       setSaved(false);
       window.scrollTo({ top: 0, behavior: "smooth" });

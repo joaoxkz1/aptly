@@ -14,10 +14,15 @@ export const GRADING_MODEL = "gpt-5.4";
 export const REASONING_EFFORT = "medium" as const;
 
 // --- Cost controls ---------------------------------------------------------
-export const MAX_QUESTION_CHARS = 600;
-export const MAX_ANSWER_CHARS = 4000; // ~700 words
-export const MAX_OUTPUT_TOKENS = 2000; // headroom for reasoning + compact JSON
-export const REQUEST_TIMEOUT_MS = 30_000;
+// Generous limits: a data-response question can include pasted stimulus text,
+// and extended essays are long. Enforced client + server.
+export const MAX_QUESTION_CHARS = 4000;
+export const MAX_ANSWER_CHARS = 9000;
+// Bigger structured JSON (classification + breakdown + metadata) plus reasoning
+// headroom for gpt-5.4. Calibration showed 3200 occasionally truncated the JSON
+// (status=incomplete -> fail-closed 502); 4400 gives reliable headroom.
+export const MAX_OUTPUT_TOKENS = 4400;
+export const REQUEST_TIMEOUT_MS = 45_000;
 
 // --- Subject scope ---------------------------------------------------------
 // v1 grades Economics only. Other subjects are intentionally not graded yet so

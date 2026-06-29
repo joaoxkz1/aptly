@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Award,
   Flame,
   PenLine,
   Send,
@@ -15,7 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarList } from "@/components/bar-list";
 import { Sparkline } from "@/components/sparkline";
-import { ScoreRing, scoreColor } from "@/components/score-ring";
+import { ScoreRing } from "@/components/score-ring";
+import { EconomicsLevelCard } from "@/components/assessment/economics-level-card";
 import { useAttempts } from "@/lib/storage";
 import {
   attemptsThisWeek,
@@ -105,24 +105,7 @@ export default function DashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Award className="h-4 w-4" />
-              <span className="text-xs font-medium">Average score</span>
-            </div>
-            <p
-              className={cn(
-                "mt-2 text-3xl font-semibold tabular-nums",
-                avg !== null && scoreColor(avg)
-              )}
-            >
-              {avg ?? "–"}
-              <span className="text-base font-normal text-muted-foreground"> / 7</span>
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">last 7 days</p>
-          </CardContent>
-        </Card>
+        <EconomicsLevelCard attempts={attempts} ready={ready} />
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">

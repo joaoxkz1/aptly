@@ -10,6 +10,7 @@ import { ScoreRing } from "@/components/score-ring";
 import { useAttempts } from "@/lib/storage";
 import { SUBJECTS, SUBJECT_BADGE } from "@/lib/subjects";
 import type { Subject } from "@/lib/types";
+import { attemptMetaLine } from "@/lib/assessment/display";
 import { cn, formatDateTime } from "@/lib/utils";
 
 export default function AttemptsPage() {
@@ -106,8 +107,9 @@ export default function AttemptsPage() {
                     <Badge className={SUBJECT_BADGE[a.subject]}>{a.subject}</Badge>
                   </div>
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                    {a.feedback.mistakes[0] ?? "No mistakes detected"} ·{" "}
-                    {a.feedback.examinerComment.split(".")[0]}.
+                    {a.assessment != null
+                      ? attemptMetaLine(a.assessment)
+                      : `${a.feedback.mistakes[0] ?? "No mistakes detected"} · ${a.feedback.examinerComment.split(".")[0]}.`}
                   </p>
                 </div>
                 <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">

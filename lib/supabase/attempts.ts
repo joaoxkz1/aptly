@@ -1,12 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Attempt, Feedback, Subject } from "@/lib/types";
+import type { Assessment, Attempt, Feedback, Subject } from "@/lib/types";
 
 const TABLE = "attempts";
 
 // Columns read back from the DB. `user_id` is intentionally never selected or
 // written by the client — it is stamped server-side via `default auth.uid()`.
+// The full assessment object lives in the `assessment` jsonb column; the
+// denormalized columns exist for DB-level integrity and future SQL analytics.
 const SELECT_COLUMNS =
-  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at";
+  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment";
 
 export interface AttemptRow {
   id: string;
@@ -20,6 +22,7 @@ export interface AttemptRow {
   mistake_type: string | null;
   next_step: string | null;
   created_at: string;
+  assessment: Assessment | null;
 }
 
 export function rowToAttempt(row: AttemptRow): Attempt {
@@ -31,6 +34,7 @@ export function rowToAttempt(row: AttemptRow): Attempt {
     question: row.question,
     answer: row.answer,
     feedback: row.feedback,
+    assessment: row.assessment ?? null,
   };
 }
 
@@ -38,9 +42,11 @@ export function rowToAttempt(row: AttemptRow): Attempt {
  * Insert payload for a real, user-submitted attempt.
  * Omits id, user_id, and created_at so the database generates them
  * (user_id via `default auth.uid()`, created_at via `default now()`).
+ * Legacy/seed attempts (no assessment) write NULL into every assessment column.
  */
 function attemptToInsert(attempt: Attempt) {
   const f = attempt.feedback;
+  const a = attempt.assessment ?? null;
   return {
     subject: attempt.subject,
     topic: attempt.topic,
@@ -51,6 +57,18 @@ function attemptToInsert(attempt: Attempt) {
     feedback: f,
     mistake_type: f.mistakes[0] ?? null,
     next_step: f.studyNext,
+    // Full object + denormalized columns (null for legacy attempts).
+    assessment: a,
+    assessment_version: a?.version ?? null,
+    assessment_format: a?.assessmentFormat ?? null,
+    paper: a?.paper ?? null,
+    syllabus_topic: a?.syllabusTopic ?? null,
+    marks_earned: a?.marksEarned ?? null,
+    marks_available: a?.marksAvailable ?? null,
+    marks_assessable: a?.marksAssessable ?? null,
+    marks_source: a?.marksSource ?? null,
+    mark_display_mode: a?.markDisplayMode ?? null,
+    classification_confidence: a?.classificationConfidence ?? null,
   };
 }
 
