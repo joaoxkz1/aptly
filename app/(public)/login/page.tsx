@@ -51,7 +51,7 @@ function LoginForm() {
 
   return (
     <Card className="w-full max-w-sm">
-      <CardContent className="p-6">
+      <CardContent className="p-6 pt-6">
         {status === "sent" ? (
           <div className="flex flex-col items-center gap-3 py-4 text-center">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
