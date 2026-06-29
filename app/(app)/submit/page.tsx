@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, History, Loader2, Wand2 } from "lucide-react";
+import { ChevronDown, CircleAlert, History, Info, Loader2, Wand2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Select, Textarea } from "@/components/ui/field";
 import { FeedbackResult } from "@/components/feedback-result";
 import { SUBJECTS, TOPICS } from "@/lib/subjects";
-import type { Attempt, Subject } from "@/lib/types";
-import { gradeAnswer } from "@/lib/grading";
+import type { Attempt, Feedback, Subject } from "@/lib/types";
+import {
+  MAX_ANSWER_CHARS,
+  MAX_QUESTION_CHARS,
+  REQUEST_TIMEOUT_MS,
+  isGradableSubject,
+} from "@/lib/ai/config";
 import { newId, useAttempts } from "@/lib/storage";
 
 const SAMPLE: Record<Subject, { question: string; answer: string }> = {
@@ -43,10 +48,17 @@ export default function SubmitPage() {
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<Attempt | null>(null);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Guards against repeated clicks creating concurrent grading calls.
+  const inFlight = useRef(false);
+
+  const gradable = isGradableSubject(subject);
 
   function handleSubjectChange(s: Subject) {
     setSubject(s);
     setTopic(TOPICS[s][0]);
+    setError(null);
   }
 
   function fillSample() {
@@ -55,26 +67,82 @@ export default function SubmitPage() {
     setAnswer(sample.answer);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function messageForStatus(status: number, code: string): string {
+    if (status === 401) return "Your session expired. Please sign in again.";
+    if (code === "too_long")
+      return "Your question or answer is too long. Please shorten it and try again.";
+    if (code === "subject_unsupported")
+      return "Economics grading is available in the Aptly beta. Business and Physics are coming later.";
+    return "Sorry — grading failed. Please try again in a moment.";
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (question.trim() === "" || answer.trim() === "") return;
+    if (inFlight.current || grading) return;
+
+    const q = question.trim();
+    const a = answer.trim();
+    if (q === "" || a === "") return;
+
+    // Economics-only in v1: never send a request for other subjects.
+    if (!gradable) {
+      setError("Economics grading is available in the Aptly beta. Business and Physics are coming later.");
+      return;
+    }
+    if (q.length > MAX_QUESTION_CHARS || a.length > MAX_ANSWER_CHARS) {
+      setError("Your question or answer is too long. Please shorten it and try again.");
+      return;
+    }
+
+    setError(null);
     setGrading(true);
-    // Simulate a short grading delay so the flow feels real.
-    window.setTimeout(() => {
-      const feedback = gradeAnswer(subject, topic, question.trim(), answer.trim());
+    inFlight.current = true;
+
+    // One request per action, with a client-side safety timeout.
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS + 5000);
+
+    try {
+      const res = await fetch("/api/grade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, topic, question: q, answer: a }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        let code = "grading_failed";
+        try {
+          const body = (await res.json()) as { error?: string };
+          if (typeof body.error === "string") code = body.error;
+        } catch {
+          // ignore parse failure; use default code
+        }
+        // Fail closed: no result is produced, so nothing can be saved.
+        setError(messageForStatus(res.status, code));
+        return;
+      }
+
+      const { feedback } = (await res.json()) as { feedback: Feedback };
       setResult({
         id: newId(),
         createdAt: new Date().toISOString(),
         subject,
         topic,
-        question: question.trim(),
-        answer: answer.trim(),
+        question: q,
+        answer: a,
         feedback,
       });
       setSaved(false);
-      setGrading(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 900);
+    } catch {
+      // Network error / abort / timeout — fail closed.
+      setError("Sorry — grading failed. Please try again in a moment.");
+    } finally {
+      setGrading(false);
+      inFlight.current = false;
+      window.clearTimeout(timer);
+    }
   }
 
   function handleSave() {
@@ -96,7 +164,7 @@ export default function SubmitPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Your feedback</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Rubric-style feedback on your {result.subject} answer.
+            Estimated AI study feedback on your {result.subject} answer — not an official IB grade.
           </p>
         </div>
         <FeedbackResult
@@ -174,6 +242,7 @@ export default function SubmitPage() {
               <Textarea
                 id="question"
                 required
+                maxLength={MAX_QUESTION_CHARS}
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="e.g. Evaluate the use of indirect taxes to correct market failure."
@@ -191,6 +260,7 @@ export default function SubmitPage() {
               <Textarea
                 id="answer"
                 required
+                maxLength={MAX_ANSWER_CHARS}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 placeholder="Write your full answer here. Tip: define key terms, use a real-world example, and end with an evaluation."
@@ -198,8 +268,25 @@ export default function SubmitPage() {
               />
             </div>
 
+            {!gradable && (
+              <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/50 px-3.5 py-2.5 text-sm text-muted-foreground">
+                <Info className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  Economics grading is available in the Aptly beta. Business and Physics are
+                  coming later.
+                </span>
+              </div>
+            )}
+
+            {error !== null && (
+              <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
+                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" size="lg" disabled={grading}>
+              <Button type="submit" size="lg" disabled={grading || !gradable}>
                 {grading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -219,7 +306,7 @@ export default function SubmitPage() {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Grading is currently simulated locally — no data leaves your browser.
+        Estimated AI study feedback for practice, not an official IB grade.
       </p>
     </div>
   );
