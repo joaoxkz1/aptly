@@ -380,3 +380,284 @@ export function assessmentTopicRecommendation(attempts: Attempt[]): TopicRecomme
 
   return { topicCode: weakest.code, topicLabel: mostCommonLabel(weakest.list), reason };
 }
+
+// ============================================================================
+// Canonical learning-insights engine.
+//
+// This is the SINGLE source for every assessment-aware insight shown on the
+// Dashboard and Mistake Analytics. No page or card may independently derive a
+// topic priority, skill priority, "weakest" topic, marks lost, readiness, or
+// recommendation from the raw attempts array — they read this object.
+// All numeric insight uses ONLY eligible attempts (exact_estimate, valid
+// arithmetic). Legacy, practice-only, and incomplete attempts are excluded
+// from the maths but remain visible in history elsewhere.
+// ============================================================================
+
+const MIN_TOPICS_FOR_FOCUS = 2;
+const RELIABLE_TOPIC_ATTEMPTS = 2;
+const MIN_ATTEMPTS_FOR_IMPROVEMENT = 3;
+
+export type Reliability = "early_signal" | "reliable_pattern";
+
+export interface TopicPerformanceRow {
+  topicCode: string;
+  topicLabel: string;
+  earned: number;
+  available: number;
+  percent: number; // Σearned / Σavailable
+  responses: number;
+  reliability: Reliability;
+}
+
+export interface SkillPriorityRow {
+  label: MarkBreakdownLabel;
+  lost: number;
+  available: number;
+  percentLost: number; // ranking signal — lost / available
+}
+
+export interface EvidenceCoverage {
+  diagramSubmitted: number;
+  diagramRequiredMissing: number;
+  workingsSubmitted: number;
+  workingsRequiredMissing: number;
+}
+
+export interface ImprovedTopic {
+  topicLabel: string;
+  fromPercent: number;
+  toPercent: number;
+}
+
+export interface NextFocus {
+  skillLabel: MarkBreakdownLabel;
+  topicCode: string;
+  topicLabel: string;
+  percentLost: number;
+  responses: number;
+  reliability: Reliability;
+  headline: string; // "Evaluation and judgment in Market failure"
+  explanation: string;
+}
+
+export type CoverageState = "empty" | "build_coverage" | "early_signal" | "reliable_pattern";
+
+export interface LearningInsights {
+  totalAttempts: number;
+  validCount: number; // eligible attempts used for numeric insight
+  excludedLegacy: number;
+  excludedPracticeOnly: number;
+  excludedIncomplete: number; // partial / invalid arithmetic
+  level: EconomicsLevel;
+  weightedPercent: number | null;
+  distinctTopics: number;
+  distinctSkills: number;
+  distinctFormats: number;
+  topicPerformance: TopicPerformanceRow[];
+  formatPerformance: FormatPerformance[];
+  skillPriority: SkillPriorityRow[];
+  coverage: SkillCoverage[];
+  evidence: EvidenceCoverage;
+  mostImproved: ImprovedTopic | null;
+  nextFocus: NextFocus | null;
+  coverageState: CoverageState;
+  markTrend: number[]; // recent eligible mark percentages, oldest -> newest
+}
+
+function rawPercent(list: Attempt[]): { earned: number; available: number; percent: number } {
+  let earned = 0;
+  let available = 0;
+  for (const a of list) {
+    earned += a.assessment!.marksEarned ?? 0;
+    available += a.assessment!.marksAvailable ?? 0;
+  }
+  return { earned, available, percent: available > 0 ? Math.round((100 * earned) / available) : 0 };
+}
+
+function groupByTopic(eligible: Attempt[]): Map<string, Attempt[]> {
+  const byCode = new Map<string, Attempt[]>();
+  for (const a of eligible) {
+    const code = a.assessment!.syllabusTopic;
+    if (code === "unknown") continue;
+    byCode.set(code, [...(byCode.get(code) ?? []), a]);
+  }
+  return byCode;
+}
+
+function topicPerformanceRows(eligible: Attempt[]): TopicPerformanceRow[] {
+  return [...groupByTopic(eligible).entries()]
+    .map(([code, list]) => {
+      const { earned, available, percent } = rawPercent(list);
+      return {
+        topicCode: code,
+        topicLabel: mostCommonLabel(list),
+        earned,
+        available,
+        percent,
+        responses: list.length,
+        reliability: (list.length >= RELIABLE_TOPIC_ATTEMPTS
+          ? "reliable_pattern"
+          : "early_signal") as Reliability,
+      };
+    })
+    .sort((a, b) => a.percent - b.percent);
+}
+
+function skillPriorityRows(eligible: Attempt[]): SkillPriorityRow[] {
+  const map = new Map<MarkBreakdownLabel, { lost: number; available: number }>();
+  for (const a of eligible) {
+    for (const b of a.assessment!.markBreakdown) {
+      const cur = map.get(b.label) ?? { lost: 0, available: 0 };
+      cur.lost += Math.max(0, b.available - b.awarded);
+      cur.available += b.available;
+      map.set(b.label, cur);
+    }
+  }
+  return [...map.entries()]
+    .map(([label, v]) => ({
+      label,
+      lost: v.lost,
+      available: v.available,
+      percentLost: v.available > 0 ? Math.round((100 * v.lost) / v.available) : 0,
+    }))
+    .filter((x) => x.available > 0)
+    .sort((a, b) => b.percentLost - a.percentLost || b.lost - a.lost);
+}
+
+function evidenceCoverage(assessed: Attempt[]): EvidenceCoverage {
+  const e: EvidenceCoverage = {
+    diagramSubmitted: 0,
+    diagramRequiredMissing: 0,
+    workingsSubmitted: 0,
+    workingsRequiredMissing: 0,
+  };
+  for (const att of assessed) {
+    const a = att.assessment!;
+    if (a.diagramSubmitted) e.diagramSubmitted += 1;
+    else if (a.diagramExpected) e.diagramRequiredMissing += 1;
+    if (a.workingsSubmitted) e.workingsSubmitted += 1;
+    else if (a.workingsExpected) e.workingsRequiredMissing += 1;
+  }
+  return e;
+}
+
+function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null {
+  let best: ImprovedTopic | null = null;
+  let bestDelta = 0;
+  for (const [, list] of groupByTopic(eligible)) {
+    if (list.length < MIN_ATTEMPTS_FOR_IMPROVEMENT) continue;
+    const sorted = [...list].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    const mid = Math.floor(sorted.length / 2);
+    const older = rawPercent(sorted.slice(0, mid));
+    const newer = rawPercent(sorted.slice(mid));
+    const delta = newer.percent - older.percent;
+    if (delta > bestDelta) {
+      bestDelta = delta;
+      best = {
+        topicLabel: mostCommonLabel(sorted),
+        fromPercent: older.percent,
+        toPercent: newer.percent,
+      };
+    }
+  }
+  return best;
+}
+
+function buildNextFocus(
+  eligible: Attempt[],
+  skillPriority: SkillPriorityRow[],
+  distinctTopics: number
+): NextFocus | null {
+  const top = skillPriority.find((s) => s.lost > 0);
+  if (top == null) return null; // nothing being lost — no focus needed
+  if (distinctTopics < MIN_TOPICS_FOR_FOCUS) return null; // cannot name a topic-specific priority
+
+  // Within the top skill category, find the topic losing the most of it.
+  const byTopic = new Map<string, { lost: number; available: number; list: Attempt[] }>();
+  for (const a of eligible) {
+    const code = a.assessment!.syllabusTopic;
+    if (code === "unknown") continue;
+    const cat = a.assessment!.markBreakdown.find((b) => b.label === top.label);
+    if (cat == null) continue;
+    const cur = byTopic.get(code) ?? { lost: 0, available: 0, list: [] };
+    cur.lost += Math.max(0, cat.available - cat.awarded);
+    cur.available += cat.available;
+    cur.list.push(a);
+    byTopic.set(code, cur);
+  }
+  const ranked = [...byTopic.entries()]
+    .filter(([, v]) => v.available > 0 && v.lost > 0)
+    .sort((a, b) => b[1].lost / b[1].available - a[1].lost / a[1].available);
+  if (ranked.length === 0) return null;
+
+  const [code, v] = ranked[0];
+  const percentLost = Math.round((100 * v.lost) / v.available);
+  const responses = v.list.length;
+  const topicLabel = mostCommonLabel(v.list);
+  const reliability: Reliability =
+    responses >= RELIABLE_TOPIC_ATTEMPTS ? "reliable_pattern" : "early_signal";
+  return {
+    skillLabel: top.label,
+    topicCode: code,
+    topicLabel,
+    percentLost,
+    responses,
+    reliability,
+    headline: `${top.label} in ${topicLabel}`,
+    explanation: `You lost ${percentLost}% of available ${top.label.toLowerCase()} marks across ${responses} assessed ${topicLabel} response${responses === 1 ? "" : "s"}.`,
+  };
+}
+
+/** The one canonical insights object. Dashboard and Analytics both read this. */
+export function buildLearningInsights(attempts: Attempt[]): LearningInsights {
+  const assessed = assessedAttempts(attempts);
+  const eligible = eligibleAttempts(attempts);
+
+  const excludedLegacy = attempts.filter((a) => a.assessment == null).length;
+  const excludedPracticeOnly = assessed.filter(
+    (a) => a.assessment!.markDisplayMode === "practice_feedback_only"
+  ).length;
+  const excludedIncomplete = Math.max(0, assessed.length - excludedPracticeOnly - eligible.length);
+
+  const topicPerformance = topicPerformanceRows(eligible);
+  const skillPriority = skillPriorityRows(eligible);
+  const distinctTopics = topicPerformance.length;
+  const distinctSkills = new Set(eligible.flatMap((a) => a.assessment!.assessmentSkills)).size;
+  const distinctFormats = new Set(eligible.map((a) => a.assessment!.assessmentFormat)).size;
+
+  const nextFocus = buildNextFocus(eligible, skillPriority, distinctTopics);
+
+  const markTrend = [...eligible]
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .slice(-10)
+    .map((a) => Math.round((100 * a.assessment!.marksEarned!) / a.assessment!.marksAssessable!));
+
+  let coverageState: CoverageState;
+  if (eligible.length === 0) coverageState = "empty";
+  else if (nextFocus == null) coverageState = "build_coverage";
+  else coverageState = nextFocus.reliability;
+
+  return {
+    totalAttempts: attempts.length,
+    validCount: eligible.length,
+    excludedLegacy,
+    excludedPracticeOnly,
+    excludedIncomplete,
+    level: currentEconomicsLevel(attempts),
+    weightedPercent: weightedMarkPercent(attempts),
+    distinctTopics,
+    distinctSkills,
+    distinctFormats,
+    topicPerformance,
+    formatPerformance: performanceByFormat(attempts),
+    skillPriority,
+    coverage: skillCoverage(attempts),
+    evidence: evidenceCoverage(assessed),
+    mostImproved: mostImprovedTopicAssessment(eligible),
+    nextFocus,
+    coverageState,
+    markTrend,
+  };
+}

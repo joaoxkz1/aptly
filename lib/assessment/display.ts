@@ -40,6 +40,57 @@ export function practiceOnlyReason(a: Assessment): string {
   return "The mark allocation could not be confidently determined, so no overall mark is estimated.";
 }
 
+// --- UI-only short labels (headings / compact cards) -----------------------
+// These NEVER feed grouping, analytics, thresholds, or recommendation logic —
+// those keep using the canonical topicCode / topicLabel. Pure display shortening.
+
+const SHORT_SKILL_LABELS: Record<string, string> = {
+  "Knowledge and terminology": "Knowledge",
+  "Economic analysis": "Analysis",
+  "Application to context": "Application",
+  "Evaluation and judgment": "Evaluation",
+  "Data use": "Data use",
+  Diagram: "Diagram",
+  "Calculation method": "Calculation",
+  "Final answer": "Final answer",
+  "Policy recommendation": "Policy",
+  "Structure and clarity": "Structure",
+};
+
+/** A compact skill word for headings (canonical label unchanged elsewhere). */
+export function shortSkillLabel(label: string): string {
+  return SHORT_SKILL_LABELS[label] ?? label;
+}
+
+/**
+ * A compact, Title-Cased topic label for headings and dense rows. Drops
+ * parenthetical detail and keeps the head of the canonical free-text label.
+ * Display only — the full `topicLabel` stays available for tooltips/detail.
+ */
+export function shortTopicLabel(topicLabel: string): string {
+  const head = topicLabel
+    .replace(/\([^)]*\)/g, " ") // remove "(demerit goods …)" detail
+    .split(/[/,:;·|]/)[0] // keep the head before a separator
+    .replace(/\s+/g, " ")
+    .trim();
+  const base = head === "" ? topicLabel.trim() : head;
+  const minor = new Set(["and", "of", "the", "to", "in", "for", "a", "an"]);
+  return base
+    .split(" ")
+    .slice(0, 4) // soft length cap so a heading never sprawls
+    .map((w, i) =>
+      i > 0 && minor.has(w.toLowerCase())
+        ? w.toLowerCase()
+        : w.charAt(0).toUpperCase() + w.slice(1)
+    )
+    .join(" ");
+}
+
+/** "Evaluation in Market Failure" — skill + short topic, display only. */
+export function shortNextFocusHeadline(skillLabel: string, topicLabel: string): string {
+  return `${shortSkillLabel(skillLabel)} in ${shortTopicLabel(topicLabel)}`;
+}
+
 /** A compact one-liner for the attempts list. */
 export function attemptMetaLine(a: Assessment): string {
   if (a.markDisplayMode === "practice_feedback_only") {

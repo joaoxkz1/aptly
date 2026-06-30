@@ -1,32 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  Flame,
-  PenLine,
-  Send,
-  Sparkles,
-  TrendingUp,
-  TriangleAlert,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Flame, Layers, LineChart, PenLine, Send } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BarList } from "@/components/bar-list";
 import { Sparkline } from "@/components/sparkline";
 import { ScoreRing } from "@/components/score-ring";
 import { EconomicsLevelCard } from "@/components/assessment/economics-level-card";
+import { NextFocusCard } from "@/components/assessment/next-focus-card";
+import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
-import {
-  attemptsThisWeek,
-  averageScore,
-  currentStreak,
-  scoreTrend,
-  studyNextRecommendation,
-  topicStats,
-  weakestTopic,
-} from "@/lib/analytics";
-import { SUBJECT_BADGE, SUBJECT_COLORS } from "@/lib/subjects";
+import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
+import { buildLearningInsights } from "@/lib/assessment/readiness";
+import { attemptMetaLine, shortTopicLabel } from "@/lib/assessment/display";
+import { SUBJECT_BADGE } from "@/lib/subjects";
 import { cn, formatDate } from "@/lib/utils";
 
 function greeting() {
@@ -38,36 +25,42 @@ function greeting() {
 
 export default function DashboardPage() {
   const { attempts, ready } = useAttempts();
-
+  const insights = buildLearningInsights(attempts);
   const week = attemptsThisWeek(attempts);
-  const avg = averageScore(week);
   const streak = currentStreak(attempts);
-  const weakest = weakestTopic(attempts);
-  const rec = studyNextRecommendation(attempts);
-  const stats = topicStats(attempts);
-  const trend = scoreTrend(attempts);
-
-  const byAttempts = [...stats]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5)
-    .map((s) => ({
-      label: s.topic,
-      value: s.count,
-      sublabel: `avg ${s.avgScore}`,
-      colorClass: SUBJECT_COLORS[s.subject],
-    }));
-
-  const byMistakes = [...stats]
-    .filter((s) => s.mistakes > 0)
-    .sort((a, b) => b.mistakes - a.mistakes)
-    .slice(0, 5)
-    .map((s) => ({
-      label: s.topic,
-      value: s.mistakes,
-      colorClass: "bg-rose-400 dark:bg-rose-500",
-    }));
-
   const recent = attempts.slice(0, 5);
+
+  // Strong first-time state instead of empty charts / confusing zeroes.
+  if (ready && attempts.length === 0) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 py-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            {greeting()}, Joao
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Aptly learns your IB Economics patterns from every answer you grade.
+          </p>
+        </div>
+        <NextFocusCard insights={insights} variant="hero" />
+        <Card>
+          <CardContent className="flex flex-col items-start gap-3 p-6">
+            <p className="text-sm text-muted-foreground">
+              Paste any Economics question and your answer. Aptly estimates the mark, breaks down
+              where marks are won and lost, and tracks your progress privately.
+            </p>
+            <Link
+              href="/submit"
+              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+            >
+              <PenLine className="h-4 w-4" />
+              Submit your first answer
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -77,7 +70,7 @@ export default function DashboardPage() {
             {greeting()}, Joao
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Here is where your IB preparation stands this week.
+            Here is where your IB Economics preparation stands.
           </p>
         </div>
         <Link
@@ -89,7 +82,7 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Weekly stat cards */}
+      {/* Top metric cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Card>
           <CardContent className="p-5">
@@ -97,15 +90,17 @@ export default function DashboardPage() {
               <Send className="h-4 w-4" />
               <span className="text-xs font-medium">Questions this week</span>
             </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums">
-              {ready ? week.length : "–"}
-            </p>
+            <p className="mt-2 text-3xl font-semibold tabular-nums">{ready ? week.length : "–"}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              across {stats.length} topic{stats.length === 1 ? "" : "s"}
+              {insights.validCount} marked overall
             </p>
           </CardContent>
         </Card>
-        <EconomicsLevelCard attempts={attempts} ready={ready} />
+        <EconomicsLevelCard
+          level={insights.level}
+          weightedPercent={insights.weightedPercent}
+          ready={ready}
+        />
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">
@@ -125,84 +120,87 @@ export default function DashboardPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <TriangleAlert className="h-4 w-4" />
-              <span className="text-xs font-medium">Weakest topic</span>
+              <Layers className="h-4 w-4" />
+              <span className="text-xs font-medium">Topics practised</span>
             </div>
-            <p className="mt-2 truncate text-lg font-semibold leading-9">
-              {weakest?.topic ?? "–"}
+            <p className="mt-2 text-3xl font-semibold tabular-nums">
+              {ready ? insights.distinctTopics : "–"}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {weakest != null ? `avg ${weakest.avgScore}/7` : "no attempts yet"}
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">with marked evidence</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Study Next + trend */}
+      {/* Hero recommendation + mark trend */}
       <div className="grid gap-3 lg:grid-cols-3">
-        <Card className="border-primary/25 bg-gradient-to-br from-accent/80 to-card lg:col-span-2">
-          <CardContent className="flex flex-col gap-3 p-6">
-            <div className="flex items-center gap-2 text-accent-foreground">
-              <Sparkles className="h-4 w-4" />
-              <span className="text-xs font-semibold uppercase tracking-wider">Study next</span>
-            </div>
-            {rec !== null ? (
+        <div className="lg:col-span-2">
+          <NextFocusCard insights={insights} variant="hero" />
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LineChart className="h-4 w-4 text-muted-foreground" />
+              Mark trend
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-end justify-between gap-3">
+            {insights.markTrend.length >= 3 ? (
               <>
-                <h2 className="text-xl font-semibold tracking-tight">
-                  Study {rec.topic} next
-                </h2>
-                <p className="max-w-prose text-sm text-muted-foreground">{rec.reason}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-3">
-                  <Badge className={SUBJECT_BADGE[rec.subject]}>{rec.subject}</Badge>
-                  <Link
-                    href="/submit"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-                  >
-                    Practise it now <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+                <Sparkline values={insights.markTrend} max={100} width={170} height={56} />
+                {insights.weightedPercent !== null && (
+                  <div className="text-right">
+                    <p className="text-2xl font-semibold tabular-nums">
+                      {insights.weightedPercent}%
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">weighted</p>
+                  </div>
+                )}
               </>
             ) : (
               <p className="text-sm text-muted-foreground">
-                Submit your first answer and Aptly will tell you what to study next.
+                Grade a few more marked answers to see your mark trend.
               </p>
             )}
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              Score trend
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-end justify-between gap-3">
-            <Sparkline values={trend} width={170} height={56} />
-            {avg !== null && <ScoreRing score={avg} size={56} />}
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Topic charts */}
-      <div className="grid gap-3 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Attempts by topic</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BarList data={byAttempts} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Mistakes by topic</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BarList data={byMistakes} />
-          </CardContent>
-        </Card>
-      </div>
+      {/* Topic performance (canonical) */}
+      <Card>
+        <CardHeader className="flex-row items-center justify-between">
+          <div>
+            <CardTitle>Topic performance</CardTitle>
+            <CardDescription>Marks earned across your assessed topics</CardDescription>
+          </div>
+          <Link href="/analytics" className="text-xs font-medium text-primary hover:underline">
+            View analytics
+          </Link>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          {insights.topicPerformance.length > 0 ? (
+            insights.topicPerformance.slice(0, 6).map((t, i) => (
+              <div key={t.topicCode}>
+                <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
+                  <span className="truncate font-medium" title={t.topicLabel}>
+                    {shortTopicLabel(t.topicLabel)}
+                  </span>
+                  <span className="shrink-0 tabular-nums text-muted-foreground">
+                    {t.percent}% ·{" "}
+                    {t.reliability === "reliable_pattern"
+                      ? `${t.responses} answers`
+                      : "early signal"}
+                  </span>
+                </div>
+                <MarkBar percent={t.percent} delayMs={i * 60} />
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Grade Economics answers to see topic performance.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Recent attempts */}
       <Card>
@@ -217,9 +215,13 @@ export default function DashboardPage() {
             <div key={a.id} className="flex items-center gap-4 py-3 first:pt-1 last:pb-1">
               <ScoreRing score={a.feedback.score} size={40} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{a.topic}</p>
+                <p className="truncate text-sm font-medium">
+                  {a.assessment?.topicLabel || a.topic}
+                </p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {a.feedback.mistakes[0] ?? "No mistakes detected"}
+                  {a.assessment != null
+                    ? attemptMetaLine(a.assessment)
+                    : a.feedback.mistakes[0] ?? "No recurring mistake pattern"}
                 </p>
               </div>
               <Badge className={cn("hidden sm:inline-flex", SUBJECT_BADGE[a.subject])}>

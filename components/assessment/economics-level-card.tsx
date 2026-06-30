@@ -1,19 +1,26 @@
 import { GraduationCap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import type { Attempt } from "@/lib/types";
-import { currentEconomicsLevel, weightedMarkPercent } from "@/lib/assessment/readiness";
+import type { EconomicsLevel } from "@/lib/assessment/readiness";
 
 const TIER_LABEL: Record<"early" | "medium" | "high", string> = {
   early: "Early estimate",
-  medium: "Developing estimate",
-  high: "Confident estimate",
+  medium: "Medium confidence",
+  high: "High confidence",
 };
 
-/** Dashboard "Current Economics level" card. Code-derived only (never AI). */
-export function EconomicsLevelCard({ attempts, ready }: { attempts: Attempt[]; ready: boolean }) {
-  const level = currentEconomicsLevel(attempts);
-  const pct = weightedMarkPercent(attempts);
-
+/**
+ * Dashboard "Current Economics level" card. Presentational only — the level and
+ * weighted percentage are computed once by buildLearningInsights and passed in.
+ */
+export function EconomicsLevelCard({
+  level,
+  weightedPercent,
+  ready,
+}: {
+  level: EconomicsLevel;
+  weightedPercent: number | null;
+  ready: boolean;
+}) {
   return (
     <Card>
       <CardContent className="p-5 text-center">
@@ -42,8 +49,10 @@ export function EconomicsLevelCard({ attempts, ready }: { attempts: Attempt[]; r
               {level.responses} response{level.responses === 1 ? "" : "s"} · {level.assessedMarks}{" "}
               marks
             </p>
-            {pct !== null && (
-              <p className="mt-0.5 text-xs text-muted-foreground">Weighted practice mark {pct}%</p>
+            {weightedPercent !== null && (
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Weighted practice mark {weightedPercent}%
+              </p>
             )}
           </>
         )}

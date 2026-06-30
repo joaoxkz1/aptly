@@ -62,17 +62,12 @@ export function useAttempts() {
   }, [supabase]);
 
   const addAttempt = useCallback(
-    (attempt: Attempt) => {
-      // Optimistic prepend for instant UX; persist in the background and
-      // broadcast so all hooks resync with the authoritative server rows.
-      setAttempts((prev) => [attempt, ...prev]);
-      void (async () => {
-        try {
-          await insertAttempt(supabase, attempt);
-        } finally {
-          broadcast();
-        }
-      })();
+    // Awaitable: resolves only after the row is persisted, throws on failure.
+    // No optimistic prepend — the attempt appears everywhere only once the
+    // write actually succeeds (then broadcast triggers a resync).
+    async (attempt: Attempt): Promise<void> => {
+      await insertAttempt(supabase, attempt);
+      broadcast();
     },
     [supabase]
   );

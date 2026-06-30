@@ -13,6 +13,10 @@ import type { Subject } from "@/lib/types";
 import { attemptMetaLine } from "@/lib/assessment/display";
 import { cn, formatDateTime } from "@/lib/utils";
 
+// Demo/destructive tooling is for local development only — never shown to
+// production students.
+const IS_DEV = process.env.NODE_ENV === "development";
+
 export default function AttemptsPage() {
   const { attempts, ready, clearAll, resetDemo } = useAttempts();
   const [filter, setFilter] = useState<Subject | "All">("All");
@@ -45,9 +49,9 @@ export default function AttemptsPage() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Attempts log</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Learning log</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every graded answer, stored locally in your browser.
+            Every graded answer, saved privately to your Aptly account.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -55,10 +59,12 @@ export default function AttemptsPage() {
             <Download className="h-3.5 w-3.5" />
             Export JSON
           </Button>
-          <Button variant="outline" size="sm" onClick={resetDemo}>
-            <RotateCcw className="h-3.5 w-3.5" />
-            Reset demo data
-          </Button>
+          {IS_DEV && (
+            <Button variant="outline" size="sm" onClick={resetDemo}>
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reset demo data
+            </Button>
+          )}
           <Button
             variant="destructive"
             size="sm"
@@ -103,13 +109,15 @@ export default function AttemptsPage() {
                 <ScoreRing score={a.feedback.score} size={44} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium">{a.topic}</span>
+                    <span className="text-sm font-medium">
+                      {a.assessment?.topicLabel || a.topic}
+                    </span>
                     <Badge className={SUBJECT_BADGE[a.subject]}>{a.subject}</Badge>
                   </div>
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">
                     {a.assessment != null
                       ? attemptMetaLine(a.assessment)
-                      : `${a.feedback.mistakes[0] ?? "No mistakes detected"} · ${a.feedback.examinerComment.split(".")[0]}.`}
+                      : `Earlier 0–7 attempt · ${a.feedback.band}`}
                   </p>
                 </div>
                 <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">

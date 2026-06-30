@@ -45,7 +45,7 @@ export function MarkSummary({
               </p>
               <p className="mt-1 text-3xl font-semibold tracking-tight">{fraction}</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Practice level {practiceBandLabel(a)}
+                Estimated range: {practiceBandLabel(a).replace("≈", "")}
               </p>
             </>
           )}
@@ -56,7 +56,8 @@ export function MarkSummary({
           <p className="text-sm font-medium">{formatAndCommand(a)}</p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
             <ScanSearch className="h-3.5 w-3.5" />
-            Detected automatically · {confidenceLabel(a.classificationConfidence)} confidence
+            Question type detected automatically · {confidenceLabel(a.classificationConfidence)}{" "}
+            confidence
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Badge className={SUBJECT_BADGE[subject]}>{subject}</Badge>

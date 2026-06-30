@@ -4,11 +4,12 @@ import {
   BookOpenCheck,
   Check,
   CircleAlert,
+  CircleCheck,
   Lightbulb,
+  Loader2,
   Quote,
   RotateCcw,
-  Save,
-  Sparkles,
+  Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,15 +20,17 @@ import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import type { Attempt } from "@/lib/types";
 
+export type SaveState = "idle" | "saving" | "saved" | "error";
+
 export function FeedbackResult({
   attempt,
-  saved,
-  onSave,
+  saveState,
+  onRetry,
   onTryAnother,
 }: {
   attempt: Attempt;
-  saved: boolean;
-  onSave: () => void;
+  saveState: SaveState;
+  onRetry: () => void;
   onTryAnother: () => void;
 }) {
   const f = attempt.feedback;
@@ -37,7 +40,7 @@ export function FeedbackResult({
     <div className="flex flex-col gap-4">
       {assessment !== null ? (
         <>
-          {/* Assessment-aware header + per-category breakdown */}
+          {/* Assessment-aware header + per-category diagnostic breakdown */}
           <MarkSummary assessment={assessment} subject={attempt.subject} topic={attempt.topic} />
           <MarkBreakdown assessment={assessment} />
         </>
@@ -102,12 +105,16 @@ export function FeedbackResult({
         </Card>
       </div>
 
-      {/* Mistake types */}
+      {/* Recurring mistake patterns — compact success note when there are none */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CircleAlert className="h-4 w-4 text-rose-500" />
-            Mistake types detected
+            {f.mistakes.length > 0 ? (
+              <CircleAlert className="h-4 w-4 text-rose-500" />
+            ) : (
+              <CircleCheck className="h-4 w-4 text-emerald-500" />
+            )}
+            Recurring mistake patterns
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
@@ -122,7 +129,7 @@ export function FeedbackResult({
             ))
           ) : (
             <p className="text-sm text-muted-foreground">
-              No recurring mistake patterns detected in this answer. Well done.
+              No recurring mistake pattern found in this answer.
             </p>
           )}
         </CardContent>
@@ -133,7 +140,7 @@ export function FeedbackResult({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Quote className="h-4 w-4 text-muted-foreground" />
-            Examiner comment
+            Examiner-style comment
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -143,29 +150,51 @@ export function FeedbackResult({
         </CardContent>
       </Card>
 
-      {/* Study next */}
+      {/* Improve this answer — the fastest fix for THIS response, shown as the closing focus */}
       <Card className="border-primary/25 bg-gradient-to-br from-accent/70 to-card">
         <CardContent className="flex items-start gap-3 p-5">
-          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
+          <Zap className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
-              Study next
+              Improve this answer
             </p>
             <p className="mt-1 text-sm leading-relaxed">{f.studyNext}</p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button onClick={onSave} disabled={saved} size="lg">
-          {saved ? <BookOpenCheck className="h-4 w-4" /> : <Save className="h-4 w-4" />}
-          {saved ? "Saved to your log" : "Save attempt"}
-        </Button>
-        <Button variant="outline" size="lg" onClick={onTryAnother}>
-          <RotateCcw className="h-4 w-4" />
-          Try another answer
-        </Button>
+      {/* Save status + actions */}
+      <div className="flex flex-col gap-3">
+        {saveState === "error" && (
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
+            <span className="flex items-center gap-2">
+              <CircleAlert className="h-4 w-4" />
+              Couldn&apos;t save this attempt.
+            </span>
+            <Button size="sm" variant="outline" onClick={onRetry}>
+              <RotateCcw className="h-3.5 w-3.5" />
+              Retry save
+            </Button>
+          </div>
+        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {saveState === "saving" && (
+            <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving…
+            </span>
+          )}
+          {saveState === "saved" && (
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              <BookOpenCheck className="h-4 w-4" />
+              Saved to your learning log
+            </span>
+          )}
+          <Button size="lg" onClick={onTryAnother}>
+            <RotateCcw className="h-4 w-4" />
+            Try another answer
+          </Button>
+        </div>
       </div>
     </div>
   );

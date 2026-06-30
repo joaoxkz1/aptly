@@ -68,7 +68,6 @@ export function AppShell({
   email?: string | null;
 }) {
   const pathname = usePathname();
-  const displayName = email ? email.split("@")[0] : "Account";
 
   return (
     <div className="flex min-h-dvh">
@@ -97,8 +96,9 @@ export function AppShell({
         </nav>
         <div className="mt-auto flex items-center justify-between gap-2 px-1">
           <div className="min-w-0 text-xs text-muted-foreground">
-            <p className="truncate font-medium capitalize text-foreground">{displayName}</p>
-            <p className="truncate">{email ?? "Signed in"}</p>
+            <p className="truncate font-medium text-foreground" title={email ?? undefined}>
+              {email ?? "Signed in"}
+            </p>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <ThemeToggle />

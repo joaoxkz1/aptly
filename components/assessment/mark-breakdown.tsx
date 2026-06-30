@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ListChecks } from "lucide-react";
 import type { Assessment } from "@/lib/types";
 
@@ -12,8 +18,12 @@ export function MarkBreakdown({ assessment }: { assessment: Assessment }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ListChecks className="h-4 w-4 text-muted-foreground" />
-          Mark breakdown
+          Aptly diagnostic breakdown
         </CardTitle>
+        <CardDescription>
+          Aptly&apos;s diagnostic estimate of where marks were won and lost — not an official IB
+          markscheme.
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col divide-y divide-border">
         {items.map((item) => {
