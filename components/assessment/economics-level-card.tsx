@@ -23,8 +23,8 @@ export function EconomicsLevelCard({
 }) {
   return (
     <Card>
-      <CardContent className="p-5 text-center">
-        <div className="flex items-center justify-center gap-2 text-muted-foreground">
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <GraduationCap className="h-4 w-4" />
           <span className="text-xs font-medium">Current Economics level</span>
         </div>
