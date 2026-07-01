@@ -6,9 +6,9 @@ import {
   type AssessmentSkill,
   type Feedback,
   type MarkBreakdownLabel,
+  type MarksSource,
+  type MarkDisplayMode,
   type Subject,
-  type UnassessedEvidence,
-  type UnassessedEvidenceType,
 } from "@/lib/types";
 import {
   ASSESSMENT_FORMATS,
@@ -17,26 +17,28 @@ import {
   COMMAND_TERMS,
   CONFIDENCES,
   DIAGRAM_STATUSES,
-  EVIDENCE_SPLIT_SOURCES,
   LEVEL_RELEVANCES,
   MARK_BREAKDOWN_LABELS,
-  MARK_DISPLAY_MODES,
-  MARKS_SOURCES,
   PAPERS,
   QUESTION_PARTS,
   SYLLABUS_TOPICS,
   SYLLABUS_UNITS,
-  UNASSESSED_EVIDENCE_TYPES,
   WORKINGS_STATUSES,
 } from "@/lib/assessment/taxonomy";
 import { ASSESSMENT_VERSION } from "@/lib/assessment/config";
+import type { ScoringPolicy } from "@/lib/assessment/policy";
+import { stripUnassessableDiagramMistake } from "@/lib/assessment/status";
 import { bandForScore, validateFeedback } from "./feedback-schema";
 
 /**
- * Strict Structured Outputs schema + instructions + fail-closed validation for
- * assessment-aware grading. The model decides the substance; the server adds
- * `version`/`band`, recomputes `unassessedMarks`, and REJECTS impossible output
- * (never repairs it) so no malformed attempt is ever returned or saved.
+ * Strict Structured Outputs schema + instructions + fail-closed validation.
+ *
+ * Assessment Integrity trust model: the MODEL judges only answer-specific
+ * evidence — classification, qualitative feedback, and the marks earned on the
+ * assessable portion the SERVER tells it about. It does NOT choose the mark
+ * total, the scoring state (marked/provisional/feedback-only), whether a
+ * diagram cap applies, or core-analytics eligibility. Those are decided by
+ * `resolveScoringPolicy` and stamped here by `assembleAssessment`.
  */
 
 const strArr = () => ({ type: "array", items: { type: "string" } });
@@ -44,7 +46,7 @@ const enumStr = (values: readonly string[]) => ({ type: "string", enum: [...valu
 
 const SCHEMA_PROPERTIES: Record<string, unknown> = {
   // Feedback subset (back-compat).
-  score: { type: "integer", description: "Estimated IB-style 0–7 mark." },
+  score: { type: "integer", description: "Estimated IB-style 0–7 mark (internal signal, not shown)." },
   strengths: strArr(),
   improvements: strArr(),
   mistakes: { type: "array", items: { type: "string", enum: [...MISTAKE_TYPES] } },
@@ -63,30 +65,11 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
   topicLabel: { type: "string" },
   classificationConfidence: enumStr(CONFIDENCES),
   markingConfidence: enumStr(CONFIDENCES),
-  // Marks (stored separately).
-  marksAvailable: { type: ["integer", "null"] },
-  marksEarned: { type: ["integer", "null"] },
-  marksAssessable: { type: ["integer", "null"] },
-  unassessedMarks: { type: ["integer", "null"] },
-  marksSource: enumStr(MARKS_SOURCES),
-  markDisplayMode: enumStr(MARK_DISPLAY_MODES),
-  evidenceSplitSource: enumStr(EVIDENCE_SPLIT_SOURCES),
-  // Non-null only for partial_estimate (strict nullable object).
-  unassessedEvidence: {
-    type: ["object", "null"],
-    additionalProperties: false,
-    required: ["type", "marks", "quote"],
-    properties: {
-      type: { type: "string", enum: [...UNASSESSED_EVIDENCE_TYPES] },
-      marks: { type: "integer" },
-      quote: { type: "string" },
-    },
-  },
-  // Practice band.
+  // Practice band (kept internal; not shown as a numeric band per Assessment Integrity).
   practiceLevelLow: { type: "integer" },
   practiceLevelHigh: { type: "integer" },
   practiceLevelConfidence: enumStr(CONFIDENCES),
-  // Evidence.
+  // Evidence (drive coverage; NEVER a diagram cap).
   diagramExpected: { type: "boolean" },
   diagramSubmitted: { type: "boolean" },
   diagramAssessmentStatus: enumStr(DIAGRAM_STATUSES),
@@ -94,7 +77,9 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
   workingsSubmitted: { type: "boolean" },
   workingsAssessmentStatus: enumStr(WORKINGS_STATUSES),
   attachmentContent: enumStr(ATTACHMENT_CONTENTS),
-  // Breakdown.
+  // Marks earned on the ASSESSABLE portion the server specified (null = feedback-only).
+  assessableEarned: { type: ["integer", "null"] },
+  // Breakdown of the assessable marks only (empty for feedback-only).
   markBreakdown: {
     type: "array",
     items: {
@@ -119,20 +104,59 @@ export const GRADE_RESULT_JSON_SCHEMA: Record<string, unknown> = {
   properties: SCHEMA_PROPERTIES,
 };
 
+/** A compact, deterministic description of the server-decided marking frame. */
+function policyBrief(policy: ScoringPolicy): string {
+  if (policy.scoringState === "feedback_only") {
+    return [
+      "MARKING FRAME (decided by Aptly, not you): FEEDBACK ONLY.",
+      "No reliable mark total exists. Set assessableEarned = null and markBreakdown = [].",
+      "Give honest qualitative feedback only. Do NOT invent a mark total or a fraction.",
+    ].join(" ");
+  }
+
+  const parts: string[] = [
+    `MARKING FRAME (decided by Aptly, not you): framework = ${policy.framework}; total ${policy.total} marks; ASSESSABLE ${policy.assessable} marks.`,
+  ];
+
+  if (policy.framework === "paper2_four_mark_diagram_explain") {
+    parts.push(
+      `Mark ONLY the written explanation out of ${policy.assessable}. The ${policy.cappedDiagramMarks} diagram mark(s) are EXCLUDED because no diagram was submitted. Reward accurate written economics on its own merit; NEVER call a valid written response unmarkable for lacking a diagram.`
+    );
+  } else if (policy.bestFit) {
+    parts.push(
+      `Use an IB BEST-FIT judgement. Judge the answer holistically against the markbands and set assessableEarned (0..${policy.assessable}) to the single best-fit mark. Do NOT compute the mark by adding up category points.`
+    );
+  } else if (policy.assessable != null && policy.assessable <= 2) {
+    parts.push(
+      `Use a question-specific analytic mini-markscheme. Award assessableEarned (0..${policy.assessable}) for demonstrated economic meaning; reward an accurate definition/answer even when the wording differs from a canonical one. Do NOT require an explanation the question does not ask for.`
+    );
+  } else {
+    parts.push(
+      `Judge the answer holistically and set assessableEarned (0..${policy.assessable}) as a best-fit practice estimate. The paper format is NOT confirmed — do not assume a specific IB paper's markscheme.`
+    );
+  }
+
+  parts.push(
+    "markBreakdown is a per-criterion DIAGNOSTIC ONLY (Aptly's internal signal, shown to the student qualitatively — NOT the official IB allocation). It does NOT need to sum to assessableEarned. For each criterion the question genuinely tests, set awarded/available to reflect how well it was demonstrated."
+  );
+
+  if (policy.scoringState === "provisional") {
+    parts.push("This total is INFERRED, not confirmed — Aptly labels the result provisional.");
+  }
+  return parts.join(" ");
+}
+
 export function buildAssessmentInstructions(): string {
   return [
     "You are Aptly, an IB Economics assistant that returns ESTIMATED study feedback for practice — never an official IB grade.",
     "From the question and the student's typed answer, classify the likely IB assessment: format, paper, part, command term (normalized), the skills it tests, the syllabus topic code, and SL/HL relevance.",
-    "Award an estimated mark out of the real total ONLY when you can do so honestly. Follow the rubric's honesty rules exactly.",
-    "Never invent a mark total or a missing-evidence mark split. When the total or split is not reliably known, set markDisplayMode to practice_feedback_only.",
-    "exact_estimate requires marksAssessable == marksAvailable and a markBreakdown whose awarded/available sum to marksEarned/marksAssessable.",
-    "For practice_feedback_only and not_reliably_known, set marksEarned and marksAssessable to null and leave markBreakdown empty (do not output 0); marksAvailable may still hold the question's stated total when it is explicit.",
-    "partial_estimate is allowed ONLY when the PASTED QUESTION explicitly allocates marks to genuinely missing evidence — a diagram you cannot see, or workings the student did not type. Then set evidenceSplitSource = explicit_in_question and set unassessedEvidence = { type, marks, quote }: type is 'diagram' or 'workings'; marks equals the unassessed marks; quote is a short EXACT phrase copied verbatim from the question that BOTH names that evidence (diagram/draw/graph/curve, or working/workings/method/calculation/show your work) AND states its mark allocation (e.g. 'diagram [2 marks]'). You may NOT justify a split with a canonical/template assumption. If there is no such explicit allocation, use practice_feedback_only.",
-    "Use unassessedEvidence.type = diagram only when a diagram is genuinely missing (diagramExpected true and no diagram submitted), and = workings only when typed workings are genuinely missing (workingsExpected true and workingsSubmitted false).",
-    "Missing source/stimulus material (an unpasted text/figure/data) is NOT partial evidence — it stays practice_feedback_only.",
-    "Set unassessedEvidence to null for every mode except partial_estimate.",
-    "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram, or clearly contains a diagram-specific allocated mark component. Do NOT set it true merely because a diagram would strengthen the answer. A clear text-only Paper 1 explanation whose prompt does not require a diagram can receive an exact_estimate.",
-    "Respect the FACT hasImageAttachment: when false, no image exists — diagramSubmitted must be false, attachmentContent must be none, and you must not claim an image was assessed. Typed workings in the answer are still assessable.",
+    "You do NOT decide the mark total, whether the attempt is marked/provisional/feedback-only, the marking framework, or any diagram-cap policy — Aptly has already decided the MARKING FRAME and you must mark within it.",
+    "Mark ONLY the assessable marks stated in the MARKING FRAME. Never invent, expand, or reduce the total. Never award marks for a diagram you cannot see; typed workings in the answer ARE assessable.",
+    "The overall mark is a best-fit / analytic judgement, NOT the sum of category points. The markBreakdown is a per-criterion diagnostic only and need not sum to the mark.",
+    "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram. Do NOT set it true merely because a diagram would strengthen the answer. diagramExpected NEVER changes the mark total — the frame already accounts for any cap.",
+    "Do NOT add limitations about a missing image, photo, upload, or drawn diagram unless the MARKING FRAME's framework expects a diagram or diagramExpected is true.",
+    "For a data-response framework (Paper 2(g)/3(b)), assess data use ONLY against the SOURCE MATERIAL block when present. Never claim to assess charts, tables, figures, or images that were not pasted as readable text.",
+    "Respect the FACT hasImageAttachment: when false, no image exists — diagramSubmitted must be false, attachmentContent must be none, diagramAssessmentStatus must not be submitted_and_assessed, and workingsAssessmentStatus must not be image_and_assessed.",
     "Choose mistakes only from the fixed list. Keep strengths/improvements to at most 3 each. Use the full plausible mark range; do not cluster mid-band.",
     "Return only the structured JSON defined by the response format.",
   ].join(" ");
@@ -144,10 +168,15 @@ export function buildAssessmentUserInput(
   question: string,
   answer: string,
   rubric: string,
-  hasImageAttachment: boolean
+  hasImageAttachment: boolean,
+  policy: ScoringPolicy,
+  sourceMaterial: string | null
 ): string {
+  const hasSource = typeof sourceMaterial === "string" && sourceMaterial.trim() !== "";
   return [
     rubric,
+    "",
+    policyBrief(policy),
     "",
     `SUBJECT: ${subject}`,
     `STUDENT-SELECTED TOPIC HINT: ${topic}`,
@@ -155,10 +184,18 @@ export function buildAssessmentUserInput(
     "QUESTION:",
     question,
     "",
+    ...(hasSource
+      ? [
+          "SOURCE MATERIAL (pasted by the student — assess data use ONLY against this readable text):",
+          sourceMaterial!.trim(),
+          "",
+        ]
+      : []),
     "STUDENT ANSWER (typed; any workings written here are assessable):",
     answer,
     "",
     `FACT — hasImageAttachment: ${hasImageAttachment}`,
+    `FACT — hasSourceMaterial: ${hasSource}`,
     "Produce the structured grade-result JSON.",
   ].join("\n");
 }
@@ -181,12 +218,6 @@ function nonEmptyString(value: unknown, name: string): string {
 
 function intInRange(value: unknown, lo: number, hi: number, name: string): number {
   if (typeof value === "number" && Number.isInteger(value) && value >= lo && value <= hi) return value;
-  return fail(name);
-}
-
-function intOrNull(value: unknown, name: string): number | null {
-  if (value === null) return null;
-  if (typeof value === "number" && Number.isInteger(value)) return value;
   return fail(name);
 }
 
@@ -217,59 +248,64 @@ function parseBreakdown(value: unknown): AssessmentMarkBreakdownItem[] {
   });
 }
 
-function sum(items: AssessmentMarkBreakdownItem[], key: "awarded" | "available"): number {
-  return items.reduce((s, b) => s + b[key], 0);
+/**
+ * Whether diagram/image evidence messaging is appropriate for this attempt.
+ * Only true when the framework expects a diagram or the question explicitly
+ * does — so ordinary essays never show missing-diagram wording.
+ */
+function diagramMessagingApplies(framework: ScoringPolicy["framework"], diagramExpected: boolean): boolean {
+  return framework === "paper2_four_mark_diagram_explain" || diagramExpected;
 }
 
-function normalizeWhitespace(s: string): string {
-  return s.replace(/\s+/g, " ").trim().toLowerCase();
+/** Drop model limitations that mention images/diagrams when none is expected. */
+function filterLimitations(limitations: string[], showDiagram: boolean): string[] {
+  if (showDiagram) return limitations;
+  const diagramMention = /\b(image|images|diagram|diagrams|photo|photograph|upload|attachment|drawn|drawing)\b/i;
+  return limitations.filter((l) => !diagramMention.test(l));
 }
 
-/** True if the (whitespace-normalized) quote appears verbatim in the question. */
-function quoteInQuestion(quote: string, question: string): boolean {
-  const q = normalizeWhitespace(quote);
-  if (q === "") return false;
-  return normalizeWhitespace(question).includes(q);
-}
-
-/** True if the quote explicitly names the claimed evidence type. */
-function quoteNamesEvidence(quote: string, type: UnassessedEvidenceType): boolean {
-  const q = normalizeWhitespace(quote);
-  if (type === "diagram") return /\b(diagram|draw|graph|curve)\b/.test(q);
-  return /(\bworkings?\b|\bmethod\b|\bcalculation\b|show your work)/.test(q);
-}
-
-/** True if the quote contains the integer mark allocation (e.g. 2, [2], [2 marks], (2 marks)). */
-function quoteHasMarks(quote: string, marks: number): boolean {
-  const q = normalizeWhitespace(quote);
-  return new RegExp(`(?<![0-9])${marks}(?![0-9])`).test(q);
-}
-
-function parseUnassessedEvidence(value: unknown): UnassessedEvidence | null {
-  if (value === null) return null;
-  if (typeof value !== "object") return fail("unassessedEvidence");
-  const o = value as Record<string, unknown>;
-  const type = enumOf(o.type, UNASSESSED_EVIDENCE_TYPES, "unassessedEvidence.type");
-  const marks = intInRange(o.marks, 1, 200, "unassessedEvidence.marks");
-  const quote = nonEmptyString(o.quote, "unassessedEvidence.quote");
-  return { type, marks, quote };
+/** The answer-specific evidence the model legitimately produces. */
+interface ModelAssessment {
+  assessmentFormat: Assessment["assessmentFormat"];
+  paper: Assessment["paper"];
+  questionPart: Assessment["questionPart"];
+  levelRelevance: Assessment["levelRelevance"];
+  assessmentSkills: AssessmentSkill[];
+  commandTerm: Assessment["commandTerm"];
+  commandTermLabel: string;
+  syllabusUnit: Assessment["syllabusUnit"];
+  syllabusTopic: Assessment["syllabusTopic"];
+  topicLabel: string;
+  classificationConfidence: Assessment["classificationConfidence"];
+  markingConfidence: Assessment["markingConfidence"];
+  practiceLevelLow: number;
+  practiceLevelHigh: number;
+  practiceLevelConfidence: Assessment["practiceLevelConfidence"];
+  diagramExpected: boolean;
+  diagramSubmitted: boolean;
+  diagramAssessmentStatus: Assessment["diagramAssessmentStatus"];
+  workingsExpected: boolean;
+  workingsSubmitted: boolean;
+  workingsAssessmentStatus: Assessment["workingsAssessmentStatus"];
+  attachmentContent: Assessment["attachmentContent"];
+  assessableEarned: number | null;
+  markBreakdown: AssessmentMarkBreakdownItem[];
+  limitations: string[];
 }
 
 /**
- * Fail-closed validation. Returns { feedback, assessment } or throws.
- * Commit 1 always passes hasImageAttachment = false.
+ * Fail-closed validation of the model output against the server MARKING FRAME.
+ * Returns { feedback, model } or throws. `assessable` is null for feedback-only.
  */
-export function validateGradeResult(
+function validateModelOutput(
   raw: unknown,
-  opts: { hasImageAttachment: boolean; question: string }
-): { feedback: Feedback; assessment: Assessment } {
+  opts: { hasImageAttachment: boolean; assessable: number | null }
+): { feedback: Feedback; model: ModelAssessment } {
   if (typeof raw !== "object" || raw === null) return fail("not an object");
   const o = raw as Record<string, unknown>;
 
-  // Feedback subset (reuses existing validator: score/strengths/improvements/mistakes/comment/studyNext).
   const feedback = validateFeedback(o);
 
-  // Classification enums + labels.
   const assessmentFormat = enumOf(o.assessmentFormat, ASSESSMENT_FORMATS, "assessmentFormat");
   const paper = enumOf(o.paper, PAPERS, "paper");
   const questionPart = enumOf(o.questionPart, QUESTION_PARTS, "questionPart");
@@ -279,10 +315,6 @@ export function validateGradeResult(
   const syllabusTopic = enumOf(o.syllabusTopic, SYLLABUS_TOPICS, "syllabusTopic");
   const classificationConfidence = enumOf(o.classificationConfidence, CONFIDENCES, "classificationConfidence");
   const markingConfidence = enumOf(o.markingConfidence, CONFIDENCES, "markingConfidence");
-  const marksSource = enumOf(o.marksSource, MARKS_SOURCES, "marksSource");
-  const markDisplayMode = enumOf(o.markDisplayMode, MARK_DISPLAY_MODES, "markDisplayMode");
-  const evidenceSplitSource = enumOf(o.evidenceSplitSource, EVIDENCE_SPLIT_SOURCES, "evidenceSplitSource");
-  const practiceLevelConfidence = enumOf(o.practiceLevelConfidence, CONFIDENCES, "practiceLevelConfidence");
   const diagramAssessmentStatus = enumOf(o.diagramAssessmentStatus, DIAGRAM_STATUSES, "diagramAssessmentStatus");
   const workingsAssessmentStatus = enumOf(o.workingsAssessmentStatus, WORKINGS_STATUSES, "workingsAssessmentStatus");
   const attachmentContent = enumOf(o.attachmentContent, ATTACHMENT_CONTENTS, "attachmentContent");
@@ -305,7 +337,7 @@ export function validateGradeResult(
   const workingsExpected = bool(o.workingsExpected, "workingsExpected");
   const workingsSubmitted = bool(o.workingsSubmitted, "workingsSubmitted");
 
-  // Image impossibility — reject (do not coerce) output that cannot exist without an image.
+  // Image impossibility — reject output that cannot exist without an image.
   if (!opts.hasImageAttachment) {
     if (diagramSubmitted) fail("diagramSubmitted without image");
     if (diagramAssessmentStatus === "submitted_and_assessed") fail("diagram assessed without image");
@@ -314,111 +346,151 @@ export function validateGradeResult(
   }
 
   const limitations = stringArray(o.limitations);
-  const breakdown = parseBreakdown(o.markBreakdown);
 
-  // Marks logic — stored separately, evidence-aware, fail-closed.
-  let marksAvailable = intOrNull(o.marksAvailable, "marksAvailable");
-  let marksAssessable = intOrNull(o.marksAssessable, "marksAssessable");
-  let marksEarned = intOrNull(o.marksEarned, "marksEarned");
-  let unassessedMarks: number | null;
+  // Marks: enforced against the server frame.
+  let assessableEarned: number | null;
+  let markBreakdown: AssessmentMarkBreakdownItem[];
 
-  const unassessedEvidence = parseUnassessedEvidence(o.unassessedEvidence);
-
-  if (marksSource === "not_reliably_known") {
-    if (markDisplayMode !== "practice_feedback_only") fail("unknown source must be practice-only");
-    if (marksAvailable !== null || marksAssessable !== null || marksEarned !== null) fail("invented total");
-    if (breakdown.length !== 0) fail("breakdown without marks");
-    marksAvailable = marksAssessable = marksEarned = unassessedMarks = null;
-  } else if (markDisplayMode === "practice_feedback_only") {
-    // Known total but ambiguous evidence/split -> no numeric estimate.
-    // Strict on the dangerous case (a real earned-mark claim); the inert
-    // marksAssessable is normalized to null (no fraction is ever shown here).
-    if (marksEarned !== null) fail("practice mode must not estimate an earned mark");
-    if (breakdown.length !== 0) fail("breakdown in practice mode");
-    marksAssessable = null;
-    marksEarned = null;
-    unassessedMarks = null;
-    // marksAvailable may remain the question's stated total (shown as context).
-  } else if (markDisplayMode === "exact_estimate") {
-    if (marksAvailable === null || marksAssessable === null || marksEarned === null) fail("exact requires marks");
-    if (marksAvailable < 1) fail("marksAvailable < 1");
-    if (!(marksEarned >= 0 && marksEarned <= marksAssessable && marksAssessable <= marksAvailable))
-      fail("exact mark ordering");
-    if (marksAssessable !== marksAvailable) fail("exact must be fully assessable");
-    if (breakdown.length === 0) fail("exact requires breakdown");
-    if (sum(breakdown, "awarded") !== marksEarned) fail("breakdown awarded != marksEarned");
-    if (sum(breakdown, "available") !== marksAssessable) fail("breakdown available != marksAssessable");
-    unassessedMarks = 0;
+  if (opts.assessable == null) {
+    // Feedback-only: ignore any model-proposed marks (no denominator exists).
+    assessableEarned = null;
+    markBreakdown = [];
   } else {
-    // partial_estimate — allowed ONLY with an explicit allocation in the
-    // pasted question, proven by a structured, verifiable unassessedEvidence.
-    if (marksAvailable === null || marksAssessable === null || marksEarned === null) fail("partial requires marks");
-    if (marksAvailable < 1) fail("marksAvailable < 1");
-    if (evidenceSplitSource !== "explicit_in_question") fail("partial requires explicit_in_question split");
-    if (!(marksEarned >= 0 && marksEarned <= marksAssessable && marksAssessable < marksAvailable))
-      fail("partial mark ordering");
-    if (breakdown.length === 0) fail("partial requires breakdown");
-    if (sum(breakdown, "awarded") !== marksEarned) fail("breakdown awarded != marksEarned");
-    if (sum(breakdown, "available") !== marksAssessable) fail("breakdown available != marksAssessable");
-    unassessedMarks = marksAvailable - marksAssessable;
-    if (!(unassessedMarks > 0)) fail("partial requires unassessed > 0");
-
-    // The split must be backed by genuinely-missing evidence whose marks are
-    // explicitly allocated in the question text.
-    if (unassessedEvidence === null) fail("partial requires unassessedEvidence");
-    if (unassessedEvidence.marks !== unassessedMarks) fail("unassessedEvidence.marks != unassessedMarks");
-    if (!quoteInQuestion(unassessedEvidence.quote, opts.question)) fail("evidence quote not found in question");
-    if (!quoteNamesEvidence(unassessedEvidence.quote, unassessedEvidence.type)) fail("quote does not name the evidence type");
-    if (!quoteHasMarks(unassessedEvidence.quote, unassessedEvidence.marks)) fail("quote missing the numeric allocation");
-    if (unassessedEvidence.type === "diagram" && !(diagramExpected && !diagramSubmitted))
-      fail("diagram not genuinely missing");
-    if (unassessedEvidence.type === "workings" && !(workingsExpected && !workingsSubmitted))
-      fail("workings not genuinely missing");
+    // The overall mark is a best-fit / analytic judgement (server-authoritative
+    // denominator). The breakdown is a per-criterion DIAGNOSTIC only — it is NOT
+    // required to sum to the mark, so it is never presented as the official IB
+    // allocation. Each row is still validated for internal consistency.
+    assessableEarned = intInRange(o.assessableEarned, 0, opts.assessable, "assessableEarned");
+    markBreakdown = parseBreakdown(o.markBreakdown);
+    if (markBreakdown.length === 0) fail("markBreakdown required when marking");
   }
 
-  // unassessedEvidence may only accompany a partial_estimate.
-  if (markDisplayMode !== "partial_estimate" && unassessedEvidence !== null) {
-    fail("unassessedEvidence must be null unless partial_estimate");
-  }
-
-  const assessment: Assessment = {
-    version: ASSESSMENT_VERSION,
-    assessmentFormat,
-    paper,
-    questionPart,
-    levelRelevance,
-    assessmentSkills,
-    commandTerm,
-    commandTermLabel,
-    syllabusUnit,
-    syllabusTopic,
-    topicLabel,
-    classificationConfidence,
-    markingConfidence,
-    marksAvailable,
-    marksAssessable,
-    marksEarned,
-    unassessedMarks,
-    marksSource,
-    markDisplayMode,
-    evidenceSplitSource,
-    unassessedEvidence: markDisplayMode === "partial_estimate" ? unassessedEvidence : null,
-    practiceLevelLow,
-    practiceLevelHigh,
-    practiceLevelConfidence,
-    diagramExpected,
-    diagramSubmitted,
-    diagramAssessmentStatus,
-    workingsExpected,
-    workingsSubmitted,
-    workingsAssessmentStatus,
-    attachmentContent,
-    markBreakdown: breakdown,
-    limitations,
-  };
-
-  // band stays consistent with the 0–7 score for back-compat.
   feedback.band = bandForScore(feedback.score);
 
-  return { feedback, assessment };
+  return {
+    feedback,
+    model: {
+      assessmentFormat,
+      paper,
+      questionPart,
+      levelRelevance,
+      assessmentSkills,
+      commandTerm,
+      commandTermLabel,
+      syllabusUnit,
+      syllabusTopic,
+      topicLabel,
+      classificationConfidence,
+      markingConfidence,
+      practiceLevelLow,
+      practiceLevelHigh,
+      practiceLevelConfidence: enumOf(o.practiceLevelConfidence, CONFIDENCES, "practiceLevelConfidence"),
+      diagramExpected,
+      diagramSubmitted,
+      diagramAssessmentStatus,
+      workingsExpected,
+      workingsSubmitted,
+      workingsAssessmentStatus,
+      attachmentContent,
+      assessableEarned,
+      markBreakdown,
+      limitations,
+    },
+  };
+}
+
+const MARKS_SOURCE_FOR: Record<ScoringPolicy["markTotalSource"], MarksSource> = {
+  explicit: "explicit_in_question",
+  user_confirmed: "custom_explicit",
+  template_inferred: "canonical_inferred",
+  unknown: "not_reliably_known",
+};
+
+function markDisplayModeFor(policy: ScoringPolicy): MarkDisplayMode {
+  if (policy.scoringState === "feedback_only") return "practice_feedback_only";
+  if (policy.scoringState === "provisional") return "provisional_estimate";
+  return policy.cappedDiagramMarks > 0 ? "partial_estimate" : "exact_estimate";
+}
+
+/** Stamp the server-authoritative policy onto the model's evidence. */
+function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Assessment {
+  const feedbackOnly = policy.scoringState === "feedback_only";
+  const total = policy.total;
+  const assessable = policy.assessable;
+  const earned = feedbackOnly ? null : model.assessableEarned;
+  const unassessedMarks =
+    total != null && assessable != null ? total - assessable : null;
+  const showDiagram = diagramMessagingApplies(policy.framework, model.diagramExpected);
+
+  return {
+    version: ASSESSMENT_VERSION,
+    assessmentFormat: model.assessmentFormat,
+    paper: model.paper,
+    questionPart: model.questionPart,
+    levelRelevance: model.levelRelevance,
+    assessmentSkills: model.assessmentSkills,
+    commandTerm: model.commandTerm,
+    commandTermLabel: model.commandTermLabel,
+    syllabusUnit: model.syllabusUnit,
+    syllabusTopic: model.syllabusTopic,
+    topicLabel: model.topicLabel,
+    classificationConfidence: model.classificationConfidence,
+    markingConfidence: model.markingConfidence,
+    marksAvailable: total,
+    marksAssessable: feedbackOnly ? null : assessable,
+    marksEarned: earned,
+    unassessedMarks,
+    marksSource: MARKS_SOURCE_FOR[policy.markTotalSource],
+    markDisplayMode: markDisplayModeFor(policy),
+    evidenceSplitSource: "not_specified",
+    unassessedEvidence: null,
+    practiceLevelLow: model.practiceLevelLow,
+    practiceLevelHigh: model.practiceLevelHigh,
+    practiceLevelConfidence: model.practiceLevelConfidence,
+    diagramExpected: model.diagramExpected,
+    diagramSubmitted: model.diagramSubmitted,
+    diagramAssessmentStatus: model.diagramAssessmentStatus,
+    workingsExpected: model.workingsExpected,
+    workingsSubmitted: model.workingsSubmitted,
+    workingsAssessmentStatus: model.workingsAssessmentStatus,
+    attachmentContent: model.attachmentContent,
+    markBreakdown: feedbackOnly ? [] : model.markBreakdown,
+    limitations: filterLimitations(model.limitations, showDiagram),
+    // Assessment Integrity — server-derived, authoritative:
+    scoringState: policy.scoringState,
+    markTotalSource: policy.markTotalSource,
+    recognizedTemplate: policy.recognizedTemplate,
+    diagramAssessable: false, // text-only release: a submitted+assessed diagram never happens
+    writtenMarksAwarded: earned,
+    diagramMarksUnavailable: policy.cappedDiagramMarks > 0 ? policy.cappedDiagramMarks : null,
+    capReason: policy.capReason,
+    eligibleForCoreAnalytics: policy.scoringState === "marked",
+    // IB Marking Fidelity — server-derived framework:
+    framework: policy.framework,
+    // Data-Dependent Framework — safe source-context indicator (Paper 2(g)/3(b)).
+    sourceMaterialProvided: policy.sourceMaterialProvided ?? undefined,
+  };
+}
+
+/**
+ * Public entry: validate the model output against the frame and assemble the
+ * final, server-stamped Assessment. Throws (fail closed) on invalid output.
+ */
+export function validateGradeResult(
+  raw: unknown,
+  opts: { hasImageAttachment: boolean; policy: ScoringPolicy }
+): { feedback: Feedback; assessment: Assessment } {
+  const { feedback, model } = validateModelOutput(raw, {
+    hasImageAttachment: opts.hasImageAttachment,
+    assessable: opts.policy.assessable,
+  });
+  // A diagram Aptly cannot yet inspect is NOT a diagnosed student weakness:
+  // never surface "Missing diagram explanation" as a recurring mistake when the
+  // diagram was merely unsubmitted (text-only release).
+  feedback.mistakes = stripUnassessableDiagramMistake(
+    feedback.mistakes,
+    model.diagramExpected,
+    model.diagramSubmitted
+  );
+  return { feedback, assessment: assembleAssessment(model, opts.policy) };
 }

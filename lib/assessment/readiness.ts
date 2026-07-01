@@ -1,9 +1,7 @@
 import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel } from "@/lib/types";
-import {
-  ASSESSMENT_FORMAT_LABELS,
-  ASSESSMENT_SKILLS,
-  ASSESSMENT_SKILL_LABELS,
-} from "./taxonomy";
+import { ASSESSMENT_SKILLS, ASSESSMENT_SKILL_LABELS } from "./taxonomy";
+import { deriveScoringState, isCoreEligible } from "./status";
+import { frameworkFormatKey, frameworkFormatLabel, topicDisplayLabel } from "./display";
 import {
   BASELINE_MIN_ATTEMPTS,
   BASELINE_MIN_FORMATS,
@@ -46,41 +44,46 @@ function weightForMarks(a: Assessment): number {
   return clamp(a.marksAssessable ?? 0, WEIGHT_MARKS_MIN, WEIGHT_MARKS_MAX);
 }
 
-/** Defensive re-check of the mark invariants (validator enforced these at insert). */
-function validArithmetic(a: Assessment): boolean {
-  if (a.marksAvailable == null || a.marksAssessable == null || a.marksEarned == null) return false;
-  if (!(a.marksEarned >= 0 && a.marksEarned <= a.marksAssessable)) return false;
-  if (!(a.marksAssessable <= a.marksAvailable)) return false;
-  if (a.markBreakdown.length > 0) {
-    const awarded = a.markBreakdown.reduce((s, b) => s + b.awarded, 0);
-    const available = a.markBreakdown.reduce((s, b) => s + b.available, 0);
-    if (awarded !== a.marksEarned || available !== a.marksAssessable) return false;
-  }
-  return true;
+/**
+ * Only fully "marked" attempts (explicit / user-confirmed total) count toward
+ * the numeric Current Economics Level and every other CORE metric. Provisional,
+ * feedback-only, and legacy attempts feed qualitative analytics only (never
+ * raise or lower the number). Canonical decision lives in the status helper.
+ */
+export const isEligible = isCoreEligible;
+
+/** Economics attempts that carry any assessment (observed practice evidence). */
+export function assessedAttempts(attempts: Attempt[]): Attempt[] {
+  return attempts.filter((x) => x.subject === "Economics" && x.assessment != null);
 }
 
 /**
- * Only exact, fully assessed, reliably marked attempts count toward the
- * numeric Current Economics Level. partial/practice attempts feed qualitative
- * analytics only (never raise or lower the number).
+ * A complete, non-overlapping breakdown of a set of attempts by canonical state
+ * so a display count can never leave a category unexplained. Every attempt lands
+ * in exactly one bucket, so confirmed + provisional + feedbackOnly + unscored ===
+ * total. Uses the canonical helpers — no new derivation or eligibility rule.
  */
-export function isEligible(attempt: Attempt): boolean {
-  const a = attempt.assessment;
-  if (attempt.subject !== "Economics" || a == null) return false;
-  return (
-    a.markDisplayMode === "exact_estimate" &&
-    a.marksSource !== "not_reliably_known" &&
-    a.marksAvailable != null &&
-    a.marksAssessable != null &&
-    a.marksAssessable >= 1 &&
-    a.marksEarned != null &&
-    validArithmetic(a)
-  );
+export interface StateBreakdown {
+  total: number;
+  confirmed: number; // core-eligible marked
+  provisional: number;
+  feedbackOnly: number;
+  unscored: number; // legacy/unscored (or any non-core, non-provisional, non-feedback state)
 }
 
-/** Economics attempts that carry any assessment (used for qualitative analytics). */
-export function assessedAttempts(attempts: Attempt[]): Attempt[] {
-  return attempts.filter((x) => x.subject === "Economics" && x.assessment != null);
+export function stateBreakdown(attempts: Attempt[]): StateBreakdown {
+  const b: StateBreakdown = { total: attempts.length, confirmed: 0, provisional: 0, feedbackOnly: 0, unscored: 0 };
+  for (const att of attempts) {
+    if (isCoreEligible(att)) {
+      b.confirmed += 1;
+      continue;
+    }
+    const st = deriveScoringState(att);
+    if (st === "provisional") b.provisional += 1;
+    else if (st === "feedback_only") b.feedbackOnly += 1;
+    else b.unscored += 1;
+  }
+  return b;
 }
 
 function eligibleAttempts(attempts: Attempt[]): Attempt[] {
@@ -204,17 +207,20 @@ export interface FormatPerformance {
   responses: number;
 }
 
+// Group + label by the SERVER-confirmed framework (never the model's
+// assessmentFormat), so a generic [15] response appears under "15-mark practice"
+// and never "Paper 1(b)". Eligibility and the percent calc are unchanged.
 export function performanceByFormat(attempts: Attempt[]): FormatPerformance[] {
   const E = eligibleAttempts(attempts);
   const byFormat = new Map<string, Attempt[]>();
   for (const a of E) {
-    const key = a.assessment!.assessmentFormat;
+    const key = frameworkFormatKey(a.assessment!);
     byFormat.set(key, [...(byFormat.get(key) ?? []), a]);
   }
   return [...byFormat.entries()]
     .map(([format, list]) => ({
       format,
-      label: ASSESSMENT_FORMAT_LABELS[format as keyof typeof ASSESSMENT_FORMAT_LABELS] ?? format,
+      label: frameworkFormatLabel(list[0].assessment!),
       percent: weightedMarkPercent(list) ?? 0,
       responses: list.length,
     }))
@@ -411,9 +417,10 @@ export interface TopicPerformanceRow {
 
 export interface SkillPriorityRow {
   label: MarkBreakdownLabel;
-  lost: number;
-  available: number;
-  percentLost: number; // ranking signal — lost / available
+  lost: number; // internal diagnostic scale — NOT an IB mark, never shown as one
+  available: number; // internal diagnostic scale — NOT shown to students
+  percentLost: number; // internal ranking signal — never shown as a percentage
+  responses: number; // marked answers that exercised this skill (evidence count)
 }
 
 export interface EvidenceCoverage {
@@ -429,25 +436,30 @@ export interface ImprovedTopic {
   toPercent: number;
 }
 
+export type ConfidenceTierLabel = "Test this skill next" | "Developing priority" | "Established focus";
+
 export interface NextFocus {
-  skillLabel: MarkBreakdownLabel;
+  skillLabel: MarkBreakdownLabel; // lead: "Weakest skill: <skillLabel>"
   topicCode: string;
-  topicLabel: string;
+  topicLabel: string; // context: "Most visible in <topicLabel>"
   percentLost: number;
   responses: number;
   reliability: Reliability;
+  confidenceTier: ConfidenceTierLabel;
   headline: string; // "Evaluation and judgment in Market failure"
   explanation: string;
+  whyThis: string | null; // shown only when a lower-scoring topic is skipped for weak evidence
 }
 
 export type CoverageState = "empty" | "build_coverage" | "early_signal" | "reliable_pattern";
 
 export interface LearningInsights {
-  totalAttempts: number;
-  validCount: number; // eligible attempts used for numeric insight
-  excludedLegacy: number;
-  excludedPracticeOnly: number;
-  excludedIncomplete: number; // partial / invalid arithmetic
+  totalAttempts: number; // all saved answers (submitted)
+  validCount: number; // marked, core-eligible attempts used for numeric insight
+  markedCount: number; // === validCount, named for clarity at call sites
+  provisionalCount: number; // inferred totals, shown separately (never core)
+  feedbackOnlyCount: number; // saved + analysed, but no reliable total
+  excludedLegacy: number; // legacy/unscored attempts
   level: EconomicsLevel;
   weightedPercent: number | null;
   distinctTopics: number;
@@ -464,12 +476,16 @@ export interface LearningInsights {
   markTrend: number[]; // recent eligible mark percentages, oldest -> newest
 }
 
+// CORE ratios use the ASSESSABLE denominator (what Aptly could actually judge),
+// consistent with weightedMarkPercent and markTrend. A template diagram cap
+// reduces marksAssessable, so a capped answer is scored on what was assessed,
+// never penalised for a diagram a text-only release cannot see.
 function rawPercent(list: Attempt[]): { earned: number; available: number; percent: number } {
   let earned = 0;
   let available = 0;
   for (const a of list) {
     earned += a.assessment!.marksEarned ?? 0;
-    available += a.assessment!.marksAvailable ?? 0;
+    available += a.assessment!.marksAssessable ?? 0;
   }
   return { earned, available, percent: available > 0 ? Math.round((100 * earned) / available) : 0 };
 }
@@ -490,7 +506,7 @@ function topicPerformanceRows(eligible: Attempt[]): TopicPerformanceRow[] {
       const { earned, available, percent } = rawPercent(list);
       return {
         topicCode: code,
-        topicLabel: mostCommonLabel(list),
+        topicLabel: topicDisplayLabel(code),
         earned,
         available,
         percent,
@@ -504,12 +520,21 @@ function topicPerformanceRows(eligible: Attempt[]): TopicPerformanceRow[] {
 }
 
 function skillPriorityRows(eligible: Attempt[]): SkillPriorityRow[] {
-  const map = new Map<MarkBreakdownLabel, { lost: number; available: number }>();
+  const map = new Map<MarkBreakdownLabel, { lost: number; available: number; responses: number }>();
   for (const a of eligible) {
+    const seen = new Set<MarkBreakdownLabel>();
     for (const b of a.assessment!.markBreakdown) {
-      const cur = map.get(b.label) ?? { lost: 0, available: 0 };
+      // A diagram Aptly cannot yet inspect is not a diagnosed skill weakness —
+      // exclude it from diagnostic ranking / next-focus until upload support
+      // assesses a real submitted diagram.
+      if (b.label === "Diagram") continue;
+      const cur = map.get(b.label) ?? { lost: 0, available: 0, responses: 0 };
       cur.lost += Math.max(0, b.available - b.awarded);
       cur.available += b.available;
+      if (!seen.has(b.label)) {
+        cur.responses += 1; // count each marked answer once per skill
+        seen.add(b.label);
+      }
       map.set(b.label, cur);
     }
   }
@@ -519,6 +544,7 @@ function skillPriorityRows(eligible: Attempt[]): SkillPriorityRow[] {
       lost: v.lost,
       available: v.available,
       percentLost: v.available > 0 ? Math.round((100 * v.lost) / v.available) : 0,
+      responses: v.responses,
     }))
     .filter((x) => x.available > 0)
     .sort((a, b) => b.percentLost - a.percentLost || b.lost - a.lost);
@@ -544,7 +570,7 @@ function evidenceCoverage(assessed: Attempt[]): EvidenceCoverage {
 function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null {
   let best: ImprovedTopic | null = null;
   let bestDelta = 0;
-  for (const [, list] of groupByTopic(eligible)) {
+  for (const [code, list] of groupByTopic(eligible)) {
     if (list.length < MIN_ATTEMPTS_FOR_IMPROVEMENT) continue;
     const sorted = [...list].sort(
       (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -556,7 +582,7 @@ function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null 
     if (delta > bestDelta) {
       bestDelta = delta;
       best = {
-        topicLabel: mostCommonLabel(sorted),
+        topicLabel: topicDisplayLabel(code),
         fromPercent: older.percent,
         toPercent: newer.percent,
       };
@@ -565,9 +591,16 @@ function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null 
   return best;
 }
 
+function confidenceTierFor(responses: number): ConfidenceTierLabel {
+  if (responses >= 4) return "Established focus";
+  if (responses >= 2) return "Developing priority";
+  return "Test this skill next";
+}
+
 function buildNextFocus(
   eligible: Attempt[],
   skillPriority: SkillPriorityRow[],
+  topicPerformance: TopicPerformanceRow[],
   distinctTopics: number
 ): NextFocus | null {
   const top = skillPriority.find((s) => s.lost > 0);
@@ -595,9 +628,31 @@ function buildNextFocus(
   const [code, v] = ranked[0];
   const percentLost = Math.round((100 * v.lost) / v.available);
   const responses = v.list.length;
-  const topicLabel = mostCommonLabel(v.list);
+  const topicLabel = topicDisplayLabel(code);
   const reliability: Reliability =
     responses >= RELIABLE_TOPIC_ATTEMPTS ? "reliable_pattern" : "early_signal";
+
+  // "Why this?" — only when a topic with a VISIBLY lower percent is skipped
+  // because its evidence is an early signal (fewer than a reliable pattern).
+  // Built strictly from stored data, never fabricated. NO marks/percentages.
+  const focusRow = topicPerformance.find((t) => t.topicCode === code);
+  const lowerButWeak = topicPerformance.find(
+    (t) =>
+      t.topicCode !== code &&
+      focusRow != null &&
+      t.percent < focusRow.percent &&
+      t.reliability === "early_signal"
+  );
+  const topMarks = v.list.reduce((m, a) => Math.max(m, a.assessment!.marksAvailable ?? 0), 0);
+  const evidencePhrase =
+    responses === 1 && topMarks >= 1
+      ? `a marked ${topMarks}-mark response`
+      : `${responses} marked answer${responses === 1 ? "" : "s"}`;
+  const whyThis =
+    lowerButWeak != null
+      ? `${topicLabel} has a stronger evidence base than your other early signals. This recommendation is based on ${evidencePhrase}, while other topic results rest on fewer or shorter answers.`
+      : null;
+
   return {
     skillLabel: top.label,
     topicCode: code,
@@ -605,8 +660,10 @@ function buildNextFocus(
     percentLost,
     responses,
     reliability,
+    confidenceTier: confidenceTierFor(responses),
     headline: `${top.label} in ${topicLabel}`,
-    explanation: `You lost ${percentLost}% of available ${top.label.toLowerCase()} marks across ${responses} assessed ${topicLabel} response${responses === 1 ? "" : "s"}.`,
+    explanation: `${top.label} is the clearest diagnostic improvement signal in your marked answers so far.`,
+    whyThis,
   };
 }
 
@@ -615,11 +672,16 @@ export function buildLearningInsights(attempts: Attempt[]): LearningInsights {
   const assessed = assessedAttempts(attempts);
   const eligible = eligibleAttempts(attempts);
 
-  const excludedLegacy = attempts.filter((a) => a.assessment == null).length;
-  const excludedPracticeOnly = assessed.filter(
-    (a) => a.assessment!.markDisplayMode === "practice_feedback_only"
-  ).length;
-  const excludedIncomplete = Math.max(0, assessed.length - excludedPracticeOnly - eligible.length);
+  // Canonical, non-overlapping status counts (one attempt is counted once).
+  let provisionalCount = 0;
+  let feedbackOnlyCount = 0;
+  let excludedLegacy = 0;
+  for (const att of attempts) {
+    const st = deriveScoringState(att);
+    if (st === "provisional") provisionalCount += 1;
+    else if (st === "feedback_only") feedbackOnlyCount += 1;
+    else if (st === "legacy_unscored") excludedLegacy += 1;
+  }
 
   const topicPerformance = topicPerformanceRows(eligible);
   const skillPriority = skillPriorityRows(eligible);
@@ -627,7 +689,7 @@ export function buildLearningInsights(attempts: Attempt[]): LearningInsights {
   const distinctSkills = new Set(eligible.flatMap((a) => a.assessment!.assessmentSkills)).size;
   const distinctFormats = new Set(eligible.map((a) => a.assessment!.assessmentFormat)).size;
 
-  const nextFocus = buildNextFocus(eligible, skillPriority, distinctTopics);
+  const nextFocus = buildNextFocus(eligible, skillPriority, topicPerformance, distinctTopics);
 
   const markTrend = [...eligible]
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
@@ -642,9 +704,10 @@ export function buildLearningInsights(attempts: Attempt[]): LearningInsights {
   return {
     totalAttempts: attempts.length,
     validCount: eligible.length,
+    markedCount: eligible.length,
+    provisionalCount,
+    feedbackOnlyCount,
     excludedLegacy,
-    excludedPracticeOnly,
-    excludedIncomplete,
     level: currentEconomicsLevel(attempts),
     weightedPercent: weightedMarkPercent(attempts),
     distinctTopics,

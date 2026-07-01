@@ -6,7 +6,7 @@ import { Flame, Layers, LineChart, PenLine, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkline } from "@/components/sparkline";
-import { ScoreRing } from "@/components/score-ring";
+import { MarkPill } from "@/components/assessment/mark-pill";
 import { EconomicsLevelCard } from "@/components/assessment/economics-level-card";
 import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
@@ -14,8 +14,8 @@ import { useAttempts } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { readDisplayName } from "@/lib/auth/display-name";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
-import { buildLearningInsights } from "@/lib/assessment/readiness";
-import { attemptMetaLine, shortTopicLabel } from "@/lib/assessment/display";
+import { buildLearningInsights, stateBreakdown } from "@/lib/assessment/readiness";
+import { attemptMetaLine, topicDisplayLabel, topicShortLabel } from "@/lib/assessment/display";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -30,6 +30,8 @@ export default function DashboardPage() {
   const { attempts, ready } = useAttempts();
   const insights = buildLearningInsights(attempts);
   const week = attemptsThisWeek(attempts);
+  // Complete, reconciling breakdown of THIS WEEK's submissions (sums to week.length).
+  const weekly = stateBreakdown(week);
   const streak = currentStreak(attempts);
   const recent = attempts.slice(0, 5);
 
@@ -102,11 +104,20 @@ export default function DashboardPage() {
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Send className="h-4 w-4" />
-              <span className="text-xs font-medium">Questions this week</span>
+              <span className="text-xs font-medium">Submitted this week</span>
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums">{ready ? week.length : "–"}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {insights.validCount} marked overall
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              {ready
+                ? [
+                    `${weekly.confirmed} confirmed`,
+                    weekly.provisional > 0 ? `${weekly.provisional} provisional` : null,
+                    weekly.feedbackOnly > 0 ? `${weekly.feedbackOnly} feedback-only` : null,
+                    weekly.unscored > 0 ? `${weekly.unscored} earlier/unscored` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
+                : "0 confirmed"}
             </p>
           </CardContent>
         </Card>
@@ -114,6 +125,8 @@ export default function DashboardPage() {
           level={insights.level}
           weightedPercent={insights.weightedPercent}
           ready={ready}
+          provisionalCount={insights.provisionalCount}
+          feedbackOnlyCount={insights.feedbackOnlyCount}
         />
         <Card>
           <CardContent className="p-5">
@@ -135,12 +148,15 @@ export default function DashboardPage() {
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Layers className="h-4 w-4" />
-              <span className="text-xs font-medium">Topics practised</span>
+              <span className="text-xs font-medium">Topics with confirmed marks</span>
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums">
               {ready ? insights.distinctTopics : "–"}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">with marked evidence</p>
+            {/* All-time provisional/feedback-only context lives on the level card
+                (same time basis as the level); this card stays purely about
+                confirmed-mark topics so the counts never appear to mismatch. */}
+            <p className="mt-1 text-xs text-muted-foreground">with confirmed marks</p>
           </CardContent>
         </Card>
       </div>
@@ -196,7 +212,7 @@ export default function DashboardPage() {
               <div key={t.topicCode}>
                 <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
                   <span className="truncate font-medium" title={t.topicLabel}>
-                    {shortTopicLabel(t.topicLabel)}
+                    {topicShortLabel(t.topicCode)}
                   </span>
                   <span className="shrink-0 tabular-nums text-muted-foreground">
                     {t.percent}% ·{" "}
@@ -216,36 +232,36 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Recent attempts */}
+      {/* Recent answers */}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
-          <CardTitle>Recent attempts</CardTitle>
+          <CardTitle>Recent answers</CardTitle>
           <Link href="/attempts" className="text-xs font-medium text-primary hover:underline">
             View all
           </Link>
         </CardHeader>
         <CardContent className="flex flex-col divide-y divide-border">
-          {recent.map((a) => (
-            <div key={a.id} className="flex items-center gap-4 py-3 first:pt-1 last:pb-1">
-              <ScoreRing score={a.feedback.score} size={40} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {a.assessment?.topicLabel || a.topic}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">
-                  {a.assessment != null
-                    ? attemptMetaLine(a.assessment)
-                    : a.feedback.mistakes[0] ?? "No recurring mistake pattern"}
-                </p>
+          {recent.map((a) => {
+            const topic =
+              a.assessment != null && a.assessment.syllabusTopic !== "unknown"
+                ? topicDisplayLabel(a.assessment.syllabusTopic)
+                : a.assessment?.topicLabel || a.topic;
+            return (
+              <div key={a.id} className="flex items-center gap-4 py-3 first:pt-1 last:pb-1">
+                <MarkPill attempt={a} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{topic}</p>
+                  <p className="truncate text-xs text-muted-foreground">{attemptMetaLine(a)}</p>
+                </div>
+                <Badge className={cn("hidden sm:inline-flex", SUBJECT_BADGE[a.subject])}>
+                  {a.subject}
+                </Badge>
+                <span className="w-14 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                  {formatDate(a.createdAt)}
+                </span>
               </div>
-              <Badge className={cn("hidden sm:inline-flex", SUBJECT_BADGE[a.subject])}>
-                {a.subject}
-              </Badge>
-              <span className="w-14 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
-                {formatDate(a.createdAt)}
-              </span>
-            </div>
-          ))}
+            );
+          })}
           {ready && recent.length === 0 && (
             <p className="py-4 text-sm text-muted-foreground">
               Nothing here yet — submit your first answer to get started.

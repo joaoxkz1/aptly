@@ -28,10 +28,14 @@ export function Button({
   className,
   variant = "primary",
   size = "md",
+  // Default to "button" so buttons inside a <form> never submit it by accident;
+  // form submits set type="submit" explicitly.
+  type = "button",
   ...props
 }: ButtonProps) {
   return (
     <button
+      type={type}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         variants[variant],

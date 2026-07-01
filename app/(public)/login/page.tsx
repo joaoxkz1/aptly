@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   CircleAlert,
@@ -15,6 +15,9 @@ import { Input, Label } from "@/components/ui/field";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { createClient } from "@/lib/supabase/client";
 
+// Client-side cooldown between magic-link sends (>= Supabase's own OTP rate limit).
+const RESEND_COOLDOWN_SECONDS = 60;
+
 function LoginForm() {
   const searchParams = useSearchParams();
   const [supabase] = useState(() => createClient());
@@ -26,13 +29,16 @@ function LoginForm() {
       ? "That sign-in link was invalid or expired. Please request a new one."
       : null
   );
+  const [cooldown, setCooldown] = useState(0);
+  const [resent, setResent] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (email.trim() === "" || status === "sending") return;
-    setError(null);
-    setStatus("sending");
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = window.setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [cooldown]);
 
+  async function sendLink(): Promise<boolean> {
     const { error: signInError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
@@ -40,17 +46,32 @@ function LoginForm() {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-
     if (signInError) {
-      setStatus("idle");
       setError(signInError.message);
-      return;
+      return false;
     }
-    setStatus("sent");
+    setCooldown(RESEND_COOLDOWN_SECONDS);
+    return true;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (email.trim() === "" || status === "sending") return;
+    setError(null);
+    setStatus("sending");
+    const ok = await sendLink();
+    setStatus(ok ? "sent" : "idle");
+  }
+
+  async function handleResend() {
+    if (cooldown > 0) return;
+    setError(null);
+    setResent(false);
+    if (await sendLink()) setResent(true);
   }
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm sm:max-w-[26.5rem]">
       <CardContent className="p-6 pt-6">
         {status === "sent" ? (
           <div className="flex flex-col items-center gap-3 py-4 text-center">
@@ -60,17 +81,36 @@ function LoginForm() {
             <h1 className="text-lg font-semibold tracking-tight">Check your inbox</h1>
             <p className="text-sm text-muted-foreground">
               We sent a magic sign-in link to{" "}
-              <span className="font-medium text-foreground">{email.trim()}</span>. Open it
-              on this device to finish signing in.
+              <span className="font-medium text-foreground">{email.trim()}</span>. Open the link on
+              the device where you want to continue using Aptly.
             </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-1"
-              onClick={() => setStatus("idle")}
-            >
-              Use a different email
-            </Button>
+            <p className="text-xs text-muted-foreground">
+              Can&apos;t see it? Check your spam or junk folders.
+            </p>
+            {error !== null && (
+              <p className="text-xs text-destructive">{error}</p>
+            )}
+            {resent && (
+              <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                Link sent again.
+              </p>
+            )}
+            <div className="mt-1 flex flex-col items-center gap-1.5">
+              <Button variant="outline" size="sm" onClick={handleResend} disabled={cooldown > 0}>
+                {cooldown > 0 ? `Resend link in ${cooldown}s` : "Resend link"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setStatus("idle");
+                  setResent(false);
+                  setError(null);
+                }}
+              >
+                Use a different email
+              </Button>
+            </div>
           </div>
         ) : (
           <>
@@ -137,7 +177,7 @@ export default function LoginPage() {
       </div>
 
       <Suspense
-        fallback={<Card className="h-64 w-full max-w-sm animate-pulse" />}
+        fallback={<Card className="h-64 w-full max-w-sm animate-pulse sm:max-w-[26.5rem]" />}
       >
         <LoginForm />
       </Suspense>

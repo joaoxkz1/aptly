@@ -24,7 +24,8 @@
   --card: #151518;
   --card-foreground: #f4f4f5;
   --muted: #1e1e22;
-  --muted-foreground: #a1a1aa;
+  /* One restrained step lighter for better dark-mode secondary-text contrast. */
+  --muted-foreground: #b4b4bd;
   --border: #27272a;
   --primary: #818cf8;
   --primary-foreground: #1e1b4b;

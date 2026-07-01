@@ -49,29 +49,37 @@ WEAKNESS LABELS — use ONLY these exact strings in "mistakes":
 
 HONESTY RULES (mandatory):
 - Never hallucinate source text, mark totals, diagrams, or calculations the student did not provide.
-- Infer marksAvailable ONLY from: explicit marks in the question, an explicit paper+part at high confidence,
-  or a very-high-confidence canonical format. Otherwise marksSource = not_reliably_known and give practice feedback only.
-- Never invent a missing-evidence mark split (e.g. "diagram = 2 of 4"). A numeric partial_estimate is allowed ONLY when the
-  PASTED QUESTION explicitly allocates marks to genuinely missing evidence — a diagram you cannot see, or workings the student
-  did not type. Then set evidenceSplitSource = explicit_in_question and unassessedEvidence = { type: 'diagram'|'workings',
-  marks, quote }, where marks equals the unassessed marks and quote is the exact phrase from the question that names the
-  evidence (diagram/draw/graph/curve, or working/workings/method/calculation/show your work) AND states its marks
-  (e.g. "diagram [2 marks]"). You may NOT use a canonical/template assumption. Otherwise use practice_feedback_only.
-- Set unassessedEvidence to null for every mode except partial_estimate. Missing source/stimulus is never partial evidence.
+- You do NOT decide the mark total or whether the attempt is marked/provisional/feedback-only. Aptly gives you a MARKING
+  FRAME (the total and the assessable marks). Mark ONLY the assessable marks in that frame. Never expand or reduce the total.
 - diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a
-  diagram, or clearly contains a diagram-specific allocated mark component. Do NOT set diagramExpected = true just because a
-  diagram would strengthen a Paper 1 or other explanation; a clear text-only prompt can earn an exact_estimate.
-- Do NOT demand evaluation in a 10-mark explain. Do NOT penalise a missing diagram when one is not needed.
+  diagram. Do NOT set diagramExpected = true just because a diagram would strengthen an explanation. diagramExpected does NOT
+  change the mark total — any diagram cap is already reflected in the assessable marks of the frame.
+- Do NOT demand evaluation in a 10-mark explain. Do NOT penalise a missing diagram when the frame does not exclude diagram marks.
 - Do NOT reward a diagram you cannot see; typed workings IN the answer ARE assessable.
 - No full method marks for a calculation without shown workings.
 - Distinguish "marks lost" (assessed, not earned) from "marks not assessable" (evidence not submitted).
-- If the question refers to stimulus/source material (an extract, text, figure, table, chart, or data set) that is NOT
-  pasted into the question, the data-based marks cannot be assessed. Unless the question explicitly allocates marks to a
-  non-data written portion (with a quotable split), return markDisplayMode = practice_feedback_only because the source
-  material was not supplied — do not grade it as if fully assessable.
 - Use the FULL plausible mark range; do not cluster everything mid-band.
 - Never claim official IB grading. Do not assume HL unless the question is clearly HL-only (P3 or an HL extension).
-- The mark breakdown covers ONLY assessable marks and its awarded/available sums must equal marksEarned/marksAssessable.`;
+- The overall mark (assessableEarned) is a best-fit / analytic judgement — NOT the sum of category points.
+- markBreakdown is a per-criterion DIAGNOSTIC only (Aptly's internal signal, shown to the student qualitatively, never as an
+  official IB allocation). It does NOT need to sum to assessableEarned. Score each criterion the question genuinely tests.
+
+FRAMEWORK MARKING (Aptly tells you the framework in the MARKING FRAME — follow it):
+- paper2_short_analytic (1–2 marks): analytic mini-markscheme. Reward an accurate definition/meaning even if the wording
+  differs from a canonical one; for a calculation reward valid method, units, rounding and own-figure logic only where the
+  question calls for it; do not demand an explanation the question does not ask for.
+- paper2_four_mark_diagram_explain: mark ONLY the written explanation (0–2). The diagram marks are excluded (no diagram
+  submitted). A strong written explanation with no diagram earns up to 2; never call it unmarkable.
+- paper1a_10_mark: Paper 1(a) best-fit — knowledge, relevant terminology, theory, answering the exact question, diagrams
+  where appropriate. No evaluation demanded.
+- paper1b_15_mark: Paper 1(b) best-fit — theory, terminology, real-world application, balanced two-sided evaluation, and a
+  supported final judgement. Diagrams considered where appropriate, not automatically required.
+- paper2g_15_mark: Paper 2(g) best-fit — requires appropriate use of the SUPPLIED text/data alongside theory, analysis and
+  balanced evaluation.
+- paper3b_10_mark: Paper 3(b) HL recommendation — requires a clear recommendation, economic theory, use of supplied
+  text/data, and balanced evaluation. This is NOT Paper 1(a).
+- generic_practice: paper format is not confirmed. Give an honest best-fit practice estimate out of the stated total; do not
+  assume a specific IB paper's markscheme.`;
 
 export function getRubric(subject: Subject): string | null {
   if (subject === "Economics") return ECONOMICS_RUBRIC;

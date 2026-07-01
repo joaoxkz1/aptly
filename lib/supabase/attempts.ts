@@ -57,7 +57,9 @@ function attemptToInsert(attempt: Attempt) {
     feedback: f,
     mistake_type: f.mistakes[0] ?? null,
     next_step: f.studyNext,
-    // Full object + denormalized columns (null for legacy attempts).
+    // Full object + denormalized columns (null for legacy attempts). The
+    // `assessment` JSON is the single source of truth; these mirror it for
+    // DB-level integrity and future SQL analytics only.
     assessment: a,
     assessment_version: a?.version ?? null,
     assessment_format: a?.assessmentFormat ?? null,
@@ -69,6 +71,11 @@ function attemptToInsert(attempt: Attempt) {
     marks_source: a?.marksSource ?? null,
     mark_display_mode: a?.markDisplayMode ?? null,
     classification_confidence: a?.classificationConfidence ?? null,
+    // Assessment Integrity (v2) — server-derived canonical status.
+    scoring_state: a?.scoringState ?? null,
+    mark_total_source: a?.markTotalSource ?? null,
+    recognized_template: a?.recognizedTemplate ?? null,
+    eligible_for_core: a?.eligibleForCoreAnalytics ?? null,
   };
 }
 

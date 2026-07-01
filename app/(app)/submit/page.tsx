@@ -7,8 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
+import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
 import type { Assessment, Attempt, Feedback } from "@/lib/types";
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, REQUEST_TIMEOUT_MS } from "@/lib/ai/config";
+import { runPreflight, type PreflightResult } from "@/lib/assessment/preflight";
+import { requiresSourceMaterial } from "@/lib/assessment/status";
+import { clientGradeErrorMessage } from "@/lib/ai/grade-errors";
 import { newId, useAttempts } from "@/lib/storage";
 
 const SAMPLE = {
@@ -27,6 +31,11 @@ export default function SubmitPage() {
   const [result, setResult] = useState<Attempt | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState<string | null>(null);
+  // Non-null when a compact preflight choice is needed before grading.
+  const [preflight, setPreflight] = useState<PreflightResult | null>(null);
+  // True while the Paper 2(g)/3(b) source-material step is active — the bottom
+  // "Grade my answer" CTA is hidden so the source-aware action is the only grade.
+  const [sourceStep, setSourceStep] = useState(false);
 
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
@@ -48,7 +57,7 @@ export default function SubmitPage() {
     if (status === 401) return "Your session expired. Please sign in again.";
     if (code === "too_long")
       return "Your question or answer is too long. Please shorten it and try again.";
-    return "Sorry — grading failed. Please try again in a moment.";
+    return clientGradeErrorMessage();
   }
 
   // Saves exactly once per successful grading result; safe against rerenders,
@@ -68,7 +77,9 @@ export default function SubmitPage() {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  // Step 1: validate and run the deterministic preflight. If an explicit total
+  // is in the text, grade immediately; otherwise surface the compact choice.
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (inFlight.current || grading) return;
 
@@ -81,6 +92,37 @@ export default function SubmitPage() {
     }
 
     setError(null);
+    const pf = runPreflight(q);
+    // Grade immediately only when the total AND the marking framework are both
+    // safe to use. An ambiguous 10/15 total needs a compact framework choice; a
+    // Paper 2(g)/3(b) framework needs its source text/data first.
+    if (pf.kind === "explicit" && pf.frameworkConfirmed && !requiresSourceMaterial(pf.framework)) {
+      void grade({
+        requestedSource: "explicit",
+        requestedTotal: pf.total,
+        templateId: pf.templateId,
+        requestedFramework: null,
+        sourceMaterial: null,
+      });
+    } else {
+      // An explicit Paper 2(g)/3(b) opens straight into the source step.
+      setSourceStep(pf.frameworkConfirmed && requiresSourceMaterial(pf.framework));
+      setPreflight(pf);
+    }
+  }
+
+  // Step 2: grade with the resolved preflight decision. The server re-checks the
+  // policy — this decision is an input, never the final authority.
+  async function grade(decision: PreflightDecision) {
+    if (inFlight.current || grading) return;
+
+    const q = question.trim();
+    const a = answer.trim();
+    if (q === "" || a === "") return;
+
+    setPreflight(null);
+    setSourceStep(false);
+    setError(null);
     setGrading(true);
     inFlight.current = true;
 
@@ -92,7 +134,17 @@ export default function SubmitPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Economics-only; the question type and topic are detected automatically.
-        body: JSON.stringify({ subject: "Economics", topic: "Economics", question: q, answer: a }),
+        body: JSON.stringify({
+          subject: "Economics",
+          topic: "Economics",
+          question: q,
+          answer: a,
+          requestedSource: decision.requestedSource,
+          requestedTotal: decision.requestedTotal,
+          templateId: decision.templateId,
+          requestedFramework: decision.requestedFramework,
+          sourceMaterial: decision.sourceMaterial,
+        }),
         signal: controller.signal,
       });
 
@@ -129,7 +181,7 @@ export default function SubmitPage() {
       // Automatically save the successful grade to the signed-in account.
       void persist(attempt);
     } catch {
-      setError("Sorry — grading failed. Please try again in a moment.");
+      setError(clientGradeErrorMessage());
     } finally {
       setGrading(false);
       inFlight.current = false;
@@ -147,6 +199,8 @@ export default function SubmitPage() {
     savedIdRef.current = null;
     setQuestion("");
     setAnswer("");
+    setPreflight(null);
+    setSourceStep(false);
   }
 
   if (result !== null) {
@@ -189,7 +243,7 @@ export default function SubmitPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Your answer</CardTitle>
+          <CardTitle>Your submission</CardTitle>
           <CardDescription>No setup needed — just the question and your response.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -201,7 +255,11 @@ export default function SubmitPage() {
                 required
                 maxLength={MAX_QUESTION_CHARS}
                 value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                onChange={(e) => {
+                  setQuestion(e.target.value);
+                  setPreflight(null); // editing invalidates a pending preflight choice
+                  setSourceStep(false);
+                }}
                 placeholder="e.g. Evaluate the use of indirect taxes to correct market failure. [15 marks]"
                 className="min-h-20"
               />
@@ -232,22 +290,35 @@ export default function SubmitPage() {
               </div>
             )}
 
-            <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" size="lg" disabled={grading}>
-                {grading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Checking your answer…
-                  </>
-                ) : (
-                  "Grade my answer"
-                )}
-              </Button>
-              <Button type="button" variant="ghost" onClick={fillSample} disabled={grading}>
-                <Wand2 className="h-4 w-4" />
-                Fill with a sample answer
-              </Button>
-            </div>
+            {preflight !== null && !grading && (
+              <PreflightChoice
+                preflight={preflight}
+                disabled={grading}
+                onChoose={(d) => void grade(d)}
+                onEnterSourceStep={() => setSourceStep(true)}
+              />
+            )}
+
+            {/* Hide the generic Grade CTA while the source step is active so the
+                only grade action is "Grade with this source". */}
+            {!sourceStep && (
+              <div className="flex flex-wrap items-center gap-3">
+                <Button type="submit" size="lg" disabled={grading}>
+                  {grading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Checking your answer…
+                    </>
+                  ) : (
+                    "Grade my answer"
+                  )}
+                </Button>
+                <Button type="button" variant="ghost" onClick={fillSample} disabled={grading}>
+                  <Wand2 className="h-4 w-4" />
+                  Fill with a sample answer
+                </Button>
+              </div>
+            )}
 
             {grading && (
               <p className="text-xs text-muted-foreground">

@@ -5,6 +5,7 @@ import {
   Check,
   CircleAlert,
   CircleCheck,
+  FileText,
   Lightbulb,
   Loader2,
   Quote,
@@ -14,10 +15,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScoreRing } from "@/components/score-ring";
 import { MarkSummary } from "@/components/assessment/mark-summary";
+import { AssessmentComponents } from "@/components/assessment/assessment-components";
 import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
 import { SUBJECT_BADGE } from "@/lib/subjects";
+import { filterSourceDataFeedback, isSourceMaterialMissing } from "@/lib/assessment/status";
 import type { Attempt } from "@/lib/types";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
@@ -33,77 +35,105 @@ export function FeedbackResult({
   onRetry: () => void;
   onTryAnother: () => void;
 }) {
-  const f = attempt.feedback;
   const assessment = attempt.assessment ?? null;
+  // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness — strip
+  // any source-data corrective wording from the model's feedback.
+  const sourceMissing = assessment !== null && isSourceMaterialMissing(assessment);
+  const f = sourceMissing ? filterSourceDataFeedback(attempt.feedback) : attempt.feedback;
 
   return (
     <div className="flex flex-col gap-4">
       {assessment !== null ? (
         <>
-          {/* Assessment-aware header + per-category diagnostic breakdown */}
-          <MarkSummary assessment={assessment} subject={attempt.subject} topic={attempt.topic} />
+          {/* Header → recognised component structure (4-mark diagram only) →
+              qualitative diagnostic feedback */}
+          <MarkSummary attempt={attempt} />
+          <AssessmentComponents attempt={attempt} />
           <MarkBreakdown assessment={assessment} />
         </>
       ) : (
-        /* Legacy header (no assessment) — unchanged */
+        /* Legacy attempt (no assessment) — conservative header, no score or band */
         <Card className="overflow-hidden">
-          <div className="flex flex-col items-center gap-5 bg-gradient-to-br from-accent/70 to-card p-6 sm:flex-row sm:items-center">
-            <ScoreRing score={f.score} size={96} />
-            <div className="text-center sm:text-left">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Grade band
-              </p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-tight">{f.band}</h2>
-              <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
-                <Badge className={SUBJECT_BADGE[attempt.subject]}>{attempt.subject}</Badge>
-                <Badge>{attempt.topic}</Badge>
-              </div>
+          <div className="flex flex-col gap-2 bg-gradient-to-br from-accent/70 to-card p-6">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Earlier attempt
+            </p>
+            <h2 className="text-lg font-semibold tracking-tight">Saved before mark estimates</h2>
+            <p className="max-w-prose text-sm text-muted-foreground">
+              This answer was saved before Aptly estimated marks. It stays in your learning log, but
+              has no score.
+            </p>
+            <div className="mt-1 flex flex-wrap gap-2">
+              <Badge className={SUBJECT_BADGE[attempt.subject]}>{attempt.subject}</Badge>
+              <Badge>{attempt.topic}</Badge>
             </div>
           </div>
         </Card>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Strengths */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-              <Check className="h-4 w-4" />
-              Strengths
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="flex flex-col gap-2.5">
-              {f.strengths.map((s) => (
-                <li key={s} className="flex gap-2.5 text-sm leading-relaxed">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
-                  {s}
-                </li>
-              ))}
-            </ul>
+      {/* Source-less data response: data use is unavailable, with a clear path */}
+      {sourceMissing && (
+        <Card className="border-border bg-muted/40">
+          <CardContent className="flex items-start gap-3 p-5">
+            <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-semibold">Data use unavailable</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Paste the source text or data to receive feedback on how well you use it and an
+                IB-style estimate for this framework.
+              </p>
+            </div>
           </CardContent>
         </Card>
+      )}
 
-        {/* Improvements */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-              <Lightbulb className="h-4 w-4" />
-              Improvements
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="flex flex-col gap-2.5">
-              {f.improvements.map((s) => (
-                <li key={s} className="flex gap-2.5 text-sm leading-relaxed">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
+      {(f.strengths.length > 0 || f.improvements.length > 0) && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Strengths */}
+          {f.strengths.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                  <Check className="h-4 w-4" />
+                  Strengths
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="flex flex-col gap-2.5">
+                  {f.strengths.map((s) => (
+                    <li key={s} className="flex gap-2.5 text-sm leading-relaxed">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Improvements */}
+          {f.improvements.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                  <Lightbulb className="h-4 w-4" />
+                  Improvements
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="flex flex-col gap-2.5">
+                  {f.improvements.map((s) => (
+                    <li key={s} className="flex gap-2.5 text-sm leading-relaxed">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
       {/* Recurring mistake patterns — compact success note when there are none */}
       <Card>
@@ -136,32 +166,36 @@ export function FeedbackResult({
       </Card>
 
       {/* Examiner comment */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Quote className="h-4 w-4 text-muted-foreground" />
-            Examiner-style comment
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <blockquote className="border-l-2 border-primary/40 pl-4 text-sm italic leading-relaxed text-muted-foreground">
-            {f.examinerComment}
-          </blockquote>
-        </CardContent>
-      </Card>
+      {f.examinerComment && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Quote className="h-4 w-4 text-muted-foreground" />
+              Examiner-style comment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <blockquote className="border-l-2 border-primary/40 pl-4 text-sm italic leading-relaxed text-muted-foreground">
+              {f.examinerComment}
+            </blockquote>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Improve this answer — the fastest fix for THIS response, shown as the closing focus */}
-      <Card className="border-primary/25 bg-gradient-to-br from-accent/70 to-card">
-        <CardContent className="flex items-start gap-3 p-5">
-          <Zap className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
-              Improve this answer
-            </p>
-            <p className="mt-1 text-sm leading-relaxed">{f.studyNext}</p>
-          </div>
-        </CardContent>
-      </Card>
+      {f.studyNext && (
+        <Card className="border-primary/25 bg-gradient-to-br from-accent/70 to-card">
+          <CardContent className="flex items-start gap-3 p-5">
+            <Zap className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
+                Improve this answer
+              </p>
+              <p className="mt-1 text-sm leading-relaxed">{f.studyNext}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Save status + actions */}
       <div className="flex flex-col gap-3">

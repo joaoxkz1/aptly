@@ -1,5 +1,6 @@
 import type {
   ASSESSMENT_FORMATS,
+  ASSESSMENT_FRAMEWORKS,
   ASSESSMENT_SKILLS,
   ATTACHMENT_CONTENTS,
   COMMAND_TERMS,
@@ -9,9 +10,12 @@ import type {
   LEVEL_RELEVANCES,
   MARK_BREAKDOWN_LABELS,
   MARK_DISPLAY_MODES,
+  MARK_TOTAL_SOURCES,
   MARKS_SOURCES,
   PAPERS,
   QUESTION_PARTS,
+  RUBRIC_TEMPLATE_IDS,
+  SCORING_STATES,
   SYLLABUS_TOPICS,
   SYLLABUS_UNITS,
   UNASSESSED_EVIDENCE_TYPES,
@@ -60,6 +64,10 @@ export type AssessmentSkill = (typeof ASSESSMENT_SKILLS)[number];
 export type AttachmentContent = (typeof ATTACHMENT_CONTENTS)[number];
 export type MarkBreakdownLabel = (typeof MARK_BREAKDOWN_LABELS)[number];
 export type UnassessedEvidenceType = (typeof UNASSESSED_EVIDENCE_TYPES)[number];
+export type MarkTotalSource = (typeof MARK_TOTAL_SOURCES)[number];
+export type ScoringState = (typeof SCORING_STATES)[number];
+export type RubricTemplateId = (typeof RUBRIC_TEMPLATE_IDS)[number];
+export type AssessmentFramework = (typeof ASSESSMENT_FRAMEWORKS)[number];
 
 // Structured proof that a partial estimate's missing-evidence marks are
 // explicitly allocated in the question (server-verified against the text).
@@ -115,6 +123,27 @@ export interface Assessment {
   attachmentContent: AttachmentContent; // commit 1: always "none"
   markBreakdown: AssessmentMarkBreakdownItem[]; // sums to marksAssessable
   limitations: string[]; // honest caveats shown in UI
+  // --- Assessment Integrity (v2): canonical, server-derived policy ----------
+  // Decided by trusted server logic from the preflight result + an explicit or
+  // user-confirmed total + a recognised controlled template + validated model
+  // evidence. NEVER chosen by the model. Optional so a legacy (v1 / no
+  // assessment) row parsed as `Assessment` does not falsely claim them — the
+  // status helper treats their absence as "legacy" and renders conservatively.
+  scoringState?: ScoringState;
+  markTotalSource?: MarkTotalSource;
+  recognizedTemplate?: RubricTemplateId | null;
+  diagramAssessable?: boolean; // whether a submitted diagram could be assessed
+  writtenMarksAwarded?: number | null; // marks earned from the written response
+  diagramMarksUnavailable?: number | null; // template diagram marks capped away
+  capReason?: string | null; // why capped marks are unavailable (template only)
+  eligibleForCoreAnalytics?: boolean; // === (scoringState === "marked")
+  // IB Marking Fidelity: the server-derived marking framework. Optional so
+  // legacy attempts (which lack it) render conservatively as generic.
+  framework?: AssessmentFramework;
+  // Data-Dependent Framework: a safe source-context indicator for Paper 2(g) /
+  // Paper 3(b). true only when usable source text/data was supplied. Absent on
+  // every other framework and on pre-patch attempts (treated conservatively).
+  sourceMaterialProvided?: boolean;
 }
 
 export interface Attempt {

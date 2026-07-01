@@ -1,14 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { shortNextFocusHeadline } from "@/lib/assessment/display";
+import { shortSkillLabel, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
 
 /**
  * The single canonical global recommendation. Rendered identically on the
- * Dashboard (hero) and Mistake Analytics so they never disagree.
+ * Dashboard (hero) and Mistake Analytics so they never disagree — both read the
+ * same `insights.nextFocus`.
  */
 export function NextFocusCard({
   insights,
@@ -18,6 +22,7 @@ export function NextFocusCard({
   variant?: "hero" | "section";
 }) {
   const nf = insights.nextFocus;
+  const [showWhy, setShowWhy] = useState(false);
   const titleSize = variant === "hero" ? "text-xl md:text-2xl" : "text-base";
 
   return (
@@ -30,15 +35,36 @@ export function NextFocusCard({
 
         {nf !== null ? (
           <>
-            <h2
-              className={cn(titleSize, "font-semibold tracking-tight")}
-              title={nf.headline}
-            >
-              {shortNextFocusHeadline(nf.skillLabel, nf.topicLabel)}
+            {/* Lead with the skill, then the topic context. */}
+            <h2 className={cn(titleSize, "font-semibold tracking-tight")}>
+              Weakest skill: {shortSkillLabel(nf.skillLabel)}
             </h2>
+            <p className="text-sm font-medium text-muted-foreground" title={nf.topicLabel}>
+              Most visible in {topicShortLabel(nf.topicCode)}
+            </p>
             <p className="max-w-prose text-sm text-muted-foreground">{nf.explanation}</p>
+
+            {nf.whyThis !== null && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowWhy((v) => !v)}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                  aria-expanded={showWhy}
+                >
+                  Why this?
+                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", showWhy && "rotate-180")} />
+                </button>
+                {showWhy && (
+                  <p className="mt-1.5 max-w-prose rounded-lg border border-border bg-muted/50 p-2.5 text-xs leading-relaxed text-muted-foreground">
+                    {nf.whyThis}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="mt-1 flex flex-wrap items-center gap-3">
-              <Badge>{nf.reliability === "reliable_pattern" ? "Reliable pattern" : "Early signal"}</Badge>
+              <Badge>{nf.confidenceTier}</Badge>
               <Link
                 href="/submit"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
@@ -47,7 +73,7 @@ export function NextFocusCard({
               </Link>
             </div>
           </>
-        ) : insights.validCount === 0 ? (
+        ) : insights.totalAttempts === 0 ? (
           <>
             <h2 className={cn(titleSize, "font-semibold tracking-tight")}>
               Submit your first answer
@@ -62,10 +88,24 @@ export function NextFocusCard({
               Submit your first answer <ArrowRight className="h-4 w-4" />
             </Link>
           </>
+        ) : insights.markedCount === 0 ? (
+          <>
+            <h2 className={cn(titleSize, "font-semibold tracking-tight")}>Build your baseline</h2>
+            <p className="max-w-prose text-sm text-muted-foreground">
+              Your first answer is saved. Add a mark total on your next answer to unlock mark trends
+              and reliable comparisons.
+            </p>
+            <Link
+              href="/submit"
+              className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            >
+              Add a marked answer <ArrowRight className="h-4 w-4" />
+            </Link>
+          </>
         ) : (
           <>
             <h2 className={cn(titleSize, "font-semibold tracking-tight")}>
-              {insights.distinctTopics < 2 ? "Build your coverage" : "Keep building evidence"}
+              {insights.distinctTopics < 2 ? "Test this skill next" : "Keep building evidence"}
             </h2>
             <p className="max-w-prose text-sm text-muted-foreground">
               {insights.distinctTopics < 2

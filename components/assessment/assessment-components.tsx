@@ -1,0 +1,54 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SquareStack } from "lucide-react";
+import type { Attempt } from "@/lib/types";
+import { deriveScoringState } from "@/lib/assessment/status";
+
+/**
+ * The recognised template's OFFICIAL component structure (IB Marking Fidelity).
+ * Shown only for `paper2_four_mark_diagram_explain`, where the 2 written + 2
+ * diagram split is genuinely the recognised allocation (unlike the internal
+ * diagnostic categories). A text-only submission shows the diagram as 0/2 ·
+ * Not submitted, so the total is the written marks out of the full total.
+ */
+export function AssessmentComponents({ attempt }: { attempt: Attempt }) {
+  const a = attempt.assessment;
+  if (a == null || a.framework !== "paper2_four_mark_diagram_explain") return null;
+  if (a.marksEarned == null || a.marksAssessable == null || a.marksAvailable == null) return null;
+
+  const provisional = deriveScoringState(attempt) === "provisional";
+  const diagramAvailable = a.diagramMarksUnavailable ?? 0;
+
+  const rows: { label: string; value: string; note?: string; emphasis?: boolean }[] = [
+    { label: "Written explanation", value: `${a.marksEarned} / ${a.marksAssessable}` },
+    { label: "Diagram", value: `0 / ${diagramAvailable}`, note: "Not submitted" },
+    {
+      label: provisional ? "Likely total" : "Total",
+      value: `${a.marksEarned} / ${a.marksAvailable}`,
+      emphasis: true,
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <SquareStack className="h-4 w-4 text-muted-foreground" />
+          Assessment components
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col divide-y divide-border">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+            <span className={r.emphasis ? "text-sm font-semibold" : "text-sm"}>{r.label}</span>
+            <span className="flex items-center gap-2 shrink-0">
+              {r.note && <span className="text-xs text-muted-foreground">{r.note}</span>}
+              <span className={"tabular-nums " + (r.emphasis ? "text-sm font-semibold" : "text-sm")}>
+                {r.value}
+              </span>
+            </span>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}

@@ -7,7 +7,11 @@ import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
 import { buildLearningInsights } from "@/lib/assessment/readiness";
-import { shortTopicLabel } from "@/lib/assessment/display";
+import {
+  diagnosticSignalStrength,
+  diagramEvidenceNote,
+  topicShortLabel,
+} from "@/lib/assessment/display";
 
 export default function AnalyticsPage() {
   const { attempts, ready } = useAttempts();
@@ -54,6 +58,18 @@ export default function AnalyticsPage() {
       {/* One canonical global recommendation (identical to the Dashboard hero) */}
       <NextFocusCard insights={insights} />
 
+      {(insights.provisionalCount > 0 || insights.feedbackOnlyCount > 0) && (
+        <p className="text-xs text-muted-foreground">
+          {[
+            insights.provisionalCount > 0 ? `${insights.provisionalCount} provisional` : null,
+            insights.feedbackOnlyCount > 0 ? `${insights.feedbackOnlyCount} feedback-only` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")}{" "}
+          saved as observed practice evidence — not counted in your marked analytics.
+        </p>
+      )}
+
       <div className="grid gap-3 lg:grid-cols-2">
         {/* Topic performance */}
         <Card>
@@ -76,7 +92,7 @@ export default function AnalyticsPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium" title={t.topicLabel}>
-                      {shortTopicLabel(t.topicLabel)}
+                      {topicShortLabel(t.topicCode)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {t.reliability === "reliable_pattern"
@@ -98,37 +114,56 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* Where marks are being lost (ranked by % of available marks lost) */}
+        {/* Diagnostic focus by skill — Aptly's internal qualitative pattern.
+            NEVER shown as marks, available marks, percentages, or ratios. */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-rose-500" />
-              Where marks are being lost
+              Diagnostic focus by skill
             </CardTitle>
-            <CardDescription>% of available marks lost, by skill</CardDescription>
+            <CardDescription>
+              Aptly&apos;s qualitative pattern across marked answers — not an additional IB mark
+              allocation.
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            {skillPriority.length > 0 ? (
-              skillPriority.slice(0, 6).map((s, i) => (
-                <div key={s.label}>
-                  <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
-                    <span className="truncate font-medium">{s.label}</span>
-                    <span className="shrink-0 tabular-nums text-muted-foreground">
-                      {s.percentLost}% lost · {s.lost}/{s.available}
-                    </span>
+            {(() => {
+              const gaps = skillPriority.filter((s) => s.lost > 0).slice(0, 6);
+              if (gaps.length === 0) {
+                return (
+                  <div>
+                    <p className="text-sm font-medium">No clear diagnostic gap yet</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Keep submitting marked answers to build a reliable skill pattern.
+                    </p>
                   </div>
-                  <MarkBar
-                    percent={s.percentLost}
-                    colorClass="bg-rose-400 dark:bg-rose-500"
-                    delayMs={i * 60}
-                  />
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                No marked breakdowns yet — grade a few fully-marked answers.
-              </p>
-            )}
+                );
+              }
+              return gaps.map((s, i) => {
+                const signal = diagnosticSignalStrength(s.percentLost);
+                return (
+                  <div key={s.label}>
+                    <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
+                      <span className="truncate font-medium">{s.label}</span>
+                      <span className="shrink-0 text-muted-foreground">{signal}</span>
+                    </div>
+                    <p className="mb-1 text-xs text-muted-foreground">
+                      {s.responses === 1
+                        ? "Observed in 1 marked answer"
+                        : `Observed across ${s.responses} marked answers`}
+                    </p>
+                    <div role="img" aria-label={`${s.label}: ${signal}`}>
+                      <MarkBar
+                        percent={s.percentLost}
+                        colorClass="bg-rose-400 dark:bg-rose-500"
+                        delayMs={i * 60}
+                      />
+                    </div>
+                  </div>
+                );
+              });
+            })()}
           </CardContent>
         </Card>
       </div>
@@ -176,31 +211,33 @@ export default function AnalyticsPage() {
               <Layers className="h-4 w-4 text-muted-foreground" />
               Coverage
             </CardTitle>
-            <CardDescription>Skills you have practised</CardDescription>
+            <CardDescription>Observed practice evidence</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             {coverage.map((c) => (
               <div key={c.skill} className="flex items-center justify-between gap-2 text-sm">
                 <span className={c.responses === 0 ? "text-muted-foreground" : "font-medium"}>
-                  {c.label}
+                  {/* No diagram image is assessed this release — label the skill as
+                      the written explanation, not a verified diagram. */}
+                  {c.skill === "diagram_explanation" ? "Diagram-related written explanation" : c.label}
                 </span>
                 <span className="shrink-0 tabular-nums text-muted-foreground">
-                  {c.responses === 0 ? "Not practised yet" : `${c.responses} practised`}
+                  {c.responses === 0 ? "No clear evidence yet" : `${c.responses} observed`}
                 </span>
               </div>
             ))}
-            {(evidence.diagramRequiredMissing > 0 || evidence.workingsRequiredMissing > 0) && (
+            {evidence.diagramRequiredMissing > 0 && (
               <p className="mt-2 border-t border-border pt-2 text-xs leading-relaxed text-muted-foreground">
-                {evidence.diagramRequiredMissing > 0 && (
-                  <>
-                    {evidence.diagramRequiredMissing} answer
-                    {evidence.diagramRequiredMissing === 1 ? "" : "s"} needed a diagram you
-                    haven&apos;t submitted (photo upload arrives in a later release).{" "}
-                  </>
-                )}
-                {evidence.workingsSubmitted > 0 && (
-                  <>{evidence.workingsSubmitted} answer{evidence.workingsSubmitted === 1 ? "" : "s"} included typed workings.</>
-                )}
+                <span className="font-medium text-foreground">
+                  {diagramEvidenceNote(evidence.diagramRequiredMissing).title}.
+                </span>{" "}
+                {diagramEvidenceNote(evidence.diagramRequiredMissing).body}
+              </p>
+            )}
+            {evidence.workingsSubmitted > 0 && (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {evidence.workingsSubmitted}{" "}
+                answer{evidence.workingsSubmitted === 1 ? "" : "s"} included typed workings.
               </p>
             )}
           </CardContent>
@@ -219,7 +256,7 @@ export default function AnalyticsPage() {
           <CardContent>
             <div className="flex items-center gap-4">
               <p className="flex-1 text-lg font-semibold tracking-tight" title={mostImproved.topicLabel}>
-                {shortTopicLabel(mostImproved.topicLabel)}
+                {mostImproved.topicLabel}
               </p>
               <div className="flex items-center gap-2 text-2xl font-semibold tabular-nums">
                 <span className="text-muted-foreground">{mostImproved.fromPercent}%</span>

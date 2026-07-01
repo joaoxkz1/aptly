@@ -9,7 +9,11 @@ import type { Confidence } from "@/lib/types";
  * across the app) so calibration is a one-file change.
  */
 
-export const ASSESSMENT_VERSION = 1;
+// v2 adds the canonical, server-derived scoring model (scoringState,
+// markTotalSource, template cap, core-analytics eligibility). Attempts written
+// at v1 (or with no assessment at all) are treated as legacy and rendered
+// conservatively — never reinterpreted or upgraded.
+export const ASSESSMENT_VERSION = 2;
 
 // --- Weighting -------------------------------------------------------------
 // Weight an attempt by the marks Aptly actually judged: a 15-mark answer

@@ -31,6 +31,11 @@ create table if not exists public.attempts (
   marks_source              text,
   mark_display_mode         text,
   classification_confidence text,
+  -- Assessment Integrity (v2) — server-derived canonical status (mirrors JSON).
+  scoring_state             text,
+  mark_total_source         text,
+  recognized_template       text,
+  eligible_for_core         boolean,
   constraint attempts_marks_chk check (
     marks_available is null
     or (
@@ -47,6 +52,10 @@ create table if not exists public.attempts (
 -- Index attempts by detected format (for future SQL analytics).
 create index if not exists attempts_user_format_idx
   on public.attempts (user_id, assessment_format);
+
+-- Index the canonical scoring state (for future per-user SQL analytics).
+create index if not exists attempts_user_scoring_state_idx
+  on public.attempts (user_id, scoring_state);
 
 -- 2. Index for "my attempts, newest first" ---------------------------------
 create index if not exists attempts_user_created_idx

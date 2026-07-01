@@ -18,7 +18,7 @@ import { ThemeToggle } from "./theme-toggle";
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/submit", label: "Submit Answer", icon: PenLine },
-  { href: "/attempts", label: "Attempts Log", icon: History },
+  { href: "/attempts", label: "Learning log", icon: History },
   { href: "/analytics", label: "Mistake Analytics", icon: BarChart3 },
 ];
 
@@ -124,7 +124,10 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-10">
+        {/* Modest widening on large desktops for Dashboard / Learning log /
+            Analytics. The Submit and feedback flows self-constrain to max-w-3xl,
+            so they are unaffected. */}
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-10 xl:max-w-6xl">
           {children}
         </main>
 
