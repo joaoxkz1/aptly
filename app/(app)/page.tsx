@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Flame, Layers, LineChart, PenLine, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -10,6 +11,8 @@ import { EconomicsLevelCard } from "@/components/assessment/economics-level-card
 import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
+import { createClient } from "@/lib/supabase/client";
+import { readDisplayName } from "@/lib/auth/display-name";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
 import { buildLearningInsights } from "@/lib/assessment/readiness";
 import { attemptMetaLine, shortTopicLabel } from "@/lib/assessment/display";
@@ -30,14 +33,27 @@ export default function DashboardPage() {
   const streak = currentStreak(attempts);
   const recent = attempts.slice(0, 5);
 
+  // Resolve the signed-in user's chosen name for the greeting. Until it loads
+  // we show a neutral "Welcome back" rather than risk the wrong name.
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  useEffect(() => {
+    const supabase = createClient();
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setDisplayName(readDisplayName(data.session?.user?.user_metadata));
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  const heading = displayName ? `${greeting()}, ${displayName}` : "Welcome back";
+
   // Strong first-time state instead of empty charts / confusing zeroes.
   if (ready && attempts.length === 0) {
     return (
       <div className="mx-auto flex max-w-2xl flex-col gap-6 py-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {greeting()}, Joao
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Aptly learns your IB Economics patterns from every answer you grade.
           </p>
@@ -66,9 +82,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            {greeting()}, Joao
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Here is where your IB Economics preparation stands.
           </p>

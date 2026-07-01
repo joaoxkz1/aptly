@@ -4,6 +4,7 @@ import { geistSans, geistMono } from "../fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppShell } from "@/components/app-shell";
 import { createClient } from "@/lib/supabase/server";
+import { readDisplayName } from "@/lib/auth/display-name";
 
 export const metadata: Metadata = {
   title: "Aptly — IB Study Analytics Copilot",
@@ -17,10 +18,11 @@ export default async function AppLayout({
   children: React.ReactNode;
 }>) {
   // Route protection is enforced in the proxy; here we only read the
-  // verified email to display it in the shell.
+  // verified email and display name to show them in the shell.
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const email = typeof data?.claims?.email === "string" ? data.claims.email : null;
+  const displayName = readDisplayName(data?.claims?.user_metadata);
 
   return (
     <html
@@ -30,7 +32,9 @@ export default async function AppLayout({
     >
       <body className="min-h-full">
         <ThemeProvider>
-          <AppShell email={email}>{children}</AppShell>
+          <AppShell email={email} displayName={displayName}>
+            {children}
+          </AppShell>
         </ThemeProvider>
       </body>
     </html>

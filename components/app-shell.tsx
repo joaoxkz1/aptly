@@ -63,9 +63,11 @@ function SignOutButton() {
 export function AppShell({
   children,
   email,
+  displayName,
 }: {
   children: React.ReactNode;
   email?: string | null;
+  displayName?: string | null;
 }) {
   const pathname = usePathname();
 
@@ -96,7 +98,12 @@ export function AppShell({
         </nav>
         <div className="mt-auto flex items-center justify-between gap-2 px-1">
           <div className="min-w-0 text-xs text-muted-foreground">
-            <p className="truncate font-medium text-foreground" title={email ?? undefined}>
+            {displayName ? (
+              <p className="truncate font-medium text-foreground" title={displayName}>
+                {displayName}
+              </p>
+            ) : null}
+            <p className="truncate" title={email ?? undefined}>
               {email ?? "Signed in"}
             </p>
           </div>
