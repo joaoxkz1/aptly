@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { CircleAlert, History, Loader2, Wand2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChevronDown, CircleAlert, History, Loader2, PenLine, Wand2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
@@ -13,19 +14,29 @@ import {
   MarkTotalNotice,
   type DetectedTotalOverride,
 } from "@/components/submit/mark-total-notice";
-import type { Assessment, Attempt, Feedback } from "@/lib/types";
+import type { Assessment, AssessmentFramework, Attempt, Feedback, PracticeQuestion } from "@/lib/types";
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, REQUEST_TIMEOUT_MS } from "@/lib/ai/config";
 import {
-  isValidMarkTotal,
   runPreflight,
   MIN_MARK_TOTAL,
   MAX_MARK_TOTAL,
   type PreflightResult,
 } from "@/lib/assessment/preflight";
-import { requiresSourceMaterial } from "@/lib/assessment/status";
-import { recurringMistakeSummary } from "@/lib/assessment/readiness";
+import { resolveSubmitAction, type GradeDecision } from "@/lib/assessment/submit-flow";
+import { presentedFeedback } from "@/lib/assessment/status";
+import { buildLearningInsights, recurringMistakeSummary } from "@/lib/assessment/readiness";
+import { revisionContextFor, type RevisionContext } from "@/lib/assessment/revisions";
+import {
+  APTLY_PRACTICE_LABEL,
+  NOT_OFFICIAL_IB_LABEL,
+  PRACTICE_FROM_FOCUS_LABEL,
+  REVISION_ATTEMPT_LABEL,
+} from "@/lib/assessment/display";
 import { clientGradeErrorMessage, clientMessageForGradeFailure } from "@/lib/ai/grade-errors";
 import { newId, useAttempts } from "@/lib/storage";
+import { createClient } from "@/lib/supabase/client";
+import { fetchPracticeQuestion } from "@/lib/supabase/practice-questions";
+import { cn } from "@/lib/utils";
 
 const SAMPLE = {
   question:
@@ -34,10 +45,40 @@ const SAMPLE = {
     "Vaccines create positive externalities of consumption: the social benefit is higher than the private benefit, so the free market under-provides them. A subsidy shifts the supply curve right on the diagram, lowering price and raising quantity towards the social optimum. For example, many EU countries subsidise flu vaccines for the elderly. However, subsidies have an opportunity cost and their effect depends on the price elasticity of demand — if hesitancy, not price, causes under-consumption, education campaigns may work better. Overall, a subsidy is effective when price is the main barrier, but it should be combined with information provision.",
 };
 
+// useSearchParams needs a Suspense boundary; the inner page is keyed on the
+// params so entering/leaving revision or practice mode fully resets its state.
 export default function SubmitPage() {
-  const { attempts, addAttempt } = useAttempts();
+  return (
+    <Suspense fallback={null}>
+      <SubmitPageFromParams />
+    </Suspense>
+  );
+}
 
-  const [question, setQuestion] = useState("");
+function SubmitPageFromParams() {
+  const params = useSearchParams();
+  const reviseId = params.get("revise");
+  const practiceId = params.get("practice");
+  return (
+    <SubmitPageInner
+      key={`${reviseId ?? ""}|${practiceId ?? ""}`}
+      reviseId={reviseId}
+      practiceId={practiceId}
+    />
+  );
+}
+
+function SubmitPageInner({
+  reviseId,
+  practiceId,
+}: {
+  reviseId: string | null;
+  practiceId: string | null;
+}) {
+  const router = useRouter();
+  const { attempts, ready, addAttempt } = useAttempts();
+
+  const [typedQuestion, setTypedQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<Attempt | null>(null);
@@ -48,15 +89,71 @@ export default function SubmitPage() {
   // True while the Paper 2(g)/3(b) source-material step is active — the bottom
   // "Grade my answer" CTA is hidden so the source-aware action is the only grade.
   const [sourceStep, setSourceStep] = useState(false);
+  // The framework the source step opened for (from the submit decision —
+  // e.g. a revision's server-stored parent framework preference).
+  const [sourceFrameworkHint, setSourceFrameworkHint] = useState<AssessmentFramework | null>(null);
   // Pre-grade choice about a detected explicit total (change it / feedback-only).
   const [totalOverride, setTotalOverride] = useState<DetectedTotalOverride>(DEFAULT_TOTAL_OVERRIDE);
+  // Collapsed reference area (revision mode): original answer + feedback.
+  const [showOriginal, setShowOriginal] = useState(false);
+
+  // --- Revision mode --------------------------------------------------------
+  // The original attempt being revised (from the user's own saved attempts).
+  const parent = reviseId !== null ? attempts.find((a) => a.id === reviseId) ?? null : null;
+  const revisionCtx: RevisionContext | null = useMemo(
+    () => (parent !== null ? revisionContextFor(parent) : null),
+    [parent]
+  );
+  const revisionMissing = reviseId !== null && ready && parent === null;
+
+  // --- Practice mode --------------------------------------------------------
+  // The Aptly-generated question being answered (RLS-scoped fetch), either
+  // directly (?practice=) or because the revised original answered one.
+  const practiceQuestionId = practiceId ?? revisionCtx?.practiceQuestionId ?? null;
+  const [practiceQuestion, setPracticeQuestion] = useState<PracticeQuestion | null>(null);
+  const [practiceMissing, setPracticeMissing] = useState(false);
+  useEffect(() => {
+    if (practiceQuestionId === null) return;
+    let active = true;
+    const supabase = createClient();
+    fetchPracticeQuestion(supabase, practiceQuestionId)
+      .then((pq) => {
+        if (!active) return;
+        if (pq === null) setPracticeMissing(true);
+        else setPracticeQuestion(pq);
+      })
+      .catch(() => {
+        if (active) setPracticeMissing(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [practiceQuestionId]);
+
+  // The question being answered. Fixed (read-only) in revision and practice
+  // modes so the trusted context always matches what gets graded and saved.
+  const isPractice = practiceId !== null;
+  const isRevision = parent !== null;
+  const fixedQuestion = isRevision
+    ? parent.question
+    : isPractice
+      ? practiceQuestion?.question ?? ""
+      : null;
+  const question = fixedQuestion ?? typedQuestion;
 
   // Live, deterministic detection so the student SEES the total Aptly found
-  // (and where) before grading — no silent first-regex-hit denominators.
+  // (and where) before grading — normal mode only (revision preserves the
+  // original's trusted context; practice totals are fixed server-side).
   const livePreflight = useMemo(
-    () => (question.trim() === "" ? null : runPreflight(question.trim())),
-    [question]
+    () =>
+      fixedQuestion === null && typedQuestion.trim() !== ""
+        ? runPreflight(typedQuestion.trim())
+        : null,
+    [fixedQuestion, typedQuestion]
   );
+
+  // Meaningful next focus → a quiet "Practice this focus" action on feedback.
+  const nextFocus = useMemo(() => buildLearningInsights(attempts).nextFocus, [attempts]);
 
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
@@ -65,29 +162,32 @@ export default function SubmitPage() {
 
   function fillSample() {
     if (
-      (question.trim() !== "" || answer.trim() !== "") &&
+      (typedQuestion.trim() !== "" || answer.trim() !== "") &&
       !window.confirm("Replace your current question and answer with the sample?")
     ) {
       return;
     }
-    setQuestion(SAMPLE.question);
+    setTypedQuestion(SAMPLE.question);
     setAnswer(SAMPLE.answer);
     // Replacing the question invalidates any pending choice/override for it.
     setPreflight(null);
     setSourceStep(false);
+    setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
   }
 
-
   // Saves exactly once per successful grading result; safe against rerenders,
-  // retries, and repeated clicks. Never shows a false "saved" state.
+  // retries, and repeated clicks. Never shows a false "saved" state. On
+  // success the result takes its DATABASE id so follow-up actions (Revise
+  // this answer) link to the real row.
   async function persist(attempt: Attempt) {
     if (savedIdRef.current === attempt.id || persistingRef.current) return;
     persistingRef.current = true;
     setSaveState("saving");
     try {
-      await addAttempt(attempt);
-      savedIdRef.current = attempt.id;
+      const saved = await addAttempt(attempt);
+      savedIdRef.current = saved.id;
+      setResult(saved);
       setSaveState("saved");
     } catch {
       setSaveState("error");
@@ -96,10 +196,11 @@ export default function SubmitPage() {
     }
   }
 
-  // Step 1: validate and run the deterministic preflight. A single explicit
-  // total (already shown to the student in the detection notice) grades
-  // immediately unless they overrode it; multiple distinct totals or a missing
-  // total surface the compact choice.
+  // Step 1: ONE pure, unit-tested decision (lib/assessment/submit-flow.ts)
+  // resolves what a "Grade my answer" click does: grade now, open the source
+  // step, open the compact chooser, or flag an invalid typed total. A
+  // source-dependent revision with no stored source ALWAYS opens the source
+  // step first — the paid grading call can never run before that choice.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (inFlight.current || grading) return;
@@ -113,64 +214,36 @@ export default function SubmitPage() {
     }
 
     setError(null);
-    const pf = runPreflight(q);
 
-    if (pf.kind === "explicit") {
-      // The student's visible pre-grade override of the detected total.
-      if (totalOverride.mode === "feedback_only") {
-        void grade({
-          requestedSource: "feedback_only",
-          requestedTotal: null,
-          templateId: null,
-          requestedFramework: null,
-          sourceMaterial: null,
-        });
-        return;
-      }
-      if (totalOverride.mode === "custom") {
-        const parsed = Number.parseInt(totalOverride.total, 10);
-        if (!isValidMarkTotal(parsed)) {
-          setError(
-            `Enter a mark total between ${MIN_MARK_TOTAL} and ${MAX_MARK_TOTAL}, or use the detected total.`
-          );
-          return;
-        }
-        void grade({
-          requestedSource: "user_confirmed",
-          requestedTotal: parsed,
-          templateId: pf.templateId,
-          requestedFramework: null,
-          sourceMaterial: null,
-        });
-        return;
-      }
-      // Grade immediately only when the total AND the marking framework are both
-      // safe to use. An ambiguous 10/15 total needs a compact framework choice; a
-      // Paper 2(g)/3(b) framework needs its source text/data first.
-      if (pf.frameworkConfirmed && !requiresSourceMaterial(pf.framework)) {
-        void grade({
-          requestedSource: "explicit",
-          requestedTotal: pf.total,
-          templateId: pf.templateId,
-          requestedFramework: null,
-          sourceMaterial: null,
-        });
-        return;
-      }
+    const action = resolveSubmitAction({
+      question: q,
+      practiceLinked: practiceQuestionId !== null,
+      revisionCtx,
+      totalOverride,
+    });
+
+    if (action.kind === "invalid_custom_total") {
+      setError(
+        `Enter a mark total between ${MIN_MARK_TOTAL} and ${MAX_MARK_TOTAL}, or use the detected total.`
+      );
+      return;
     }
-
-    // Multiple distinct totals, an unconfirmed framework, a source-dependent
-    // framework, or no total at all → the compact choice decides before grading.
-    // An explicit Paper 2(g)/3(b) opens straight into the source step.
-    setSourceStep(
-      pf.kind === "explicit" && pf.frameworkConfirmed && requiresSourceMaterial(pf.framework)
-    );
-    setPreflight(pf);
+    if (action.kind === "grade") {
+      void grade(action.decision);
+      return;
+    }
+    // "source_step" | "choice": the student decides before any grading call.
+    // The entered answer is untouched — only the choice UI opens.
+    setSourceStep(action.kind === "source_step");
+    setSourceFrameworkHint(action.kind === "source_step" ? action.sourceFramework : null);
+    setPreflight(action.preflight);
   }
 
   // Step 2: grade with the resolved preflight decision. The server re-checks the
-  // policy — this decision is an input, never the final authority.
-  async function grade(decision: PreflightDecision) {
+  // policy — this decision is an input, never the final authority. For generated
+  // practice the server swaps in ITS stored question/source before grading and
+  // ignores every preflight field (requestedSource stays null).
+  async function grade(decision: PreflightDecision | GradeDecision) {
     if (inFlight.current || grading) return;
 
     const q = question.trim();
@@ -179,6 +252,7 @@ export default function SubmitPage() {
 
     setPreflight(null);
     setSourceStep(false);
+    setSourceFrameworkHint(null);
     setError(null);
     setGrading(true);
     inFlight.current = true;
@@ -201,6 +275,10 @@ export default function SubmitPage() {
           templateId: decision.templateId,
           requestedFramework: decision.requestedFramework,
           sourceMaterial: decision.sourceMaterial,
+          practiceQuestionId,
+          // Revisions: lets the server retrieve the parent's privately
+          // retained source itself instead of trusting client source text.
+          parentAttemptId: revisionCtx?.parentId ?? null,
         }),
         signal: controller.signal,
       });
@@ -224,6 +302,16 @@ export default function SubmitPage() {
         feedback: Feedback;
         assessment?: Assessment | null;
       };
+      // Manual source retention: keep the attempt's own private copy of the
+      // source it was actually graded against (the parent's retained source
+      // for revisions, else the pasted source) — but ONLY when the server
+      // confirmed usable source, and never for generated practice (its source
+      // stays solely in practice_questions).
+      const usedSource = revisionCtx?.storedSource ?? decision.sourceMaterial ?? null;
+      const retainedSource =
+        practiceQuestionId == null && assessment?.sourceMaterialProvided === true
+          ? usedSource
+          : null;
       const attempt: Attempt = {
         id: newId(),
         createdAt: new Date().toISOString(),
@@ -234,6 +322,10 @@ export default function SubmitPage() {
         answer: a,
         feedback,
         assessment: assessment ?? null,
+        // Durable Practice Loop links (RLS verifies both belong to this user).
+        parentAttemptId: revisionCtx?.parentId ?? null,
+        practiceQuestionId,
+        sourceMaterial: retainedSource,
       };
       setResult(attempt);
       setSaveState("idle");
@@ -254,13 +346,19 @@ export default function SubmitPage() {
   }
 
   function handleTryAnother() {
+    if (reviseId !== null || practiceId !== null) {
+      // Leave revision/practice mode; the key on the inner page resets state.
+      router.push("/submit");
+      return;
+    }
     setResult(null);
     setSaveState("idle");
     savedIdRef.current = null;
-    setQuestion("");
+    setTypedQuestion("");
     setAnswer("");
     setPreflight(null);
     setSourceStep(false);
+    setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
   }
 
@@ -277,6 +375,13 @@ export default function SubmitPage() {
           attempt={result}
           saveState={saveState}
           recurring={recurringMistakeSummary(attempts)}
+          parentAttempt={parent}
+          nextFocus={nextFocus}
+          onRevise={
+            saveState === "saved" && savedIdRef.current !== null
+              ? () => router.push(`/submit?revise=${savedIdRef.current}`)
+              : undefined
+          }
           onRetry={handleRetry}
           onTryAnother={handleTryAnother}
         />
@@ -293,15 +398,124 @@ export default function SubmitPage() {
     );
   }
 
+  const heading = isRevision
+    ? "Revise this answer"
+    : isPractice
+      ? "Answer your practice question"
+      : "Submit an answer";
+  const subheading = isRevision
+    ? "Write a fresh answer to the same question. Aptly grades it like any attempt and links it to the original."
+    : isPractice
+      ? "This question was generated from your next focus. Write your answer below."
+      : "Paste your Economics question and answer. Aptly will identify the format and give you an evidence-aware estimate.";
+
+  // Revision/practice context still loading (attempts or practice fetch).
+  const contextLoading =
+    (reviseId !== null && !ready) ||
+    (practiceQuestionId !== null && practiceQuestion === null && !practiceMissing);
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-5">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Submit an answer</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Paste your Economics question and answer. Aptly will identify the format and give you an
-          evidence-aware estimate.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{heading}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{subheading}</p>
       </div>
+
+      {/* Honest fallbacks when a linked context cannot be loaded. */}
+      {(revisionMissing || practiceMissing) && (
+        <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-sm text-muted-foreground">
+          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            {revisionMissing
+              ? "The original attempt could not be found — it may have been deleted. You can still submit a fresh answer below."
+              : "This practice question could not be found — it may have been removed. Generate a new one from your next focus."}
+          </span>
+        </div>
+      )}
+
+      {/* Revision context: concise banner + collapsed reference (never dominant). */}
+      {isRevision && revisionCtx !== null && (
+        <div className="flex flex-col gap-2 rounded-xl border border-primary/25 bg-accent/40 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
+            {REVISION_ATTEMPT_LABEL}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            You&apos;re revising the same question after feedback. Your previous answer stays in
+            your learning log — start this one fresh.
+          </p>
+          {revisionCtx.needsSourceAgain && (
+            <p className="text-sm text-muted-foreground">
+              Paste the source text or data again to receive a source-based estimate. Without it,
+              this revision is graded feedback-only.
+            </p>
+          )}
+          {revisionCtx.storedSource !== null && (
+            <p className="text-sm text-muted-foreground">
+              Original source material will be used for this revision.
+            </p>
+          )}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowOriginal((v) => !v)}
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+              aria-expanded={showOriginal}
+            >
+              {showOriginal ? "Hide" : "Show"} original answer and feedback
+              <ChevronDown
+                className={cn("h-3.5 w-3.5 transition-transform", showOriginal && "rotate-180")}
+              />
+            </button>
+            {showOriginal && parent !== null && (
+              <div className="mt-2 flex flex-col gap-3 rounded-lg border border-border bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground">
+                {/* Read-only inspection of the retained source — it cannot be
+                    edited here: a revision compares work on the same context. */}
+                {revisionCtx.storedSource !== null && (
+                  <div>
+                    <p className="font-semibold uppercase tracking-wider">
+                      Original source material
+                    </p>
+                    <p className="mt-1 whitespace-pre-wrap">{revisionCtx.storedSource}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="font-semibold uppercase tracking-wider">Original answer</p>
+                  <p className="mt-1 whitespace-pre-wrap">{parent.answer}</p>
+                </div>
+                {presentedFeedback(parent).improvements.length > 0 && (
+                  <div>
+                    <p className="font-semibold uppercase tracking-wider">Previous improvements</p>
+                    <ul className="mt-1 list-disc pl-4">
+                      {presentedFeedback(parent).improvements.map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {presentedFeedback(parent).examinerComment !== "" && (
+                  <div>
+                    <p className="font-semibold uppercase tracking-wider">Previous comment</p>
+                    <p className="mt-1 italic">{presentedFeedback(parent).examinerComment}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Practice context: what this generated question practises, honestly labelled. */}
+      {isPractice && practiceQuestion !== null && (
+        <div className="flex flex-col gap-1.5 rounded-xl border border-primary/25 bg-accent/40 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
+            {APTLY_PRACTICE_LABEL}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {PRACTICE_FROM_FOCUS_LABEL}: {practiceQuestion.topicLabel} · {practiceQuestion.markTotal}{" "}
+            marks. {NOT_OFFICIAL_IB_LABEL}.
+          </p>
+        </div>
+      )}
 
       {/* One purpose statement (the header above) — the card adds no repeated
           instructions; contextual help appears only when detection needs it. */}
@@ -310,34 +524,69 @@ export default function SubmitPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
               <Label htmlFor="question">Question</Label>
-              <Textarea
-                id="question"
-                required
-                maxLength={MAX_QUESTION_CHARS}
-                value={question}
-                onChange={(e) => {
-                  setQuestion(e.target.value);
-                  setPreflight(null); // editing invalidates a pending preflight choice
-                  setSourceStep(false);
-                  setTotalOverride(DEFAULT_TOTAL_OVERRIDE); // and any total override
-                }}
-                placeholder="Paste the full question, including any mark total or source text reference."
-                className="min-h-20"
-              />
-              {/* Visible pre-grade detection: the total Aptly found (and where),
-                  with a small way to change it or choose feedback-only — no
-                  silent denominators, no forced extra click. */}
-              {livePreflight !== null && preflight === null && !grading && (
-                <div className="mt-2">
-                  <MarkTotalNotice
-                    preflight={livePreflight}
-                    override={totalOverride}
-                    onOverrideChange={setTotalOverride}
-                    disabled={grading}
-                  />
+              {fixedQuestion !== null ? (
+                // Revision/practice: the question is fixed so the trusted
+                // context (total, framework, stored source) stays valid.
+                <div
+                  id="question"
+                  className="mt-1 rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-sm leading-relaxed"
+                >
+                  {contextLoading ? (
+                    <span className="inline-flex items-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Loading question…
+                    </span>
+                  ) : (
+                    question
+                  )}
                 </div>
+              ) : (
+                <>
+                  <Textarea
+                    id="question"
+                    required
+                    maxLength={MAX_QUESTION_CHARS}
+                    value={typedQuestion}
+                    onChange={(e) => {
+                      setTypedQuestion(e.target.value);
+                      setPreflight(null); // editing invalidates a pending preflight choice
+                      setSourceStep(false);
+                      setSourceFrameworkHint(null);
+                      setTotalOverride(DEFAULT_TOTAL_OVERRIDE); // and any total override
+                    }}
+                    placeholder="Paste the full question, including any mark total or source text reference."
+                    className="min-h-20"
+                  />
+                  {/* Visible pre-grade detection: the total Aptly found (and where),
+                      with a small way to change it or choose feedback-only — no
+                      silent denominators, no forced extra click. */}
+                  {livePreflight !== null && preflight === null && !grading && (
+                    <div className="mt-2">
+                      <MarkTotalNotice
+                        preflight={livePreflight}
+                        override={totalOverride}
+                        onOverrideChange={setTotalOverride}
+                        disabled={grading}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
+
+            {/* Aptly-generated source material: displayed for reading, never
+                re-pasted — grading reads the stored server-side copy. */}
+            {practiceQuestion !== null && practiceQuestion.sourceMaterial !== null && (
+              <div>
+                <Label htmlFor="practice-source">Source material</Label>
+                <div
+                  id="practice-source"
+                  className="mt-1 whitespace-pre-wrap rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-sm leading-relaxed text-muted-foreground"
+                >
+                  {practiceQuestion.sourceMaterial}
+                </div>
+              </div>
+            )}
 
             <div>
               <div className="flex items-baseline justify-between">
@@ -368,6 +617,9 @@ export default function SubmitPage() {
               <PreflightChoice
                 preflight={preflight}
                 disabled={grading}
+                // From the submit decision: the framework the source step opened
+                // for (e.g. a revision's stored parent framework preference).
+                initialSourceFramework={sourceFrameworkHint}
                 onChoose={(d) => void grade(d)}
                 onEnterSourceStep={() => setSourceStep(true)}
               />
@@ -378,7 +630,7 @@ export default function SubmitPage() {
             {!sourceStep && (
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button type="submit" size="lg" disabled={grading}>
+                  <Button type="submit" size="lg" disabled={grading || contextLoading}>
                     {grading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -389,10 +641,18 @@ export default function SubmitPage() {
                     )}
                   </Button>
                   {/* Quiet secondary affordance — not another instruction block. */}
-                  <Button type="button" variant="ghost" size="sm" onClick={fillSample} disabled={grading}>
-                    <Wand2 className="h-3.5 w-3.5" />
-                    Use a sample answer
-                  </Button>
+                  {fixedQuestion === null && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={fillSample}
+                      disabled={grading}
+                    >
+                      <Wand2 className="h-3.5 w-3.5" />
+                      Use a sample answer
+                    </Button>
+                  )}
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   Your response is sent to OpenAI for feedback and stored privately in Aptly. Avoid
@@ -410,6 +670,16 @@ export default function SubmitPage() {
           </form>
         </CardContent>
       </Card>
+
+      {practiceMissing && (
+        <Link
+          href="/practice"
+          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+        >
+          <PenLine className="h-4 w-4" />
+          Generate a new practice question
+        </Link>
+      )}
 
       <p className="text-xs text-muted-foreground">
         Aptly provides practice estimates, not official IB grades.

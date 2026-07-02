@@ -65,9 +65,17 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
   topicLabel: { type: "string" },
   classificationConfidence: enumStr(CONFIDENCES),
   markingConfidence: enumStr(CONFIDENCES),
-  // Practice band (kept internal; not shown as a numeric band per Assessment Integrity).
-  practiceLevelLow: { type: "integer" },
-  practiceLevelHigh: { type: "integer" },
+  // Practice band (kept internal; not shown as a numeric band per Assessment
+  // Integrity). Bounds live in the description because strict mode forbids
+  // min/max — the server validator rejects anything outside 1–7.
+  practiceLevelLow: {
+    type: "integer",
+    description: "Integer from 1 to 7 (use 1 for very weak answers — never 0).",
+  },
+  practiceLevelHigh: {
+    type: "integer",
+    description: "Integer from 1 to 7, greater than or equal to practiceLevelLow.",
+  },
   practiceLevelConfidence: enumStr(CONFIDENCES),
   // Evidence (drive coverage; NEVER a diagram cap).
   diagramExpected: { type: "boolean" },
@@ -78,7 +86,11 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
   workingsAssessmentStatus: enumStr(WORKINGS_STATUSES),
   attachmentContent: enumStr(ATTACHMENT_CONTENTS),
   // Marks earned on the ASSESSABLE portion the server specified (null = feedback-only).
-  assessableEarned: { type: ["integer", "null"] },
+  assessableEarned: {
+    type: ["integer", "null"],
+    description:
+      "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY.",
+  },
   // Breakdown of the assessable marks only (empty for feedback-only).
   markBreakdown: {
     type: "array",
@@ -88,9 +100,13 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
       required: ["label", "awarded", "available", "reason"],
       properties: {
         label: { type: "string", enum: [...MARK_BREAKDOWN_LABELS] },
-        awarded: { type: "integer" },
-        available: { type: "integer" },
-        reason: { type: "string" },
+        awarded: { type: "integer", description: "Integer 0..available." },
+        available: {
+          type: "integer",
+          description:
+            "Integer of at least 1. OMIT any criterion the question does not test — never emit a row with available 0.",
+        },
+        reason: { type: "string", description: "Non-empty, specific to this answer." },
       },
     },
   },
@@ -177,6 +193,7 @@ export function buildAssessmentInstructions(): string {
     "In a recognised diagram-explain frame, a theoretically correct causal explanation earns the written marks even without a verbatim textbook definition — a precise definition is an optional refinement, not the main loss.",
     "Respect the FACT hasImageAttachment: when false, no image exists — diagramSubmitted must be false, attachmentContent must be none, diagramAssessmentStatus must not be submitted_and_assessed, and workingsAssessmentStatus must not be image_and_assessed.",
     "Choose mistakes only from the fixed list. Keep strengths/improvements to at most 3 each. Use the full plausible mark range; do not cluster mid-band.",
+    "Numeric bounds are enforced: practiceLevelLow/practiceLevelHigh are ALWAYS integers 1–7 (use 1 for very weak answers, never 0); when the MARKING FRAME states an assessable total, assessableEarned is ALWAYS an integer in that range (use 0 rather than null for an answer earning nothing); every markBreakdown row has available ≥ 1 — omit untested criteria entirely.",
     "Return only the structured JSON defined by the response format.",
   ].join(" ");
 }

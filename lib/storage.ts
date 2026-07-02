@@ -65,10 +65,13 @@ export function useAttempts() {
   const addAttempt = useCallback(
     // Awaitable: resolves only after the row is persisted, throws on failure.
     // No optimistic prepend — the attempt appears everywhere only once the
-    // write actually succeeds (then broadcast triggers a resync).
-    async (attempt: Attempt): Promise<void> => {
-      await insertAttempt(supabase, attempt);
+    // write actually succeeds (then broadcast triggers a resync). Returns the
+    // attempt with its DATABASE id so follow-up actions (e.g. "Revise this
+    // answer") link to the real row, never a temporary local id.
+    async (attempt: Attempt): Promise<Attempt> => {
+      const saved = await insertAttempt(supabase, attempt);
       broadcast();
+      return saved;
     },
     [supabase]
   );

@@ -30,6 +30,17 @@ export const REQUEST_TIMEOUT_MS = 45_000;
 // Feedback-only grades count too; they use the same grading capacity.
 export const DAILY_GRADE_LIMIT = 30;
 
+// --- Targeted practice generation (Practice Loop) ---------------------------
+// Generation uses the SAME model as grading (one model everywhere this
+// release). Separate, conservative per-user UTC-day cap — each generation is
+// its own paid call, distinct from the grading cap above. Counted from the
+// user's practice_questions rows created today (RLS-scoped, no new storage).
+export const DAILY_PRACTICE_GENERATION_LIMIT = 10;
+// A generated question + short source stimulus is far smaller than a grade
+// result, but reasoning tokens share this budget — keep sensible headroom.
+export const PRACTICE_MAX_OUTPUT_TOKENS = 2600;
+export const PRACTICE_REQUEST_TIMEOUT_MS = 45_000;
+
 // --- Subject scope ---------------------------------------------------------
 // v1 grades Economics only. Other subjects are intentionally not graded yet so
 // Aptly never gives weak/misleading feedback outside its designed subject.

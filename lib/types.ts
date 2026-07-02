@@ -155,4 +155,37 @@ export interface Attempt {
   answer: string;
   feedback: Feedback;
   assessment?: Assessment | null; // legacy attempts have this undefined/null
+  // --- Practice Loop -------------------------------------------------------
+  // Durable revision link: the earlier attempt this one revises. Deleting the
+  // original NULLs this (never the revision itself). Undefined/null = not a
+  // revision.
+  parentAttemptId?: string | null;
+  // The Aptly-generated practice question this attempt answered (grading reads
+  // the stored question/source server-side). Undefined/null = a pasted question.
+  practiceQuestionId?: string | null;
+  // Manual source retention: the pasted Paper 2(g)/3(b) source this attempt
+  // was graded against, stored privately (per-user RLS) so a revision reuses
+  // the exact same source automatically. Null/undefined for non-source
+  // attempts, pre-patch attempts, and generated practice (whose source lives
+  // in practice_questions).
+  sourceMaterial?: string | null;
+}
+
+/**
+ * An Aptly-generated practice question (Practice Loop). Private to its owner
+ * (RLS); the generated source material for Paper 2(g)/3(b) lives ONLY here and
+ * grading always retrieves it server-side — never from the client.
+ */
+export interface PracticeQuestion {
+  id: string;
+  createdAt: string;
+  question: string;
+  sourceMaterial: string | null;
+  framework: AssessmentFramework;
+  markTotal: number;
+  topicCode: string;
+  topicLabel: string;
+  skill: AssessmentSkill;
+  /** Evidence-backed "Why this question?" copy shown to the student. */
+  why: string;
 }

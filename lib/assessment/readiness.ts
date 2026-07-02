@@ -1,6 +1,7 @@
 import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel, MistakeType } from "@/lib/types";
 import { ASSESSMENT_SKILLS, ASSESSMENT_SKILL_LABELS } from "./taxonomy";
 import { deriveScoringState, isCoreEligible } from "./status";
+import { collapseRevisionChains } from "./revisions";
 import { frameworkFormatKey, frameworkFormatLabel, topicDisplayLabel } from "./display";
 import {
   BASELINE_MIN_ATTEMPTS,
@@ -86,8 +87,15 @@ export function stateBreakdown(attempts: Attempt[]): StateBreakdown {
   return b;
 }
 
+/**
+ * The core INDEPENDENT-EVIDENCE set: fully marked attempts, with each revision
+ * chain collapsed to its latest eligible attempt so repeated revisions of the
+ * same question can never inflate the Economics level, mark trend, topic
+ * performance, next-focus logic, or marked-answer evidence counts. All
+ * attempts stay visible in the Learning log — this only shapes the maths.
+ */
 function eligibleAttempts(attempts: Attempt[]): Attempt[] {
-  return attempts.filter(isEligible);
+  return collapseRevisionChains(attempts);
 }
 
 // --- Recurring-pattern honesty ----------------------------------------------

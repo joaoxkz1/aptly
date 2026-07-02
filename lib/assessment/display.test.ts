@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   LEVEL_ESTIMATE_DISCLAIMER,
+  NEXT_FOCUS_STRONG_EVIDENCE_MIN,
   TOPICS_WITH_ESTIMATES_CAPTION,
   TOPICS_WITH_ESTIMATES_TITLE,
   basedOnEstimatesLabel,
+  nextFocusPresentation,
   withConfirmedTotalsLabel,
 } from "./display";
 
@@ -49,5 +51,39 @@ describe("estimate vocabulary — exact shared labels", () => {
     for (const label of outputs) {
       expect(label).not.toMatch(BANNED);
     }
+  });
+});
+
+describe("nextFocusPresentation — evidence-honest next-focus wording (display only)", () => {
+  const base = {
+    skillLabel: "Data use",
+    explanation: "Data use is the clearest diagnostic improvement signal in your marked answers so far.",
+  };
+
+  it("one independent marked answer uses the early-focus wording", () => {
+    const p = nextFocusPresentation({ ...base, responses: 1 });
+    expect(p.early).toBe(true);
+    expect(p.heading).toBe("Early focus to test: Data use");
+    expect(p.evidenceLine).toBe("Based on 1 marked answer so far.");
+    // Never the strong claims on a single answer.
+    expect(p.heading).not.toContain("Weakest skill");
+    const all = `${p.heading} ${p.evidenceLine} ${p.explanation}`;
+    expect(all.toLowerCase()).not.toContain("losing the most marks");
+    expect(all.toLowerCase()).not.toContain("weakest");
+  });
+
+  it("two or more independent marked answers keep the stronger wording", () => {
+    for (const responses of [NEXT_FOCUS_STRONG_EVIDENCE_MIN, 3, 7]) {
+      const p = nextFocusPresentation({ ...base, responses });
+      expect(p.early).toBe(false);
+      expect(p.heading).toBe("Weakest skill: Data use");
+      expect(p.evidenceLine).toBeNull();
+      expect(p.explanation).toBe(base.explanation);
+    }
+  });
+
+  it("the threshold sits exactly at two independent marked answers", () => {
+    expect(nextFocusPresentation({ ...base, responses: 1 }).early).toBe(true);
+    expect(nextFocusPresentation({ ...base, responses: 2 }).early).toBe(false);
   });
 });

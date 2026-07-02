@@ -131,7 +131,6 @@ export default function DashboardPage() {
         </Card>
         <EconomicsLevelCard
           level={insights.level}
-          weightedPercent={insights.weightedPercent}
           ready={ready}
           provisionalCount={insights.provisionalCount}
           feedbackOnlyCount={insights.feedbackOnlyCount}

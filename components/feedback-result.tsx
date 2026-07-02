@@ -1,13 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import {
+  ArrowRight,
   BookOpenCheck,
   Check,
   CircleAlert,
   CircleCheck,
   FileText,
+  History,
   Lightbulb,
   Loader2,
+  PenLine,
   Quote,
   RotateCcw,
   Zap,
@@ -24,7 +28,14 @@ import {
   isSourceMaterialMissing,
   presentedFeedback,
 } from "@/lib/assessment/status";
-import type { RecurringMistakeSummary } from "@/lib/assessment/readiness";
+import { revisionComparison } from "@/lib/assessment/revisions";
+import {
+  REVISION_ATTEMPT_LABEL,
+  REVISION_SAVED_BODY,
+  REVISION_SAVED_LABEL,
+  shortSkillLabel,
+} from "@/lib/assessment/display";
+import type { NextFocus, RecurringMistakeSummary } from "@/lib/assessment/readiness";
 import type { Attempt } from "@/lib/types";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
@@ -33,6 +44,9 @@ export function FeedbackResult({
   attempt,
   saveState,
   recurring,
+  parentAttempt = null,
+  nextFocus = null,
+  onRevise,
   onRetry,
   onTryAnother,
 }: {
@@ -40,6 +54,12 @@ export function FeedbackResult({
   saveState: SaveState;
   /** Cross-attempt recurring-mistake summary (computed from saved attempts). */
   recurring?: RecurringMistakeSummary;
+  /** The original attempt when THIS result is a revision of it. */
+  parentAttempt?: Attempt | null;
+  /** The canonical next focus, when one exists — enables "Practice this focus". */
+  nextFocus?: NextFocus | null;
+  /** Starts a revision of this (saved) answer. Omitted until it is saved. */
+  onRevise?: () => void;
   onRetry: () => void;
   onTryAnother: () => void;
 }) {
@@ -50,8 +70,59 @@ export function FeedbackResult({
   const sourceMissing = assessment !== null && isSourceMaterialMissing(assessment);
   const f = presentedFeedback(attempt);
 
+  // Revision of an earlier attempt: a restrained estimate comparison ONLY when
+  // both are marked with matching totals and a compatible framework; otherwise
+  // a neutral confirmation — never a numeric claim across unlike estimates.
+  const isRevisionOf = parentAttempt !== null && attempt.parentAttemptId === parentAttempt.id;
+  const comparison =
+    isRevisionOf && parentAttempt !== null ? revisionComparison(parentAttempt, attempt) : null;
+
   return (
     <div className="flex flex-col gap-4">
+      {isRevisionOf && (
+        <Card>
+          <CardContent className="flex items-start gap-3 p-5">
+            <History className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {REVISION_ATTEMPT_LABEL}
+              </p>
+              {comparison !== null ? (
+                <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
+                  <span className="text-muted-foreground">
+                    Previous estimate:{" "}
+                    <span className="font-medium text-foreground tabular-nums">
+                      {comparison.previousFraction}
+                    </span>
+                  </span>
+                  <span className="text-muted-foreground">
+                    Revision estimate:{" "}
+                    <span className="font-medium text-foreground tabular-nums">
+                      {comparison.revisionFraction}
+                    </span>
+                  </span>
+                  <span className="text-muted-foreground">
+                    Change:{" "}
+                    <span className="font-medium text-foreground tabular-nums">
+                      {comparison.deltaLabel}
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {saveState === "saved"
+                    ? `${REVISION_SAVED_LABEL} — ${REVISION_SAVED_BODY.charAt(0).toLowerCase()}${REVISION_SAVED_BODY.slice(1)}`
+                    : "You revised this question after feedback."}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Revision of an earlier attempt — both stay in your learning log. Practice
+                estimates, not an official grade change.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {assessment !== null ? (
         <>
           {/* Header → recognised component structure (4-mark diagram only) →
@@ -258,7 +329,24 @@ export function FeedbackResult({
             <RotateCcw className="h-4 w-4" />
             Try another answer
           </Button>
+          {/* Deliberately quieter than the feedback itself: act on this answer. */}
+          {onRevise !== undefined && (
+            <Button size="lg" variant="outline" onClick={onRevise}>
+              <PenLine className="h-4 w-4" />
+              Revise this answer
+            </Button>
+          )}
         </div>
+        {/* Practice the evidence-backed focus — only when one actually exists. */}
+        {nextFocus !== null && (
+          <Link
+            href="/practice"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          >
+            Practice this focus: {shortSkillLabel(nextFocus.skillLabel)}{" "}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        )}
       </div>
     </div>
   );

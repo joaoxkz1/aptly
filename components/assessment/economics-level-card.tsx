@@ -30,13 +30,11 @@ function practiceNote(provisionalCount: number, feedbackOnlyCount: number): stri
  */
 export function EconomicsLevelCard({
   level,
-  weightedPercent,
   ready,
   provisionalCount,
   feedbackOnlyCount,
 }: {
   level: EconomicsLevel;
-  weightedPercent: number | null;
   ready: boolean;
   provisionalCount: number;
   feedbackOnlyCount: number;
@@ -69,14 +67,8 @@ export function EconomicsLevelCard({
             </p>
             <p className="mt-1 text-sm text-muted-foreground">{TIER_LABEL[level.state]}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {basedOnEstimatesLabel(level.responses)} · {level.assessedMarks} marks
+              {basedOnEstimatesLabel(level.responses)}
             </p>
-            {note && <p className="mt-0.5 text-xs text-muted-foreground">{note}</p>}
-            {weightedPercent !== null && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Weighted practice mark {weightedPercent}%
-              </p>
-            )}
             <p className="mt-1 text-xs text-muted-foreground">{LEVEL_ESTIMATE_DISCLAIMER}</p>
           </>
         )}

@@ -194,6 +194,51 @@ export function shortSkillLabel(label: string): string {
   return SHORT_SKILL_LABELS[label] ?? label;
 }
 
+// --- Next-focus evidence-honest presentation ---------------------------------
+// DISPLAY ONLY: the targeting algorithm, core eligibility, and analytics are
+// untouched. With a single independent marked answer behind the focus, Aptly
+// must not claim a "weakest skill" or "losing the most marks" — it offers an
+// early focus to test. Every surface that words the next focus (Dashboard,
+// Analytics, the practice "Why this question?", feedback entry points) reads
+// this ONE helper so the strength of the claim can never drift between pages.
+
+/** Independent marked answers required before the stronger wording is used. */
+export const NEXT_FOCUS_STRONG_EVIDENCE_MIN = 2;
+
+export interface NextFocusPresentation {
+  /** True when the focus rests on fewer than the strong-evidence minimum. */
+  early: boolean;
+  /** "Weakest skill: Evaluation" or "Early focus to test: Evaluation". */
+  heading: string;
+  /** Honest evidence caption for the early state; null for strong evidence. */
+  evidenceLine: string | null;
+  /** Supporting sentence matched to the strength of the claim. */
+  explanation: string;
+}
+
+/** The one evidence-aware wording for a next focus (pure; feeds every surface). */
+export function nextFocusPresentation(nf: {
+  skillLabel: string;
+  responses: number;
+  explanation: string;
+}): NextFocusPresentation {
+  if (nf.responses < NEXT_FOCUS_STRONG_EVIDENCE_MIN) {
+    return {
+      early: true,
+      heading: `Early focus to test: ${shortSkillLabel(nf.skillLabel)}`,
+      evidenceLine: `Based on ${nf.responses} marked answer${nf.responses === 1 ? "" : "s"} so far.`,
+      explanation:
+        "One answer is a signal to test, not a confirmed pattern — practise this skill again to see if it holds.",
+    };
+  }
+  return {
+    early: false,
+    heading: `Weakest skill: ${shortSkillLabel(nf.skillLabel)}`,
+    evidenceLine: null,
+    explanation: nf.explanation,
+  };
+}
+
 // --- Estimate vocabulary (Pilot Trust) --------------------------------------
 // Aptly's marks are ALWAYS estimates — only the mark TOTAL (the denominator)
 // can be confirmed. Shared student-facing surfaces read these helpers instead
@@ -218,6 +263,27 @@ export function withConfirmedTotalsLabel(n: number): string {
 export function basedOnEstimatesLabel(n: number): string {
   return `Based on ${n} estimate${n === 1 ? "" : "s"} with confirmed totals`;
 }
+
+// --- Practice Loop labels ----------------------------------------------------
+// The concise shared vocabulary for revisions and generated practice. Every
+// surface reads these constants so the wording can never drift between the
+// submission flow, the feedback screen, and the Learning log.
+
+/** List/badge + banner label for a revision attempt. */
+export const REVISION_ATTEMPT_LABEL = "Revision attempt";
+
+/** Badge + banner label for an attempt on an Aptly-generated question. */
+export const APTLY_PRACTICE_LABEL = "Aptly practice question";
+
+/** One-line provenance note for generated practice. */
+export const PRACTICE_FROM_FOCUS_LABEL = "Practice generated from your next focus";
+
+/** The honest non-official disclaimer every generated question carries. */
+export const NOT_OFFICIAL_IB_LABEL = "Original Aptly practice, not an official IB question";
+
+/** Neutral confirmation when a revision is not numerically comparable. */
+export const REVISION_SAVED_LABEL = "Revision saved";
+export const REVISION_SAVED_BODY = "Your revised answer has been added to your learning log.";
 
 /**
  * A compact one-liner for attempt lists (Learning log, Dashboard recent).

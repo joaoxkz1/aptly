@@ -8,7 +8,7 @@ const TABLE = "attempts";
 // The full assessment object lives in the `assessment` jsonb column; the
 // denormalized columns exist for DB-level integrity and future SQL analytics.
 const SELECT_COLUMNS =
-  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment";
+  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material";
 
 export interface AttemptRow {
   id: string;
@@ -23,6 +23,9 @@ export interface AttemptRow {
   next_step: string | null;
   created_at: string;
   assessment: Assessment | null;
+  parent_attempt_id?: string | null;
+  practice_question_id?: string | null;
+  source_material?: string | null;
 }
 
 export function rowToAttempt(row: AttemptRow): Attempt {
@@ -35,6 +38,9 @@ export function rowToAttempt(row: AttemptRow): Attempt {
     answer: row.answer,
     feedback: row.feedback,
     assessment: row.assessment ?? null,
+    parentAttemptId: row.parent_attempt_id ?? null,
+    practiceQuestionId: row.practice_question_id ?? null,
+    sourceMaterial: row.source_material ?? null,
   };
 }
 
@@ -76,6 +82,15 @@ function attemptToInsert(attempt: Attempt) {
     mark_total_source: a?.markTotalSource ?? null,
     recognized_template: a?.recognizedTemplate ?? null,
     eligible_for_core: a?.eligibleForCoreAnalytics ?? null,
+    // Practice Loop links. RLS verifies the referenced rows belong to this
+    // user, so a link can never point at another user's data.
+    parent_attempt_id: attempt.parentAttemptId ?? null,
+    practice_question_id: attempt.practiceQuestionId ?? null,
+    // Manual source retention: the attempt's OWN private copy of the pasted
+    // source it was graded against (null for non-source attempts). Deleted
+    // with its row; revisions carry their own copy, so parent deletion never
+    // strips a revision's source context.
+    source_material: attempt.sourceMaterial ?? null,
   };
 }
 
@@ -88,22 +103,66 @@ export async function fetchAttempts(supabase: SupabaseClient): Promise<Attempt[]
   return (data as unknown as AttemptRow[]).map(rowToAttempt);
 }
 
+/**
+ * Insert a real attempt and return it with the DATABASE-generated id and
+ * created_at. Callers must use the returned attempt for any follow-up link
+ * (e.g. a revision's parentAttemptId) — the local temporary id never reaches
+ * other rows.
+ */
 export async function insertAttempt(
   supabase: SupabaseClient,
   attempt: Attempt
-): Promise<void> {
-  const { error } = await supabase.from(TABLE).insert(attemptToInsert(attempt));
+): Promise<Attempt> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert(attemptToInsert(attempt))
+    .select("id, created_at")
+    .single();
   if (error) throw error;
+  const row = data as { id: string; created_at: string };
+  return { ...attempt, id: row.id, createdAt: row.created_at };
 }
 
 /**
  * Delete ONE attempt by id. RLS ("delete_own_attempts") limits the delete to
  * the current user's own row, so this can never touch another user's data.
  * Throws on failure so callers never optimistically drop the row.
+ *
+ * If the attempt answered an Aptly-generated practice question, the private
+ * practice-question row (including any generated source material) is removed
+ * too once no other attempt still references it — best-effort: a failed
+ * cleanup never resurrects the already-deleted attempt.
  */
 export async function deleteAttempt(supabase: SupabaseClient, id: string): Promise<void> {
+  // Read the link BEFORE deleting (RLS scopes the read to this user's row).
+  const { data: linkRow } = await supabase
+    .from(TABLE)
+    .select("practice_question_id")
+    .eq("id", id)
+    .maybeSingle();
+  const practiceQuestionId =
+    (linkRow as { practice_question_id?: string | null } | null)?.practice_question_id ?? null;
+
   const { error } = await supabase.from(TABLE).delete().eq("id", id);
   if (error) throw error;
+
+  if (practiceQuestionId !== null) {
+    try {
+      // Keep the row while any other attempt (e.g. a revision) still grades
+      // against its stored question/source; delete once fully unreferenced.
+      const { count, error: countError } = await supabase
+        .from(TABLE)
+        .select("id", { count: "exact", head: true })
+        .eq("practice_question_id", practiceQuestionId);
+      if (countError) throw countError;
+      if ((count ?? 0) === 0) {
+        await supabase.from("practice_questions").delete().eq("id", practiceQuestionId);
+      }
+    } catch {
+      // Best-effort cleanup only: the orphaned row stays private (RLS) and is
+      // removed on cascade when the account is deleted.
+    }
+  }
 }
 
 export async function clearAttempts(supabase: SupabaseClient): Promise<void> {

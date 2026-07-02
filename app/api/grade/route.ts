@@ -9,7 +9,13 @@ import {
   buildAssessmentUserInput,
   validateGradeResult,
 } from "@/lib/ai/assessment-schema";
-import { resolveScoringPolicy, type RequestedSource } from "@/lib/assessment/policy";
+import {
+  enforceRevisionSourceGate,
+  policyForGeneratedPractice,
+  resolveScoringPolicy,
+  type RequestedSource,
+  type ScoringPolicy,
+} from "@/lib/assessment/policy";
 import {
   DAILY_LIMIT_ERROR_CODE,
   GRADE_ERROR_CODE,
@@ -146,20 +152,106 @@ export async function POST(request: Request) {
     return failClosed(502, err);
   }
 
-  // 3c. Server-authoritative scoring policy. The client's preflight choice is an
-  // input, but the question text is ground truth and this decides marked /
-  // provisional / feedback-only, the marking framework, the denominator, and any
+  // 3c. Server-authoritative scoring policy.
+  //
+  // GENERATED PRACTICE: when the client references an Aptly-generated practice
+  // question, the stored PRIVATE row (RLS-scoped to this user) is the ground
+  // truth — its question text, its generated source material, its framework,
+  // and its mark total. Client-supplied question text, source material, and
+  // preflight fields are all ignored, so a client can neither doctor the
+  // generated question nor substitute its own "official generated source".
+  //
+  // PASTED QUESTIONS: the client's preflight choice is an input, but the
+  // question text is ground truth and `resolveScoringPolicy` decides marked /
+  // provisional / feedback-only, the framework, the denominator, and any
   // template diagram cap — never the model.
-  stage = "assessment_policy";
-  const { requestedSource, requestedTotal, templateId, requestedFramework } = (body ??
-    {}) as Record<string, unknown>;
-  const policy = resolveScoringPolicy(q, {
-    requestedSource: parseRequestedSource(requestedSource),
-    requestedTotal: typeof requestedTotal === "number" ? requestedTotal : null,
-    templateId: typeof templateId === "string" ? templateId : null,
-    requestedFramework: parseFramework(requestedFramework),
-    sourceMaterial,
-  });
+  let gradedQuestion = q;
+  let policy: ScoringPolicy;
+  const { practiceQuestionId } = (body ?? {}) as Record<string, unknown>;
+  if (typeof practiceQuestionId === "string" && practiceQuestionId.trim() !== "") {
+    stage = "practice_context";
+    try {
+      const { data: pq, error: pqError } = await supabase
+        .from("practice_questions")
+        .select("id, question, source_material, framework, mark_total")
+        .eq("id", practiceQuestionId.trim())
+        .maybeSingle();
+      if (pqError) throw pqError;
+      if (pq == null) {
+        // Not this user's practice question (or gone) — reject without detail.
+        return fail(400, "invalid_request");
+      }
+      const row = pq as {
+        question: string;
+        source_material: string | null;
+        framework: string;
+        mark_total: number;
+      };
+      gradedQuestion = row.question;
+      sourceMaterial = row.source_material;
+      // Throws on an unsupported stored framework/total → generic failure.
+      policy = policyForGeneratedPractice({
+        framework: row.framework,
+        markTotal: row.mark_total,
+        sourceMaterial: row.source_material,
+      });
+    } catch (err) {
+      return failClosed(502, err);
+    }
+  } else {
+    // REVISION SOURCE RETENTION: when the client says this grade revises an
+    // earlier attempt, the parent row (RLS-scoped — another user's id, or a
+    // deleted parent, resolves to no row) is checked for a privately RETAINED
+    // manual source. When one exists it is used AUTHORITATIVELY: a revision
+    // compares work on the same question/context, so a client-supplied source
+    // can never silently replace the original. Parents without a stored
+    // source (pre-patch attempts) keep the one-time paste flow — the client's
+    // pasted source applies as before. The parent's SERVER-STORED framework is
+    // read too: it drives the revision source gate applied after policy
+    // resolution below.
+    let parentFramework: string | null = null;
+    const { parentAttemptId } = (body ?? {}) as Record<string, unknown>;
+    if (typeof parentAttemptId === "string" && parentAttemptId.trim() !== "") {
+      stage = "revision_context";
+      try {
+        const { data: parentRow, error: parentError } = await supabase
+          .from("attempts")
+          .select("id, source_material, assessment")
+          .eq("id", parentAttemptId.trim())
+          .maybeSingle();
+        if (parentError) throw parentError;
+        const row = parentRow as {
+          source_material?: string | null;
+          assessment?: { framework?: unknown } | null;
+        } | null;
+        const stored = row?.source_material;
+        if (typeof stored === "string" && stored.trim() !== "") {
+          sourceMaterial = stored;
+        }
+        parentFramework =
+          typeof row?.assessment?.framework === "string" ? row.assessment.framework : null;
+      } catch (err) {
+        return failClosed(502, err);
+      }
+    }
+
+    stage = "assessment_policy";
+    const { requestedSource, requestedTotal, templateId, requestedFramework } = (body ??
+      {}) as Record<string, unknown>;
+    policy = resolveScoringPolicy(q, {
+      requestedSource: parseRequestedSource(requestedSource),
+      requestedTotal: typeof requestedTotal === "number" ? requestedTotal : null,
+      templateId: typeof templateId === "string" ? templateId : null,
+      requestedFramework: parseFramework(requestedFramework),
+      sourceMaterial,
+    });
+    // Old-source revision gate: a revision of a source-dependent attempt can
+    // never resolve to a MARKED frame without usable source — that frame asks
+    // the model to mark a data-response answer with no text, which it cannot
+    // honestly satisfy. Source-backed, non-source, and feedback-only requests
+    // pass through unchanged.
+    policy = enforceRevisionSourceGate(policy, parentFramework, sourceMaterial);
+  }
 
   // Commit 1 is text-only: no image is ever sent to the model.
   const hasImageAttachment = false;
@@ -184,7 +276,7 @@ export async function POST(request: Request) {
             content: buildAssessmentUserInput(
               subject,
               t,
-              q,
+              gradedQuestion,
               a,
               rubric,
               hasImageAttachment,

@@ -36,11 +36,15 @@ const FRAMEWORK_CHOICE_LABELS: Partial<Record<AssessmentFramework, string>> = {
 export function PreflightChoice({
   preflight,
   disabled,
+  initialSourceFramework = null,
   onChoose,
   onEnterSourceStep,
 }: {
   preflight: PreflightResult;
   disabled: boolean;
+  /** Opens straight into the source step for this framework (e.g. a revision
+      whose original already confirmed a Paper 2(g)/3(b) format). */
+  initialSourceFramework?: AssessmentFramework | null;
   onChoose: (d: PreflightDecision) => void;
   /** Called when the compact source-material step becomes active (parent hides the bottom Grade CTA). */
   onEnterSourceStep?: () => void;
@@ -49,9 +53,11 @@ export function PreflightChoice({
   const [total, setTotal] = useState("");
   // A source-dependent framework, confirmed up front or picked from the choice.
   const [sourceFramework, setSourceFramework] = useState<AssessmentFramework | null>(
-    preflight.frameworkConfirmed && requiresSourceMaterial(preflight.framework)
-      ? preflight.framework
-      : null
+    initialSourceFramework !== null && requiresSourceMaterial(initialSourceFramework)
+      ? initialSourceFramework
+      : preflight.frameworkConfirmed && requiresSourceMaterial(preflight.framework)
+        ? preflight.framework
+        : null
   );
   const [source, setSource] = useState("");
 
@@ -85,7 +91,8 @@ export function PreflightChoice({
               This response needs the source text or data to receive an IB-style estimate.
             </p>
             <p className="mt-0.5 text-sm text-muted-foreground">
-              Paste the {label} source below (text only), or continue for feedback only.
+              Paste the {label} source below (text only), or continue for feedback only. The
+              source is stored privately with your attempt so a later revision can reuse it.
             </p>
           </div>
         </div>

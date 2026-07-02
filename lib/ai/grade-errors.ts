@@ -11,6 +11,8 @@
 
 export const GRADE_STAGES = [
   "assessment_policy",
+  "practice_context", // fetching the stored Aptly-generated question/source
+  "revision_context", // fetching the parent attempt's retained manual source
   "rate_limit",
   "openai",
   "structured_output",
@@ -74,6 +76,24 @@ export function safeErrorClass(err: unknown): string {
   return typeof err;
 }
 
+/**
+ * A safe DETAIL for logs, extracted ONLY from Aptly's own fail-closed
+ * validators, whose messages are code-authored constants naming the failing
+ * FIELD (e.g. "invalid grade result: assessableEarned") — never student text,
+ * model output, or provider payloads. Any other error yields null, so a
+ * quoted-text SyntaxError or raw API error can never leak through this path.
+ * Added after five schema_validation failures were undiagnosable because the
+ * log carried only the class "Error".
+ */
+const SAFE_VALIDATION_PREFIX = /^invalid (grade result|feedback|generated practice): [\w .-]{1,60}$/;
+
+export function safeValidationDetail(err: unknown): string | null {
+  if (err instanceof Error && SAFE_VALIDATION_PREFIX.test(err.message)) {
+    return err.message;
+  }
+  return null;
+}
+
 /** The exact production log event for a failed grade request. */
 export interface GradeFailureLog {
   event: "grade_request_failed";
@@ -82,6 +102,8 @@ export interface GradeFailureLog {
   errorClass: string;
   status: number;
   timestamp: string;
+  /** Present ONLY for Aptly's own constant validator messages (safe field names). */
+  detail?: string;
 }
 
 /**
@@ -97,6 +119,7 @@ export function buildGradeFailureLog(
   status: number,
   now: Date = new Date()
 ): GradeFailureLog {
+  const detail = safeValidationDetail(err);
   return {
     event: "grade_request_failed",
     requestId,
@@ -104,5 +127,6 @@ export function buildGradeFailureLog(
     errorClass: safeErrorClass(err),
     status,
     timestamp: now.toISOString(),
+    ...(detail !== null ? { detail } : {}),
   };
 }

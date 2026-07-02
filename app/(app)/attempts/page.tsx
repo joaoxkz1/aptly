@@ -9,7 +9,12 @@ import { Button } from "@/components/ui/button";
 import { MarkPill } from "@/components/assessment/mark-pill";
 import { useAttempts } from "@/lib/storage";
 import { SUBJECT_BADGE } from "@/lib/subjects";
-import { attemptMetaLine, topicDisplayLabel } from "@/lib/assessment/display";
+import {
+  APTLY_PRACTICE_LABEL,
+  REVISION_ATTEMPT_LABEL,
+  attemptMetaLine,
+  topicDisplayLabel,
+} from "@/lib/assessment/display";
 import {
   SOURCE_MATERIAL_MISSING_NOTICE,
   isSourceMaterialMissing,
@@ -84,6 +89,9 @@ export default function AttemptsPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{topicOf(a)}</span>
                     <Badge className={SUBJECT_BADGE[a.subject]}>{a.subject}</Badge>
+                    {/* Practice Loop provenance — concise, never hidden. */}
+                    {a.parentAttemptId != null && <Badge>{REVISION_ATTEMPT_LABEL}</Badge>}
+                    {a.practiceQuestionId != null && <Badge>{APTLY_PRACTICE_LABEL}</Badge>}
                   </div>
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">{attemptMetaLine(a)}</p>
                 </div>
@@ -154,8 +162,19 @@ export default function AttemptsPage() {
                     </div>
                   </div>
 
+                  {/* Act on this answer: revise it after feedback (Practice Loop). */}
+                  <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+                    <Link
+                      href={`/submit?revise=${a.id}`}
+                      className="inline-flex h-8 items-center gap-2 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted"
+                    >
+                      <PenLine className="h-3.5 w-3.5" />
+                      Revise this answer
+                    </Link>
+                  </div>
+
                   {/* Per-attempt deletion — student data control, deliberately quiet. */}
-                  <div className="mt-5 border-t border-border pt-4">
+                  <div className="mt-4 border-t border-border pt-4">
                     {pendingDeleteId === a.id ? (
                       <div
                         role="group"

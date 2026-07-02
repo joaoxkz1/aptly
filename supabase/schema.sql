@@ -2,6 +2,62 @@
 -- Safe to re-run (idempotent table, index, and policies).
 -- Paste into the Supabase SQL Editor and run.
 
+-- 0. Generated practice questions (Practice Loop) ---------------------------
+-- Created BEFORE attempts so the attempts FK below can reference it. One
+-- private row per Aptly-generated practice question; the generated source
+-- material (Paper 2(g)/3(b)) lives ONLY here and grading always reads it
+-- server-side — never a client-supplied copy.
+create table if not exists public.practice_questions (
+  id              uuid primary key default gen_random_uuid(),
+  user_id         uuid not null references auth.users (id) on delete cascade default auth.uid(),
+  created_at      timestamptz not null default now(),
+  question        text not null,
+  source_material text,
+  framework       text not null check (framework in (
+    'paper2_short_analytic',
+    'paper1a_10_mark',
+    'paper1b_15_mark',
+    'paper2g_15_mark',
+    'paper3b_10_mark',
+    'generic_practice'
+  )),
+  mark_total      integer not null check (mark_total between 1 and 60),
+  topic_code      text not null,
+  topic_label     text not null,
+  skill           text not null,
+  why             text not null
+);
+
+create index if not exists practice_questions_user_created_idx
+  on public.practice_questions (user_id, created_at desc);
+
+alter table public.practice_questions enable row level security;
+
+revoke all on table public.practice_questions from anon;
+grant select, insert, delete on table public.practice_questions to authenticated;
+
+drop policy if exists "select_own_practice_questions" on public.practice_questions;
+drop policy if exists "insert_own_practice_questions" on public.practice_questions;
+drop policy if exists "delete_own_practice_questions" on public.practice_questions;
+
+create policy "select_own_practice_questions"
+on public.practice_questions
+for select
+to authenticated
+using ((select auth.uid()) = user_id);
+
+create policy "insert_own_practice_questions"
+on public.practice_questions
+for insert
+to authenticated
+with check ((select auth.uid()) = user_id);
+
+create policy "delete_own_practice_questions"
+on public.practice_questions
+for delete
+to authenticated
+using ((select auth.uid()) = user_id);
+
 -- 1. Table -----------------------------------------------------------------
 create table if not exists public.attempts (
   id           uuid primary key default gen_random_uuid(),
@@ -36,6 +92,16 @@ create table if not exists public.attempts (
   mark_total_source         text,
   recognized_template       text,
   eligible_for_core         boolean,
+  -- Practice Loop (see migrations/0003_practice_loop.sql): durable revision
+  -- link (deleting the original NULLs the link, never the revision) and the
+  -- Aptly-generated practice question this attempt answered.
+  parent_attempt_id         uuid references public.attempts (id) on delete set null,
+  practice_question_id      uuid references public.practice_questions (id) on delete set null,
+  -- Manual source retention (see migrations/0004_revision_source_retention.sql):
+  -- the pasted Paper 2(g)/3(b) source this attempt was graded against, stored
+  -- privately (per-user RLS) so revisions reuse it automatically. NULL for
+  -- every non-source attempt; Aptly-GENERATED sources stay in practice_questions.
+  source_material           text,
   constraint attempts_marks_chk check (
     marks_available is null
     or (
@@ -61,6 +127,13 @@ create index if not exists attempts_user_scoring_state_idx
 create index if not exists attempts_user_created_idx
   on public.attempts (user_id, created_at desc);
 
+-- Practice Loop indexes (revision chains + generated-practice links).
+create index if not exists attempts_user_parent_idx
+  on public.attempts (user_id, parent_attempt_id);
+
+create index if not exists attempts_practice_question_idx
+  on public.attempts (practice_question_id);
+
 -- 3. Row Level Security ----------------------------------------------------
 alter table public.attempts enable row level security;
 
@@ -78,11 +151,58 @@ for select
 to authenticated
 using ((select auth.uid()) = user_id);
 
+-- Insert may only link the user's OWN prior attempt / practice question
+-- (foreign keys alone do not enforce ownership — FK checks bypass RLS).
+--
+-- The ownership checks live in SECURITY DEFINER functions, NOT inline
+-- subqueries: a policy on attempts that selects from attempts is rejected by
+-- PostgreSQL at query-rewrite time ("infinite recursion detected in policy
+-- for relation") and would break EVERY insert — including revision saves.
+-- Function bodies are opaque to the rewriter and enforce the identical rule.
+create or replace function public.owns_attempt(p_attempt_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.attempts a
+    where a.id = p_attempt_id
+      and a.user_id = (select auth.uid())
+  );
+$$;
+
+create or replace function public.owns_practice_question(p_question_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.practice_questions q
+    where q.id = p_question_id
+      and q.user_id = (select auth.uid())
+  );
+$$;
+
+revoke all on function public.owns_attempt(uuid) from public, anon;
+revoke all on function public.owns_practice_question(uuid) from public, anon;
+grant execute on function public.owns_attempt(uuid) to authenticated;
+grant execute on function public.owns_practice_question(uuid) to authenticated;
+
 create policy "insert_own_attempts"
 on public.attempts
 for insert
 to authenticated
-with check ((select auth.uid()) = user_id);
+with check (
+  (select auth.uid()) = user_id
+  and (parent_attempt_id is null or public.owns_attempt(parent_attempt_id))
+  and (practice_question_id is null or public.owns_practice_question(practice_question_id))
+);
 
 create policy "update_own_attempts"
 on public.attempts

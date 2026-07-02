@@ -6,7 +6,7 @@ import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { shortSkillLabel, topicShortLabel } from "@/lib/assessment/display";
+import { nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
 
 /**
@@ -22,6 +22,8 @@ export function NextFocusCard({
   variant?: "hero" | "section";
 }) {
   const nf = insights.nextFocus;
+  // Evidence-aware wording (shared with the practice "Why this question?").
+  const focusCopy = nf !== null ? nextFocusPresentation(nf) : null;
   const [showWhy, setShowWhy] = useState(false);
   const titleSize = variant === "hero" ? "text-xl md:text-2xl" : "text-base";
 
@@ -33,16 +35,19 @@ export function NextFocusCard({
           <span className="text-xs font-semibold uppercase tracking-wider">Your next focus</span>
         </div>
 
-        {nf !== null ? (
+        {nf !== null && focusCopy !== null ? (
           <>
-            {/* Lead with the skill, then the topic context. */}
-            <h2 className={cn(titleSize, "font-semibold tracking-tight")}>
-              Weakest skill: {shortSkillLabel(nf.skillLabel)}
-            </h2>
+            {/* Lead with the skill, then the topic context. The heading and
+                claim strength come from the ONE evidence-aware helper, so a
+                single-answer focus is honestly "Early focus to test". */}
+            <h2 className={cn(titleSize, "font-semibold tracking-tight")}>{focusCopy.heading}</h2>
             <p className="text-sm font-medium text-muted-foreground" title={nf.topicLabel}>
               Most visible in {topicShortLabel(nf.topicCode)}
             </p>
-            <p className="max-w-prose text-sm text-muted-foreground">{nf.explanation}</p>
+            {focusCopy.evidenceLine !== null && (
+              <p className="text-xs text-muted-foreground">{focusCopy.evidenceLine}</p>
+            )}
+            <p className="max-w-prose text-sm text-muted-foreground">{focusCopy.explanation}</p>
 
             {nf.whyThis !== null && (
               <div>
@@ -65,6 +70,13 @@ export function NextFocusCard({
 
             <div className="mt-1 flex flex-wrap items-center gap-3">
               <Badge>{nf.confidenceTier}</Badge>
+              {/* The loop's one clear next action: Aptly writes the question. */}
+              <Link
+                href="/practice"
+                className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+              >
+                Practice this focus <ArrowRight className="h-4 w-4" />
+              </Link>
               <Link
                 href="/submit"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"

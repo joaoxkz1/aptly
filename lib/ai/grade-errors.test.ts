@@ -8,6 +8,7 @@ import {
   clientGradeErrorMessage,
   clientMessageForGradeFailure,
   safeErrorClass,
+  safeValidationDetail,
   supportReference,
   type GradeStage,
 } from "./grade-errors";
@@ -102,5 +103,33 @@ describe("buildGradeFailureLog — production-safe structured event", () => {
     );
     expect(safeErrorClass("boom")).toBe("string");
     expect(safeErrorClass(undefined)).toBe("undefined");
+  });
+
+  it("adds the safe validator FIELD as detail — only for code-authored constant messages", () => {
+    const log = buildGradeFailureLog(
+      "schema_validation" as GradeStage,
+      "req-123",
+      new Error("invalid grade result: assessableEarned"),
+      502,
+      new Date("2026-07-01T12:00:00.000Z")
+    );
+    expect(log.detail).toBe("invalid grade result: assessableEarned");
+  });
+
+  it("never carries a detail for messages that could quote student or model text", () => {
+    for (const err of [
+      new Error(`model rejected: ${STUDENT_ANSWER}`),
+      new SyntaxError(`Unexpected token in "${STUDENT_ANSWER}"`),
+      // A hostile shape mimicking the prefix but smuggling long/quoted content.
+      new Error(`invalid grade result: ${STUDENT_ANSWER}, plus "quoted text" and more`),
+      new Error("invalid feedback: " + "x".repeat(200)),
+      "boom",
+      undefined,
+    ]) {
+      expect(safeValidationDetail(err)).toBeNull();
+      const log = buildGradeFailureLog("schema_validation" as GradeStage, "req-1", err, 502);
+      expect(log).not.toHaveProperty("detail");
+      expect(JSON.stringify(log)).not.toContain(STUDENT_ANSWER);
+    }
   });
 });

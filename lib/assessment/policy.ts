@@ -1,4 +1,5 @@
 import type { AssessmentFramework, MarkTotalSource, RubricTemplateId, ScoringState } from "@/lib/types";
+import { ASSESSMENT_FRAMEWORKS } from "./taxonomy";
 import { isValidMarkTotal, runPreflight, type PreflightResult } from "./preflight";
 import { matchTemplate, templateById, type RubricTemplate } from "./templates";
 import { frameworkPolicy, requiresSourceMaterial, type MarkingMethod } from "./frameworks";
@@ -179,6 +180,95 @@ function applySourceRequirement(policy: ScoringPolicy, sourceMaterial: string | 
     sourceMaterialProvided: false,
     selectedQuestionPart: policy.selectedQuestionPart,
   };
+}
+
+/**
+ * Server-authoritative REVISION source gate (old-source revision fix).
+ *
+ * When a grade revises an attempt whose SERVER-STORED framework is a
+ * source-dependent Paper 2(g)/3(b), no client input may produce a marked
+ * frame without usable source material — however the client phrased the
+ * request (a user-confirmed total resolves to a generic marked frame with no
+ * source gate of its own, which would ask the model to mark a data-response
+ * answer without its text: an impossible frame it fails). With the parent's
+ * framework as ground truth, a source-less request is downgraded to an honest
+ * feedback-only policy that RETAINS the paper framework for the header.
+ * Requests with usable source (stored or re-pasted), non-source parents, and
+ * already-feedback-only policies pass through untouched.
+ */
+export function enforceRevisionSourceGate(
+  policy: ScoringPolicy,
+  parentFramework: string | null,
+  sourceMaterial: string | null
+): ScoringPolicy {
+  if (parentFramework == null) return policy;
+  if (!(ASSESSMENT_FRAMEWORKS as readonly string[]).includes(parentFramework)) return policy;
+  const framework = parentFramework as AssessmentFramework;
+  if (!requiresSourceMaterial(framework)) return policy;
+  if (policy.scoringState === "feedback_only") return policy;
+  if (hasUsableSourceMaterial(sourceMaterial)) return policy;
+
+  return {
+    scoringState: "feedback_only",
+    markTotalSource: "unknown",
+    framework, // retained so the header can say "Paper 3(b) feedback only"
+    markingMethod: "holistic_practice",
+    bestFit: false,
+    total: null,
+    assessable: null,
+    cappedDiagramMarks: 0,
+    recognizedTemplate: null,
+    capReason: null,
+    sourceMaterialProvided: false,
+    selectedQuestionPart: policy.selectedQuestionPart,
+  };
+}
+
+/**
+ * Server-authoritative policy for an Aptly-GENERATED practice question. The
+ * framework and total come from the user's own private practice_questions row
+ * (validated at generation time) — never from client text or the model. The
+ * source requirement still applies: a source-dependent framework without its
+ * stored generated source degrades to feedback-only exactly like a pasted
+ * question. Throws on any unsupported framework/total so the grade route
+ * fails closed rather than marking an unvetted frame.
+ */
+export function policyForGeneratedPractice(input: {
+  framework: string;
+  markTotal: number;
+  sourceMaterial: string | null;
+}): ScoringPolicy {
+  const framework = input.framework as AssessmentFramework;
+  const supported: readonly string[] = [
+    "paper2_short_analytic",
+    "paper1a_10_mark",
+    "paper1b_15_mark",
+    "paper2g_15_mark",
+    "paper3b_10_mark",
+    "generic_practice",
+  ];
+  if (!supported.includes(input.framework)) {
+    throw new Error("unsupported generated-practice framework");
+  }
+  if (!isValidMarkTotal(input.markTotal)) {
+    throw new Error("invalid generated-practice mark total");
+  }
+  const entry = frameworkPolicy(framework);
+  const policy: ScoringPolicy = {
+    scoringState: "marked",
+    markTotalSource: "explicit", // the generated question states its total explicitly
+    framework,
+    markingMethod: entry.markingMethod,
+    bestFit: entry.showBestFitBands,
+    total: input.markTotal,
+    assessable: input.markTotal,
+    cappedDiagramMarks: 0, // generated questions never depend on a diagram
+    recognizedTemplate: null,
+    capReason: null,
+    sourceMaterialProvided: null,
+    selectedQuestionPart: null,
+  };
+  return applySourceRequirement(policy, input.sourceMaterial);
 }
 
 /**
