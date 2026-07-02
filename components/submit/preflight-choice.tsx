@@ -37,6 +37,7 @@ export function PreflightChoice({
   preflight,
   disabled,
   initialSourceFramework = null,
+  initialSource = null,
   onChoose,
   onEnterSourceStep,
 }: {
@@ -45,6 +46,10 @@ export function PreflightChoice({
   /** Opens straight into the source step for this framework (e.g. a revision
       whose original already confirmed a Paper 2(g)/3(b) format). */
   initialSourceFramework?: AssessmentFramework | null;
+  /** Candidate source text extracted from an attached photo (Aptly Scan). It
+      only SEEDS the editable source box — the student still reviews it here
+      before any source-based grading, exactly like a manual paste. */
+  initialSource?: string | null;
   onChoose: (d: PreflightDecision) => void;
   /** Called when the compact source-material step becomes active (parent hides the bottom Grade CTA). */
   onEnterSourceStep?: () => void;
@@ -59,7 +64,10 @@ export function PreflightChoice({
         ? preflight.framework
         : null
   );
-  const [source, setSource] = useState("");
+  const [source, setSource] = useState(initialSource?.trim() ?? "");
+  // Whether the box was seeded from a scanned photo (shown once; the text
+  // stays fully editable and the student must still choose to grade with it).
+  const scanSeeded = (initialSource?.trim() ?? "") !== "";
 
   const isInference = preflight.kind === "inference";
   const needsFramework =
@@ -94,6 +102,11 @@ export function PreflightChoice({
               Paste the {label} source below (text only), or continue for feedback only. The
               source is stored privately with your attempt so a later revision can reuse it.
             </p>
+            {scanSeeded && (
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                This source text was read from your photo — check and edit it before grading.
+              </p>
+            )}
           </div>
         </div>
         <Textarea

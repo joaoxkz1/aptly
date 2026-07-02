@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, CircleAlert, History, Loader2, PenLine, Wand2 } from "lucide-react";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
+import { ScanAttachment } from "@/components/submit/scan-attachment";
+import type { ExtractionFill } from "@/lib/scan/apply-extraction";
 import {
   DEFAULT_TOTAL_OVERRIDE,
   MarkTotalNotice,
@@ -96,6 +98,13 @@ function SubmitPageInner({
   const [totalOverride, setTotalOverride] = useState<DetectedTotalOverride>(DEFAULT_TOTAL_OVERRIDE);
   // Collapsed reference area (revision mode): original answer + feedback.
   const [showOriginal, setShowOriginal] = useState(false);
+  // Aptly Scan: candidate source text read from an attached photo. It only
+  // seeds the existing source-material step (still reviewed/edited there) —
+  // it never bypasses the source gate and is cleared with the photo.
+  const [stagedSource, setStagedSource] = useState<string | null>(null);
+  // True while a scan extraction is in flight — grading pauses so the scanned
+  // text is always reviewable before the grade call.
+  const [scanReading, setScanReading] = useState(false);
 
   // --- Revision mode --------------------------------------------------------
   // The original attempt being revised (from the user's own saved attempts).
@@ -160,6 +169,32 @@ function SubmitPageInner({
   const persistingRef = useRef(false);
   const savedIdRef = useRef<string | null>(null);
 
+  // Aptly Scan reads the LATEST field values when its response arrives (the
+  // student may keep typing while the image is read) — a ref avoids handing
+  // the in-flight request a stale snapshot.
+  const scanFieldsRef = useRef({ question: "", answer: "", stagedSource: null as string | null });
+  scanFieldsRef.current = {
+    question: fixedQuestion === null ? typedQuestion : "",
+    answer,
+    stagedSource,
+  };
+  const getScanFields = useCallback(() => scanFieldsRef.current, []);
+
+  // Apply an extraction fill: ONLY empty fields change (computed in
+  // lib/scan/apply-extraction.ts). Filling the question invalidates pending
+  // preflight state exactly like manual typing does.
+  function handleScanFill(fill: ExtractionFill) {
+    if (fill.question !== null) {
+      setTypedQuestion(fill.question);
+      setPreflight(null);
+      setSourceStep(false);
+      setSourceFrameworkHint(null);
+      setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+    }
+    if (fill.answer !== null) setAnswer(fill.answer);
+    if (fill.stagedSource !== null) setStagedSource(fill.stagedSource);
+  }
+
   function fillSample() {
     if (
       (typedQuestion.trim() !== "" || answer.trim() !== "") &&
@@ -204,6 +239,9 @@ function SubmitPageInner({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (inFlight.current || grading) return;
+    // A scan is still being read: grading waits so the student always reviews
+    // the extracted text before the grade call.
+    if (scanReading) return;
 
     const q = question.trim();
     const a = answer.trim();
@@ -360,6 +398,7 @@ function SubmitPageInner({
     setSourceStep(false);
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+    setStagedSource(null);
   }
 
   if (result !== null) {
@@ -606,6 +645,19 @@ function SubmitPageInner({
               />
             </div>
 
+            {/* Aptly Scan: one understated attachment control — manual flow
+                only (revision/practice questions are fixed or server-owned,
+                so an attachment would have no honest function there). */}
+            {fixedQuestion === null && (
+              <ScanAttachment
+                disabled={grading || preflight !== null}
+                getFields={getScanFields}
+                onFill={handleScanFill}
+                onRemoved={() => setStagedSource(null)}
+                onReadingChange={setScanReading}
+              />
+            )}
+
             {error !== null && (
               <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
                 <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
@@ -620,6 +672,9 @@ function SubmitPageInner({
                 // From the submit decision: the framework the source step opened
                 // for (e.g. a revision's stored parent framework preference).
                 initialSourceFramework={sourceFrameworkHint}
+                // Candidate source read from an attached photo — it only seeds
+                // the editable source box; the student still reviews it here.
+                initialSource={stagedSource}
                 onChoose={(d) => void grade(d)}
                 onEnterSourceStep={() => setSourceStep(true)}
               />
@@ -630,7 +685,7 @@ function SubmitPageInner({
             {!sourceStep && (
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button type="submit" size="lg" disabled={grading || contextLoading}>
+                  <Button type="submit" size="lg" disabled={grading || contextLoading || scanReading}>
                     {grading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />

@@ -216,3 +216,37 @@ on public.attempts
 for delete
 to authenticated
 using ((select auth.uid()) = user_id);
+
+-- 4. Aptly Scan usage (see migrations/0005_scan_extraction_usage.sql) --------
+-- One NO-CONTENT row per successful scan extraction: the durable per-user
+-- daily cap for the image→text extraction route. Stores no image, no image
+-- reference, no file name, and no extracted text. Append-only (no
+-- update/delete grant) so a user cannot clear their own allowance.
+create table if not exists public.scan_extraction_usage (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users (id) on delete cascade default auth.uid(),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists scan_extraction_usage_user_created_idx
+  on public.scan_extraction_usage (user_id, created_at desc);
+
+alter table public.scan_extraction_usage enable row level security;
+
+revoke all on table public.scan_extraction_usage from anon;
+grant select, insert on table public.scan_extraction_usage to authenticated;
+
+drop policy if exists "select_own_scan_usage" on public.scan_extraction_usage;
+drop policy if exists "insert_own_scan_usage" on public.scan_extraction_usage;
+
+create policy "select_own_scan_usage"
+on public.scan_extraction_usage
+for select
+to authenticated
+using ((select auth.uid()) = user_id);
+
+create policy "insert_own_scan_usage"
+on public.scan_extraction_usage
+for insert
+to authenticated
+with check ((select auth.uid()) = user_id);

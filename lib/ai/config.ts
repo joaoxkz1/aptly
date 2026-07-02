@@ -41,6 +41,30 @@ export const DAILY_PRACTICE_GENERATION_LIMIT = 10;
 export const PRACTICE_MAX_OUTPUT_TOKENS = 2600;
 export const PRACTICE_REQUEST_TIMEOUT_MS = 45_000;
 
+// --- Aptly Scan (image → candidate text extraction) --------------------------
+// Extraction uses the SAME model as grading (one model everywhere this
+// release), in vision mode, for exactly one job: transcribing visible text
+// into candidate editable fields. It never marks, classifies, or persists.
+//
+// Separate durable per-user UTC-day cap: each SUCCESSFUL extraction records
+// one no-content row in scan_extraction_usage (see migration 0005) and the
+// route counts today's rows before the paid vision call. Failed validation,
+// failed model calls, and unreadable images never consume the allowance.
+export const DAILY_EXTRACTION_LIMIT = 10;
+// Transcription is perception, not judgement — low reasoning effort keeps the
+// call cheap while the output budget leaves room for a full transcribed page
+// (question + answer + source can approach 17k chars at the field caps).
+export const EXTRACTION_REASONING_EFFORT = "low" as const;
+export const EXTRACTION_MAX_OUTPUT_TOKENS = 5200;
+export const EXTRACTION_REQUEST_TIMEOUT_MS = 60_000;
+// Acceptance ceiling for the ORIGINAL selected file (client + server). The
+// client downscales/re-encodes before upload, so what actually reaches the
+// model is a ≤2048px JPEG — the 8 MB ceiling is an acceptance limit, not a
+// transport size.
+export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+// Client-side downscale target: longest dimension after processing.
+export const IMAGE_MAX_DIMENSION = 2048;
+
 // --- Subject scope ---------------------------------------------------------
 // v1 grades Economics only. Other subjects are intentionally not graded yet so
 // Aptly never gives weak/misleading feedback outside its designed subject.
