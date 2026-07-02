@@ -1,18 +1,30 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CircleAlert, History, Loader2, Wand2 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
+import {
+  DEFAULT_TOTAL_OVERRIDE,
+  MarkTotalNotice,
+  type DetectedTotalOverride,
+} from "@/components/submit/mark-total-notice";
 import type { Assessment, Attempt, Feedback } from "@/lib/types";
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, REQUEST_TIMEOUT_MS } from "@/lib/ai/config";
-import { runPreflight, type PreflightResult } from "@/lib/assessment/preflight";
+import {
+  isValidMarkTotal,
+  runPreflight,
+  MIN_MARK_TOTAL,
+  MAX_MARK_TOTAL,
+  type PreflightResult,
+} from "@/lib/assessment/preflight";
 import { requiresSourceMaterial } from "@/lib/assessment/status";
-import { clientGradeErrorMessage } from "@/lib/ai/grade-errors";
+import { recurringMistakeSummary } from "@/lib/assessment/readiness";
+import { clientGradeErrorMessage, clientMessageForGradeFailure } from "@/lib/ai/grade-errors";
 import { newId, useAttempts } from "@/lib/storage";
 
 const SAMPLE = {
@@ -23,7 +35,7 @@ const SAMPLE = {
 };
 
 export default function SubmitPage() {
-  const { addAttempt } = useAttempts();
+  const { attempts, addAttempt } = useAttempts();
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -36,6 +48,15 @@ export default function SubmitPage() {
   // True while the Paper 2(g)/3(b) source-material step is active — the bottom
   // "Grade my answer" CTA is hidden so the source-aware action is the only grade.
   const [sourceStep, setSourceStep] = useState(false);
+  // Pre-grade choice about a detected explicit total (change it / feedback-only).
+  const [totalOverride, setTotalOverride] = useState<DetectedTotalOverride>(DEFAULT_TOTAL_OVERRIDE);
+
+  // Live, deterministic detection so the student SEES the total Aptly found
+  // (and where) before grading — no silent first-regex-hit denominators.
+  const livePreflight = useMemo(
+    () => (question.trim() === "" ? null : runPreflight(question.trim())),
+    [question]
+  );
 
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
@@ -51,14 +72,12 @@ export default function SubmitPage() {
     }
     setQuestion(SAMPLE.question);
     setAnswer(SAMPLE.answer);
+    // Replacing the question invalidates any pending choice/override for it.
+    setPreflight(null);
+    setSourceStep(false);
+    setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
   }
 
-  function messageForStatus(status: number, code: string): string {
-    if (status === 401) return "Your session expired. Please sign in again.";
-    if (code === "too_long")
-      return "Your question or answer is too long. Please shorten it and try again.";
-    return clientGradeErrorMessage();
-  }
 
   // Saves exactly once per successful grading result; safe against rerenders,
   // retries, and repeated clicks. Never shows a false "saved" state.
@@ -77,8 +96,10 @@ export default function SubmitPage() {
     }
   }
 
-  // Step 1: validate and run the deterministic preflight. If an explicit total
-  // is in the text, grade immediately; otherwise surface the compact choice.
+  // Step 1: validate and run the deterministic preflight. A single explicit
+  // total (already shown to the student in the detection notice) grades
+  // immediately unless they overrode it; multiple distinct totals or a missing
+  // total surface the compact choice.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (inFlight.current || grading) return;
@@ -93,22 +114,58 @@ export default function SubmitPage() {
 
     setError(null);
     const pf = runPreflight(q);
-    // Grade immediately only when the total AND the marking framework are both
-    // safe to use. An ambiguous 10/15 total needs a compact framework choice; a
-    // Paper 2(g)/3(b) framework needs its source text/data first.
-    if (pf.kind === "explicit" && pf.frameworkConfirmed && !requiresSourceMaterial(pf.framework)) {
-      void grade({
-        requestedSource: "explicit",
-        requestedTotal: pf.total,
-        templateId: pf.templateId,
-        requestedFramework: null,
-        sourceMaterial: null,
-      });
-    } else {
-      // An explicit Paper 2(g)/3(b) opens straight into the source step.
-      setSourceStep(pf.frameworkConfirmed && requiresSourceMaterial(pf.framework));
-      setPreflight(pf);
+
+    if (pf.kind === "explicit") {
+      // The student's visible pre-grade override of the detected total.
+      if (totalOverride.mode === "feedback_only") {
+        void grade({
+          requestedSource: "feedback_only",
+          requestedTotal: null,
+          templateId: null,
+          requestedFramework: null,
+          sourceMaterial: null,
+        });
+        return;
+      }
+      if (totalOverride.mode === "custom") {
+        const parsed = Number.parseInt(totalOverride.total, 10);
+        if (!isValidMarkTotal(parsed)) {
+          setError(
+            `Enter a mark total between ${MIN_MARK_TOTAL} and ${MAX_MARK_TOTAL}, or use the detected total.`
+          );
+          return;
+        }
+        void grade({
+          requestedSource: "user_confirmed",
+          requestedTotal: parsed,
+          templateId: pf.templateId,
+          requestedFramework: null,
+          sourceMaterial: null,
+        });
+        return;
+      }
+      // Grade immediately only when the total AND the marking framework are both
+      // safe to use. An ambiguous 10/15 total needs a compact framework choice; a
+      // Paper 2(g)/3(b) framework needs its source text/data first.
+      if (pf.frameworkConfirmed && !requiresSourceMaterial(pf.framework)) {
+        void grade({
+          requestedSource: "explicit",
+          requestedTotal: pf.total,
+          templateId: pf.templateId,
+          requestedFramework: null,
+          sourceMaterial: null,
+        });
+        return;
+      }
     }
+
+    // Multiple distinct totals, an unconfirmed framework, a source-dependent
+    // framework, or no total at all → the compact choice decides before grading.
+    // An explicit Paper 2(g)/3(b) opens straight into the source step.
+    setSourceStep(
+      pf.kind === "explicit" && pf.frameworkConfirmed && requiresSourceMaterial(pf.framework)
+    );
+    setPreflight(pf);
   }
 
   // Step 2: grade with the resolved preflight decision. The server re-checks the
@@ -150,13 +207,16 @@ export default function SubmitPage() {
 
       if (!res.ok) {
         let code = "grading_failed";
+        let reference: string | null = null;
         try {
-          const body = (await res.json()) as { error?: string };
+          const body = (await res.json()) as { error?: string; reference?: string };
           if (typeof body.error === "string") code = body.error;
+          if (typeof body.reference === "string") reference = body.reference;
         } catch {
           // ignore parse failure; use default code
         }
-        setError(messageForStatus(res.status, code)); // fail closed: no result, nothing saved
+        // Fail closed: no result, nothing saved.
+        setError(clientMessageForGradeFailure(res.status, code, reference));
         return;
       }
 
@@ -201,6 +261,7 @@ export default function SubmitPage() {
     setAnswer("");
     setPreflight(null);
     setSourceStep(false);
+    setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
   }
 
   if (result !== null) {
@@ -215,6 +276,7 @@ export default function SubmitPage() {
         <FeedbackResult
           attempt={result}
           saveState={saveState}
+          recurring={recurringMistakeSummary(attempts)}
           onRetry={handleRetry}
           onTryAnother={handleTryAnother}
         />
@@ -236,17 +298,15 @@ export default function SubmitPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Submit an answer</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Paste an IB Economics question and your answer — Aptly detects the question type and
-          estimates the mark.
+          Paste your Economics question and answer. Aptly will identify the format and give you an
+          evidence-aware estimate.
         </p>
       </div>
 
+      {/* One purpose statement (the header above) — the card adds no repeated
+          instructions; contextual help appears only when detection needs it. */}
       <Card>
-        <CardHeader>
-          <CardTitle>Your submission</CardTitle>
-          <CardDescription>No setup needed — just the question and your response.</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-5">
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
               <Label htmlFor="question">Question</Label>
@@ -259,10 +319,24 @@ export default function SubmitPage() {
                   setQuestion(e.target.value);
                   setPreflight(null); // editing invalidates a pending preflight choice
                   setSourceStep(false);
+                  setTotalOverride(DEFAULT_TOTAL_OVERRIDE); // and any total override
                 }}
-                placeholder="e.g. Evaluate the use of indirect taxes to correct market failure. [15 marks]"
+                placeholder="Paste the full question, including any mark total or source text reference."
                 className="min-h-20"
               />
+              {/* Visible pre-grade detection: the total Aptly found (and where),
+                  with a small way to change it or choose feedback-only — no
+                  silent denominators, no forced extra click. */}
+              {livePreflight !== null && preflight === null && !grading && (
+                <div className="mt-2">
+                  <MarkTotalNotice
+                    preflight={livePreflight}
+                    override={totalOverride}
+                    onOverrideChange={setTotalOverride}
+                    disabled={grading}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
@@ -278,7 +352,7 @@ export default function SubmitPage() {
                 maxLength={MAX_ANSWER_CHARS}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Write your full answer here. Tip: define key terms, use a real-world example, and end with an evaluation."
+                placeholder="Write your answer here."
                 className="min-h-52"
               />
             </div>
@@ -302,21 +376,28 @@ export default function SubmitPage() {
             {/* Hide the generic Grade CTA while the source step is active so the
                 only grade action is "Grade with this source". */}
             {!sourceStep && (
-              <div className="flex flex-wrap items-center gap-3">
-                <Button type="submit" size="lg" disabled={grading}>
-                  {grading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Checking your answer…
-                    </>
-                  ) : (
-                    "Grade my answer"
-                  )}
-                </Button>
-                <Button type="button" variant="ghost" onClick={fillSample} disabled={grading}>
-                  <Wand2 className="h-4 w-4" />
-                  Fill with a sample answer
-                </Button>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button type="submit" size="lg" disabled={grading}>
+                    {grading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Checking your answer…
+                      </>
+                    ) : (
+                      "Grade my answer"
+                    )}
+                  </Button>
+                  {/* Quiet secondary affordance — not another instruction block. */}
+                  <Button type="button" variant="ghost" size="sm" onClick={fillSample} disabled={grading}>
+                    <Wand2 className="h-3.5 w-3.5" />
+                    Use a sample answer
+                  </Button>
+                </div>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Your response is sent to OpenAI for feedback and stored privately in Aptly. Avoid
+                  including personal information.
+                </p>
               </div>
             )}
 
@@ -331,7 +412,7 @@ export default function SubmitPage() {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Estimated AI study feedback for practice, not an official IB grade.
+        Aptly provides practice estimates, not official IB grades.
       </p>
     </div>
   );

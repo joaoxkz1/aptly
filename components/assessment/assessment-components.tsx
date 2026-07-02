@@ -4,15 +4,17 @@ import type { Attempt } from "@/lib/types";
 import { deriveScoringState } from "@/lib/assessment/status";
 
 /**
- * The recognised template's OFFICIAL component structure (IB Marking Fidelity).
- * Shown only for `paper2_four_mark_diagram_explain`, where the 2 written + 2
- * diagram split is genuinely the recognised allocation (unlike the internal
- * diagnostic categories). A text-only submission shows the diagram as 0/2 ·
- * Not submitted, so the total is the written marks out of the full total.
+ * The recognised template's component structure (IB Marking Fidelity). Shown
+ * whenever the recognised 4-mark diagram-explain structure applied — via the
+ * template framework OR a user-confirmed part that matched it (generic label
+ * retained) — where the 2 written + 2 diagram split is genuinely the
+ * recognised allocation (unlike the internal diagnostic categories). A
+ * text-only submission shows the diagram as 0/2 · Not submitted, so the total
+ * can never exceed the written component.
  */
 export function AssessmentComponents({ attempt }: { attempt: Attempt }) {
   const a = attempt.assessment;
-  if (a == null || a.framework !== "paper2_four_mark_diagram_explain") return null;
+  if (a == null || a.recognizedTemplate !== "four_mark_diagram_explain") return null;
   if (a.marksEarned == null || a.marksAssessable == null || a.marksAvailable == null) return null;
 
   const provisional = deriveScoringState(attempt) === "provisional";
@@ -22,7 +24,7 @@ export function AssessmentComponents({ attempt }: { attempt: Attempt }) {
     { label: "Written explanation", value: `${a.marksEarned} / ${a.marksAssessable}` },
     { label: "Diagram", value: `0 / ${diagramAvailable}`, note: "Not submitted" },
     {
-      label: provisional ? "Likely total" : "Total",
+      label: provisional ? "Likely total" : "Estimated total",
       value: `${a.marksEarned} / ${a.marksAvailable}`,
       emphasis: true,
     },

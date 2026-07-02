@@ -1,6 +1,5 @@
 import type { Assessment, AssessmentMarkBreakdownItem, Attempt, Confidence } from "@/lib/types";
 import {
-  ASSESSMENT_FORMAT_LABELS,
   ASSESSMENT_FRAMEWORK_LABELS,
   SYLLABUS_TOPIC_LABELS,
   SYLLABUS_TOPIC_SHORT_LABELS,
@@ -8,10 +7,6 @@ import {
 import { markPresentation } from "./status";
 
 /** Display helpers for assessment attempts (shared, no secret). */
-
-export function formatLabel(a: Assessment): string {
-  return ASSESSMENT_FORMAT_LABELS[a.assessmentFormat] ?? "Unclassified";
-}
 
 // --- IB Marking Fidelity: framework + diagnostic display -------------------
 
@@ -25,8 +20,9 @@ export interface FrameworkMeta {
 export function frameworkMeta(a: Assessment): FrameworkMeta {
   const f = a.framework;
   if (f == null) {
-    // Legacy attempt (no framework) — keep the old format · command line.
-    return { label: formatAndCommand(a), note: null };
+    // Legacy attempt (no framework): a neutral total-based label plus the
+    // command term — NEVER the model's guessed paper format.
+    return { label: `${frameworkShortLabel(a)} · ${a.commandTermLabel}`, note: null };
   }
   if (f === "generic_practice") {
     const total = a.marksAvailable;
@@ -93,6 +89,12 @@ export function frameworkShortLabel(a: Assessment): string {
       return "Paper 2(g) · 15-mark data response";
     case "paper3b_10_mark":
       return "Paper 3(b) · 10-mark recommendation";
+    case "paper2a_definition":
+      return total != null ? `Paper 2(a) · ${total}-mark definition` : "Paper 2(a) · definition";
+    case "paper2b_quantitative":
+      return total != null ? `Paper 2(b) · ${total}-mark quantitative` : "Paper 2(b) · quantitative";
+    case "paper3a_analytic":
+      return total != null ? `Paper 3(a) · ${total}-mark analytic` : "Paper 3(a) · analytic";
     case "paper2_four_mark_diagram_explain":
       return "4-mark diagram explanation";
     case "paper2_short_analytic":
@@ -117,6 +119,12 @@ export function frameworkFormatLabel(a: Assessment): string {
       return "Paper 2(g)";
     case "paper3b_10_mark":
       return "Paper 3(b)";
+    case "paper2a_definition":
+      return "Paper 2(a)";
+    case "paper2b_quantitative":
+      return "Paper 2(b)";
+    case "paper3a_analytic":
+      return "Paper 3(a)";
     case "paper2_four_mark_diagram_explain":
       return "4-mark diagram explanation";
     case "paper2_short_analytic":
@@ -146,11 +154,6 @@ export function diagramEvidenceNote(count: number): { title: string; body: strin
 
 export function confidenceLabel(c: Confidence): string {
   return c === "high" ? "High" : c === "medium" ? "Medium" : "Low";
-}
-
-/** "Paper 1 (b) · Discuss" — format then the free-text command label. */
-export function formatAndCommand(a: Assessment): string {
-  return `${formatLabel(a)} · ${a.commandTermLabel}`;
 }
 
 // --- Curated topic labels --------------------------------------------------
@@ -189,6 +192,31 @@ const SHORT_SKILL_LABELS: Record<string, string> = {
 /** A compact skill word for headings (canonical label unchanged elsewhere). */
 export function shortSkillLabel(label: string): string {
   return SHORT_SKILL_LABELS[label] ?? label;
+}
+
+// --- Estimate vocabulary (Pilot Trust) --------------------------------------
+// Aptly's marks are ALWAYS estimates — only the mark TOTAL (the denominator)
+// can be confirmed. Shared student-facing surfaces read these helpers instead
+// of hand-writing labels, so bare "confirmed marks" wording (which could imply
+// an externally verified IB mark) can never silently reappear.
+
+/** Dashboard microcopy directly on the Economics-level card. */
+export const LEVEL_ESTIMATE_DISCLAIMER = "Aptly practice estimate — not an IB grade prediction.";
+
+/** Dashboard stat-card title for topics backed by mark-estimate evidence. */
+export const TOPICS_WITH_ESTIMATES_TITLE = "Topics with mark-estimate evidence";
+
+/** Dashboard stat-card caption under the topics count. */
+export const TOPICS_WITH_ESTIMATES_CAPTION = "based on confirmed totals";
+
+/** "3 with confirmed totals" — the state-breakdown lead (weekly card). */
+export function withConfirmedTotalsLabel(n: number): string {
+  return `${n} with confirmed totals`;
+}
+
+/** "Based on 4 estimates with confirmed totals" — level-card evidence line. */
+export function basedOnEstimatesLabel(n: number): string {
+  return `Based on ${n} estimate${n === 1 ? "" : "s"} with confirmed totals`;
 }
 
 /**

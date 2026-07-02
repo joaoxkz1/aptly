@@ -6,6 +6,7 @@ import { buildSeedAttempts } from "./seed";
 import { createClient } from "./supabase/client";
 import {
   clearAttempts,
+  deleteAttempt,
   fetchAttempts,
   insertAttempt,
   seedAttempts,
@@ -72,6 +73,18 @@ export function useAttempts() {
     [supabase]
   );
 
+  const removeAttempt = useCallback(
+    // Awaitable: resolves only after the row is actually deleted, throws on
+    // failure. NEVER optimistic — the attempt disappears from the log,
+    // Dashboard, and Analytics only once the delete succeeds (the broadcast
+    // then resyncs every mounted hook), so a failed delete keeps it visible.
+    async (id: string): Promise<void> => {
+      await deleteAttempt(supabase, id);
+      broadcast();
+    },
+    [supabase]
+  );
+
   const clearAll = useCallback(() => {
     setAttempts([]);
     void (async () => {
@@ -94,7 +107,7 @@ export function useAttempts() {
     })();
   }, [supabase]);
 
-  return { attempts, ready, addAttempt, clearAll, resetDemo };
+  return { attempts, ready, addAttempt, removeAttempt, clearAll, resetDemo };
 }
 
 export function newId() {

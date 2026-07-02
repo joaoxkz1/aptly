@@ -1,14 +1,18 @@
 import type { AssessmentFramework, MarkTotalSource, RubricTemplateId, ScoringState } from "@/lib/types";
 import { isValidMarkTotal, runPreflight, type PreflightResult } from "./preflight";
-import { matchTemplate, templateById } from "./templates";
-import { isBestFitFramework } from "./bands";
-import { requiresSourceMaterial } from "./status";
+import { matchTemplate, templateById, type RubricTemplate } from "./templates";
+import { frameworkPolicy, requiresSourceMaterial, type MarkingMethod } from "./frameworks";
 
 // A recognised source paste must carry real content, not just a line of prose.
 export const MIN_SOURCE_MATERIAL_CHARS = 20;
+// A bare reference ("using the data provided") is not source material.
+export const MIN_SOURCE_MATERIAL_WORDS = 5;
 
 export function hasUsableSourceMaterial(source: string | null | undefined): boolean {
-  return typeof source === "string" && source.trim().length >= MIN_SOURCE_MATERIAL_CHARS;
+  if (typeof source !== "string") return false;
+  const t = source.trim();
+  if (t.length < MIN_SOURCE_MATERIAL_CHARS) return false;
+  return t.split(/\s+/).length >= MIN_SOURCE_MATERIAL_WORDS;
 }
 
 /**
@@ -18,8 +22,9 @@ export function hasUsableSourceMaterial(source: string | null | undefined): bool
  * Given the pasted question and the student's preflight choice, this decides —
  * with trusted deterministic logic, NEVER the model — whether the attempt is
  * marked/provisional/feedback-only, the denominator, the recognised IB marking
- * framework, and whether a recognised template caps the diagram marks. The
- * model later marks only the assessable portion within this frame.
+ * framework and marking method (from the canonical framework registry), and
+ * whether the recognised template caps the diagram marks. The model later
+ * marks only the assessable portion within this frame.
  */
 
 export type RequestedSource = MarkTotalSource | "feedback_only";
@@ -44,6 +49,8 @@ export interface ScoringPolicy {
   markTotalSource: MarkTotalSource;
   /** The server-derived IB marking framework. */
   framework: AssessmentFramework;
+  /** How the assessable marks are judged (canonical framework registry). */
+  markingMethod: MarkingMethod;
   /** True when the framework uses an IB best-fit markband model (10/15 papers). */
   bestFit: boolean;
   /** marksAvailable (full total); null only for feedback-only. */
@@ -56,12 +63,20 @@ export interface ScoringPolicy {
   capReason: string | null;
   /** true/false for Paper 2(g)/3(b); null for every other framework. */
   sourceMaterialProvided: boolean | null;
+  /**
+   * The question-part slice a user-confirmed total belongs to (multi-part
+   * pastes) — server-derived from its own detection, never client text. Used
+   * for template recognition and as the grading context so the model marks the
+   * selected part, not every part. Null when the whole paste is the question.
+   */
+  selectedQuestionPart: string | null;
 }
 
 const FEEDBACK_ONLY: ScoringPolicy = {
   scoringState: "feedback_only",
   markTotalSource: "unknown",
   framework: "generic_practice",
+  markingMethod: "holistic_practice",
   bestFit: false,
   total: null,
   assessable: null,
@@ -69,6 +84,7 @@ const FEEDBACK_ONLY: ScoringPolicy = {
   recognizedTemplate: null,
   capReason: null,
   sourceMaterialProvided: null,
+  selectedQuestionPart: null,
 };
 
 /** Resolve the framework: confirmed guess, else the student's confirmed choice. */
@@ -82,10 +98,14 @@ function resolveFramework(pf: PreflightResult, requestedFramework: AssessmentFra
 }
 
 /**
- * Resolve the authoritative policy. The question text is ground truth: an
- * explicit total always wins and is always "marked", regardless of the client.
- * Otherwise the student's preflight choice decides between a confirmed total
- * (marked), an accepted inference (provisional), or feedback-only.
+ * Resolve the authoritative policy. A conscious student choice is honored
+ * first when it is SAFE: feedback-only is the most conservative state, and a
+ * user-confirmed total is the student's own denominator (always kept generic,
+ * never a paper claim). Then a single trustworthy explicit total in the text
+ * wins and is "marked". A question with MULTIPLE distinct explicit totals —
+ * or only an uncertain citation-like bracket — is never marked from the first
+ * regex hit: without a conscious user-confirmed total (or feedback-only) it
+ * resolves to feedback-only.
  */
 export function resolveScoringPolicy(question: string, choice: PreflightChoice): ScoringPolicy {
   const pf = runPreflight(question);
@@ -93,15 +113,26 @@ export function resolveScoringPolicy(question: string, choice: PreflightChoice):
   let state: PolicyState;
   let source: MarkTotalSource;
   let total: number;
+  let selectedPart: string | null = null;
 
-  if (pf.kind === "explicit" && pf.total != null) {
-    state = "marked";
-    source = "explicit";
-    total = pf.total;
-  } else if (choice.requestedSource === "user_confirmed" && isValidMarkTotal(choice.requestedTotal)) {
+  if (choice.requestedSource === "feedback_only") {
+    return FEEDBACK_ONLY;
+  }
+
+  if (choice.requestedSource === "user_confirmed" && isValidMarkTotal(choice.requestedTotal)) {
     state = "marked";
     source = "user_confirmed";
     total = choice.requestedTotal;
+    // The selected part comes from the SERVER's own detection (never client
+    // text): the candidate slice whose total matches the confirmed choice.
+    // Only meaningful when the paste contains several detected parts.
+    if (pf.explicitTotals.length > 1) {
+      selectedPart = pf.explicitTotals.find((t) => t.marks === total)?.partText ?? null;
+    }
+  } else if (pf.kind === "explicit" && pf.total != null) {
+    state = "marked";
+    source = "explicit";
+    total = pf.total;
   } else if (
     choice.requestedSource === "template_inferred" &&
     pf.kind === "inference" &&
@@ -118,7 +149,7 @@ export function resolveScoringPolicy(question: string, choice: PreflightChoice):
   const framework =
     source === "user_confirmed" ? "generic_practice" : resolveFramework(pf, choice.requestedFramework);
 
-  const policy = buildPolicy(question, choice.templateId, state, source, total, framework);
+  const policy = buildPolicy(question, selectedPart, choice.templateId, state, source, total, framework);
   return applySourceRequirement(policy, choice.sourceMaterial);
 }
 
@@ -138,6 +169,7 @@ function applySourceRequirement(policy: ScoringPolicy, sourceMaterial: string | 
     scoringState: "feedback_only",
     markTotalSource: "unknown",
     framework: policy.framework, // retained so the header can say "Paper 2(g) feedback only"
+    markingMethod: "holistic_practice",
     bestFit: false,
     total: null,
     assessable: null,
@@ -145,40 +177,71 @@ function applySourceRequirement(policy: ScoringPolicy, sourceMaterial: string | 
     recognizedTemplate: null,
     capReason: null,
     sourceMaterialProvided: false,
+    selectedQuestionPart: policy.selectedQuestionPart,
   };
 }
 
 /**
- * Assemble the final policy. The recognised 4-mark diagram framework caps its
- * diagram marks (text-only release → no assessable diagram). Every other
- * framework is fully assessable — an essay is NEVER capped for a missing diagram.
+ * The recognised 4-mark diagram-explain component policy applies when either
+ * the framework itself is the recognised structure, or a user-confirmed
+ * total's own SELECTED question part matches the template. In the second case
+ * the generic-practice label is retained — the 2+2 cap is a structural fact,
+ * not a paper claim — so a multi-part paste where the student picks the
+ * 4-mark diagram part is still capped at its written component.
+ */
+function resolveTemplate(
+  question: string,
+  selectedPart: string | null,
+  echoedTemplateId: string | null,
+  source: MarkTotalSource,
+  total: number,
+  framework: AssessmentFramework
+): RubricTemplate | null {
+  let template: RubricTemplate | null = null;
+  if (framework === "paper2_four_mark_diagram_explain") {
+    template = templateById(echoedTemplateId) ?? matchTemplate(question);
+  } else if (source === "user_confirmed") {
+    // Server-side matching ONLY (the echoed client id is never trusted here).
+    template = matchTemplate(selectedPart ?? question);
+  }
+  return template != null && total === template.totalMarks ? template : null;
+}
+
+/**
+ * Assemble the final policy from the canonical framework registry. The
+ * recognised 4-mark diagram framework caps its diagram marks (text-only
+ * release → no assessable diagram). Every other framework is fully assessable
+ * — an essay or an explicit-paper analytic part is NEVER capped for a missing
+ * diagram, and an explicit paper label (e.g. Paper 3(a)) never inherits the
+ * template.
  */
 function buildPolicy(
   question: string,
+  selectedPart: string | null,
   echoedTemplateId: string | null,
   state: PolicyState,
   source: MarkTotalSource,
   total: number,
   framework: AssessmentFramework
 ): ScoringPolicy {
-  const bestFit = isBestFitFramework(framework);
+  const entry = frameworkPolicy(framework);
+  const template = resolveTemplate(question, selectedPart, echoedTemplateId, source, total, framework);
 
-  if (framework === "paper2_four_mark_diagram_explain") {
-    const template = templateById(echoedTemplateId) ?? matchTemplate(question);
-    if (template != null && total === template.totalMarks) {
-      return {
-        scoringState: state,
-        markTotalSource: source,
-        framework,
-        bestFit,
-        total,
-        assessable: template.writtenMarks,
-        cappedDiagramMarks: template.diagramMarks,
-        recognizedTemplate: template.id,
-        capReason: template.capReason,
-        sourceMaterialProvided: null,
-      };
-    }
+  if (template != null) {
+    return {
+      scoringState: state,
+      markTotalSource: source,
+      framework,
+      markingMethod: "template_component",
+      bestFit: entry.showBestFitBands,
+      total,
+      assessable: template.writtenMarks,
+      cappedDiagramMarks: template.diagramMarks,
+      recognizedTemplate: template.id,
+      capReason: template.capReason,
+      sourceMaterialProvided: null,
+      selectedQuestionPart: selectedPart,
+    };
   }
 
   // No cap: everything is assessable.
@@ -186,12 +249,14 @@ function buildPolicy(
     scoringState: state,
     markTotalSource: source,
     framework,
-    bestFit,
+    markingMethod: entry.markingMethod,
+    bestFit: entry.showBestFitBands,
     total,
     assessable: total,
     cappedDiagramMarks: 0,
     recognizedTemplate: null,
     capReason: null,
     sourceMaterialProvided: null,
+    selectedQuestionPart: selectedPart,
   };
 }

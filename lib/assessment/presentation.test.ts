@@ -10,6 +10,7 @@ import {
   diagnosticSignalStrength,
   diagramEvidenceNote,
   frameworkFormatLabel,
+  frameworkMeta,
   frameworkShortLabel,
 } from "./display";
 import { buildLearningInsights, performanceByFormat } from "./readiness";
@@ -127,6 +128,36 @@ describe("B — framework-sourced labels never leak a model paper label", () => 
   it("frameworkFormatLabel maps confirmed papers and generic totals", () => {
     expect(frameworkFormatLabel(markedAssessment({ framework: "paper1a_10_mark", total: 10, earned: 7 }))).toBe("Paper 1(a)");
     expect(frameworkFormatLabel(markedAssessment({ framework: "generic_practice", total: 10, earned: 7 }))).toBe("10-mark practice");
+  });
+
+  it("analytic paper frameworks carry their confirmed labels", () => {
+    expect(frameworkShortLabel(markedAssessment({ framework: "paper2a_definition", total: 2, earned: 2 }))).toBe(
+      "Paper 2(a) · 2-mark definition"
+    );
+    expect(frameworkFormatLabel(markedAssessment({ framework: "paper2b_quantitative", total: 4, earned: 3 }))).toBe(
+      "Paper 2(b)"
+    );
+    expect(frameworkFormatLabel(markedAssessment({ framework: "paper3a_analytic", total: 4, earned: 3 }))).toBe(
+      "Paper 3(a)"
+    );
+  });
+
+  it("a LEGACY attempt (no framework) never leaks the model's paper format either", () => {
+    const a = markedAssessment({ framework: "generic_practice", total: 15, earned: 12, assessmentFormat: "paper_1_b" });
+    a.framework = undefined;
+    const meta = frameworkMeta(a);
+    expect(meta.label).toContain("15-mark response");
+    expect(meta.label).not.toContain("Paper 1");
+  });
+
+  it("regression: a user-confirmed 4-mark template keeps the generic practice label", () => {
+    const a = markedAssessment({ framework: "generic_practice", total: 4, earned: 2 });
+    a.recognizedTemplate = "four_mark_diagram_explain";
+    a.marksAssessable = 2;
+    const meta = frameworkMeta(a);
+    expect(meta.label).toBe("4-mark practice estimate");
+    expect(meta.note).toBe("Paper format not confirmed");
+    expect(meta.label).not.toContain("Paper 2");
   });
 });
 

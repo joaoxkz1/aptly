@@ -15,7 +15,14 @@ import { createClient } from "@/lib/supabase/client";
 import { readDisplayName } from "@/lib/auth/display-name";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
 import { buildLearningInsights, stateBreakdown } from "@/lib/assessment/readiness";
-import { attemptMetaLine, topicDisplayLabel, topicShortLabel } from "@/lib/assessment/display";
+import {
+  TOPICS_WITH_ESTIMATES_CAPTION,
+  TOPICS_WITH_ESTIMATES_TITLE,
+  attemptMetaLine,
+  topicDisplayLabel,
+  topicShortLabel,
+  withConfirmedTotalsLabel,
+} from "@/lib/assessment/display";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -51,6 +58,8 @@ export default function DashboardPage() {
   const heading = displayName ? `${greeting()}, ${displayName}` : "Welcome back";
 
   // Strong first-time state instead of empty charts / confusing zeroes.
+  // ONE clear call to action — the primary button below (the strongest of the
+  // two previously duplicated CTAs).
   if (ready && attempts.length === 0) {
     return (
       <div className="mx-auto flex max-w-2xl flex-col gap-6 py-6">
@@ -60,7 +69,6 @@ export default function DashboardPage() {
             Aptly learns your IB Economics patterns from every answer you grade.
           </p>
         </div>
-        <NextFocusCard insights={insights} variant="hero" />
         <Card>
           <CardContent className="flex flex-col items-start gap-3 p-6">
             <p className="text-sm text-muted-foreground">
@@ -110,14 +118,14 @@ export default function DashboardPage() {
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
               {ready
                 ? [
-                    `${weekly.confirmed} confirmed`,
+                    withConfirmedTotalsLabel(weekly.confirmed),
                     weekly.provisional > 0 ? `${weekly.provisional} provisional` : null,
                     weekly.feedbackOnly > 0 ? `${weekly.feedbackOnly} feedback-only` : null,
                     weekly.unscored > 0 ? `${weekly.unscored} earlier/unscored` : null,
                   ]
                     .filter(Boolean)
                     .join(" · ")
-                : "0 confirmed"}
+                : withConfirmedTotalsLabel(0)}
             </p>
           </CardContent>
         </Card>
@@ -148,15 +156,16 @@ export default function DashboardPage() {
           <CardContent className="p-5">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Layers className="h-4 w-4" />
-              <span className="text-xs font-medium">Topics with confirmed marks</span>
+              <span className="text-xs font-medium">{TOPICS_WITH_ESTIMATES_TITLE}</span>
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums">
               {ready ? insights.distinctTopics : "–"}
             </p>
             {/* All-time provisional/feedback-only context lives on the level card
                 (same time basis as the level); this card stays purely about
-                confirmed-mark topics so the counts never appear to mismatch. */}
-            <p className="mt-1 text-xs text-muted-foreground">with confirmed marks</p>
+                topics with confirmed-total estimates so the counts never appear
+                to mismatch. */}
+            <p className="mt-1 text-xs text-muted-foreground">{TOPICS_WITH_ESTIMATES_CAPTION}</p>
           </CardContent>
         </Card>
       </div>

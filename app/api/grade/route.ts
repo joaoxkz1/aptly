@@ -10,10 +10,18 @@ import {
   validateGradeResult,
 } from "@/lib/ai/assessment-schema";
 import { resolveScoringPolicy, type RequestedSource } from "@/lib/assessment/policy";
-import { GRADE_ERROR_CODE, gradeStageLog, type GradeStage } from "@/lib/ai/grade-errors";
+import {
+  DAILY_LIMIT_ERROR_CODE,
+  GRADE_ERROR_CODE,
+  buildGradeFailureLog,
+  supportReference,
+  type GradeStage,
+} from "@/lib/ai/grade-errors";
+import { dailyLimitReached, utcDayStartIso } from "@/lib/ai/rate-limit";
 import { ASSESSMENT_FRAMEWORKS } from "@/lib/assessment/taxonomy";
 import type { AssessmentFramework } from "@/lib/types";
 import {
+  DAILY_GRADE_LIMIT,
   GRADING_MODEL,
   MAX_ANSWER_CHARS,
   MAX_OUTPUT_TOKENS,
@@ -84,8 +92,13 @@ export async function POST(request: Request) {
   }
   // Optional source text/data for Paper 2(g)/3(b). Text only this release.
   const sourceRaw = (body ?? {}) as Record<string, unknown>;
-  const sourceMaterial =
+  let sourceMaterial =
     typeof sourceRaw.sourceMaterial === "string" ? sourceRaw.sourceMaterial.trim() : null;
+  // The student's answer is never source material — a re-paste of the answer
+  // into the source box must not unlock a confirmed data-response estimate.
+  if (sourceMaterial !== null && sourceMaterial === a) {
+    sourceMaterial = null;
+  }
   if (q.length > MAX_QUESTION_CHARS || a.length > MAX_ANSWER_CHARS) {
     return fail(400, "too_long");
   }
@@ -102,12 +115,42 @@ export async function POST(request: Request) {
     return fail(422, "subject_unsupported");
   }
 
-  // 3b. Server-authoritative scoring policy. The client's preflight choice is an
+  const requestId = crypto.randomUUID();
+  let stage: GradeStage = "rate_limit";
+
+  // Production-safe failure response: one structured log event (never the
+  // question, answer, source, email, id, key, or raw model output) plus a
+  // generic client code carrying a short non-secret support reference.
+  function failClosed(status: number, err: unknown) {
+    console.error(JSON.stringify(buildGradeFailureLog(stage, requestId, err, status)));
+    return NextResponse.json(
+      { error: GRADE_ERROR_CODE, reference: supportReference(requestId) },
+      { status }
+    );
+  }
+
+  // 3b. Pilot safety: per-user daily grading cap, checked BEFORE the paid model
+  // call. Counts the user's saved attempts since the start of the current UTC
+  // day (RLS scopes the count to the authenticated user; no new storage).
+  // Fails closed: if capacity cannot be verified, no model call is made.
+  try {
+    const { count, error: countError } = await supabase
+      .from("attempts")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", utcDayStartIso());
+    if (countError) throw countError;
+    if (dailyLimitReached(count ?? 0, DAILY_GRADE_LIMIT)) {
+      return fail(429, DAILY_LIMIT_ERROR_CODE);
+    }
+  } catch (err) {
+    return failClosed(502, err);
+  }
+
+  // 3c. Server-authoritative scoring policy. The client's preflight choice is an
   // input, but the question text is ground truth and this decides marked /
   // provisional / feedback-only, the marking framework, the denominator, and any
   // template diagram cap — never the model.
-  const requestId = crypto.randomUUID();
-  let stage: GradeStage = "assessment_policy";
+  stage = "assessment_policy";
   const { requestedSource, requestedTotal, templateId, requestedFramework } = (body ??
     {}) as Record<string, unknown>;
   const policy = resolveScoringPolicy(q, {
@@ -180,12 +223,10 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ feedback, assessment });
   } catch (err) {
-    // Server-only observability: the STAGE + a non-secret request id. Never the
-    // answer, key, email, or raw model output. Client sees only a generic code.
-    if (process.env.NODE_ENV !== "production") {
-      console.error(gradeStageLog(stage, requestId), err instanceof Error ? err.message : "error");
-    }
-    return fail(502, GRADE_ERROR_CODE);
+    // Server-only observability in EVERY environment: one structured event with
+    // the stage + non-secret request id, never the answer, key, email, or raw
+    // model output. The client sees only a generic code + support reference.
+    return failClosed(502, err);
   } finally {
     clearTimeout(timer);
   }

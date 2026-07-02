@@ -32,7 +32,7 @@ export function MarkBreakdown({ assessment }: { assessment: Assessment }) {
   if (items.length === 0) return null;
 
   const heading =
-    assessment.framework === "paper2_four_mark_diagram_explain"
+    assessment.recognizedTemplate === "four_mark_diagram_explain"
       ? "Aptly diagnostic feedback on your written explanation"
       : "Aptly diagnostic feedback";
 

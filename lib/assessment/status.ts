@@ -1,4 +1,9 @@
-import type { Assessment, AssessmentFramework, Attempt, Feedback, MistakeType, ScoringState } from "@/lib/types";
+import type { Assessment, Attempt, Feedback, MistakeType, ScoringState } from "@/lib/types";
+import { requiresSourceMaterial } from "./frameworks";
+
+// The source-material rule lives in the canonical framework registry; status
+// re-exports it so every existing consumer keeps one import path.
+export { requiresSourceMaterial };
 
 /**
  * A diagram Aptly cannot yet inspect is NOT a diagnosed student weakness. When
@@ -44,20 +49,30 @@ export function filterSourceDataFeedback(feedback: Feedback): Feedback {
   };
 }
 
-/**
- * Paper 2(g) and Paper 3(b) depend on supplied source text/data. Aptly must not
- * produce a confirmed mark for them unless the source material was actually
- * provided (`sourceMaterialProvided === true`). This gate is applied wherever a
- * status or eligibility is derived, so a source-less attempt — new OR pre-patch
- * — is treated as feedback-only and excluded from core analytics.
- */
-export function requiresSourceMaterial(framework: AssessmentFramework | undefined): boolean {
-  return framework === "paper2g_15_mark" || framework === "paper3b_10_mark";
-}
-
 /** True when a source-dependent framework attempt lacks its confirmed source. */
 export function isSourceMaterialMissing(a: Assessment): boolean {
   return requiresSourceMaterial(a.framework) && a.sourceMaterialProvided !== true;
+}
+
+/** The ONE guidance message every surface shows for a source-less Paper
+ *  2(g)/3(b) attempt — Feedback and the Learning log render this same copy. */
+export const SOURCE_MATERIAL_MISSING_NOTICE = {
+  title: "Data use unavailable",
+  body: "Paste the source text or data to receive feedback on how well you use it and an IB-style estimate for this framework.",
+} as const;
+
+/**
+ * THE canonical student-facing feedback for an attempt. Every surface that
+ * renders feedback content (feedback screen, Learning log) reads it through
+ * here — never `attempt.feedback` directly — so a source-less Paper 2(g)/3(b)
+ * attempt can never show source-data criticism on one page and not another.
+ */
+export function presentedFeedback(attempt: Attempt): Feedback {
+  const a = attempt.assessment;
+  if (a != null && isSourceMaterialMissing(a)) {
+    return filterSourceDataFeedback(attempt.feedback);
+  }
+  return attempt.feedback;
 }
 
 /**

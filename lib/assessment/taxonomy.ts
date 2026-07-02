@@ -51,12 +51,18 @@ export const RUBRIC_TEMPLATE_IDS = ["four_mark_diagram_explain"] as const;
 // preflight/context (explicit paper labels, recognised templates, or an
 // explicit user confirmation) — NEVER inferred by the model or from a command
 // term/raw total alone. Drives which markband model and UI are used.
+// There is NO universal rubric across totals: 10/15-mark papers are best-fit,
+// Paper 2(a)/(b) and Paper 3(a) are question-specific analytic, and only the
+// recognised Paper 2(c)–(f)-style diagram-explain uses a 2+2 component split.
 export const ASSESSMENT_FRAMEWORKS = [
   "paper2_short_analytic", // recognised short 1–2 mark response (definition/calc/diagram-read)
   "paper2_four_mark_diagram_explain", // recognised "using a named diagram, explain…" (2 written + 2 diagram)
+  "paper2a_definition", // explicit Paper 2(a) — question-specific analytic definition marking
+  "paper2b_quantitative", // explicit Paper 2(b) — question-specific quantitative/diagram task
   "paper1a_10_mark", // Paper 1(a) best-fit, 10 marks
   "paper1b_15_mark", // Paper 1(b) best-fit, 15 marks
   "paper2g_15_mark", // Paper 2(g) data-response best-fit, 15 marks
+  "paper3a_analytic", // explicit Paper 3(a) — variable-mark analytic subparts (never the 2+2 template)
   "paper3b_10_mark", // Paper 3(b) HL recommendation best-fit, 10 marks
   "generic_practice", // explicit/confirmed total but paper format NOT confirmed
 ] as const;
@@ -225,9 +231,12 @@ export const ASSESSMENT_FRAMEWORK_LABELS: Record<(typeof ASSESSMENT_FRAMEWORKS)[
   paper2_short_analytic: "Short response",
   // Recognised by structure, not an explicit Paper 2 label — never claim "Paper 2".
   paper2_four_mark_diagram_explain: "4-mark diagram explanation",
+  paper2a_definition: "Paper 2(a) · definition",
+  paper2b_quantitative: "Paper 2(b) · quantitative",
   paper1a_10_mark: "Paper 1(a) · 10-mark explanation",
   paper1b_15_mark: "Paper 1(b) · 15-mark extended response",
   paper2g_15_mark: "Paper 2(g) · 15-mark data response",
+  paper3a_analytic: "Paper 3(a) · analytic response",
   paper3b_10_mark: "Paper 3(b) · 10-mark recommendation",
   generic_practice: "Practice response",
 };

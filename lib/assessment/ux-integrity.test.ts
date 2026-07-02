@@ -2,11 +2,15 @@ import { describe, it, expect } from "vitest";
 import type { Assessment, Attempt, Feedback } from "@/lib/types";
 import { runPreflight } from "./preflight";
 import {
+  SOURCE_MATERIAL_MISSING_NOTICE,
   filterSourceDataFeedback,
   isSourceMaterialMissing,
+  mentionsSourceData,
+  presentedFeedback,
   requiresSourceMaterial,
 } from "./status";
-import { stateBreakdown } from "./readiness";
+import { buildLearningInsights, recurringMistakeSummary, stateBreakdown } from "./readiness";
+import type { MistakeType } from "@/lib/types";
 
 const BASE: Assessment = {
   version: 2,
@@ -163,5 +167,165 @@ describe("dashboard weekly state breakdown reconciles (no unexplained mismatch)"
     const b = stateBreakdown([a]);
     expect(b.confirmed).toBe(0);
     expect(b.feedbackOnly).toBe(1);
+  });
+});
+
+// --- 5. ONE canonical presented feedback for every surface -------------------
+
+describe("presentedFeedback — Feedback and Learning log can never contradict", () => {
+  const rawFeedback: Feedback = {
+    score: 0,
+    band: "",
+    strengths: ["Clear policy choice and rationale.", "You used the supplied data effectively."],
+    improvements: ["Quote the source to support your claims.", "Add a two-sided evaluation."],
+    mistakes: [],
+    examinerComment: "Refer to the figures in the extract when analysing the policy.",
+    studyNext: "Practise another policy question.",
+  };
+
+  it("a source-less Paper 2(g) attempt shows NO source-data criticism on any surface", () => {
+    const att = attempt(
+      mk({
+        framework: "paper2g_15_mark",
+        sourceMaterialProvided: undefined,
+        scoringState: "feedback_only",
+        eligibleForCoreAnalytics: false,
+        marksEarned: null,
+        marksAssessable: null,
+        marksAvailable: null,
+        markBreakdown: [],
+      })
+    );
+    att.feedback = rawFeedback;
+
+    // Both surfaces read THIS one function — identical output by construction.
+    const shown = presentedFeedback(att);
+    expect(shown).toEqual(filterSourceDataFeedback(rawFeedback));
+
+    const everything = [
+      ...shown.strengths,
+      ...shown.improvements,
+      shown.examinerComment,
+      shown.studyNext,
+    ].join(" ");
+    expect(mentionsSourceData(everything)).toBe(false);
+    expect(everything).not.toContain("Quote the source");
+    expect(everything).not.toContain("supplied data");
+    // Useful non-source feedback is preserved.
+    expect(shown.strengths).toContain("Clear policy choice and rationale.");
+    expect(shown.improvements).toContain("Add a two-sided evaluation.");
+  });
+
+  it("an ordinary attempt passes through unchanged", () => {
+    const att = attempt(mk());
+    att.feedback = rawFeedback;
+    expect(presentedFeedback(att)).toEqual(rawFeedback);
+  });
+
+  it("both surfaces share the exact same guidance copy", () => {
+    expect(SOURCE_MATERIAL_MISSING_NOTICE.title).toBe("Data use unavailable");
+    expect(SOURCE_MATERIAL_MISSING_NOTICE.body).toBe(
+      "Paste the source text or data to receive feedback on how well you use it and an IB-style estimate for this framework."
+    );
+  });
+});
+
+// --- 6. Per-attempt deletion: derived analytics recompute exactly ------------
+
+describe("per-attempt deletion refreshes every derived state", () => {
+  const before = [
+    attempt(mk(), "keep-1"),
+    attempt(mk({ syllabusTopic: "2.4", topicLabel: "Elasticities" }), "delete-me"),
+    attempt(
+      mk({
+        framework: "generic_practice",
+        scoringState: "feedback_only",
+        eligibleForCoreAnalytics: false,
+        marksEarned: null,
+        marksAssessable: null,
+        marksAvailable: null,
+        markBreakdown: [],
+      }),
+      "keep-2"
+    ),
+  ];
+  // The storage hook resyncs from the database after a successful delete —
+  // derived state is a pure function of the remaining attempts.
+  const after = before.filter((a) => a.id !== "delete-me");
+
+  it("removes exactly one attempt from the state breakdown", () => {
+    expect(stateBreakdown(before)).toEqual({
+      total: 3,
+      confirmed: 2,
+      provisional: 0,
+      feedbackOnly: 1,
+      unscored: 0,
+    });
+    expect(stateBreakdown(after)).toEqual({
+      total: 2,
+      confirmed: 1,
+      provisional: 0,
+      feedbackOnly: 1,
+      unscored: 0,
+    });
+  });
+
+  it("recomputes the canonical insights from the remaining attempts only", () => {
+    const insightsBefore = buildLearningInsights(before);
+    const insightsAfter = buildLearningInsights(after);
+    expect(insightsBefore.totalAttempts).toBe(3);
+    expect(insightsBefore.markedCount).toBe(2);
+    expect(insightsAfter.totalAttempts).toBe(2);
+    expect(insightsAfter.markedCount).toBe(1);
+    // The deleted attempt's topic no longer appears anywhere.
+    expect(insightsAfter.topicPerformance.some((t) => t.topicCode === "2.4")).toBe(false);
+  });
+});
+
+// --- 7. Recurring-pattern honesty --------------------------------------------
+
+describe("recurringMistakeSummary — one weakness is never a recurring pattern", () => {
+  function withMistakes(mistakes: MistakeType[], id: string): Attempt {
+    const a = attempt(mk(), id);
+    a.feedback = { ...a.feedback, mistakes };
+    return a;
+  }
+
+  it("fewer than 3 saved attempts → patterns are still building", () => {
+    const s = recurringMistakeSummary([
+      withMistakes(["Lack of evaluation"], "a1"),
+      withMistakes(["Lack of evaluation"], "a2"),
+    ]);
+    expect(s.state).toBe("building");
+    expect(s.patterns).toEqual([]);
+  });
+
+  it("3+ attempts with no issue repeated across 2 attempts → no pattern named", () => {
+    const s = recurringMistakeSummary([
+      withMistakes(["Lack of evaluation"], "a1"),
+      withMistakes(["Weak definitions"], "a2"),
+      withMistakes(["Unclear structure"], "a3"),
+    ]);
+    expect(s.state).toBe("none");
+    expect(s.patterns).toEqual([]);
+  });
+
+  it("a pattern is named only after 2+ distinct attempts show the same issue", () => {
+    const s = recurringMistakeSummary([
+      withMistakes(["Lack of evaluation"], "a1"),
+      withMistakes(["Lack of evaluation", "Weak definitions"], "a2"),
+      withMistakes(["No real-world example"], "a3"),
+    ]);
+    expect(s.state).toBe("patterns");
+    expect(s.patterns).toEqual([{ type: "Lack of evaluation", attempts: 2 }]);
+  });
+
+  it("repeats WITHIN one answer never count as recurring", () => {
+    const s = recurringMistakeSummary([
+      withMistakes(["Lack of evaluation", "Lack of evaluation"] as MistakeType[], "a1"),
+      withMistakes([], "a2"),
+      withMistakes([], "a3"),
+    ]);
+    expect(s.state).toBe("none");
   });
 });

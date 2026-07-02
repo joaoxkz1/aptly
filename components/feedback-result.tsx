@@ -19,7 +19,12 @@ import { MarkSummary } from "@/components/assessment/mark-summary";
 import { AssessmentComponents } from "@/components/assessment/assessment-components";
 import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
 import { SUBJECT_BADGE } from "@/lib/subjects";
-import { filterSourceDataFeedback, isSourceMaterialMissing } from "@/lib/assessment/status";
+import {
+  SOURCE_MATERIAL_MISSING_NOTICE,
+  isSourceMaterialMissing,
+  presentedFeedback,
+} from "@/lib/assessment/status";
+import type { RecurringMistakeSummary } from "@/lib/assessment/readiness";
 import type { Attempt } from "@/lib/types";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
@@ -27,19 +32,23 @@ export type SaveState = "idle" | "saving" | "saved" | "error";
 export function FeedbackResult({
   attempt,
   saveState,
+  recurring,
   onRetry,
   onTryAnother,
 }: {
   attempt: Attempt;
   saveState: SaveState;
+  /** Cross-attempt recurring-mistake summary (computed from saved attempts). */
+  recurring?: RecurringMistakeSummary;
   onRetry: () => void;
   onTryAnother: () => void;
 }) {
   const assessment = attempt.assessment ?? null;
-  // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness — strip
-  // any source-data corrective wording from the model's feedback.
+  // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness. The
+  // canonical presentation helper (shared with the Learning log) strips any
+  // source-data corrective wording from the model's feedback.
   const sourceMissing = assessment !== null && isSourceMaterialMissing(assessment);
-  const f = sourceMissing ? filterSourceDataFeedback(attempt.feedback) : attempt.feedback;
+  const f = presentedFeedback(attempt);
 
   return (
     <div className="flex flex-col gap-4">
@@ -71,16 +80,16 @@ export function FeedbackResult({
         </Card>
       )}
 
-      {/* Source-less data response: data use is unavailable, with a clear path */}
+      {/* Source-less data response: data use is unavailable, with a clear path
+          (the exact same notice the Learning log shows) */}
       {sourceMissing && (
         <Card className="border-border bg-muted/40">
           <CardContent className="flex items-start gap-3 p-5">
             <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
             <div>
-              <p className="text-sm font-semibold">Data use unavailable</p>
+              <p className="text-sm font-semibold">{SOURCE_MATERIAL_MISSING_NOTICE.title}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                Paste the source text or data to receive feedback on how well you use it and an
-                IB-style estimate for this framework.
+                {SOURCE_MATERIAL_MISSING_NOTICE.body}
               </p>
             </div>
           </CardContent>
@@ -135,7 +144,9 @@ export function FeedbackResult({
         </div>
       )}
 
-      {/* Recurring mistake patterns — compact success note when there are none */}
+      {/* Issues in THIS answer — single-answer evidence, honestly separated
+          from cross-attempt recurring patterns (one weakness is never called
+          "recurring"). */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -144,22 +155,41 @@ export function FeedbackResult({
             ) : (
               <CircleCheck className="h-4 w-4 text-emerald-500" />
             )}
-            Recurring mistake patterns
+            Issues in this answer
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          {f.mistakes.length > 0 ? (
-            f.mistakes.map((m) => (
-              <Badge
-                key={m}
-                className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300"
-              >
-                {m}
-              </Badge>
-            ))
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No recurring mistake pattern found in this answer.
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex flex-wrap gap-2">
+            {f.mistakes.length > 0 ? (
+              f.mistakes.map((m) => (
+                <Badge
+                  key={m}
+                  className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300"
+                >
+                  {m}
+                </Badge>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No specific issues flagged in this answer.
+              </p>
+            )}
+          </div>
+          {recurring && (
+            <p className="border-t border-border pt-2.5 text-xs leading-relaxed text-muted-foreground">
+              {recurring.state === "building" &&
+                "Patterns are building. Submit more answers before Aptly identifies recurring mistakes."}
+              {recurring.state === "none" && "No recurring mistake pattern found yet."}
+              {recurring.state === "patterns" && (
+                <>
+                  <span className="font-medium text-foreground">
+                    Recurring across your saved answers:
+                  </span>{" "}
+                  {recurring.patterns
+                    .map((p) => `${p.type} (${p.attempts} answers)`)
+                    .join(" · ")}
+                </>
+              )}
             </p>
           )}
         </CardContent>

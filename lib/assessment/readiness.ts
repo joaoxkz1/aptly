@@ -1,4 +1,4 @@
-import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel } from "@/lib/types";
+import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel, MistakeType } from "@/lib/types";
 import { ASSESSMENT_SKILLS, ASSESSMENT_SKILL_LABELS } from "./taxonomy";
 import { deriveScoringState, isCoreEligible } from "./status";
 import { frameworkFormatKey, frameworkFormatLabel, topicDisplayLabel } from "./display";
@@ -88,6 +88,40 @@ export function stateBreakdown(attempts: Attempt[]): StateBreakdown {
 
 function eligibleAttempts(attempts: Attempt[]): Attempt[] {
   return attempts.filter(isEligible);
+}
+
+// --- Recurring-pattern honesty ----------------------------------------------
+// One weakness is NEVER a recurring pattern. A pattern is named only after the
+// same issue is observed across at least MIN_PATTERN_REPEATS distinct saved
+// attempts, and only once at least MIN_ATTEMPTS_FOR_PATTERNS attempts exist.
+// (Unassessable-diagram mistakes were already stripped at grading time, so a
+// diagram Aptly cannot see can never surface here.)
+
+export const MIN_ATTEMPTS_FOR_PATTERNS = 3;
+export const MIN_PATTERN_REPEATS = 2;
+
+export interface RecurringMistakeSummary {
+  state: "building" | "none" | "patterns";
+  /** Named patterns, most frequent first; each counts DISTINCT attempts. */
+  patterns: { type: MistakeType; attempts: number }[];
+}
+
+export function recurringMistakeSummary(attempts: Attempt[]): RecurringMistakeSummary {
+  if (attempts.length < MIN_ATTEMPTS_FOR_PATTERNS) {
+    return { state: "building", patterns: [] };
+  }
+  const counts = new Map<MistakeType, number>();
+  for (const a of attempts) {
+    // Each attempt counts once per mistake type, however often it appears.
+    for (const m of new Set(a.feedback.mistakes)) {
+      counts.set(m, (counts.get(m) ?? 0) + 1);
+    }
+  }
+  const patterns = [...counts.entries()]
+    .filter(([, n]) => n >= MIN_PATTERN_REPEATS)
+    .map(([type, n]) => ({ type, attempts: n }))
+    .sort((a, b) => b.attempts - a.attempts);
+  return patterns.length > 0 ? { state: "patterns", patterns } : { state: "none", patterns: [] };
 }
 
 /** "Weighted practice mark NN%" — ratio of earned/assessable, mark- & recency-weighted. */

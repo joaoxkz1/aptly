@@ -2,15 +2,15 @@ import "server-only";
 import type { Subject } from "@/lib/types";
 
 /**
- * Assessment-aware Economics grading rubric for Aptly (version econ-v2).
+ * Assessment-aware Economics grading rubric for Aptly (version econ-v3).
  * Original Aptly-owned wording — paraphrased marking principles, NOT official
  * IB markscheme text. Outputs are ESTIMATED study feedback, never an official
  * IB grade. v1 supports Economics only; getRubric returns null otherwise.
  */
 
-export const ECONOMICS_RUBRIC_VERSION = "econ-v2";
+export const ECONOMICS_RUBRIC_VERSION = "econ-v3";
 
-const ECONOMICS_RUBRIC = `APTLY IB ECONOMICS RUBRIC — ${ECONOMICS_RUBRIC_VERSION}
+const ECONOMICS_RUBRIC: string = `APTLY IB ECONOMICS RUBRIC — ${ECONOMICS_RUBRIC_VERSION}
 Estimated study feedback for IB Economics practice. NOT official IB grading.
 
 SYLLABUS UNITS & TOPIC CODES (map the question to ONE code; use "unknown" if unclear):
@@ -65,21 +65,36 @@ HONESTY RULES (mandatory):
   official IB allocation). It does NOT need to sum to assessableEarned. Score each criterion the question genuinely tests.
 
 FRAMEWORK MARKING (Aptly tells you the framework in the MARKING FRAME — follow it):
+There is NO universal point allocation shared by every 2/4/10/15-mark question. Each framework below has its own method.
 - paper2_short_analytic (1–2 marks): analytic mini-markscheme. Reward an accurate definition/meaning even if the wording
   differs from a canonical one; for a calculation reward valid method, units, rounding and own-figure logic only where the
   question calls for it; do not demand an explanation the question does not ask for.
-- paper2_four_mark_diagram_explain: mark ONLY the written explanation (0–2). The diagram marks are excluded (no diagram
-  submitted). A strong written explanation with no diagram earns up to 2; never call it unmarkable.
-- paper1a_10_mark: Paper 1(a) best-fit — knowledge, relevant terminology, theory, answering the exact question, diagrams
-  where appropriate. No evaluation demanded.
-- paper1b_15_mark: Paper 1(b) best-fit — theory, terminology, real-world application, balanced two-sided evaluation, and a
-  supported final judgement. Diagrams considered where appropriate, not automatically required.
-- paper2g_15_mark: Paper 2(g) best-fit — requires appropriate use of the SUPPLIED text/data alongside theory, analysis and
-  balanced evaluation.
-- paper3b_10_mark: Paper 3(b) HL recommendation — requires a clear recommendation, economic theory, use of supplied
-  text/data, and balanced evaluation. This is NOT Paper 1(a).
+- paper2a_definition: Paper 2(a) analytic definition marking (typically 2 marks, 0/1/2). Accept an accurate description an
+  Economics educator would recognise as correct even when it is not word-for-word a textbook definition. No invented 1+1 split.
+- paper2b_quantitative: Paper 2(b) question-specific quantitative/diagram task. Credit valid method and workings, own-figure
+  logic carried forward from an earlier error, and units/rounding only where relevant. Accept relevant explanation where it
+  appropriately substitutes for annotations. NEVER impose a generic diagram-and-explanation 2+2 split.
+- paper2_four_mark_diagram_explain: the RECOGNISED 2 written + 2 diagram structure. Mark ONLY the written explanation (0–2);
+  the diagram marks are excluded (no diagram submitted). A theoretically correct causal explanation earns the written marks
+  even without a formal definition — suggest a precise definition only as an optional refinement. Never call it unmarkable.
+  Do not double-penalise one conceptual error twice.
+- paper1a_10_mark: Paper 1(a) best-fit (bands 1–2/3–4/5–6/7–8/9–10) — answers the exact question, accurate terminology,
+  depth of explanation, coherent analysis; diagrams only where relevant and necessary. No fixed diagram allocation. No
+  evaluation demanded.
+- paper1b_15_mark: Paper 1(b) best-fit (bands 1–3/4–6/7–9/10–12/13–15) — theory, genuine real-world application, analysis,
+  critical thinking, balanced synthesis/evaluation, supported judgement. Diagrams never universally compulsory.
+- paper2g_15_mark: Paper 2(g) data-response best-fit (bands 1–3/4–6/7–9/10–12/13–15) — theory, coherent analysis,
+  appropriate use of the SUPPLIED text/data, balanced evaluation, supported judgement. Data-use credit only when source
+  information builds arguments, never for restating the stimulus. No automatic diagram requirement for the top level.
+- paper3a_analytic: Paper 3(a) HL question-specific analytic subparts (variable totals, including some 4-mark explains).
+  Use the exact question's demands: method, own-figure logic, units, graph labels, workings where relevant. NEVER apply the
+  Paper 2 diagram-explain 2+2 template merely because the task is worth four marks. No universal diagram cap.
+- paper3b_10_mark: Paper 3(b) HL recommendation best-fit (bands 1–2/3–4/5–6/7–8/9–10) — five strands: appropriateness of the
+  recommended policy; how it addresses the stated problem; relevant accurate theory; effective use of supplied text/data;
+  balanced evaluation with a supported final judgement (alternatives, conditions, trade-offs, time lags, effectiveness).
+  This is NOT Paper 1(a).
 - generic_practice: paper format is not confirmed. Give an honest best-fit practice estimate out of the stated total; do not
-  assume a specific IB paper's markscheme.`;
+  assume a specific IB paper's markscheme and do not name any paper.`;
 
 export function getRubric(subject: Subject): string | null {
   if (subject === "Economics") return ECONOMICS_RUBRIC;

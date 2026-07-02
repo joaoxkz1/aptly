@@ -9,6 +9,9 @@ describe("isBestFitFramework", () => {
     expect(isBestFitFramework("paper3b_10_mark")).toBe(true);
     expect(isBestFitFramework("paper2_four_mark_diagram_explain")).toBe(false);
     expect(isBestFitFramework("paper2_short_analytic")).toBe(false);
+    expect(isBestFitFramework("paper2a_definition")).toBe(false);
+    expect(isBestFitFramework("paper2b_quantitative")).toBe(false);
+    expect(isBestFitFramework("paper3a_analytic")).toBe(false);
     expect(isBestFitFramework("generic_practice")).toBe(false);
   });
 });
@@ -39,9 +42,12 @@ describe("bestFitBand — 15-mark bands", () => {
 });
 
 describe("bestFitBand — no band for non-best-fit frameworks", () => {
-  it("returns null for the diagram template and generic practice", () => {
+  it("returns null for the diagram template, analytic parts, and generic practice", () => {
     expect(bestFitBand("paper2_four_mark_diagram_explain", 2)).toBeNull();
     expect(bestFitBand("generic_practice", 8)).toBeNull();
     expect(bestFitBand("paper2_short_analytic", 2)).toBeNull();
+    expect(bestFitBand("paper2a_definition", 2)).toBeNull();
+    expect(bestFitBand("paper2b_quantitative", 3)).toBeNull();
+    expect(bestFitBand("paper3a_analytic", 4)).toBeNull();
   });
 });

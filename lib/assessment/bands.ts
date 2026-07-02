@@ -32,6 +32,10 @@ const FRAMEWORK_BANDS: Record<AssessmentFramework, [number, number][] | null> = 
   paper2g_15_mark: FIFTEEN_MARK_BANDS,
   paper2_four_mark_diagram_explain: null,
   paper2_short_analytic: null,
+  // Question-specific analytic frameworks — no official markband display.
+  paper2a_definition: null,
+  paper2b_quantitative: null,
+  paper3a_analytic: null,
   generic_practice: null,
 };
 

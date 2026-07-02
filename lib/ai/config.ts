@@ -24,6 +24,12 @@ export const MAX_ANSWER_CHARS = 9000;
 export const MAX_OUTPUT_TOKENS = 4400;
 export const REQUEST_TIMEOUT_MS = 45_000;
 
+// --- Pilot safety ------------------------------------------------------------
+// Per-user daily grading cap: successful SAVED grades since the start of the
+// current UTC day (counted from the attempts table — no new storage).
+// Feedback-only grades count too; they use the same grading capacity.
+export const DAILY_GRADE_LIMIT = 30;
+
 // --- Subject scope ---------------------------------------------------------
 // v1 grades Economics only. Other subjects are intentionally not graded yet so
 // Aptly never gives weak/misleading feedback outside its designed subject.

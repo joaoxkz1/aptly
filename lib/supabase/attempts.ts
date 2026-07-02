@@ -96,6 +96,16 @@ export async function insertAttempt(
   if (error) throw error;
 }
 
+/**
+ * Delete ONE attempt by id. RLS ("delete_own_attempts") limits the delete to
+ * the current user's own row, so this can never touch another user's data.
+ * Throws on failure so callers never optimistically drop the row.
+ */
+export async function deleteAttempt(supabase: SupabaseClient, id: string): Promise<void> {
+  const { error } = await supabase.from(TABLE).delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function clearAttempts(supabase: SupabaseClient): Promise<void> {
   // RLS limits this delete to the current user's own rows.
   const { error } = await supabase.from(TABLE).delete().not("id", "is", null);

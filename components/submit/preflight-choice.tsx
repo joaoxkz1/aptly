@@ -133,6 +133,101 @@ export function PreflightChoice({
     );
   }
 
+  // Two or more distinct explicit totals (the paste likely contains several
+  // marked parts), or one citation-like bare bracket that needs confirmation.
+  // Aptly never auto-picks a total and never sums them — the student must
+  // consciously choose one total, type one, or go feedback-only.
+  if (preflight.kind === "multiple_explicit" || preflight.kind === "uncertain_total") {
+    const uncertain = preflight.kind === "uncertain_total";
+    return (
+      <div className="flex flex-col gap-3 rounded-xl border border-primary/25 bg-accent/40 p-4">
+        <div className="flex items-start gap-2">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
+          <div>
+            <p className="text-sm font-semibold">
+              {uncertain ? "Possible mark total detected" : "Multiple marked parts detected"}
+            </p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {uncertain
+                ? `Aptly found “${preflight.explicitTotals[0]?.matchedText}” in the question, but it could be a citation or reference. Confirm the total, enter a different one, or continue with feedback only.`
+                : "Choose the mark total for the part your answer addresses, or continue with feedback only. If your answer covers several parts together, the safest option is to paste just the part you answered — or continue with feedback only."}
+            </p>
+          </div>
+        </div>
+
+        {editing ? (
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="w-28">
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={MIN_MARK_TOTAL}
+                max={MAX_MARK_TOTAL}
+                autoFocus
+                value={total}
+                onChange={(e) => setTotal(e.target.value)}
+                placeholder="e.g. 15"
+                aria-label="Total marks"
+              />
+            </div>
+            <Button size="sm" onClick={confirmTotal} disabled={disabled || !validTotal}>
+              Grade out of {validTotal ? parsed : "…"}
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditing(false)} disabled={disabled}>
+              Back
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Detected mark totals">
+              {preflight.explicitTotals.map((t) => (
+                <Button
+                  key={t.marks}
+                  size="sm"
+                  variant="outline"
+                  disabled={disabled}
+                  onClick={() =>
+                    onChoose({
+                      requestedSource: "user_confirmed",
+                      requestedTotal: t.marks,
+                      templateId: null,
+                      requestedFramework: null,
+                      sourceMaterial: null,
+                    })
+                  }
+                >
+                  Use {t.marks} marks
+                  <span className="font-normal text-muted-foreground">· “{t.matchedText}”</span>
+                </Button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => setEditing(true)} disabled={disabled}>
+                Enter a different total
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={disabled}
+                onClick={() =>
+                  onChoose({
+                    requestedSource: "feedback_only",
+                    requestedTotal: null,
+                    templateId: null,
+                    requestedFramework: null,
+                    sourceMaterial: null,
+                  })
+                }
+              >
+                Continue with feedback only
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Framework confirmation for an ambiguous explicit 10/15 total.
   if (needsFramework) {
     return (

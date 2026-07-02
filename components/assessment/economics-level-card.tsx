@@ -1,5 +1,6 @@
 import { GraduationCap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { LEVEL_ESTIMATE_DISCLAIMER, basedOnEstimatesLabel } from "@/lib/assessment/display";
 import type { EconomicsLevel } from "@/lib/assessment/readiness";
 
 const TIER_LABEL: Record<"early" | "medium" | "high", string> = {
@@ -56,9 +57,10 @@ export function EconomicsLevelCard({
           <>
             <p className="mt-2 text-lg font-semibold leading-9">Building your baseline</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Based on {level.responses} confirmed mark estimate{level.responses === 1 ? "" : "s"}
+              {basedOnEstimatesLabel(level.responses)}
             </p>
             {note && <p className="mt-0.5 text-xs text-muted-foreground">{note}</p>}
+            <p className="mt-1 text-xs text-muted-foreground">{LEVEL_ESTIMATE_DISCLAIMER}</p>
           </>
         ) : (
           <>
@@ -67,8 +69,7 @@ export function EconomicsLevelCard({
             </p>
             <p className="mt-1 text-sm text-muted-foreground">{TIER_LABEL[level.state]}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Based on {level.responses} confirmed mark estimate{level.responses === 1 ? "" : "s"} ·{" "}
-              {level.assessedMarks} marks
+              {basedOnEstimatesLabel(level.responses)} · {level.assessedMarks} marks
             </p>
             {note && <p className="mt-0.5 text-xs text-muted-foreground">{note}</p>}
             {weightedPercent !== null && (
@@ -76,6 +77,7 @@ export function EconomicsLevelCard({
                 Weighted practice mark {weightedPercent}%
               </p>
             )}
+            <p className="mt-1 text-xs text-muted-foreground">{LEVEL_ESTIMATE_DISCLAIMER}</p>
           </>
         )}
       </CardContent>

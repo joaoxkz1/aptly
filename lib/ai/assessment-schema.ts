@@ -104,6 +104,19 @@ export const GRADE_RESULT_JSON_SCHEMA: Record<string, unknown> = {
   properties: SCHEMA_PROPERTIES,
 };
 
+// Concise, framework-specific best-fit focus (original policy summaries —
+// never verbatim official markscheme text). Only best-fit frameworks listed.
+const BEST_FIT_FOCUS: Partial<Record<ScoringPolicy["framework"], string>> = {
+  paper1a_10_mark:
+    "Paper 1(a) focus: answering the exact question asked, accurate relevant terminology, depth and accuracy of explanation, coherent analysis; credit diagrams only where they genuinely support the explanation — there is NO fixed diagram allocation and NO evaluation demanded.",
+  paper1b_15_mark:
+    "Paper 1(b) focus: relevant theory, application to genuine real-world examples/policies/events, analysis, critical thinking, balanced synthesis and evaluation, and a supported judgement. Diagrams may support the answer where relevant but are NEVER universally compulsory for a high mark.",
+  paper2g_15_mark:
+    "Paper 2(g) focus: relevant theory, coherent analysis, appropriate use of the SUPPLIED source, balanced evaluation and a supported judgement. Award data-use credit ONLY when source information is applied to build economic arguments — never for merely restating the stimulus. Do NOT require a diagram for the highest level automatically.",
+  paper3b_10_mark:
+    "Paper 3(b) focus (five strands): appropriateness of the recommended policy; explanation of how it addresses the stated problem; relevant and accurate theory; effective use of the supplied text/data; balanced evaluation with a supported final judgement (alternatives, conditions, trade-offs, time lags, effectiveness where appropriate).",
+};
+
 /** A compact, deterministic description of the server-decided marking frame. */
 function policyBrief(policy: ScoringPolicy): string {
   if (policy.scoringState === "feedback_only") {
@@ -118,17 +131,21 @@ function policyBrief(policy: ScoringPolicy): string {
     `MARKING FRAME (decided by Aptly, not you): framework = ${policy.framework}; total ${policy.total} marks; ASSESSABLE ${policy.assessable} marks.`,
   ];
 
-  if (policy.framework === "paper2_four_mark_diagram_explain") {
+  if (policy.recognizedTemplate != null) {
+    // Recognised Paper 2(c)–(f)-STYLE 4-mark diagram-explain structure — the
+    // ONLY place a 2 written + 2 diagram component split exists.
     parts.push(
-      `Mark ONLY the written explanation out of ${policy.assessable}. The ${policy.cappedDiagramMarks} diagram mark(s) are EXCLUDED because no diagram was submitted. Reward accurate written economics on its own merit; NEVER call a valid written response unmarkable for lacking a diagram.`
+      `Recognised 4-mark diagram-explain structure (2 written + 2 diagram). Mark ONLY the written explanation out of ${policy.assessable}. The ${policy.cappedDiagramMarks} diagram mark(s) are EXCLUDED because no diagram was submitted. A theoretically correct causal explanation earns the written marks even without a word-perfect textbook definition — suggest a precise definition only as an optional refinement, never as the main reason marks were lost when the causal chain is correct. NEVER call a valid written response unmarkable for lacking a diagram.`
     );
-  } else if (policy.bestFit) {
+  } else if (policy.markingMethod === "best_fit") {
     parts.push(
       `Use an IB BEST-FIT judgement. Judge the answer holistically against the markbands and set assessableEarned (0..${policy.assessable}) to the single best-fit mark. Do NOT compute the mark by adding up category points.`
     );
-  } else if (policy.assessable != null && policy.assessable <= 2) {
+    const focus = BEST_FIT_FOCUS[policy.framework];
+    if (focus) parts.push(focus);
+  } else if (policy.markingMethod === "analytic") {
     parts.push(
-      `Use a question-specific analytic mini-markscheme. Award assessableEarned (0..${policy.assessable}) for demonstrated economic meaning; reward an accurate definition/answer even when the wording differs from a canonical one. Do NOT require an explanation the question does not ask for.`
+      `Use a question-specific analytic mini-markscheme for the EXACT task asked (there is NO universal point allocation for this mark total). Award assessableEarned (0..${policy.assessable}) for demonstrated economic meaning: accept an accurate definition/answer even when the wording differs from a canonical textbook one; do NOT require an explanation the question does not ask for; credit valid method, own-figure logic carried forward from an earlier error, units and rounding ONLY where the exact question tests them. NEVER apply a generic written+diagram 2+2 split here.`
     );
   } else {
     parts.push(
@@ -156,6 +173,8 @@ export function buildAssessmentInstructions(): string {
     "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram. Do NOT set it true merely because a diagram would strengthen the answer. diagramExpected NEVER changes the mark total — the frame already accounts for any cap.",
     "Do NOT add limitations about a missing image, photo, upload, or drawn diagram unless the MARKING FRAME's framework expects a diagram or diagramExpected is true.",
     "For a data-response framework (Paper 2(g)/3(b)), assess data use ONLY against the SOURCE MATERIAL block when present. Never claim to assess charts, tables, figures, or images that were not pasted as readable text.",
+    "Never award data-use credit for merely restating the stimulus; data use counts only when source information is applied to economic reasoning.",
+    "In a recognised diagram-explain frame, a theoretically correct causal explanation earns the written marks even without a verbatim textbook definition — a precise definition is an optional refinement, not the main loss.",
     "Respect the FACT hasImageAttachment: when false, no image exists — diagramSubmitted must be false, attachmentContent must be none, diagramAssessmentStatus must not be submitted_and_assessed, and workingsAssessmentStatus must not be image_and_assessed.",
     "Choose mistakes only from the fixed list. Keep strengths/improvements to at most 3 each. Use the full plausible mark range; do not cluster mid-band.",
     "Return only the structured JSON defined by the response format.",
@@ -173,6 +192,16 @@ export function buildAssessmentUserInput(
   sourceMaterial: string | null
 ): string {
   const hasSource = typeof sourceMaterial === "string" && sourceMaterial.trim() !== "";
+  // Multi-part paste with a confirmed part: the model marks the SELECTED part
+  // only (server-derived slice), never the other parts of the paste.
+  const selectedPart = policy.selectedQuestionPart?.trim();
+  const questionBlock =
+    selectedPart != null && selectedPart !== "" && selectedPart !== question.trim()
+      ? [
+          "QUESTION (the selected part being marked — the paste contained multiple parts; mark ONLY this part):",
+          selectedPart,
+        ]
+      : ["QUESTION:", question];
   return [
     rubric,
     "",
@@ -181,8 +210,7 @@ export function buildAssessmentUserInput(
     `SUBJECT: ${subject}`,
     `STUDENT-SELECTED TOPIC HINT: ${topic}`,
     "",
-    "QUESTION:",
-    question,
+    ...questionBlock,
     "",
     ...(hasSource
       ? [
@@ -250,11 +278,16 @@ function parseBreakdown(value: unknown): AssessmentMarkBreakdownItem[] {
 
 /**
  * Whether diagram/image evidence messaging is appropriate for this attempt.
- * Only true when the framework expects a diagram or the question explicitly
- * does — so ordinary essays never show missing-diagram wording.
+ * Only true for the recognised diagram-explain structure (framework OR a
+ * user-confirmed part matching the template) or when the question explicitly
+ * expects a diagram — so ordinary essays never show missing-diagram wording.
  */
-function diagramMessagingApplies(framework: ScoringPolicy["framework"], diagramExpected: boolean): boolean {
-  return framework === "paper2_four_mark_diagram_explain" || diagramExpected;
+function diagramMessagingApplies(policy: ScoringPolicy, diagramExpected: boolean): boolean {
+  return (
+    policy.framework === "paper2_four_mark_diagram_explain" ||
+    policy.recognizedTemplate != null ||
+    diagramExpected
+  );
 }
 
 /** Drop model limitations that mention images/diagrams when none is expected. */
@@ -420,7 +453,7 @@ function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Asse
   const earned = feedbackOnly ? null : model.assessableEarned;
   const unassessedMarks =
     total != null && assessable != null ? total - assessable : null;
-  const showDiagram = diagramMessagingApplies(policy.framework, model.diagramExpected);
+  const showDiagram = diagramMessagingApplies(policy, model.diagramExpected);
 
   return {
     version: ASSESSMENT_VERSION,

@@ -117,7 +117,7 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
             <Badge>{topicLabel}</Badge>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Estimated AI study feedback — not an official IB grade.
+            Aptly provides practice estimates, not official IB grades.
           </p>
         </div>
       </div>

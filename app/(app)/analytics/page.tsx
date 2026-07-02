@@ -66,7 +66,8 @@ export default function AnalyticsPage() {
           ]
             .filter(Boolean)
             .join(" · ")}{" "}
-          saved as observed practice evidence — not counted in your marked analytics.
+          saved as observed practice evidence — not counted in the analytics built from
+          estimates with confirmed totals.
         </p>
       )}
 
@@ -181,7 +182,7 @@ export default function AnalyticsPage() {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               Performance by question format
             </CardTitle>
-            <CardDescription>Mark % on fully-marked answers</CardDescription>
+            <CardDescription>Estimated mark % on answers with confirmed totals</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             {formatPerformance.length > 0 ? (
@@ -198,7 +199,7 @@ export default function AnalyticsPage() {
               ))
             ) : (
               <p className="text-sm text-muted-foreground">
-                Limited data — grade a few more fully-marked answers.
+                Limited data — grade a few more answers with confirmed totals.
               </p>
             )}
           </CardContent>
