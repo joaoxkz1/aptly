@@ -29,6 +29,7 @@ const SUBMIT = read(join("app", "(app)", "submit", "page.tsx"));
 const FEEDBACK = read(join("components", "feedback-result.tsx"));
 const DASHBOARD = read(join("app", "(app)", "page.tsx"));
 const LEARNING_LOG = read(join("app", "(app)", "attempts", "page.tsx"));
+const APP_SHELL = read(join("components", "app-shell.tsx"));
 
 function count(haystack: string, needle: string): number {
   return haystack.split(needle).length - 1;
@@ -114,6 +115,15 @@ describe("Learning log — no internal/developer controls in the student UI", ()
 describe("Dashboard — no duplicate empty-state CTA", () => {
   it("the dashboard page has exactly one 'Submit your first answer' action", () => {
     expect(count(DASHBOARD, "Submit your first answer")).toBe(1);
+  });
+});
+
+describe("Navigation — sentence-case labels, consistent with page headings", () => {
+  it("nav labels match the sentence case used across the product", () => {
+    expect(APP_SHELL).toContain("Submit answer");
+    expect(APP_SHELL).toContain("Mistake analytics");
+    expect(APP_SHELL).not.toContain("Submit Answer");
+    expect(APP_SHELL).not.toContain("Mistake Analytics");
   });
 });
 

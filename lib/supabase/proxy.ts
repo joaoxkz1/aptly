@@ -48,6 +48,18 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isOnboarding = pathname === "/onboarding";
 
+  // API routes are never redirected to an HTML page. An unauthenticated call
+  // gets the same 401 JSON the route handlers themselves return — a redirect
+  // would hand fetch() the login page with status 200, so the client's
+  // "session expired, sign in again" handling could never fire. Authenticated
+  // calls pass through (onboarding is a page concern, not an API one).
+  if (pathname.startsWith("/api/")) {
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+    return supabaseResponse;
+  }
+
   // Signed out and visiting a protected route -> /login
   if (!isAuthenticated && !isPublicPath(pathname)) {
     const url = request.nextUrl.clone();

@@ -17,9 +17,9 @@ import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/submit", label: "Submit Answer", icon: PenLine },
+  { href: "/submit", label: "Submit answer", icon: PenLine },
   { href: "/attempts", label: "Learning log", icon: History },
-  { href: "/analytics", label: "Mistake Analytics", icon: BarChart3 },
+  { href: "/analytics", label: "Mistake analytics", icon: BarChart3 },
 ];
 
 function Logo() {

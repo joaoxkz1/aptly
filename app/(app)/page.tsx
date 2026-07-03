@@ -148,7 +148,9 @@ export default function DashboardPage() {
                 day{streak === 1 ? "" : "s"}
               </span>
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">keep it going today</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {ready && streak === 0 ? "submit an answer to start one" : "keep it going today"}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -172,16 +174,21 @@ export default function DashboardPage() {
       {/* Hero recommendation + mark trend */}
       <div className="grid gap-3 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <NextFocusCard insights={insights} variant="hero" />
+          <NextFocusCard insights={insights} variant="hero" ready={ready} />
         </div>
-        <Card>
+        {/* At lg+ the grid stretches this card to match the (taller) next-focus
+            hero; the flex-1 content then vertically centres the chart and its
+            weighted metric in that height instead of leaving a blank band
+            beneath a top-stuck chart. The chart keeps its fixed size, and
+            below lg (natural card height) the layout is unchanged. */}
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <LineChart className="h-4 w-4 text-muted-foreground" />
               Mark trend
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-end justify-between gap-3">
+          <CardContent className="flex items-end justify-between gap-3 lg:flex-1 lg:items-center">
             {insights.markTrend.length >= 3 ? (
               <>
                 <Sparkline values={insights.markTrend} max={100} width={170} height={56} />
@@ -194,11 +201,11 @@ export default function DashboardPage() {
                   </div>
                 )}
               </>
-            ) : (
+            ) : ready ? (
               <p className="text-sm text-muted-foreground">
                 Grade a few more marked answers to see your mark trend.
               </p>
-            )}
+            ) : null}
           </CardContent>
         </Card>
       </div>
@@ -232,11 +239,11 @@ export default function DashboardPage() {
                 <MarkBar percent={t.percent} delayMs={i * 60} />
               </div>
             ))
-          ) : (
+          ) : ready ? (
             <p className="text-sm text-muted-foreground">
               Grade Economics answers to see topic performance.
             </p>
-          )}
+          ) : null}
         </CardContent>
       </Card>
 

@@ -17,9 +17,13 @@ import type { LearningInsights } from "@/lib/assessment/readiness";
 export function NextFocusCard({
   insights,
   variant = "section",
+  ready = true,
 }: {
   insights: LearningInsights;
   variant?: "hero" | "section";
+  /** False while saved attempts are still loading — shows a quiet placeholder
+      instead of flashing the first-time "Submit your first answer" state. */
+  ready?: boolean;
 }) {
   const nf = insights.nextFocus;
   // Evidence-aware wording (shared with the practice "Why this question?").
@@ -35,7 +39,9 @@ export function NextFocusCard({
           <span className="text-xs font-semibold uppercase tracking-wider">Your next focus</span>
         </div>
 
-        {nf !== null && focusCopy !== null ? (
+        {!ready ? (
+          <p className="text-sm text-muted-foreground">Loading your progress…</p>
+        ) : nf !== null && focusCopy !== null ? (
           <>
             {/* Lead with the skill, then the topic context. The heading and
                 claim strength come from the ONE evidence-aware helper, so a

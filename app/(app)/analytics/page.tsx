@@ -17,13 +17,36 @@ export default function AnalyticsPage() {
   const { attempts, ready } = useAttempts();
   const insights = buildLearningInsights(attempts);
 
-  if (ready && attempts.length === 0) {
+  // Attempts still loading: a quiet placeholder instead of flashing the
+  // empty-state copy ("No data yet", "Grade Economics answers…") at students
+  // who already have saved answers.
+  if (!ready) {
     return (
       <div className="flex flex-col gap-5">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Estimated insight from your graded Economics answers — not official IB grades.
+            Estimated practice insights from your graded Economics answers — not official IB
+            grades.
+          </p>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-sm text-muted-foreground">Loading your analytics…</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (attempts.length === 0) {
+    return (
+      <div className="flex flex-col gap-5">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Estimated practice insights from your graded Economics answers — not official IB
+            grades.
           </p>
         </div>
         <Card>
