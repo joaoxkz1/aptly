@@ -3,12 +3,13 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronDown, CircleAlert, History, Loader2, PenLine, Wand2 } from "lucide-react";
+import { ChevronDown, CircleAlert, History, Info, Loader2, PenLine, Wand2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
+import { SampleWalkthrough } from "@/components/submit/sample-walkthrough";
 import { ScanAttachment } from "@/components/submit/scan-attachment";
 import type { ExtractionFill } from "@/lib/scan/apply-extraction";
 import {
@@ -35,17 +36,15 @@ import {
   REVISION_ATTEMPT_LABEL,
 } from "@/lib/assessment/display";
 import { clientGradeErrorMessage, clientMessageForGradeFailure } from "@/lib/ai/grade-errors";
+import {
+  SAMPLE_ANSWER,
+  SAMPLE_QUESTION,
+  isUnmodifiedSample,
+} from "@/lib/assessment/sample-walkthrough";
 import { newId, useAttempts } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { fetchPracticeQuestion } from "@/lib/supabase/practice-questions";
 import { cn } from "@/lib/utils";
-
-const SAMPLE = {
-  question:
-    "Discuss whether a subsidy is the best policy to correct the under-consumption of vaccines.",
-  answer:
-    "Vaccines create positive externalities of consumption: the social benefit is higher than the private benefit, so the free market under-provides them. A subsidy shifts the supply curve right on the diagram, lowering price and raising quantity towards the social optimum. For example, many EU countries subsidise flu vaccines for the elderly. However, subsidies have an opportunity cost and their effect depends on the price elasticity of demand — if hesitancy, not price, causes under-consumption, education campaigns may work better. Overall, a subsidy is effective when price is the main barrier, but it should be combined with information provision.",
-};
 
 // useSearchParams needs a Suspense boundary; the inner page is keyed on the
 // params so entering/leaving revision or practice mode fully resets its state.
@@ -105,6 +104,10 @@ function SubmitPageInner({
   // True while a scan extraction is in flight — grading pauses so the scanned
   // text is always reviewable before the grade call.
   const [scanReading, setScanReading] = useState(false);
+  // Sample walkthrough (onboarding): a fixed example-feedback view for the
+  // UNTOUCHED sample answer. Pure display state — opening it never grades,
+  // saves, or counts anything.
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
 
   // --- Revision mode --------------------------------------------------------
   // The original attempt being revised (from the user's own saved attempts).
@@ -202,13 +205,30 @@ function SubmitPageInner({
     ) {
       return;
     }
-    setTypedQuestion(SAMPLE.question);
-    setAnswer(SAMPLE.answer);
+    setTypedQuestion(SAMPLE_QUESTION);
+    setAnswer(SAMPLE_ANSWER);
     // Replacing the question invalidates any pending choice/override for it.
     setPreflight(null);
     setSourceStep(false);
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+  }
+
+  // The sample paths exist ONLY while both fields hold the untouched sample
+  // text (manual flow only). Any edit makes this false and the page behaves
+  // exactly like a normal submission — no hidden free-sample treatment.
+  const isSample = fixedQuestion === null && isUnmodifiedSample(typedQuestion, answer);
+
+  // "Try your own answer" from the walkthrough: back to an empty form.
+  function handleTryYourOwn() {
+    setShowWalkthrough(false);
+    setTypedQuestion("");
+    setAnswer("");
+    setPreflight(null);
+    setSourceStep(false);
+    setSourceFrameworkHint(null);
+    setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+    setStagedSource(null);
   }
 
   // Saves exactly once per successful grading result; safe against rerenders,
@@ -399,6 +419,24 @@ function SubmitPageInner({
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
     setStagedSource(null);
+  }
+
+  // Sample walkthrough: a fixed example — nothing is graded, saved, or counted.
+  if (showWalkthrough) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col gap-5">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Sample feedback</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            An example of the feedback Aptly gives, for the sample Economics answer.
+          </p>
+        </div>
+        <SampleWalkthrough
+          onTryYourOwn={handleTryYourOwn}
+          onBack={() => setShowWalkthrough(false)}
+        />
+      </div>
+    );
   }
 
   if (result !== null) {
@@ -656,6 +694,36 @@ function SubmitPageInner({
                 onRemoved={() => setStagedSource(null)}
                 onReadingChange={setScanReading}
               />
+            )}
+
+            {/* Untouched sample: two calm paths — the free fixed walkthrough,
+                or edit the text and grade it as a real answer. Opening the
+                walkthrough is pure display state (no request, no save). */}
+            {isSample && preflight === null && !grading && (
+              <div className="flex flex-col gap-2.5 rounded-xl border border-primary/25 bg-accent/40 p-4">
+                <div className="flex items-start gap-2">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
+                  <div>
+                    <p className="text-sm font-semibold">This is Aptly&apos;s sample answer</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                      View the example feedback walkthrough — nothing is graded or saved — or edit
+                      the question or answer and grade it as your own work.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => {
+                      setShowWalkthrough(true);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    View sample feedback
+                  </Button>
+                </div>
+              </div>
             )}
 
             {error !== null && (

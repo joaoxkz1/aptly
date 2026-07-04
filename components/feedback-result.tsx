@@ -46,6 +46,7 @@ export function FeedbackResult({
   recurring,
   parentAttempt = null,
   nextFocus = null,
+  tryAnotherLabel = "Try another answer",
   onRevise,
   onRetry,
   onTryAnother,
@@ -58,6 +59,8 @@ export function FeedbackResult({
   parentAttempt?: Attempt | null;
   /** The canonical next focus, when one exists — enables "Practice this focus". */
   nextFocus?: NextFocus | null;
+  /** Primary action label — the sample walkthrough uses "Try your own answer". */
+  tryAnotherLabel?: string;
   /** Starts a revision of this (saved) answer. Omitted until it is saved. */
   onRevise?: () => void;
   onRetry: () => void;
@@ -327,7 +330,7 @@ export function FeedbackResult({
           )}
           <Button size="lg" onClick={onTryAnother}>
             <RotateCcw className="h-4 w-4" />
-            Try another answer
+            {tryAnotherLabel}
           </Button>
           {/* Deliberately quieter than the feedback itself: act on this answer. */}
           {onRevise !== undefined && (
