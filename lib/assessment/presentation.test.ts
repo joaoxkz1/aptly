@@ -238,6 +238,18 @@ describe("C — diagram evidence wording", () => {
     const combined = `${note.title} ${note.body}`.toLowerCase();
     expect(combined).toContain("diagram evidence");
     expect(combined).not.toContain("diagram marks");
-    expect(note.body).toContain("no diagram itself has been assessed");
+  });
+
+  it("is truthful about Diagram Evidence V1 — review exists, kept separate; never 'unavailable'", () => {
+    const note = diagramEvidenceNote(1);
+    // The count clause stays factual and text-derived, exactly as before.
+    expect(note.body).toContain("in 1 answer.");
+    expect(diagramEvidenceNote(3).body).toContain("in 3 answers.");
+    // Truthful separation statement — no false "never assessed" claims.
+    expect(note.body).toContain("Diagram photo review is available");
+    expect(note.body).toContain("separate from marks and Coverage metrics");
+    const combined = `${note.title} ${note.body}`.toLowerCase();
+    expect(combined).not.toContain("unavailable");
+    expect(combined).not.toContain("no diagram itself has been assessed");
   });
 });

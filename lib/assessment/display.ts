@@ -144,11 +144,17 @@ export function frameworkFormatKey(a: Assessment): string {
   return f;
 }
 
-/** Card-level note when a saved attempt expected but lacked a diagram. */
+/**
+ * Card-level Coverage note for answers that expected a diagram (count is
+ * text-derived, exactly as before). Truthful about Diagram Evidence V1:
+ * diagram photo review exists as separate study feedback, and it stays fully
+ * outside marks and Coverage metrics — this note never claims review is
+ * unavailable or that no diagram has ever been looked at.
+ */
 export function diagramEvidenceNote(count: number): { title: string; body: string } {
   return {
-    title: "Diagram evidence unavailable",
-    body: `Aptly assessed related written explanation in ${count} answer${count === 1 ? "" : "s"}, but no diagram itself has been assessed.`,
+    title: "Diagram evidence kept separate",
+    body: `Aptly assessed the related written explanation in ${count} answer${count === 1 ? "" : "s"}. Diagram photo review is available when you attach a diagram to an answer, and its feedback stays separate from marks and Coverage metrics in this version of Aptly.`,
   };
 }
 

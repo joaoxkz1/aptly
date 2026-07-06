@@ -35,6 +35,9 @@ const DIAGRAM_ATTACHMENT = readFileSync(
 );
 const REVIEW_REQUEST = readFileSync(join("lib", "diagram", "review-request.ts"), "utf8");
 const SAMPLE_WALKTHROUGH = readFileSync(join("lib", "assessment", "sample-walkthrough.ts"), "utf8");
+const MARK_SUMMARY = readFileSync(join("components", "assessment", "mark-summary.tsx"), "utf8");
+const DISPLAY = readFileSync(join("lib", "assessment", "display.ts"), "utf8");
+const ANALYTICS_PAGE = readFileSync(join("app", "(app)", "analytics", "page.tsx"), "utf8");
 
 describe.each([
   ["0006_diagram_evidence.sql", MIGRATION_0006],
@@ -248,10 +251,66 @@ describe("submit flow — evidence attaches only to the attempt object", () => {
 
   it("every reset path drops the photo and its memoised review together", () => {
     // handleDiagramChange(null) clears blob + memo + failure notice; it must
-    // run on try-another, try-your-own, and walkthrough-open (the form
-    // unmounts there while the page-level refs survive).
+    // run on try-another, try-your-own, walkthrough-open, AND use-a-sample
+    // (the form unmounts/locks there while the page-level refs survive).
     expect((SUBMIT_PAGE.match(/handleDiagramChange\(null\)/g) ?? []).length).toBeGreaterThanOrEqual(
-      3
+      4
+    );
+  });
+});
+
+// --- QA patch protections ------------------------------------------------------
+
+describe("QA patch — no-diagram wording is mutually exclusive with evidence", () => {
+  it("the mark summary renders limitations ONLY through the canonical presenter", () => {
+    expect(MARK_SUMMARY).toContain("presentedLimitations(attempt)");
+    expect(MARK_SUMMARY).not.toContain("a.limitations.map");
+  });
+});
+
+describe("QA patch — Analytics coverage wording is truthful and calculation-free", () => {
+  it("the stale 'unavailable / never assessed' claims are gone from the sources", () => {
+    for (const source of [DISPLAY, ANALYTICS_PAGE]) {
+      expect(source).not.toContain("Diagram evidence unavailable");
+      expect(source).not.toContain("no diagram itself has been assessed");
+    }
+  });
+
+  it("the truthful note lives in the ONE tested display helper", () => {
+    expect(DISPLAY).toContain("separate from marks and Coverage metrics");
+    expect(ANALYTICS_PAGE).not.toContain("separate from marks and Coverage metrics");
+    expect(ANALYTICS_PAGE).toContain("diagramEvidenceNote");
+  });
+});
+
+describe("QA patch — pristine sample mode is grade-free and attachment-free", () => {
+  it("handler-level guards block grading of the untouched sample on BOTH paths", () => {
+    expect(SUBMIT_PAGE).toContain("if (isSample) return;");
+    expect(SUBMIT_PAGE).toContain("isUnmodifiedSample(question, answer)) return;");
+  });
+
+  it("both upload controls are gated out of pristine sample mode", () => {
+    expect(SUBMIT_PAGE).toMatch(/\{fixedQuestion === null && !isSample && \(\s*<ScanAttachment/);
+    expect(SUBMIT_PAGE).toMatch(/\{!isSample && \(\s*<DiagramAttachment/);
+  });
+
+  it("the Grade CTA is hidden while the sample is pristine, with honest copy", () => {
+    expect(SUBMIT_PAGE).toContain("{!sourceStep && !isSample && (");
+    expect(SUBMIT_PAGE).toContain("question or answer to grade your own work.");
+  });
+
+  it("filling the sample drops staged scan text, the scan pause, and the diagram photo", () => {
+    const at = SUBMIT_PAGE.indexOf("function fillSample()");
+    expect(at).toBeGreaterThan(-1);
+    const fn = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("\n  }", at));
+    expect(fn).toContain("setStagedSource(null)");
+    expect(fn).toContain("setScanReading(false)");
+    expect(fn).toContain("handleDiagramChange(null)");
+  });
+
+  it("a late-arriving scan fill can never touch the pristine sample", () => {
+    expect(SUBMIT_PAGE).toContain(
+      "if (isUnmodifiedSample(scanFieldsRef.current.question, scanFieldsRef.current.answer)) return;"
     );
   });
 });

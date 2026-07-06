@@ -4,7 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import type { Attempt } from "@/lib/types";
 import { confidenceLabel, frameworkMeta, topicDisplayLabel } from "@/lib/assessment/display";
-import { isSourceMaterialMissing, markPresentation } from "@/lib/assessment/status";
+import {
+  isSourceMaterialMissing,
+  markPresentation,
+  presentedLimitations,
+} from "@/lib/assessment/status";
 import { bestFitBand, placementLabel } from "@/lib/assessment/bands";
 
 /**
@@ -20,6 +24,10 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
   const a = attempt.assessment;
   if (a == null) return null; // legacy without assessment handled by the caller
   const p = markPresentation(attempt);
+  // Canonical caveat list: when a diagram photo was reviewed, "no image was
+  // provided"-style model limitations are dropped here (they would contradict
+  // the Diagram Evidence card and the reconciled cap reason beside them).
+  const limitations = presentedLimitations(attempt);
   const subject = attempt.subject;
   const topicLabel =
     a.syllabusTopic !== "unknown" ? topicDisplayLabel(a.syllabusTopic) : a.topicLabel || subject;
@@ -123,7 +131,7 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
       </div>
 
       {/* Cap reason (marked-capped or provisional), data-use note, or limitations */}
-      {(p.reason !== null || a.limitations.length > 0 || sourceMissing) && (
+      {(p.reason !== null || limitations.length > 0 || sourceMissing) && (
         <div className="flex items-start gap-2 border-t border-border px-6 py-4 text-xs text-muted-foreground">
           <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <div className="flex flex-col gap-1">
@@ -135,7 +143,7 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
               </span>
             )}
             {p.reason !== null && !sourceMissing && <span>{p.reason}</span>}
-            {a.limitations.map((l) => (
+            {limitations.map((l) => (
               <span key={l}>{l}</span>
             ))}
           </div>

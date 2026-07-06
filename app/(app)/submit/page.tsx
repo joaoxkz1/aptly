@@ -225,6 +225,10 @@ function SubmitPageInner({
   // lib/scan/apply-extraction.ts). Filling the question invalidates pending
   // preflight state exactly like manual typing does.
   function handleScanFill(fill: ExtractionFill) {
+    // Pristine sample mode: a late-arriving extraction (its control was
+    // unmounted when the sample filled the form) must never touch the sample
+    // state. The ref always holds the CURRENT field values.
+    if (isUnmodifiedSample(scanFieldsRef.current.question, scanFieldsRef.current.answer)) return;
     if (fill.question !== null) {
       setTypedQuestion(fill.question);
       setPreflight(null);
@@ -250,6 +254,13 @@ function SubmitPageInner({
     setSourceStep(false);
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+    // Pristine sample mode is attachment-free by design: the sample is never
+    // graded, so nothing may look gradable alongside it. Both upload controls
+    // unmount (their gates check isSample), any staged scan text and diagram
+    // photo are dropped, and an in-flight scan can no longer pause grading.
+    setStagedSource(null);
+    setScanReading(false);
+    handleDiagramChange(null);
   }
 
   // The sample paths exist ONLY while both fields hold the untouched sample
@@ -298,6 +309,10 @@ function SubmitPageInner({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (inFlight.current || grading) return;
+    // Handler-level protection: the pristine sample is NEVER graded — its only
+    // path is the free walkthrough. (The Grade CTA is hidden in sample mode;
+    // this guard holds even if submit is triggered outside the visible UI.)
+    if (isSample) return;
     // A scan is still being read: grading waits so the student always reviews
     // the extracted text before the grade call.
     if (scanReading) return;
@@ -342,6 +357,10 @@ function SubmitPageInner({
   // ignores every preflight field (requestedSource stays null).
   async function grade(decision: PreflightDecision | GradeDecision) {
     if (inFlight.current || grading) return;
+    // Defense in depth (mirrors handleSubmit): pristine sample content can
+    // never reach the paid grade call or the diagram review, whatever path
+    // tried to invoke grading.
+    if (fixedQuestion === null && isUnmodifiedSample(question, answer)) return;
 
     const q = question.trim();
     const a = answer.trim();
@@ -746,8 +765,10 @@ function SubmitPageInner({
 
             {/* Aptly Scan: one understated attachment control — manual flow
                 only (revision/practice questions are fixed or server-owned,
-                so an attachment would have no honest function there). */}
-            {fixedQuestion === null && (
+                so an attachment would have no honest function there), and
+                never in pristine sample mode (the sample is never graded, so
+                upload controls return only after the sample is edited). */}
+            {fixedQuestion === null && !isSample && (
               <ScanAttachment
                 disabled={grading || preflight !== null}
                 getFields={getScanFields}
@@ -760,11 +781,14 @@ function SubmitPageInner({
             {/* Diagram Evidence V1: one optional close-up diagram photo,
                 reviewed separately at grade time — feedback only, never
                 marks. Available in every mode: revising a diagram-explain
-                answer is exactly when a student wants their diagram seen. */}
-            <DiagramAttachment
-              disabled={grading || preflight !== null}
-              onAttachedChange={handleDiagramChange}
-            />
+                answer is exactly when a student wants their diagram seen.
+                Hidden in pristine sample mode (nothing gradable there). */}
+            {!isSample && (
+              <DiagramAttachment
+                disabled={grading || preflight !== null}
+                onAttachedChange={handleDiagramChange}
+              />
+            )}
 
 
             {/* Untouched sample: two calm paths — the free fixed walkthrough,
@@ -777,8 +801,8 @@ function SubmitPageInner({
                   <div>
                     <p className="text-sm font-semibold">This is Aptly&apos;s sample answer</p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      View the example feedback walkthrough — nothing is graded or saved — or edit
-                      the question or answer and grade it as your own work.
+                      View the example feedback walkthrough — nothing is graded or saved. Edit the
+                      question or answer to grade your own work.
                     </p>
                   </div>
                 </div>
@@ -824,8 +848,10 @@ function SubmitPageInner({
             )}
 
             {/* Hide the generic Grade CTA while the source step is active so the
-                only grade action is "Grade with this source". */}
-            {!sourceStep && (
+                only grade action is "Grade with this source" — and in pristine
+                sample mode, where the ONLY primary action is the free
+                walkthrough (editing the sample restores normal grading). */}
+            {!sourceStep && !isSample && (
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <Button type="submit" size="lg" disabled={grading || contextLoading || scanReading}>

@@ -1,6 +1,10 @@
 import type { Assessment, Attempt, Feedback, MistakeType, ScoringState } from "@/lib/types";
 import { requiresSourceMaterial } from "./frameworks";
-import { DIAGRAM_CAP_REASON_WITH_EVIDENCE } from "@/lib/diagram/evidence";
+import {
+  DIAGRAM_CAP_REASON_WITH_EVIDENCE,
+  mentionsAddDiagramAdvice,
+  mentionsUnsubmittedDiagram,
+} from "@/lib/diagram/evidence";
 
 // The source-material rule lives in the canonical framework registry; status
 // re-exports it so every existing consumer keeps one import path.
@@ -63,17 +67,58 @@ export const SOURCE_MATERIAL_MISSING_NOTICE = {
 } as const;
 
 /**
+ * Remove stale "add a diagram" advice and "no diagram was submitted" wording
+ * from written feedback for an attempt whose diagram photo WAS reviewed
+ * (Diagram Evidence V1). The student attached a diagram, so telling them to
+ * add one is untrue; diagram-specific improvements belong to the separate
+ * Diagram Evidence card. Non-diagram writing advice is preserved; removal is
+ * the only operation. Pure display reconciliation — stored feedback, marks,
+ * mistakes, and every analytics input are untouched.
+ */
+export function filterStaleDiagramAdvice(feedback: Feedback): Feedback {
+  const stale = (text: string) =>
+    mentionsAddDiagramAdvice(text) || mentionsUnsubmittedDiagram(text);
+  return {
+    ...feedback,
+    improvements: feedback.improvements.filter((s) => !stale(s)),
+    examinerComment: stale(feedback.examinerComment) ? "" : feedback.examinerComment,
+    studyNext: stale(feedback.studyNext) ? "" : feedback.studyNext,
+  };
+}
+
+/**
  * THE canonical student-facing feedback for an attempt. Every surface that
  * renders feedback content (feedback screen, Learning log) reads it through
  * here — never `attempt.feedback` directly — so a source-less Paper 2(g)/3(b)
- * attempt can never show source-data criticism on one page and not another.
+ * attempt can never show source-data criticism on one page and not another,
+ * and an attempt with reviewed diagram evidence can never be told to "add a
+ * diagram" it already attached.
  */
 export function presentedFeedback(attempt: Attempt): Feedback {
   const a = attempt.assessment;
+  let f = attempt.feedback;
   if (a != null && isSourceMaterialMissing(a)) {
-    return filterSourceDataFeedback(attempt.feedback);
+    f = filterSourceDataFeedback(f);
   }
-  return attempt.feedback;
+  if (attempt.diagramEvidence != null) {
+    f = filterStaleDiagramAdvice(f);
+  }
+  return f;
+}
+
+/**
+ * THE canonical honest-caveat list for an attempt (mirrors presentedFeedback).
+ * When a diagram photo was reviewed, model limitations written for the
+ * no-photo world ("No image attachment was provided, so the diagram component
+ * could not be credited.") contradict the Diagram Evidence card beside them —
+ * mutually exclusive presentation: with evidence, such lines are dropped and
+ * the reconciled cap reason carries the accurate story; without evidence,
+ * every stored limitation renders exactly as before.
+ */
+export function presentedLimitations(attempt: Attempt): string[] {
+  const limitations = attempt.assessment?.limitations ?? [];
+  if (attempt.diagramEvidence == null) return limitations;
+  return limitations.filter((l) => !mentionsUnsubmittedDiagram(l));
 }
 
 /**

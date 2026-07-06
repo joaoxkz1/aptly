@@ -10,7 +10,12 @@ import {
   presentDiagramEvidence,
   type DiagramEvidence,
 } from "./evidence";
-import { markPresentation } from "@/lib/assessment/status";
+import {
+  markPresentation,
+  presentedFeedback,
+  presentedLimitations,
+} from "@/lib/assessment/status";
+import { mentionsAddDiagramAdvice, mentionsUnsubmittedDiagram } from "./evidence";
 import type { Assessment, Attempt, Feedback } from "@/lib/types";
 
 /**
@@ -235,8 +240,12 @@ describe("markPresentation — cap-reason reconciliation (display copy only)", (
   });
 
   it("the reconciled copy still says marks are excluded — never awarded", () => {
-    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("aren't included");
+    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("are not included");
     expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("not for marks");
+    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("feedback-only release");
+    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain(
+      "does not yet contribute to the mark estimate"
+    );
   });
 
   it("an unrelated attempt (no cap) is untouched by diagram evidence", () => {
@@ -257,5 +266,118 @@ describe("markPresentation — cap-reason reconciliation (display copy only)", (
     const p = markPresentation(marked);
     expect(p.reason).toBeNull();
     expect(p.fraction).toBe("3 / 4");
+  });
+});
+
+// --- QA patch: mutually exclusive no-diagram wording ---------------------------
+
+describe("mentionsUnsubmittedDiagram — the exact contradictions QA found", () => {
+  it("matches claims that no diagram/image was provided or credited", () => {
+    for (const line of [
+      "No image attachment was provided, so the diagram component could not be credited.",
+      "No diagram was submitted.",
+      "The diagram marks could not be verified.",
+      "Without a diagram, the mechanism is asserted rather than shown.",
+      "The photo was not included, so the diagram could not be assessed.",
+    ]) {
+      expect(mentionsUnsubmittedDiagram(line), line).toBe(true);
+    }
+  });
+
+  it("never matches mixed sentences or non-diagram caveats", () => {
+    for (const line of [
+      "Your diagram is clear, but you did not explain the shift in demand.",
+      "The response addresses only one stakeholder.",
+      "The conclusion does not follow from the analysis.",
+      "Real-world examples are not used.",
+    ]) {
+      expect(mentionsUnsubmittedDiagram(line), line).toBe(false);
+    }
+  });
+});
+
+describe("presentedLimitations — contradiction-free beside a reviewed diagram", () => {
+  const CONTRADICTION =
+    "No image attachment was provided, so the diagram component could not be credited.";
+  const UNRELATED = "Only one real-world example was given.";
+
+  it("with evidence: drops no-diagram claims, keeps every other caveat", () => {
+    const a = attemptWith({
+      assessment: templateAssessment({ limitations: [CONTRADICTION, UNRELATED] }),
+      diagramEvidence: evidence(),
+    });
+    expect(presentedLimitations(a)).toEqual([UNRELATED]);
+  });
+
+  it("without evidence: the stored no-diagram wording renders exactly as before", () => {
+    const a = attemptWith({
+      assessment: templateAssessment({ limitations: [CONTRADICTION, UNRELATED] }),
+    });
+    expect(presentedLimitations(a)).toEqual([CONTRADICTION, UNRELATED]);
+  });
+
+  it("is null-safe for legacy attempts without an assessment", () => {
+    const a = attemptWith({ assessment: null, diagramEvidence: evidence() });
+    expect(presentedLimitations(a)).toEqual([]);
+  });
+});
+
+// --- QA patch: stale "add a diagram" advice suppressed, writing advice kept ----
+
+describe("mentionsAddDiagramAdvice", () => {
+  it("matches generic add-a-diagram advice", () => {
+    for (const line of [
+      "Add a fully labelled diagram to support your explanation.",
+      "Include a demand and supply diagram showing the shift.",
+      "A correctly shifted diagram would strengthen your answer.",
+      "You should draw a diagram of the market.",
+    ]) {
+      expect(mentionsAddDiagramAdvice(line), line).toBe(true);
+    }
+  });
+
+  it("never matches advice about improving an existing diagram or non-diagram advice", () => {
+    for (const line of [
+      "Label both axes of your diagram with P and Q.",
+      "Mark the new equilibrium on your diagram.",
+      "Define price elasticity of demand precisely.",
+      "Draw a conclusion about the extent of the change.",
+    ]) {
+      expect(mentionsAddDiagramAdvice(line), line).toBe(false);
+    }
+  });
+});
+
+describe("presentedFeedback — diagram evidence suppresses ONLY stale diagram advice", () => {
+  const withDiagramAdvice: Feedback = {
+    score: 4,
+    band: "internal",
+    strengths: ["Clear chain of reasoning."],
+    improvements: [
+      "Add a fully labelled diagram to earn the diagram component.",
+      "Define subsidy precisely in your first sentence.",
+    ],
+    mistakes: [],
+    examinerComment:
+      "A sound explanation, but no diagram was submitted so the diagram component could not be credited.",
+    studyNext: "Practise drawing subsidy diagrams with clear labels.",
+  };
+
+  it("with evidence on a 4-mark template: add-a-diagram advice goes, writing advice stays", () => {
+    const a = attemptWith({
+      feedback: withDiagramAdvice,
+      diagramEvidence: evidence(),
+    });
+    const f = presentedFeedback(a);
+    expect(f.improvements).toEqual(["Define subsidy precisely in your first sentence."]);
+    expect(f.examinerComment).toBe("");
+    expect(f.strengths).toEqual(["Clear chain of reasoning."]);
+    // Practice advice about drawing better diagrams is not an "add one" claim.
+    expect(f.studyNext).toBe("Practise drawing subsidy diagrams with clear labels.");
+  });
+
+  it("without evidence: the stored feedback renders exactly as before", () => {
+    const a = attemptWith({ feedback: withDiagramAdvice });
+    expect(presentedFeedback(a)).toEqual(withDiagramAdvice);
   });
 });

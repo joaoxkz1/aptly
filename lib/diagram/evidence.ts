@@ -138,7 +138,43 @@ export const DIAGRAM_RETAKE_GUIDANCE =
  * themselves never change — diagram marks stay excluded in this release.
  */
 export const DIAGRAM_CAP_REASON_WITH_EVIDENCE =
-  "Diagram marks aren't included in this estimate. Your diagram photo was reviewed separately as study feedback — not for marks.";
+  "Diagram marks are not included in this estimate. Your diagram photo was reviewed separately as study feedback, not for marks. Only the written explanation is assessable in this feedback-only release — diagram review does not yet contribute to the mark estimate.";
+
+// --- Presentation reconciliation predicates -----------------------------------
+// When structured Diagram Evidence exists on an attempt, wording written for
+// the no-photo world ("No image attachment was provided…", "add a fully
+// labelled diagram") becomes untrue or confusing next to the review card.
+// These predicates let the canonical presenters DROP such lines at display
+// time only. Stored feedback, marks, assessment state, and analytics inputs
+// never change; removal is the only operation (model text is never rewritten).
+
+/**
+ * A claim that no diagram/image/photo was provided, submitted, or usable —
+ * e.g. "No image attachment was provided, so the diagram component could not
+ * be credited." or "No diagram was submitted." Deliberately requires the
+ * negation NEAR the visual noun inside one clause, so mixed sentences like
+ * "Your diagram is clear, but you did not explain the shift." survive.
+ */
+const UNSUBMITTED_DIAGRAM_WORDING =
+  /\b(no|without|missing|lacks?|lacking)\b[^.!?]{0,60}\b(diagrams?|images?|photos?|photographs?|attachments?|uploads?|drawings?)\b|\b(diagrams?|images?|photos?|photographs?|attachments?|uploads?|drawings?)\b[^.!?]{0,60}\b(not|never|wasn'?t|weren'?t|couldn'?t|could not|cannot|can'?t|unable)\b[^.!?]{0,40}\b(provided|submitted|included|attached|supplied|drawn|present|seen|credited|assessed|verified|available)\b|\b(diagrams?|images?|photos?)\b[^.!?]{0,30}\b(was|were|is|are)\b[^.!?]{0,20}\b(missing|absent)\b/i;
+
+export function mentionsUnsubmittedDiagram(text: string): boolean {
+  return UNSUBMITTED_DIAGRAM_WORDING.test(text);
+}
+
+/**
+ * Generic advice that merely tells the student to ADD a diagram — stale once
+ * they attached one. Advice about improving an existing diagram ("label the
+ * axes of your diagram") and skill advice ("practise drawing diagrams")
+ * deliberately do NOT match — bare "draw/draws a diagram" is an instruction
+ * to add one; the gerund "drawing" is how ongoing practice is described.
+ */
+const ADD_DIAGRAM_ADVICE_WORDING =
+  /\b(?:(?:add|include|provide|attach|insert|sketch|supply|submit)(?:ing|s|ed)?|draws?)\b[^.!?]{0,60}\b(diagrams?|graphs?)\b|\b(diagrams?|graphs?)\b[^.!?]{0,60}\b(would|could)\b[^.!?]{0,40}\b(help|strengthen|improve|clarify|support|earn)/i;
+
+export function mentionsAddDiagramAdvice(text: string): boolean {
+  return ADD_DIAGRAM_ADVICE_WORDING.test(text);
+}
 
 /** Component-row note replacing "Not submitted" when a photo was reviewed. */
 export const DIAGRAM_COMPONENT_REVIEWED_NOTE = "Photo reviewed separately — not marked";

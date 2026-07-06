@@ -130,10 +130,12 @@ describe("image privacy disclosure — conditional, single, attachment-scoped", 
 });
 
 describe("attachment control exists only in the manual submit flow", () => {
-  it("is rendered exactly once, gated on fixedQuestion === null (hidden for revision AND practice)", () => {
+  it("is rendered exactly once, gated on fixedQuestion === null AND outside pristine sample mode", () => {
     const uses = SUBMIT_PAGE.match(/<ScanAttachment/g) ?? [];
     expect(uses).toHaveLength(1);
-    expect(SUBMIT_PAGE).toMatch(/\{fixedQuestion === null && \(\s*<ScanAttachment/);
+    // Tightened by the Diagram Evidence QA patch: hidden for revision,
+    // practice, AND the untouched sample (which is never graded).
+    expect(SUBMIT_PAGE).toMatch(/\{fixedQuestion === null && !isSample && \(\s*<ScanAttachment/);
   });
 
   it("extracted source only SEEDS the existing reviewed source step (no new source area)", () => {
