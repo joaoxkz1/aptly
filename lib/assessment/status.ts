@@ -1,5 +1,6 @@
 import type { Assessment, Attempt, Feedback, MistakeType, ScoringState } from "@/lib/types";
 import { requiresSourceMaterial } from "./frameworks";
+import { DIAGRAM_CAP_REASON_WITH_EVIDENCE } from "@/lib/diagram/evidence";
 
 // The source-material rule lives in the canonical framework registry; status
 // re-exports it so every existing consumer keeps one import path.
@@ -188,6 +189,20 @@ function fractionOf(a: Assessment): string | null {
   return `${a.marksEarned} / ${a.marksAvailable}`;
 }
 
+/**
+ * The one-line cap reason, reconciled with Diagram Evidence V1 at DISPLAY
+ * time only: when this attempt carries a reviewed diagram photo, the stored
+ * "Diagram evidence missing…" template reason would contradict the review
+ * card next to it, so the honest replacement says the marks stay excluded
+ * while the photo was reviewed as feedback. The stored assessment, the marks,
+ * and the cap itself never change.
+ */
+function presentedCapReason(attempt: Attempt, a: Assessment | null | undefined): string | null {
+  const raw = a?.capReason ?? null;
+  if (raw === null) return null;
+  return attempt.diagramEvidence != null ? DIAGRAM_CAP_REASON_WITH_EVIDENCE : raw;
+}
+
 /** Everything a mark display needs, resolved once from the canonical state. */
 export function markPresentation(attempt: Attempt): MarkPresentation {
   const state = deriveScoringState(attempt);
@@ -200,7 +215,7 @@ export function markPresentation(attempt: Attempt): MarkPresentation {
       fraction: a ? fractionOf(a) : null,
       primaryLabel: "Estimated mark",
       secondaryLabel: null,
-      reason: a?.capReason ?? null,
+      reason: presentedCapReason(attempt, a),
     };
   }
   if (state === "provisional") {
@@ -211,7 +226,7 @@ export function markPresentation(attempt: Attempt): MarkPresentation {
       primaryLabel: "Likely",
       secondaryLabel: "Provisional estimate",
       reason:
-        a?.capReason ??
+        presentedCapReason(attempt, a) ??
         (a?.recognizedTemplate
           ? "Inferred from a recognised diagram-explain format."
           : "Inferred mark total — lower confidence."),

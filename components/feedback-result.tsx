@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { MarkSummary } from "@/components/assessment/mark-summary";
 import { AssessmentComponents } from "@/components/assessment/assessment-components";
 import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
+import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
+import { DIAGRAM_REVIEW_UNAVAILABLE_NOTICE } from "@/lib/diagram/evidence";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import {
   SOURCE_MATERIAL_MISSING_NOTICE,
@@ -47,6 +49,7 @@ export function FeedbackResult({
   parentAttempt = null,
   nextFocus = null,
   tryAnotherLabel = "Try another answer",
+  diagramReviewFailed = false,
   onRevise,
   onRetry,
   onTryAnother,
@@ -61,6 +64,8 @@ export function FeedbackResult({
   nextFocus?: NextFocus | null;
   /** Primary action label — the sample walkthrough uses "Try your own answer". */
   tryAnotherLabel?: string;
+  /** A diagram photo was attached but its review failed (grading unaffected). */
+  diagramReviewFailed?: boolean;
   /** Starts a revision of this (saved) answer. Omitted until it is saved. */
   onRevise?: () => void;
   onRetry: () => void;
@@ -168,6 +173,25 @@ export function FeedbackResult({
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Diagram Evidence V1: image-based study feedback, rendered ONLY when a
+          diagram photo was actually reviewed (never a "missing diagram" state)
+          — the same shared card the Learning log shows. A failed review gets a
+          gentle notice; it never blocks or alters the written feedback above. */}
+      {attempt.diagramEvidence != null ? (
+        <DiagramEvidenceCard evidence={attempt.diagramEvidence} />
+      ) : (
+        diagramReviewFailed && (
+          <Card className="border-border bg-muted/40">
+            <CardContent className="flex items-start gap-3 p-5">
+              <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {DIAGRAM_REVIEW_UNAVAILABLE_NOTICE}
+              </p>
+            </CardContent>
+          </Card>
+        )
       )}
 
       {(f.strengths.length > 0 || f.improvements.length > 0) && (

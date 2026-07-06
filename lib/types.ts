@@ -1,3 +1,4 @@
+import type { DiagramEvidence } from "./diagram/evidence";
 import type {
   ASSESSMENT_FORMATS,
   ASSESSMENT_FRAMEWORKS,
@@ -169,6 +170,13 @@ export interface Attempt {
   // attempts, pre-patch attempts, and generated practice (whose source lives
   // in practice_questions).
   sourceMaterial?: string | null;
+  // --- Diagram Evidence V1 --------------------------------------------------
+  // Structured, feedback-only findings from a reviewed diagram photo (see
+  // lib/diagram/evidence.ts). Strictly per-attempt: a revision never inherits
+  // it. Never read by grading, analytics, readiness, or practice targeting;
+  // carries no marks and no image data. Null/undefined = no diagram photo was
+  // reviewed for this attempt.
+  diagramEvidence?: DiagramEvidence | null;
 }
 
 /**

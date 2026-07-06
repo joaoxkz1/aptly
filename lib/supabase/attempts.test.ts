@@ -172,6 +172,23 @@ describe("insertAttempt — durable Practice Loop links + database identity", ()
     expect((insertPayloads[0] as Record<string, unknown>).source_material).toBe(source);
   });
 
+  it("persists structured diagram evidence when present and NULL when absent", async () => {
+    const evidence = {
+      version: 1 as const,
+      status: "partially_readable" as const,
+      graphTypeObserved: null,
+      relevanceToQuestion: "unclear" as const,
+      elements: [{ element: "axes_labels" as const, observed: "unclear" as const }],
+      consistencyWithAnswer: "not_checked" as const,
+      improvements: [],
+    };
+    const { client, insertPayloads } = mockClient({});
+    await insertAttempt(client, attempt({ diagramEvidence: evidence }));
+    await insertAttempt(client, attempt());
+    expect((insertPayloads[0] as Record<string, unknown>).diagram_evidence).toEqual(evidence);
+    expect((insertPayloads[1] as Record<string, unknown>).diagram_evidence).toBeNull();
+  });
+
   it("retry-save works after a transient failure (no duplicate on success)", async () => {
     const { client, insertPayloads } = mockClient({ insertFailures: 1 });
     const revision = attempt({ parentAttemptId: "parent-uuid" });
@@ -205,6 +222,39 @@ describe("rowToAttempt — retained source round-trips privately to its owner", 
       "Extract text."
     );
     expect(rowToAttempt(base as AttemptRow).sourceMaterial).toBeNull();
+  });
+});
+
+describe("rowToAttempt — diagram evidence round-trips per-attempt (legacy rows carry none)", () => {
+  const base = {
+    id: "db-uuid-1",
+    subject: "Economics",
+    topic: "Economics",
+    question: "Q",
+    answer: "A",
+    score: 5,
+    max_score: 7,
+    feedback: feedback(),
+    mistake_type: null,
+    next_step: null,
+    created_at: "2026-07-01T10:00:00.000Z",
+    assessment: null,
+  };
+
+  it("maps diagram_evidence and defaults it to null on rows without one", () => {
+    const evidence = {
+      version: 1 as const,
+      status: "reviewed_clearly" as const,
+      graphTypeObserved: "demand and supply",
+      relevanceToQuestion: "appears_relevant" as const,
+      elements: [],
+      consistencyWithAnswer: "supports" as const,
+      improvements: [],
+    };
+    expect(
+      rowToAttempt({ ...base, diagram_evidence: evidence } as AttemptRow).diagramEvidence
+    ).toEqual(evidence);
+    expect(rowToAttempt(base as AttemptRow).diagramEvidence).toBeNull();
   });
 });
 

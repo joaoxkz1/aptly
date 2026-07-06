@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MarkPill } from "@/components/assessment/mark-pill";
+import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
 import { useAttempts } from "@/lib/storage";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import {
@@ -161,6 +162,15 @@ export default function AttemptsPage() {
                       )}
                     </div>
                   </div>
+
+                  {/* Diagram Evidence V1: the SAME shared card the feedback
+                      screen shows — rendered only when this attempt actually
+                      carries a reviewed diagram (old attempts show nothing). */}
+                  {a.diagramEvidence != null && (
+                    <div className="mt-5">
+                      <DiagramEvidenceCard evidence={a.diagramEvidence} />
+                    </div>
+                  )}
 
                   {/* Act on this answer: revise it after feedback (Practice Loop). */}
                   <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">

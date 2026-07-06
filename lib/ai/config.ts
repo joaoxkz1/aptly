@@ -65,6 +65,25 @@ export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 // Client-side downscale target: longest dimension after processing.
 export const IMAGE_MAX_DIMENSION = 2048;
 
+// --- Diagram Evidence (image → structured study feedback) --------------------
+// Diagram review uses the SAME model as grading (one model everywhere this
+// release), in vision mode, for exactly one job: cautious, feedback-only
+// observations about one close-up diagram photo. It never marks, never
+// classifies the paper, and never changes an estimate.
+//
+// Separate durable per-user UTC-day cap (diagram_review_usage, migration
+// 0006), fully independent from the Scan extraction cap: each successful
+// review — including an honest "unable to assess" — records one no-content
+// row. Failed validation and failed model calls never consume the allowance.
+export const DAILY_DIAGRAM_REVIEW_LIMIT = 10;
+// Observation, not judgement — low effort keeps the call cheap; the output is
+// a small structured object, so the budget mostly covers reasoning headroom.
+export const DIAGRAM_REASONING_EFFORT = "low" as const;
+export const DIAGRAM_MAX_OUTPUT_TOKENS = 2600;
+export const DIAGRAM_REQUEST_TIMEOUT_MS = 60_000;
+// Image acceptance limits are shared with Aptly Scan: MAX_IMAGE_BYTES and
+// IMAGE_MAX_DIMENSION above apply to diagram photos identically.
+
 // --- Subject scope ---------------------------------------------------------
 // v1 grades Economics only. Other subjects are intentionally not graded yet so
 // Aptly never gives weak/misleading feedback outside its designed subject.

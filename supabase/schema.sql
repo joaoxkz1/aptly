@@ -102,6 +102,11 @@ create table if not exists public.attempts (
   -- privately (per-user RLS) so revisions reuse it automatically. NULL for
   -- every non-source attempt; Aptly-GENERATED sources stay in practice_questions.
   source_material           text,
+  -- Diagram Evidence V1 (see migrations/0006_diagram_evidence.sql): structured
+  -- FEEDBACK-ONLY findings from a reviewed diagram photo. Never marks, never
+  -- image bytes/references/file names. NULL for attempts without a reviewed
+  -- diagram; strictly per-attempt (revisions never inherit it).
+  diagram_evidence          jsonb,
   constraint attempts_marks_chk check (
     marks_available is null
     or (
@@ -247,6 +252,41 @@ using ((select auth.uid()) = user_id);
 
 create policy "insert_own_scan_usage"
 on public.scan_extraction_usage
+for insert
+to authenticated
+with check ((select auth.uid()) = user_id);
+
+-- 5. Diagram review usage (see migrations/0006_diagram_evidence.sql) ---------
+-- One NO-CONTENT row per successful diagram review: the durable per-user
+-- daily cap for the diagram-review route, fully independent from the scan
+-- extraction cap. Stores no image, no image reference, no file name, and no
+-- findings. Append-only (no update/delete grant) so a user cannot clear
+-- their own allowance.
+create table if not exists public.diagram_review_usage (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users (id) on delete cascade default auth.uid(),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists diagram_review_usage_user_created_idx
+  on public.diagram_review_usage (user_id, created_at desc);
+
+alter table public.diagram_review_usage enable row level security;
+
+revoke all on table public.diagram_review_usage from anon;
+grant select, insert on table public.diagram_review_usage to authenticated;
+
+drop policy if exists "select_own_diagram_usage" on public.diagram_review_usage;
+drop policy if exists "insert_own_diagram_usage" on public.diagram_review_usage;
+
+create policy "select_own_diagram_usage"
+on public.diagram_review_usage
+for select
+to authenticated
+using ((select auth.uid()) = user_id);
+
+create policy "insert_own_diagram_usage"
+on public.diagram_review_usage
 for insert
 to authenticated
 with check ((select auth.uid()) = user_id);

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SquareStack } from "lucide-react";
 import type { Attempt } from "@/lib/types";
 import { deriveScoringState } from "@/lib/assessment/status";
+import { DIAGRAM_COMPONENT_REVIEWED_NOTE } from "@/lib/diagram/evidence";
 
 /**
  * The recognised template's component structure (IB Marking Fidelity). Shown
@@ -22,7 +23,14 @@ export function AssessmentComponents({ attempt }: { attempt: Attempt }) {
 
   const rows: { label: string; value: string; note?: string; emphasis?: boolean }[] = [
     { label: "Written explanation", value: `${a.marksEarned} / ${a.marksAssessable}` },
-    { label: "Diagram", value: `0 / ${diagramAvailable}`, note: "Not submitted" },
+    {
+      label: "Diagram",
+      value: `0 / ${diagramAvailable}`,
+      // Diagram Evidence V1 reconciliation (display only): when a photo was
+      // reviewed, "Not submitted" would be untrue — but the diagram marks stay
+      // excluded either way (feedback-only review, never marks).
+      note: attempt.diagramEvidence != null ? DIAGRAM_COMPONENT_REVIEWED_NOTE : "Not submitted",
+    },
     {
       label: provisional ? "Likely total" : "Estimated total",
       value: `${a.marksEarned} / ${a.marksAvailable}`,

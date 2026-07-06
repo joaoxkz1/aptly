@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Assessment, Attempt, Feedback, Subject } from "@/lib/types";
+import type { DiagramEvidence } from "@/lib/diagram/evidence";
 
 const TABLE = "attempts";
 
@@ -8,7 +9,7 @@ const TABLE = "attempts";
 // The full assessment object lives in the `assessment` jsonb column; the
 // denormalized columns exist for DB-level integrity and future SQL analytics.
 const SELECT_COLUMNS =
-  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material";
+  "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material, diagram_evidence";
 
 export interface AttemptRow {
   id: string;
@@ -26,6 +27,7 @@ export interface AttemptRow {
   parent_attempt_id?: string | null;
   practice_question_id?: string | null;
   source_material?: string | null;
+  diagram_evidence?: DiagramEvidence | null;
 }
 
 export function rowToAttempt(row: AttemptRow): Attempt {
@@ -41,6 +43,7 @@ export function rowToAttempt(row: AttemptRow): Attempt {
     parentAttemptId: row.parent_attempt_id ?? null,
     practiceQuestionId: row.practice_question_id ?? null,
     sourceMaterial: row.source_material ?? null,
+    diagramEvidence: row.diagram_evidence ?? null,
   };
 }
 
@@ -91,6 +94,10 @@ function attemptToInsert(attempt: Attempt) {
     // with its row; revisions carry their own copy, so parent deletion never
     // strips a revision's source context.
     source_material: attempt.sourceMaterial ?? null,
+    // Diagram Evidence V1: structured feedback-only findings from a reviewed
+    // diagram photo (never marks, never image data — see lib/diagram/evidence.ts).
+    // NULL for every attempt without a reviewed diagram; strictly per-attempt.
+    diagram_evidence: attempt.diagramEvidence ?? null,
   };
 }
 

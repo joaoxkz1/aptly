@@ -11,7 +11,10 @@ import { FeedbackResult, type SaveState } from "@/components/feedback-result";
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
 import { SampleWalkthrough } from "@/components/submit/sample-walkthrough";
 import { ScanAttachment } from "@/components/submit/scan-attachment";
+import { DiagramAttachment } from "@/components/submit/diagram-attachment";
 import type { ExtractionFill } from "@/lib/scan/apply-extraction";
+import type { DiagramEvidence } from "@/lib/diagram/evidence";
+import { requestDiagramReview, type DiagramReviewResult } from "@/lib/diagram/review-request";
 import {
   DEFAULT_TOTAL_OVERRIDE,
   MarkTotalNotice,
@@ -108,6 +111,14 @@ function SubmitPageInner({
   // UNTOUCHED sample answer. Pure display state — opening it never grades,
   // saves, or counts anything.
   const [showWalkthrough, setShowWalkthrough] = useState(false);
+  // Diagram Evidence V1: the processed close-up diagram photo, held as
+  // transient local state until grade time (nothing uploads at attach time).
+  const diagramImageRef = useRef<Blob | null>(null);
+  // Memoised successful review for the CURRENT photo: a grade retry after a
+  // grading failure reuses it instead of paying for a second review.
+  const diagramReviewRef = useRef<{ image: Blob; evidence: DiagramEvidence } | null>(null);
+  // A photo was attached but its review failed — gentle notice, never blocking.
+  const [diagramReviewFailed, setDiagramReviewFailed] = useState(false);
 
   // --- Revision mode --------------------------------------------------------
   // The original attempt being revised (from the user's own saved attempts).
@@ -183,6 +194,33 @@ function SubmitPageInner({
   };
   const getScanFields = useCallback(() => scanFieldsRef.current, []);
 
+  // Attaching, replacing, or removing the diagram photo. A changed photo
+  // invalidates any memoised review — exactly one photo is ever active.
+  const handleDiagramChange = useCallback((image: Blob | null) => {
+    diagramImageRef.current = image;
+    diagramReviewRef.current = null;
+    setDiagramReviewFailed(false);
+  }, []);
+
+  // One review per photo: reuse the memoised result when the same processed
+  // photo is graded again (e.g. retry after a grading failure); only a
+  // successful review is memoised, so "try again" paths stay honest.
+  async function reviewDiagramOnce(
+    image: Blob,
+    q: string,
+    a: string
+  ): Promise<DiagramReviewResult> {
+    const memo = diagramReviewRef.current;
+    if (memo !== null && memo.image === image) {
+      return { evidence: memo.evidence, failureMessage: null };
+    }
+    const result = await requestDiagramReview(image, q, a);
+    if (result.evidence !== null) {
+      diagramReviewRef.current = { image, evidence: result.evidence };
+    }
+    return result;
+  }
+
   // Apply an extraction fill: ONLY empty fields change (computed in
   // lib/scan/apply-extraction.ts). Filling the question invalidates pending
   // preflight state exactly like manual typing does.
@@ -229,6 +267,7 @@ function SubmitPageInner({
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
     setStagedSource(null);
+    handleDiagramChange(null);
   }
 
   // Saves exactly once per successful grading result; safe against rerenders,
@@ -318,6 +357,13 @@ function SubmitPageInner({
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS + 5000);
 
+    // Diagram Evidence V1: review the attached photo in PARALLEL with grading.
+    // Two separate routes — grading stays text-only and never sees the photo;
+    // the review (which never throws) is awaited only AFTER grading succeeds,
+    // so a slow or failed review can never block or change written feedback.
+    const diagramImage = diagramImageRef.current;
+    const diagramReview = diagramImage !== null ? reviewDiagramOnce(diagramImage, q, a) : null;
+
     try {
       const res = await fetch("/api/grade", {
         method: "POST",
@@ -370,6 +416,16 @@ function SubmitPageInner({
         practiceQuestionId == null && assessment?.sourceMaterialProvided === true
           ? usedSource
           : null;
+      // The parallel diagram review (if any). Evidence attaches to THIS
+      // attempt only; a failed review resolves to null with a gentle notice.
+      let diagramEvidence: DiagramEvidence | null = null;
+      if (diagramReview !== null) {
+        const review = await diagramReview;
+        diagramEvidence = review.evidence;
+        setDiagramReviewFailed(review.evidence === null);
+      } else {
+        setDiagramReviewFailed(false);
+      }
       const attempt: Attempt = {
         id: newId(),
         createdAt: new Date().toISOString(),
@@ -384,6 +440,9 @@ function SubmitPageInner({
         parentAttemptId: revisionCtx?.parentId ?? null,
         practiceQuestionId,
         sourceMaterial: retainedSource,
+        // Diagram Evidence V1: structured feedback-only findings (never marks,
+        // never image data). Strictly this attempt's own — revisions re-attach.
+        diagramEvidence,
       };
       setResult(attempt);
       setSaveState("idle");
@@ -419,6 +478,7 @@ function SubmitPageInner({
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
     setStagedSource(null);
+    handleDiagramChange(null);
   }
 
   // Sample walkthrough: a fixed example — nothing is graded, saved, or counted.
@@ -454,6 +514,7 @@ function SubmitPageInner({
           recurring={recurringMistakeSummary(attempts)}
           parentAttempt={parent}
           nextFocus={nextFocus}
+          diagramReviewFailed={diagramReviewFailed}
           onRevise={
             saveState === "saved" && savedIdRef.current !== null
               ? () => router.push(`/submit?revise=${savedIdRef.current}`)
@@ -696,6 +757,16 @@ function SubmitPageInner({
               />
             )}
 
+            {/* Diagram Evidence V1: one optional close-up diagram photo,
+                reviewed separately at grade time — feedback only, never
+                marks. Available in every mode: revising a diagram-explain
+                answer is exactly when a student wants their diagram seen. */}
+            <DiagramAttachment
+              disabled={grading || preflight !== null}
+              onAttachedChange={handleDiagramChange}
+            />
+
+
             {/* Untouched sample: two calm paths — the free fixed walkthrough,
                 or edit the text and grade it as a real answer. Opening the
                 walkthrough is pure display state (no request, no save). */}
@@ -716,6 +787,10 @@ function SubmitPageInner({
                     type="button"
                     size="sm"
                     onClick={() => {
+                      // The form (and the attachment control) unmounts while
+                      // the walkthrough shows — drop any attached diagram so
+                      // no invisible photo survives into a later grade.
+                      handleDiagramChange(null);
                       setShowWalkthrough(true);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
