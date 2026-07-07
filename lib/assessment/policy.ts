@@ -45,11 +45,26 @@ export interface PreflightChoice {
 
 export type PolicyState = Exclude<ScoringState, "legacy_unscored">;
 
+/**
+ * How the marking FRAMEWORK was established (Beta Trust). Distinct from
+ * markTotalSource (the denominator's provenance): after the student confirms
+ * a format in the preflight chooser, the feedback header must say so — it may
+ * never claim Aptly detected the format autonomously.
+ *  - "detected":       unambiguous from the question text (explicit paper label,
+ *                      recognised template, or a total needing no confirmation).
+ *  - "user_confirmed": the student picked the format in the preflight chooser.
+ *  - "aptly_practice": fixed by the Aptly-generated practice question.
+ *  - null:             no paper claim exists to attribute (generic/feedback-only).
+ */
+export type FrameworkSource = "detected" | "user_confirmed" | "aptly_practice";
+
 export interface ScoringPolicy {
   scoringState: PolicyState;
   markTotalSource: MarkTotalSource;
   /** The server-derived IB marking framework. */
   framework: AssessmentFramework;
+  /** How that framework was established (see FrameworkSource). */
+  frameworkSource: FrameworkSource | null;
   /** How the assessable marks are judged (canonical framework registry). */
   markingMethod: MarkingMethod;
   /** True when the framework uses an IB best-fit markband model (10/15 papers). */
@@ -77,6 +92,7 @@ const FEEDBACK_ONLY: ScoringPolicy = {
   scoringState: "feedback_only",
   markTotalSource: "unknown",
   framework: "generic_practice",
+  frameworkSource: null,
   markingMethod: "holistic_practice",
   bestFit: false,
   total: null,
@@ -88,14 +104,27 @@ const FEEDBACK_ONLY: ScoringPolicy = {
   selectedQuestionPart: null,
 };
 
-/** Resolve the framework: confirmed guess, else the student's confirmed choice. */
-function resolveFramework(pf: PreflightResult, requestedFramework: AssessmentFramework | null): AssessmentFramework {
-  if (pf.frameworkConfirmed) return pf.framework;
+/** Resolve the framework AND its provenance: confirmed guess, else the student's confirmed choice. */
+function resolveFramework(
+  pf: PreflightResult,
+  requestedFramework: AssessmentFramework | null
+): { framework: AssessmentFramework; frameworkSource: FrameworkSource | null } {
+  if (pf.frameworkConfirmed) {
+    // Unambiguous server detection. Generic practice is not a paper claim, so
+    // there is nothing to attribute.
+    return {
+      framework: pf.framework,
+      frameworkSource: pf.framework === "generic_practice" ? null : "detected",
+    };
+  }
   if (requestedFramework != null && pf.frameworkOptions.includes(requestedFramework)) {
-    return requestedFramework;
+    return {
+      framework: requestedFramework,
+      frameworkSource: requestedFramework === "generic_practice" ? null : "user_confirmed",
+    };
   }
   // Ambiguous 10/15 with no valid confirmation → never claim a paper.
-  return "generic_practice";
+  return { framework: "generic_practice", frameworkSource: null };
 }
 
 /**
@@ -146,11 +175,23 @@ export function resolveScoringPolicy(question: string, choice: PreflightChoice):
     return FEEDBACK_ONLY;
   }
 
-  // A user-confirmed total is a raw number with no paper context → generic.
-  const framework =
-    source === "user_confirmed" ? "generic_practice" : resolveFramework(pf, choice.requestedFramework);
+  // A user-confirmed total is a raw number with no paper context → generic
+  // (no paper claim, so no framework provenance to attribute).
+  const resolved =
+    source === "user_confirmed"
+      ? { framework: "generic_practice" as const, frameworkSource: null }
+      : resolveFramework(pf, choice.requestedFramework);
 
-  const policy = buildPolicy(question, selectedPart, choice.templateId, state, source, total, framework);
+  const policy = buildPolicy(
+    question,
+    selectedPart,
+    choice.templateId,
+    state,
+    source,
+    total,
+    resolved.framework,
+    resolved.frameworkSource
+  );
   return applySourceRequirement(policy, choice.sourceMaterial);
 }
 
@@ -170,6 +211,7 @@ function applySourceRequirement(policy: ScoringPolicy, sourceMaterial: string | 
     scoringState: "feedback_only",
     markTotalSource: "unknown",
     framework: policy.framework, // retained so the header can say "Paper 2(g) feedback only"
+    frameworkSource: policy.frameworkSource, // provenance is unchanged by the downgrade
     markingMethod: "holistic_practice",
     bestFit: false,
     total: null,
@@ -212,6 +254,9 @@ export function enforceRevisionSourceGate(
     scoringState: "feedback_only",
     markTotalSource: "unknown",
     framework, // retained so the header can say "Paper 3(b) feedback only"
+    // The paper frame comes from the parent attempt, not a fresh detection or
+    // a fresh confirmation — attribute nothing rather than overclaim.
+    frameworkSource: null,
     markingMethod: "holistic_practice",
     bestFit: false,
     total: null,
@@ -258,6 +303,9 @@ export function policyForGeneratedPractice(input: {
     scoringState: "marked",
     markTotalSource: "explicit", // the generated question states its total explicitly
     framework,
+    // The format is fixed by the Aptly-generated question itself — neither a
+    // fresh detection nor a student confirmation.
+    frameworkSource: framework === "generic_practice" ? null : "aptly_practice",
     markingMethod: entry.markingMethod,
     bestFit: entry.showBestFitBands,
     total: input.markTotal,
@@ -312,7 +360,8 @@ function buildPolicy(
   state: PolicyState,
   source: MarkTotalSource,
   total: number,
-  framework: AssessmentFramework
+  framework: AssessmentFramework,
+  frameworkSource: FrameworkSource | null
 ): ScoringPolicy {
   const entry = frameworkPolicy(framework);
   const template = resolveTemplate(question, selectedPart, echoedTemplateId, source, total, framework);
@@ -322,6 +371,7 @@ function buildPolicy(
       scoringState: state,
       markTotalSource: source,
       framework,
+      frameworkSource,
       markingMethod: "template_component",
       bestFit: entry.showBestFitBands,
       total,
@@ -339,6 +389,7 @@ function buildPolicy(
     scoringState: state,
     markTotalSource: source,
     framework,
+    frameworkSource,
     markingMethod: entry.markingMethod,
     bestFit: entry.showBestFitBands,
     total,

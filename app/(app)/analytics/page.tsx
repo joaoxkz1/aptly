@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, BarChart3, Layers, TrendingDown, TrendingUp } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BarChart3, Layers, TrendingDown, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
 import { buildLearningInsights } from "@/lib/assessment/readiness";
 import {
+  DIAGNOSTIC_BAR_EXPLANATION,
+  LATEST_ATTEMPT_PER_QUESTION_NOTE,
   diagnosticSignalStrength,
   diagramEvidenceNote,
   topicShortLabel,
@@ -54,11 +56,12 @@ export default function AnalyticsPage() {
             <p className="text-sm text-muted-foreground">
               No data yet. Aptly learns from submitted answers.
             </p>
+            {/* In-app navigation — never the external-link arrow. */}
             <Link
               href="/submit"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
-              Submit your first answer <ArrowUpRight className="h-4 w-4" />
+              Submit your first answer <ArrowRight className="h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
@@ -84,13 +87,17 @@ export default function AnalyticsPage() {
       {(insights.provisionalCount > 0 || insights.feedbackOnlyCount > 0) && (
         <p className="text-xs text-muted-foreground">
           {[
-            insights.provisionalCount > 0 ? `${insights.provisionalCount} provisional` : null,
-            insights.feedbackOnlyCount > 0 ? `${insights.feedbackOnlyCount} feedback-only` : null,
+            insights.provisionalCount > 0
+              ? `${insights.provisionalCount} answer${insights.provisionalCount === 1 ? "" : "s"} with an inferred total`
+              : null,
+            insights.feedbackOnlyCount > 0
+              ? `${insights.feedbackOnlyCount} feedback-only answer${insights.feedbackOnlyCount === 1 ? "" : "s"}`
+              : null,
           ]
             .filter(Boolean)
             .join(" · ")}{" "}
-          saved as observed practice evidence — not counted in the analytics built from
-          estimates with confirmed totals.
+          are saved and analysed, but only answers marked with a confirmed total feed the
+          numbers below.
         </p>
       )}
 
@@ -102,7 +109,9 @@ export default function AnalyticsPage() {
               <TrendingDown className="h-4 w-4 text-amber-500" />
               Topic performance
             </CardTitle>
-            <CardDescription>Marks earned per topic · lowest relative first</CardDescription>
+            <CardDescription>
+              Marks earned per topic · lowest first · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             {topicPerformance.length > 0 ? (
@@ -118,11 +127,12 @@ export default function AnalyticsPage() {
                     <p className="truncate text-sm font-medium" title={t.topicLabel}>
                       {topicShortLabel(t.topicCode)}
                     </p>
+                    {/* Always the evidence count, with an early-signal qualifier —
+                        never two different label kinds in the same slot. */}
                     <p className="text-xs text-muted-foreground">
-                      {t.reliability === "reliable_pattern"
-                        ? `Based on ${t.responses} answers`
-                        : "Early signal"}{" "}
-                      · {t.earned}/{t.available} marks
+                      Based on {t.responses} answer{t.responses === 1 ? "" : "s"}
+                      {t.reliability === "early_signal" ? " · early signal" : ""} · {t.earned}/
+                      {t.available} marks
                     </p>
                   </div>
                   <span className="shrink-0 text-lg font-semibold tabular-nums">
@@ -147,8 +157,7 @@ export default function AnalyticsPage() {
               Diagnostic focus by skill
             </CardTitle>
             <CardDescription>
-              Aptly&apos;s qualitative pattern across marked answers — not an additional IB mark
-              allocation.
+              Where marks slipped away, by skill. {DIAGNOSTIC_BAR_EXPLANATION}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -205,7 +214,9 @@ export default function AnalyticsPage() {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               Performance by question format
             </CardTitle>
-            <CardDescription>Estimated mark % on answers with confirmed totals</CardDescription>
+            <CardDescription>
+              Estimated mark % on marked answers · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             {formatPerformance.length > 0 ? (
@@ -235,7 +246,13 @@ export default function AnalyticsPage() {
               <Layers className="h-4 w-4 text-muted-foreground" />
               Coverage
             </CardTitle>
-            <CardDescription>Observed practice evidence</CardDescription>
+            {/* Deliberately a WIDER count than the marked-answer cards: it
+                answers "what have I practised?", so revisions and answers
+                without a confirmed total count too — and it says so. */}
+            <CardDescription>
+              Skills your questions have practised — counts every analysed answer, including
+              revisions
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             {coverage.map((c) => (

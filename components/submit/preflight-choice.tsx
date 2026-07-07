@@ -18,9 +18,11 @@ export interface PreflightDecision {
 }
 
 // Compact, plain labels for the framework confirmation (10/15-mark ambiguity).
+// Paper 3 is HL-only in IB Economics — the option says so, because Aptly has
+// no HL/SL profile and must not casually steer an SL student into it.
 const FRAMEWORK_CHOICE_LABELS: Partial<Record<AssessmentFramework, string>> = {
   paper1a_10_mark: "Paper 1(a) explanation",
-  paper3b_10_mark: "Paper 3(b) recommendation",
+  paper3b_10_mark: "Paper 3(b) recommendation · HL only",
   paper1b_15_mark: "Paper 1(b) extended response",
   paper2g_15_mark: "Paper 2(g) data response",
   generic_practice: "General practice response",
@@ -264,11 +266,13 @@ export function PreflightChoice({
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          {preflight.frameworkOptions.map((f, i) => (
+          {/* Equal visual weight for every paper option: no pre-selected-looking
+              default, because the student — not Aptly — decides the format. */}
+          {preflight.frameworkOptions.map((f) => (
             <Button
               key={f}
               size="sm"
-              variant={i === 0 ? "primary" : f === "generic_practice" ? "ghost" : "outline"}
+              variant={f === "generic_practice" ? "ghost" : "outline"}
               disabled={disabled}
               onClick={() => {
                 // Paper 2(g)/3(b) need source text/data before an estimate.

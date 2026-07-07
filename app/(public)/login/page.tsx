@@ -182,8 +182,11 @@ export default function LoginPage() {
         <LoginForm />
       </Suspense>
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        Your IB study analytics copilot.
+      {/* Concrete value in one line — a cold student should know what Aptly
+          does within seconds, with no generic branding words. */}
+      <p className="mt-6 max-w-sm text-center text-xs leading-relaxed text-muted-foreground">
+        Aptly grades your IB Economics practice answers, tracks the patterns in your mistakes,
+        and shows you what to study next.
       </p>
     </div>
   );

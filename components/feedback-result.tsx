@@ -30,7 +30,12 @@ import {
   isSourceMaterialMissing,
   presentedFeedback,
 } from "@/lib/assessment/status";
-import { revisionComparison } from "@/lib/assessment/revisions";
+import {
+  REVISION_FOLLOWUP_EXPLAINER,
+  REVISION_ISSUE_STATUS_LABELS,
+  revisionComparison,
+  revisionIssueFollowUp,
+} from "@/lib/assessment/revisions";
 import {
   REVISION_ATTEMPT_LABEL,
   REVISION_SAVED_BODY,
@@ -84,6 +89,11 @@ export function FeedbackResult({
   const isRevisionOf = parentAttempt !== null && attempt.parentAttemptId === parentAttempt.id;
   const comparison =
     isRevisionOf && parentAttempt !== null ? revisionComparison(parentAttempt, attempt) : null;
+  // Beta Trust: follow up every issue flagged on the ORIGINAL, so a tag that
+  // simply isn't re-flagged never looks like Aptly forgot its own feedback.
+  // Presentation-only, controlled-tag identity — never claims an issue is fixed.
+  const issueFollowUp =
+    isRevisionOf && parentAttempt !== null ? revisionIssueFollowUp(parentAttempt, attempt) : [];
 
   return (
     <div className="flex flex-col gap-4">
@@ -122,6 +132,35 @@ export function FeedbackResult({
                     ? `${REVISION_SAVED_LABEL} — ${REVISION_SAVED_BODY.charAt(0).toLowerCase()}${REVISION_SAVED_BODY.slice(1)}`
                     : "You revised this question after feedback."}
                 </p>
+              )}
+              {issueFollowUp.length > 0 && (
+                <div className="mt-2.5 border-t border-border pt-2.5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Issues flagged on your original answer
+                  </p>
+                  <ul className="mt-1.5 flex flex-col gap-1">
+                    {issueFollowUp.map((item) => (
+                      <li
+                        key={item.type}
+                        className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-sm"
+                      >
+                        <span className="font-medium">{item.type}</span>
+                        <span
+                          className={
+                            item.status === "still_flagged"
+                              ? "text-xs text-rose-600 dark:text-rose-400"
+                              : "text-xs text-muted-foreground"
+                          }
+                        >
+                          {REVISION_ISSUE_STATUS_LABELS[item.status]}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {REVISION_FOLLOWUP_EXPLAINER}
+                  </p>
+                </div>
               )}
               <p className="mt-1 text-xs text-muted-foreground">
                 Revision of an earlier attempt — both stay in your learning log. Practice

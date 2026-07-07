@@ -237,7 +237,9 @@ export const ASSESSMENT_FRAMEWORK_LABELS: Record<(typeof ASSESSMENT_FRAMEWORKS)[
   paper1b_15_mark: "Paper 1(b) · 15-mark extended response",
   paper2g_15_mark: "Paper 2(g) · 15-mark data response",
   paper3a_analytic: "Paper 3(a) · analytic response",
-  paper3b_10_mark: "Paper 3(b) · 10-mark recommendation",
+  // Paper 3 is HL-only in IB Economics; the label carries that so an SL
+  // student is never casually steered into an HL-only format.
+  paper3b_10_mark: "Paper 3(b) · 10-mark recommendation (HL)",
   generic_practice: "Practice response",
 };
 

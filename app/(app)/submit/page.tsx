@@ -63,11 +63,17 @@ function SubmitPageFromParams() {
   const params = useSearchParams();
   const reviseId = params.get("revise");
   const practiceId = params.get("practice");
+  // Cold-start deep link (?sample=1): open straight into the free sample
+  // walkthrough — sample-only display state, never a grade or a save. Ignored
+  // in revision/practice modes, where the question is fixed.
+  const startWithSample =
+    params.get("sample") === "1" && reviseId === null && practiceId === null;
   return (
     <SubmitPageInner
-      key={`${reviseId ?? ""}|${practiceId ?? ""}`}
+      key={`${reviseId ?? ""}|${practiceId ?? ""}|${startWithSample ? "s" : ""}`}
       reviseId={reviseId}
       practiceId={practiceId}
+      startWithSample={startWithSample}
     />
   );
 }
@@ -75,15 +81,20 @@ function SubmitPageFromParams() {
 function SubmitPageInner({
   reviseId,
   practiceId,
+  startWithSample = false,
 }: {
   reviseId: string | null;
   practiceId: string | null;
+  startWithSample?: boolean;
 }) {
   const router = useRouter();
   const { attempts, ready, addAttempt } = useAttempts();
 
-  const [typedQuestion, setTypedQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  // The ?sample=1 entry pre-fills the pristine sample text, so every existing
+  // sample guard (never graded, never saved, upload controls unmounted)
+  // applies exactly as if the student had clicked "Use a sample answer".
+  const [typedQuestion, setTypedQuestion] = useState(startWithSample ? SAMPLE_QUESTION : "");
+  const [answer, setAnswer] = useState(startWithSample ? SAMPLE_ANSWER : "");
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<Attempt | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -109,8 +120,8 @@ function SubmitPageInner({
   const [scanReading, setScanReading] = useState(false);
   // Sample walkthrough (onboarding): a fixed example-feedback view for the
   // UNTOUCHED sample answer. Pure display state — opening it never grades,
-  // saves, or counts anything.
-  const [showWalkthrough, setShowWalkthrough] = useState(false);
+  // saves, or counts anything. The ?sample=1 deep link opens it directly.
+  const [showWalkthrough, setShowWalkthrough] = useState(startWithSample);
   // Diagram Evidence V1: the processed close-up diagram photo, held as
   // transient local state until grade time (nothing uploads at attach time).
   const diagramImageRef = useRef<Blob | null>(null);
@@ -564,7 +575,7 @@ function SubmitPageInner({
     ? "Write a fresh answer to the same question. Aptly grades it like any attempt and links it to the original."
     : isPractice
       ? "This question was generated from your next focus. Write your answer below."
-      : "Paste your Economics question and answer. Aptly will identify the format and give you an evidence-aware estimate.";
+      : "Paste your Economics question and answer. Aptly will identify the format and give you an estimated mark with feedback.";
 
   // Revision/practice context still loading (attempts or practice fetch).
   const contextLoading =
@@ -599,6 +610,13 @@ function SubmitPageInner({
           <p className="text-sm text-muted-foreground">
             You&apos;re revising the same question after feedback. Your previous answer stays in
             your learning log — start this one fresh.
+          </p>
+          {/* Honest about the missing Scan control: photo-to-text fill is a
+              new-submission tool by design; the diagram photo review is still
+              available on revisions. */}
+          <p className="text-sm text-muted-foreground">
+            Photo scan isn&apos;t available when revising — type your revised answer. You can
+            still attach a close-up diagram photo below.
           </p>
           {revisionCtx.needsSourceAgain && (
             <p className="text-sm text-muted-foreground">

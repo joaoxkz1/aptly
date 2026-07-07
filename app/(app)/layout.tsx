@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { readDisplayName } from "@/lib/auth/display-name";
 
 export const metadata: Metadata = {
-  title: "Aptly — IB Study Analytics Copilot",
+  title: "Aptly — IB Economics practice feedback",
   description:
     "Submit answers, get rubric-style feedback, track mistakes by topic, and know exactly what to study next.",
 };

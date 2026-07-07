@@ -517,6 +517,10 @@ function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Asse
     eligibleForCoreAnalytics: policy.scoringState === "marked",
     // IB Marking Fidelity — server-derived framework:
     framework: policy.framework,
+    // Beta Trust — how the framework was established (detected vs confirmed
+    // by the student vs fixed by generated practice). Display-only honesty
+    // signal; never read by marking, gating, or analytics maths.
+    frameworkSource: policy.frameworkSource,
     // Data-Dependent Framework — safe source-context indicator (Paper 2(g)/3(b)).
     sourceMaterialProvided: policy.sourceMaterialProvided ?? undefined,
   };

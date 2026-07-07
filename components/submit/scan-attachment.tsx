@@ -33,6 +33,11 @@ const NOTHING_EMPTY_COPY =
 const REVIEW_COPY = "Check the extracted text. You can edit anything before grading.";
 const KEPT_COPY = "Your typed text was kept — nothing was empty to fill.";
 
+// What Scan is FOR, stated up front — so it is never confused with the
+// separate close-up diagram review next to it (Upload Clarity audit).
+const SCAN_HELPER_COPY =
+  "Reads the written text from a photo of your answer page into the empty fields. It doesn't review diagrams — use “Add your diagram” for that.";
+
 type ScanStatus = "idle" | "preparing" | "reading" | "done" | "error";
 
 /**
@@ -197,8 +202,9 @@ export function ScanAttachment({
             onClick={() => inputRef.current?.click()}
           >
             <Paperclip className="h-3.5 w-3.5" />
-            Attach a photo of your work
+            Scan your answer page (optional)
           </Button>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{SCAN_HELPER_COPY}</p>
         </div>
       ) : (
         <div className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/40 px-2.5 py-2">

@@ -17,7 +17,7 @@ function target(overrides: Partial<PracticeTarget> = {}): PracticeTarget {
     requiresSource: false,
     why: "Evidence-backed reason.",
     reliability: "reliable_pattern",
-    confidenceTier: "Developing priority",
+    confidenceTier: "Building evidence",
     ...overrides,
   };
 }

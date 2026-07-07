@@ -243,9 +243,10 @@ describe("markPresentation — cap-reason reconciliation (display copy only)", (
     expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("are not included");
     expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("not for marks");
     expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain("feedback-only release");
-    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE).toContain(
-      "does not yet contribute to the mark estimate"
-    );
+    // Disclaimer-fatigue audit: each truth is stated once — the copy is two
+    // sentences, not three restatements of the same limitation.
+    expect(DIAGRAM_CAP_REASON_WITH_EVIDENCE.split(/[.!?]\s*/).filter(Boolean).length)
+      .toBeLessThanOrEqual(2);
   });
 
   it("an unrelated attempt (no cap) is untouched by diagram evidence", () => {

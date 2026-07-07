@@ -9,24 +9,24 @@ const TIER_LABEL: Record<"early" | "medium" | "high", string> = {
   high: "High confidence",
 };
 
-/** "1 provisional estimate · 1 feedback-only answer saved" — or null. */
+/** "1 with an inferred total · 1 feedback only — saved, not counted here" — or null. */
 function practiceNote(provisionalCount: number, feedbackOnlyCount: number): string | null {
   const parts: string[] = [];
   if (provisionalCount > 0) {
-    parts.push(`${provisionalCount} provisional estimate${provisionalCount === 1 ? "" : "s"}`);
+    parts.push(`${provisionalCount} with an inferred total`);
   }
   if (feedbackOnlyCount > 0) {
-    parts.push(`${feedbackOnlyCount} feedback-only answer${feedbackOnlyCount === 1 ? "" : "s"}`);
+    parts.push(`${feedbackOnlyCount} feedback only`);
   }
   if (parts.length === 0) return null;
-  return `${parts.join(" · ")} saved`;
+  return `${parts.join(" · ")} — saved, not counted here`;
 }
 
 /**
- * Dashboard "Estimated Economics level" card. Presentational only — the level is
- * computed once by buildLearningInsights. Language distinguishes CONFIRMED marked
- * answers (which drive the level) from provisional/feedback-only answers (which
- * are saved but never change the level).
+ * Dashboard practice-level card. Presentational only — the level is computed
+ * once by buildLearningInsights. Language distinguishes CONFIRMED marked
+ * answers (which drive the level) from inferred-total/feedback-only answers
+ * (which are saved but never change the level).
  */
 export function EconomicsLevelCard({
   level,
@@ -44,9 +44,12 @@ export function EconomicsLevelCard({
   return (
     <Card>
       <CardContent className="p-5">
+        {/* "Practice level", not "Economics level": the number is Aptly's
+            1–7-scale practice estimate and must not read as a predicted IB
+            grade (the disclaimer below makes the boundary explicit). */}
         <div className="flex items-center gap-2 text-muted-foreground">
           <GraduationCap className="h-4 w-4" />
-          <span className="text-xs font-medium">Estimated Economics level</span>
+          <span className="text-xs font-medium">Estimated practice level (1–7 scale)</span>
         </div>
 
         {!ready ? (

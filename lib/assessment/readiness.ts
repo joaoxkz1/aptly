@@ -478,7 +478,10 @@ export interface ImprovedTopic {
   toPercent: number;
 }
 
-export type ConfidenceTierLabel = "Test this skill next" | "Developing priority" | "Established focus";
+// Evidence-depth chip for the next focus. "Building evidence" deliberately
+// avoids "Developing", which is reserved for skill-performance ratings — the
+// same word must never mean both an evidence tier and a skill level.
+export type ConfidenceTierLabel = "Test this skill next" | "Building evidence" | "Established focus";
 
 export interface NextFocus {
   skillLabel: MarkBreakdownLabel; // lead: "Weakest skill: <skillLabel>"
@@ -635,7 +638,7 @@ function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null 
 
 function confidenceTierFor(responses: number): ConfidenceTierLabel {
   if (responses >= 4) return "Established focus";
-  if (responses >= 2) return "Developing priority";
+  if (responses >= 2) return "Building evidence";
   return "Test this skill next";
 }
 

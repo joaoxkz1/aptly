@@ -60,6 +60,18 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
       ? a.markBreakdown[0].reason
       : null;
 
+  // Format-provenance line (Beta Trust). After the student confirms a format
+  // in the preflight chooser, Aptly must say so — never "detected
+  // automatically", which would contradict the chooser's "Aptly won't assume
+  // a paper you don't confirm" promise. Legacy attempts (no frameworkSource)
+  // keep the neutral detection wording they were graded under.
+  const detectionLine =
+    a.frameworkSource === "user_confirmed"
+      ? "Format confirmed by you · topic identified automatically"
+      : a.frameworkSource === "aptly_practice"
+        ? "Format set by your Aptly practice question"
+        : `Question type detected automatically · ${confidenceLabel(a.classificationConfidence)} confidence`;
+
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col gap-5 bg-gradient-to-br from-accent/70 to-card p-6 sm:flex-row sm:items-center">
@@ -117,8 +129,7 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
             <ScanSearch className="h-3.5 w-3.5" />
-            Question type detected automatically · {confidenceLabel(a.classificationConfidence)}{" "}
-            confidence
+            {detectionLine}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Badge className={SUBJECT_BADGE[subject]}>{subject}</Badge>

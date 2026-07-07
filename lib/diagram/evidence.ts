@@ -136,9 +136,11 @@ export const DIAGRAM_RETAKE_GUIDANCE =
  * diagram photo WAS reviewed: the stored capReason ("Diagram evidence
  * missing…") would read as a contradiction next to the review card. The marks
  * themselves never change — diagram marks stay excluded in this release.
+ * ONE sentence-pair, stating each truth once (disclaimer-fatigue audit): the
+ * diagram card beside it already carries the full review limitation.
  */
 export const DIAGRAM_CAP_REASON_WITH_EVIDENCE =
-  "Diagram marks are not included in this estimate. Your diagram photo was reviewed separately as study feedback, not for marks. Only the written explanation is assessable in this feedback-only release — diagram review does not yet contribute to the mark estimate.";
+  "Diagram marks are not included — only the written explanation is assessable in this feedback-only release. Your diagram photo was reviewed separately as study feedback, not for marks.";
 
 // --- Presentation reconciliation predicates -----------------------------------
 // When structured Diagram Evidence exists on an attempt, wording written for
@@ -212,6 +214,50 @@ const CONSISTENCY_LINES: Record<Exclude<DiagramConsistency, "not_checked">, stri
   unclear: "The diagram couldn't be compared confidently with your written explanation.",
 };
 
+// --- Graph-type humanization ---------------------------------------------------
+// `graphTypeObserved` is short free text from the vision model ("demand and
+// supply"). Common Economics abbreviations can arrive as raw lowercase tokens
+// ("ad-as", "ppc") that read like internal enum values. Humanize the KNOWN
+// abbreviations deterministically; everything else renders as written. Display
+// only — the stored evidence is never rewritten.
+
+const GRAPH_TYPE_ABBREVIATIONS: Record<string, string> = {
+  "ad-as": "AD–AS",
+  "ad/as": "AD–AS",
+  ad: "AD",
+  as: "AS",
+  sras: "SRAS",
+  lras: "LRAS",
+  ppc: "PPC",
+  ppf: "PPF",
+  mc: "MC",
+  ac: "AC",
+  atc: "ATC",
+  avc: "AVC",
+  ar: "AR",
+  mr: "MR",
+  msb: "MSB",
+  mpb: "MPB",
+  msc: "MSC",
+  mpc: "MPC",
+  gdp: "GDP",
+  cpi: "CPI",
+};
+
+export function humanizeGraphType(raw: string): string {
+  return raw
+    .split(/(\s+)/)
+    .map((token) => {
+      const key = token.toLowerCase().replace(/[.,;:]+$/, "");
+      const mapped = GRAPH_TYPE_ABBREVIATIONS[key];
+      if (mapped == null) return token;
+      // Preserve any trailing punctuation the token carried.
+      const trailing = token.slice(key.length);
+      return mapped + trailing;
+    })
+    .join("");
+}
+
 // --- Presenter ----------------------------------------------------------------
 
 export interface DiagramElementRow {
@@ -261,7 +307,9 @@ export function presentDiagramEvidence(evidence: DiagramEvidence): DiagramEviden
     tone: evidence.status === "reviewed_clearly" ? "clear" : "partial",
     showFindings: true,
     graphTypeLine:
-      evidence.graphTypeObserved !== null ? `Appears to show: ${evidence.graphTypeObserved}` : null,
+      evidence.graphTypeObserved !== null
+        ? `Appears to show: ${humanizeGraphType(evidence.graphTypeObserved)}`
+        : null,
     relevanceLine: RELEVANCE_LINES[evidence.relevanceToQuestion],
     elementRows: evidence.elements.map((f) => ({
       label: ELEMENT_LABELS[f.element],

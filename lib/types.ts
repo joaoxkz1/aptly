@@ -141,6 +141,13 @@ export interface Assessment {
   // IB Marking Fidelity: the server-derived marking framework. Optional so
   // legacy attempts (which lack it) render conservatively as generic.
   framework?: AssessmentFramework;
+  // Beta Trust: how the framework was established — "detected" from the
+  // question text, "user_confirmed" in the preflight chooser, or
+  // "aptly_practice" (fixed by a generated question). Server-stamped from the
+  // policy; optional so legacy attempts (which lack it) keep the neutral
+  // detection wording. The feedback header MUST NOT claim autonomous
+  // detection when this says the student confirmed the format.
+  frameworkSource?: "detected" | "user_confirmed" | "aptly_practice" | null;
   // Data-Dependent Framework: a safe source-context indicator for Paper 2(g) /
   // Paper 3(b). true only when usable source text/data was supplied. Absent on
   // every other framework and on pre-patch attempts (treated conservatively).

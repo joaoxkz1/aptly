@@ -97,7 +97,7 @@ export function NextFocusCard({
               Submit your first answer
             </h2>
             <p className="max-w-prose text-sm text-muted-foreground">
-              Aptly learns your IB Economics patterns from each answer you submit and grade.
+              Aptly learns your IB Economics patterns from each answer you submit.
             </p>
             <Link
               href="/submit"

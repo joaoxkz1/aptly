@@ -49,18 +49,28 @@ export function diagnosticSignal(awarded: number, available: number): string {
 }
 
 /**
- * The strength of a skill's diagnostic GAP signal, from the internal
- * `percentLost` rank value (0–100). A bigger gap = a stronger "work on this"
- * signal. Deterministic thresholds; deliberately NOT shown as a percentage or
- * an IB mark. See the report for the exact mapping.
+ * The size of a skill's diagnostic GAP, from the internal `percentLost` rank
+ * value (0–100). A bigger gap = a stronger "work on this" priority.
+ * Deterministic thresholds; deliberately NOT shown as a percentage or an IB
+ * mark. The labels must always read as a GAP to close, never a strength —
+ * "Strong"/"Developing" are reserved for skill-performance ratings, so a
+ * weakness can never be worded like a strength (Beta Trust).
  */
-export type DiagnosticSignalStrength = "Strong signal" | "Developing signal" | "Limited signal";
+export type DiagnosticSignalStrength = "High-priority gap" | "Moderate gap" | "Smaller gap";
 
 export function diagnosticSignalStrength(percentLost: number): DiagnosticSignalStrength {
-  if (percentLost >= 50) return "Strong signal";
-  if (percentLost >= 25) return "Developing signal";
-  return "Limited signal";
+  if (percentLost >= 50) return "High-priority gap";
+  if (percentLost >= 25) return "Moderate gap";
+  return "Smaller gap";
 }
+
+/**
+ * The one-line explanation of the Diagnostic-focus bar encoding, shown once on
+ * the panel so the red bars are never an unexplained visual. Kept here so the
+ * copy is tested and cannot drift.
+ */
+export const DIAGNOSTIC_BAR_EXPLANATION =
+  "Bar length shows how much of that skill's marks were missed in your marked answers — a practice signal, not an IB mark.";
 
 /**
  * The qualitative diagnostic rows a student may see. Excludes "Diagram" — a
@@ -88,7 +98,7 @@ export function frameworkShortLabel(a: Assessment): string {
     case "paper2g_15_mark":
       return "Paper 2(g) · 15-mark data response";
     case "paper3b_10_mark":
-      return "Paper 3(b) · 10-mark recommendation";
+      return "Paper 3(b) · 10-mark recommendation (HL)";
     case "paper2a_definition":
       return total != null ? `Paper 2(a) · ${total}-mark definition` : "Paper 2(a) · definition";
     case "paper2b_quantitative":
@@ -245,30 +255,56 @@ export function nextFocusPresentation(nf: {
   };
 }
 
-// --- Estimate vocabulary (Pilot Trust) --------------------------------------
+// --- Estimate vocabulary (Pilot Trust + Beta Trust) --------------------------
 // Aptly's marks are ALWAYS estimates — only the mark TOTAL (the denominator)
 // can be confirmed. Shared student-facing surfaces read these helpers instead
 // of hand-writing labels, so bare "confirmed marks" wording (which could imply
-// an externally verified IB mark) can never silently reappear.
+// an externally verified IB mark) can never silently reappear — and internal
+// database-state words ("provisional", "feedback_only") stay translated into
+// student language in ONE place.
 
 /** Dashboard microcopy directly on the Economics-level card. */
 export const LEVEL_ESTIMATE_DISCLAIMER = "Aptly practice estimate — not an IB grade prediction.";
 
 /** Dashboard stat-card title for topics backed by mark-estimate evidence. */
-export const TOPICS_WITH_ESTIMATES_TITLE = "Topics with mark-estimate evidence";
+export const TOPICS_WITH_ESTIMATES_TITLE = "Topics with marked answers";
 
 /** Dashboard stat-card caption under the topics count. */
-export const TOPICS_WITH_ESTIMATES_CAPTION = "based on confirmed totals";
+export const TOPICS_WITH_ESTIMATES_CAPTION = "from answers marked out of a confirmed total";
 
-/** "3 with confirmed totals" — the state-breakdown lead (weekly card). */
+/** "3 marked with a confirmed total" — the state-breakdown lead (weekly card). */
 export function withConfirmedTotalsLabel(n: number): string {
-  return `${n} with confirmed totals`;
+  return `${n} marked with a confirmed total`;
 }
 
-/** "Based on 4 estimates with confirmed totals" — level-card evidence line. */
-export function basedOnEstimatesLabel(n: number): string {
-  return `Based on ${n} estimate${n === 1 ? "" : "s"} with confirmed totals`;
+/** "1 with an inferred total" — provisional attempts, in student words. */
+export function withInferredTotalLabel(n: number): string {
+  return `${n} with an inferred total`;
 }
+
+/** "2 feedback only" — attempts that received feedback but no mark estimate. */
+export function feedbackOnlyCountLabel(n: number): string {
+  return `${n} feedback only`;
+}
+
+/**
+ * Level-card evidence line. States the revision rule explicitly: repeated
+ * revisions of one question count as ONE piece of independent evidence, so
+ * this count can honestly sit beside submission counts that include both.
+ */
+export function basedOnEstimatesLabel(n: number): string {
+  return `Based on ${n} marked answer${n === 1 ? "" : "s"} — revisions of the same question count once`;
+}
+
+/**
+ * The one shared clause for every card whose maths keep only the latest
+ * marked attempt in each revision chain (topic/format performance, mark trend).
+ */
+export const LATEST_ATTEMPT_PER_QUESTION_NOTE = "latest attempt per question";
+
+/** Tooltip/caption explaining the weighted practice average. */
+export const WEIGHTED_PERCENT_EXPLANATION =
+  "Average of your marked answers, weighted toward recent answers and questions with more marks. Revisions of the same question count once.";
 
 // --- Practice Loop labels ----------------------------------------------------
 // The concise shared vocabulary for revisions and generated practice. Every
@@ -294,22 +330,26 @@ export const REVISION_SAVED_BODY = "Your revised answer has been added to your l
 /**
  * A compact one-liner for attempt lists (Learning log, Dashboard recent).
  * State-aware via the ONE canonical status helper — never renders a raw score
- * or 0–7 band, so it can never contradict the feedback screen.
+ * or 0–7 band, so it can never contradict the feedback screen. It is ALWAYS
+ * rendered beside the MarkPill, which already carries the mark/state — so this
+ * line never repeats the fraction or state word (no duplicate mark metadata).
  */
 export function attemptMetaLine(attempt: Attempt): string {
   const p = markPresentation(attempt);
   const a = attempt.assessment;
 
   if (p.state === "feedback_only") {
-    // No paper label — the model's assessmentFormat must never leak here.
-    return a ? `Feedback only · ${a.commandTermLabel}` : "Feedback only";
+    // No paper/total label — a feedback-only attempt has no reliable total,
+    // and the model's assessmentFormat must never leak here. The MarkPill
+    // beside this line already says "Feedback only".
+    return a ? a.commandTermLabel : "";
   }
   if (p.state === "legacy_unscored") {
-    return "Earlier attempt";
+    // The MarkPill already says "Earlier attempt".
+    return "";
   }
 
-  const lead = p.state === "provisional" ? `Likely ${p.fraction}` : p.fraction;
-  return [lead, a ? frameworkShortLabel(a) : null, a ? a.commandTermLabel : null]
+  return [a ? frameworkShortLabel(a) : null, a ? a.commandTermLabel : null]
     .filter(Boolean)
     .join(" · ");
 }

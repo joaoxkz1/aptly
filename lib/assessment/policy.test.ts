@@ -330,6 +330,78 @@ describe("regression — multi-part subsidy question, student selects 4, no diag
   });
 });
 
+describe("frameworkSource — the header may never claim autonomous detection after confirmation", () => {
+  it("an explicit paper label in the text => detected", () => {
+    const p = resolveScoringPolicy("Paper 1(a): Explain X. [10 marks]", NO_CHOICE);
+    expect(p.framework).toBe("paper1a_10_mark");
+    expect(p.frameworkSource).toBe("detected");
+  });
+
+  it("a student-confirmed 10/15 framework => user_confirmed", () => {
+    const q = "Discuss the extract's argument about subsidies. [15 marks]";
+    const p = resolveScoringPolicy(
+      q,
+      choice({ requestedFramework: "paper2g_15_mark", sourceMaterial: SOURCE })
+    );
+    expect(p.framework).toBe("paper2g_15_mark");
+    expect(p.frameworkSource).toBe("user_confirmed");
+  });
+
+  it("the source-gate downgrade preserves the confirmed provenance", () => {
+    // Confirmed Paper 2(g) with NO source: feedback-only, framework retained,
+    // and the provenance still says the student confirmed it.
+    const p = resolveScoringPolicy(
+      "Discuss the extract's argument about subsidies. [15 marks]",
+      choice({ requestedFramework: "paper2g_15_mark" })
+    );
+    expect(p.scoringState).toBe("feedback_only");
+    expect(p.framework).toBe("paper2g_15_mark");
+    expect(p.frameworkSource).toBe("user_confirmed");
+  });
+
+  it("generic practice makes no paper claim => no provenance to attribute", () => {
+    expect(
+      resolveScoringPolicy("Discuss whether tariffs improve welfare. [15 marks]", NO_CHOICE)
+        .frameworkSource
+    ).toBeNull();
+    expect(
+      resolveScoringPolicy(
+        "Evaluate the impact of tariffs.",
+        choice({ requestedSource: "user_confirmed", requestedTotal: 15 })
+      ).frameworkSource
+    ).toBeNull();
+    expect(
+      resolveScoringPolicy("Explain something vague.", choice({ requestedSource: "feedback_only" }))
+        .frameworkSource
+    ).toBeNull();
+  });
+
+  it("the recognised diagram-explain structure counts as detected", () => {
+    const p = resolveScoringPolicy(
+      "Using a demand and supply diagram, explain the effect of a subsidy. [4 marks]",
+      NO_CHOICE
+    );
+    expect(p.framework).toBe("paper2_four_mark_diagram_explain");
+    expect(p.frameworkSource).toBe("detected");
+  });
+
+  it("generated practice is attributed to the practice question, not detection", async () => {
+    const { policyForGeneratedPractice } = await import("./policy");
+    const p = policyForGeneratedPractice({
+      framework: "paper1b_15_mark",
+      markTotal: 15,
+      sourceMaterial: null,
+    });
+    expect(p.frameworkSource).toBe("aptly_practice");
+    const generic = policyForGeneratedPractice({
+      framework: "generic_practice",
+      markTotal: 8,
+      sourceMaterial: null,
+    });
+    expect(generic.frameworkSource).toBeNull();
+  });
+});
+
 describe("coffee-substitute diagram question (required QA)", () => {
   const coffee =
     "Using a demand and supply diagram, explain the effect of a fall in the price of tea, a substitute, on the market for coffee.";

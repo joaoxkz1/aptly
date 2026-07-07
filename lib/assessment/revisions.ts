@@ -1,4 +1,4 @@
-import type { AssessmentFramework, Attempt } from "@/lib/types";
+import type { AssessmentFramework, Attempt, MistakeType } from "@/lib/types";
 import { deriveScoringState, isCoreEligible } from "./status";
 
 /**
@@ -128,6 +128,53 @@ export function revisionComparison(
     deltaMarks: delta,
     deltaLabel,
   };
+}
+
+// --- Revision issue follow-up (Beta Trust) ------------------------------------
+//
+// Aptly re-marks every revision as a FRESH answer: the grading request carries
+// no parent feedback, so the model never re-checks earlier issues one by one.
+// Without this section, an issue tag that simply isn't re-flagged looks like
+// Aptly forgot its own feedback. The follow-up below is a pure PRESENTATION
+// rule over the controlled MistakeType tags (enum identity, never fuzzy text
+// matching): a parent tag present in the revision's own tags is "still
+// flagged"; an absent tag is honestly "not re-flagged — not verified as
+// fixed". Aptly NEVER claims a prior issue was addressed, because independent
+// re-marking produces no evidence for that claim. Stored feedback and marks
+// are never rewritten.
+
+export type RevisionIssueStatus = "still_flagged" | "not_reflagged";
+
+export interface RevisionIssueFollowUpItem {
+  type: MistakeType;
+  status: RevisionIssueStatus;
+}
+
+/** Student-facing wording for each follow-up status — never a "fixed" claim. */
+export const REVISION_ISSUE_STATUS_LABELS: Record<RevisionIssueStatus, string> = {
+  still_flagged: "Still flagged in this revision",
+  not_reflagged: "Not flagged this time — not re-checked individually",
+};
+
+/** The one honest explainer shown with the follow-up list. */
+export const REVISION_FOLLOWUP_EXPLAINER =
+  "Aptly marks each revision as a fresh answer, so it doesn't re-check earlier issues one by one. Judge each point against your revised answer yourself.";
+
+/**
+ * Follow-up rows for every issue flagged on the ORIGINAL attempt. Pure and
+ * deterministic: controlled-tag identity only. Returns [] when the parent had
+ * no flagged issues (nothing to follow up).
+ */
+export function revisionIssueFollowUp(
+  parent: Attempt,
+  revision: Attempt
+): RevisionIssueFollowUpItem[] {
+  const revisionTags = new Set(revision.feedback.mistakes);
+  // De-duplicate defensively; stored tags should already be unique.
+  return [...new Set(parent.feedback.mistakes)].map((type) => ({
+    type,
+    status: revisionTags.has(type) ? "still_flagged" : "not_reflagged",
+  }));
 }
 
 // --- Trusted revision prefill context ---------------------------------------

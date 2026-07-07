@@ -122,8 +122,45 @@ export default function AttemptsPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Mistakes detected
+                      {/* The essential feedback record — the same canonical
+                          presented feedback the feedback screen shows, so the
+                          log is a usable memory, not just a mistake list. */}
+                      {f.strengths.length > 0 && (
+                        <>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Strengths
+                          </p>
+                          <ul className="mt-1.5 flex flex-col gap-1 text-sm leading-relaxed text-muted-foreground">
+                            {f.strengths.map((s) => (
+                              <li key={s} className="flex gap-2">
+                                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-500" />
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      {f.improvements.length > 0 && (
+                        <>
+                          <p
+                            className={`${f.strengths.length > 0 ? "mt-4 " : ""}text-xs font-semibold uppercase tracking-wider text-muted-foreground`}
+                          >
+                            Improvements
+                          </p>
+                          <ul className="mt-1.5 flex flex-col gap-1 text-sm leading-relaxed text-muted-foreground">
+                            {f.improvements.map((s) => (
+                              <li key={s} className="flex gap-2">
+                                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-amber-500" />
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      <p
+                        className={`${f.strengths.length > 0 || f.improvements.length > 0 ? "mt-4 " : ""}text-xs font-semibold uppercase tracking-wider text-muted-foreground`}
+                      >
+                        Issues flagged
                       </p>
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         {f.mistakes.length > 0 ? (
@@ -152,8 +189,11 @@ export default function AttemptsPage() {
                       )}
                       {f.examinerComment !== "" && (
                         <>
+                          {/* Same label as the feedback screen — this is
+                              Aptly's examiner-STYLE comment, not a real
+                              examiner's. */}
                           <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Examiner comment
+                            Examiner-style comment
                           </p>
                           <p className="mt-1.5 text-sm italic leading-relaxed text-muted-foreground">
                             {f.examinerComment}

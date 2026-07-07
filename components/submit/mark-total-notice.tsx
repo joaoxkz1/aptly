@@ -145,15 +145,16 @@ export function MarkTotalNotice({
           disabled={disabled}
           onClick={() => onOverrideChange({ mode: "custom", total: "" })}
         >
-          Change total
+          Change mark total
         </Button>
+        {/* Plain meaning: grade the answer for feedback, skip the mark estimate. */}
         <Button
           size="sm"
           variant="ghost"
           disabled={disabled}
           onClick={() => onOverrideChange({ mode: "feedback_only" })}
         >
-          Use feedback only
+          Feedback only (no mark)
         </Button>
       </div>
     </div>

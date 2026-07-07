@@ -21,18 +21,22 @@ const BANNED = /\bconfirmed marks?\b|\bconfirmed mark estimates?\b|\bofficial\b/
 
 describe("estimate vocabulary — exact shared labels", () => {
   it("state-breakdown lead names the confirmed TOTAL, not a confirmed mark", () => {
-    expect(withConfirmedTotalsLabel(3)).toBe("3 with confirmed totals");
-    expect(withConfirmedTotalsLabel(0)).toBe("0 with confirmed totals");
+    expect(withConfirmedTotalsLabel(3)).toBe("3 marked with a confirmed total");
+    expect(withConfirmedTotalsLabel(0)).toBe("0 marked with a confirmed total");
   });
 
-  it("level-card evidence line says estimates with confirmed totals", () => {
-    expect(basedOnEstimatesLabel(1)).toBe("Based on 1 estimate with confirmed totals");
-    expect(basedOnEstimatesLabel(4)).toBe("Based on 4 estimates with confirmed totals");
+  it("level-card evidence line counts marked answers AND states the revision rule", () => {
+    expect(basedOnEstimatesLabel(1)).toBe(
+      "Based on 1 marked answer — revisions of the same question count once"
+    );
+    expect(basedOnEstimatesLabel(4)).toBe(
+      "Based on 4 marked answers — revisions of the same question count once"
+    );
   });
 
-  it("topics card is framed as mark-estimate evidence", () => {
-    expect(TOPICS_WITH_ESTIMATES_TITLE).toBe("Topics with mark-estimate evidence");
-    expect(TOPICS_WITH_ESTIMATES_CAPTION).toBe("based on confirmed totals");
+  it("topics card is framed as marked-answer evidence in student words", () => {
+    expect(TOPICS_WITH_ESTIMATES_TITLE).toBe("Topics with marked answers");
+    expect(TOPICS_WITH_ESTIMATES_CAPTION).toBe("from answers marked out of a confirmed total");
   });
 
   it("the Economics-level disclaimer is the exact required microcopy", () => {

@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Sign in — Aptly",
-  description: "Sign in to Aptly, your IB study analytics copilot.",
+  description: "Sign in to Aptly — practice feedback and study insights for IB Economics.",
 };
 
 export default function PublicLayout({

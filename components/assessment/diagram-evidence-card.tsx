@@ -43,9 +43,12 @@ export function DiagramEvidenceCard({ evidence }: { evidence: DiagramEvidence })
           Diagram evidence
           <Badge className={STATUS_BADGE[p.tone]}>{p.statusLabel}</Badge>
         </CardTitle>
+        {/* Provenance only — the separation/no-marks story is stated ONCE, in
+            the fixed limitation at the foot of this card (disclaimer-fatigue
+            audit: one truth per card, at the moment it matters). */}
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Camera className="h-3 w-3 shrink-0" />
-          From your diagram photo — separate from your written-answer feedback.
+          From your diagram photo.
         </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">

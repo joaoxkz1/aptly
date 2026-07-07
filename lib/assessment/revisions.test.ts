@@ -6,14 +6,18 @@ import type {
   Attempt,
   Feedback,
   MarkTotalSource,
+  MistakeType,
   ScoringState,
   SyllabusTopic,
 } from "@/lib/types";
 import {
+  REVISION_FOLLOWUP_EXPLAINER,
+  REVISION_ISSUE_STATUS_LABELS,
   collapseRevisionChains,
   isRevision,
   revisionComparison,
   revisionContextFor,
+  revisionIssueFollowUp,
 } from "./revisions";
 import { buildLearningInsights } from "./readiness";
 
@@ -438,5 +442,67 @@ describe("revisionContextFor — trusted context only, never the old answer", ()
     expect(ctx.practiceQuestionId).toBe("pq-1");
     expect(ctx.needsSourceAgain).toBe(false);
     expect(ctx.question).toBe(revision.question);
+  });
+});
+
+// --- Revision issue follow-up (Beta Trust) ------------------------------------
+
+describe("revisionIssueFollowUp — prior issues are never silently forgotten", () => {
+  function withMistakes(id: string, mistakes: MistakeType[]): Attempt {
+    const a = attempt({ id });
+    a.feedback = { ...a.feedback, mistakes };
+    return a;
+  }
+
+  it("a parent tag re-flagged on the revision is 'still_flagged'", () => {
+    const parent = withMistakes("p", ["No real-world example", "Lack of evaluation"]);
+    const revision = withMistakes("r", ["No real-world example"]);
+    expect(revisionIssueFollowUp(parent, revision)).toEqual([
+      { type: "No real-world example", status: "still_flagged" },
+      { type: "Lack of evaluation", status: "not_reflagged" },
+    ]);
+  });
+
+  it("an absent tag is honestly 'not_reflagged' — NEVER claimed fixed", () => {
+    const parent = withMistakes("p", ["No real-world example"]);
+    const revision = withMistakes("r", []);
+    const rows = revisionIssueFollowUp(parent, revision);
+    expect(rows).toEqual([{ type: "No real-world example", status: "not_reflagged" }]);
+  });
+
+  it("a parent with no flagged issues produces no follow-up rows", () => {
+    expect(revisionIssueFollowUp(withMistakes("p", []), withMistakes("r", []))).toEqual([]);
+  });
+
+  it("duplicate stored parent tags are followed up once", () => {
+    const parent = withMistakes("p", [
+      "Weak definitions",
+      "Weak definitions",
+    ] as MistakeType[]);
+    const revision = withMistakes("r", ["Weak definitions"]);
+    expect(revisionIssueFollowUp(parent, revision)).toEqual([
+      { type: "Weak definitions", status: "still_flagged" },
+    ]);
+  });
+
+  it("the student-facing wording never claims a prior issue was fixed or resolved", () => {
+    const wording = [
+      ...Object.values(REVISION_ISSUE_STATUS_LABELS),
+      REVISION_FOLLOWUP_EXPLAINER,
+    ]
+      .join(" ")
+      .toLowerCase();
+    expect(wording).not.toContain("fixed");
+    expect(wording).not.toContain("resolved");
+    expect(wording).not.toContain("addressed");
+    // And it does explain the honest limitation.
+    expect(REVISION_FOLLOWUP_EXPLAINER).toContain("fresh answer");
+  });
+
+  it("status labels distinguish re-flagged from not-re-checked", () => {
+    expect(REVISION_ISSUE_STATUS_LABELS.still_flagged).toBe("Still flagged in this revision");
+    expect(REVISION_ISSUE_STATUS_LABELS.not_reflagged).toBe(
+      "Not flagged this time — not re-checked individually"
+    );
   });
 });

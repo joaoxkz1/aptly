@@ -16,12 +16,16 @@ import { readDisplayName } from "@/lib/auth/display-name";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
 import { buildLearningInsights, stateBreakdown } from "@/lib/assessment/readiness";
 import {
+  LATEST_ATTEMPT_PER_QUESTION_NOTE,
   TOPICS_WITH_ESTIMATES_CAPTION,
   TOPICS_WITH_ESTIMATES_TITLE,
+  WEIGHTED_PERCENT_EXPLANATION,
   attemptMetaLine,
+  feedbackOnlyCountLabel,
   topicDisplayLabel,
   topicShortLabel,
   withConfirmedTotalsLabel,
+  withInferredTotalLabel,
 } from "@/lib/assessment/display";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import { cn, formatDate } from "@/lib/utils";
@@ -66,7 +70,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Aptly learns your IB Economics patterns from every answer you grade.
+            Aptly learns your IB Economics patterns from every answer you submit.
           </p>
         </div>
         <Card>
@@ -81,6 +85,14 @@ export default function DashboardPage() {
             >
               <PenLine className="h-4 w-4" />
               Submit your first answer
+            </Link>
+            {/* Low-friction cold-start path: see real example feedback before
+                writing anything — nothing is graded or saved on that route. */}
+            <Link
+              href="/submit?sample=1"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            >
+              Or see sample feedback first — no writing needed
             </Link>
           </CardContent>
         </Card>
@@ -119,9 +131,9 @@ export default function DashboardPage() {
               {ready
                 ? [
                     withConfirmedTotalsLabel(weekly.confirmed),
-                    weekly.provisional > 0 ? `${weekly.provisional} provisional` : null,
-                    weekly.feedbackOnly > 0 ? `${weekly.feedbackOnly} feedback-only` : null,
-                    weekly.unscored > 0 ? `${weekly.unscored} earlier/unscored` : null,
+                    weekly.provisional > 0 ? withInferredTotalLabel(weekly.provisional) : null,
+                    weekly.feedbackOnly > 0 ? feedbackOnlyCountLabel(weekly.feedbackOnly) : null,
+                    weekly.unscored > 0 ? `${weekly.unscored} earlier (no mark data)` : null,
                   ]
                     .filter(Boolean)
                     .join(" · ")
@@ -148,8 +160,13 @@ export default function DashboardPage() {
                 day{streak === 1 ? "" : "s"}
               </span>
             </p>
+            {/* The streak counts consecutive DAYS with an answer (yesterday
+                keeps it alive), so 0 can honestly sit beside a busy week —
+                the caption states the rule instead of looking contradictory. */}
             <p className="mt-1 text-xs text-muted-foreground">
-              {ready && streak === 0 ? "submit an answer to start one" : "keep it going today"}
+              {ready && streak === 0
+                ? "days in a row with an answer — submit today to start one"
+                : "keep it going today"}
             </p>
           </CardContent>
         </Card>
@@ -193,11 +210,15 @@ export default function DashboardPage() {
               <>
                 <Sparkline values={insights.markTrend} max={100} width={170} height={56} />
                 {insights.weightedPercent !== null && (
-                  <div className="text-right">
+                  <div className="text-right" title={WEIGHTED_PERCENT_EXPLANATION}>
                     <p className="text-2xl font-semibold tabular-nums">
                       {insights.weightedPercent}%
                     </p>
-                    <p className="text-[10px] text-muted-foreground">weighted</p>
+                    <p className="text-[10px] leading-snug text-muted-foreground">
+                      weighted toward
+                      <br />
+                      recent answers
+                    </p>
                   </div>
                 )}
               </>
@@ -215,7 +236,9 @@ export default function DashboardPage() {
         <CardHeader className="flex-row items-center justify-between">
           <div>
             <CardTitle>Topic performance</CardTitle>
-            <CardDescription>Marks earned across your assessed topics</CardDescription>
+            <CardDescription>
+              Marks earned across your assessed topics · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
+            </CardDescription>
           </div>
           <Link href="/analytics" className="text-xs font-medium text-primary hover:underline">
             View analytics
@@ -229,11 +252,11 @@ export default function DashboardPage() {
                   <span className="truncate font-medium" title={t.topicLabel}>
                     {topicShortLabel(t.topicCode)}
                   </span>
+                  {/* Always the evidence count, with an early-signal qualifier —
+                      the same slot never alternates between two label kinds. */}
                   <span className="shrink-0 tabular-nums text-muted-foreground">
-                    {t.percent}% ·{" "}
-                    {t.reliability === "reliable_pattern"
-                      ? `${t.responses} answers`
-                      : "early signal"}
+                    {t.percent}% · {t.responses} answer{t.responses === 1 ? "" : "s"}
+                    {t.reliability === "early_signal" ? " · early signal" : ""}
                   </span>
                 </div>
                 <MarkBar percent={t.percent} delayMs={i * 60} />

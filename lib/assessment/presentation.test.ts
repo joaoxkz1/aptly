@@ -221,14 +221,26 @@ describe("A — next-focus copy never presents diagnostics as marks", () => {
   });
 });
 
-describe("A — diagnostic signal thresholds", () => {
-  it("maps percentLost to qualitative signal strength", () => {
-    expect(diagnosticSignalStrength(80)).toBe("Strong signal");
-    expect(diagnosticSignalStrength(50)).toBe("Strong signal");
-    expect(diagnosticSignalStrength(49)).toBe("Developing signal");
-    expect(diagnosticSignalStrength(25)).toBe("Developing signal");
-    expect(diagnosticSignalStrength(24)).toBe("Limited signal");
-    expect(diagnosticSignalStrength(1)).toBe("Limited signal");
+describe("A — diagnostic gap thresholds (same cut-offs, gap-first wording)", () => {
+  it("maps percentLost to a qualitative gap size", () => {
+    expect(diagnosticSignalStrength(80)).toBe("High-priority gap");
+    expect(diagnosticSignalStrength(50)).toBe("High-priority gap");
+    expect(diagnosticSignalStrength(49)).toBe("Moderate gap");
+    expect(diagnosticSignalStrength(25)).toBe("Moderate gap");
+    expect(diagnosticSignalStrength(24)).toBe("Smaller gap");
+    expect(diagnosticSignalStrength(1)).toBe("Smaller gap");
+  });
+
+  it("a weakness label can NEVER read as a strength or a skill rating", () => {
+    // "Strong"/"Secure"/"Developing" are skill-performance words; a diagnostic
+    // GAP label using them would word a weakness like a strength (Beta Trust).
+    for (const pct of [0, 1, 24, 25, 49, 50, 80, 100]) {
+      const label = diagnosticSignalStrength(pct).toLowerCase();
+      expect(label).not.toContain("strong");
+      expect(label).not.toContain("secure");
+      expect(label).not.toContain("developing");
+      expect(label).toContain("gap");
+    }
   });
 });
 
