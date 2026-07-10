@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { MarkPill } from "@/components/assessment/mark-pill";
 import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
 import { useAttempts } from "@/lib/storage";
+import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
 import { SUBJECT_BADGE } from "@/lib/subjects";
 import {
   APTLY_PRACTICE_LABEL,
@@ -24,7 +25,7 @@ import {
 import { cn, formatDateTime } from "@/lib/utils";
 
 export default function AttemptsPage() {
-  const { attempts, ready, removeAttempt } = useAttempts();
+  const { attempts, status, retry, removeAttempt } = useAttempts();
   const [expanded, setExpanded] = useState<string | null>(null);
   // Per-attempt delete flow: which row is asking for confirmation, which is
   // mid-delete, and which failed (kept visible — never optimistic).
@@ -66,6 +67,8 @@ export default function AttemptsPage() {
           Every answer you submit, saved privately to your Aptly account.
         </p>
       </div>
+
+      <AttemptsLoadNotice status={status} hasData={attempts.length > 0} onRetry={retry} />
 
       <div className="flex flex-col gap-3">
         {attempts.map((a) => {
@@ -293,7 +296,7 @@ export default function AttemptsPage() {
           );
         })}
 
-        {ready && attempts.length === 0 && (
+        {status === "ready" && attempts.length === 0 && (
           <Card>
             <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
               <p className="text-sm text-muted-foreground">No answers saved yet.</p>

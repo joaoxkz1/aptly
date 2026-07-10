@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
+import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
 import { buildLearningInsights } from "@/lib/assessment/readiness";
 import {
   DIAGNOSTIC_BAR_EXPLANATION,
@@ -16,13 +17,13 @@ import {
 } from "@/lib/assessment/display";
 
 export default function AnalyticsPage() {
-  const { attempts, ready } = useAttempts();
+  const { attempts, status, retry } = useAttempts();
   const insights = buildLearningInsights(attempts);
 
   // Attempts still loading: a quiet placeholder instead of flashing the
   // empty-state copy ("No data yet", "Grade Economics answers…") at students
   // who already have saved answers.
-  if (!ready) {
+  if (status !== "ready" && attempts.length === 0) {
     return (
       <div className="flex flex-col gap-5">
         <div>
@@ -32,16 +33,12 @@ export default function AnalyticsPage() {
             grades.
           </p>
         </div>
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-sm text-muted-foreground">Loading your analytics…</p>
-          </CardContent>
-        </Card>
+        <AttemptsLoadNotice status={status} hasData={false} onRetry={retry} />
       </div>
     );
   }
 
-  if (attempts.length === 0) {
+  if (status === "ready" && attempts.length === 0) {
     return (
       <div className="flex flex-col gap-5">
         <div>
@@ -74,6 +71,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex flex-col gap-5">
+      <AttemptsLoadNotice status={status} hasData onRetry={retry} />
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
         <p className="mt-1 text-sm text-muted-foreground">

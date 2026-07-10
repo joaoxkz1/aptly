@@ -11,6 +11,7 @@ import { EconomicsLevelCard } from "@/components/assessment/economics-level-card
 import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
+import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
 import { createClient } from "@/lib/supabase/client";
 import { readDisplayName } from "@/lib/auth/display-name";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
@@ -38,7 +39,8 @@ function greeting() {
 }
 
 export default function DashboardPage() {
-  const { attempts, ready } = useAttempts();
+  const { attempts, status, retry } = useAttempts();
+  const ready = status === "ready" || (status === "error" && attempts.length > 0);
   const insights = buildLearningInsights(attempts);
   const week = attemptsThisWeek(attempts);
   // Complete, reconciling breakdown of THIS WEEK's submissions (sums to week.length).
@@ -60,6 +62,20 @@ export default function DashboardPage() {
     };
   }, []);
   const heading = displayName ? `${greeting()}, ${displayName}` : "Welcome back";
+
+  if (status !== "ready" && attempts.length === 0) {
+    return (
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 py-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Aptly learns your IB Economics patterns from every answer you submit.
+          </p>
+        </div>
+        <AttemptsLoadNotice status={status} hasData={false} onRetry={retry} />
+      </div>
+    );
+  }
 
   // Strong first-time state instead of empty charts / confusing zeroes.
   // ONE clear call to action — the primary button below (the strongest of the
@@ -102,6 +118,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <AttemptsLoadNotice status={status} hasData onRetry={retry} />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
