@@ -117,6 +117,23 @@ describe("POST /api/extract atomic transcription", () => {
     expect(succeeded).toHaveBeenCalledWith(RESERVATION_ID, USER_ID);
   });
 
+  it("fails closed and counts output that exceeds the transcription-only schema", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    openaiCreate.mockResolvedValue({
+      status: "completed",
+      output_text: JSON.stringify({
+        question: "Explain a subsidy. [4 marks]",
+        answer: "A transcribed answer.",
+        sourceMaterial: null,
+        mark: 4,
+      }),
+    });
+    const response = await POST(request());
+    expect(response.status).toBe(502);
+    expect(failed).toHaveBeenCalledWith(RESERVATION_ID, USER_ID, "validation");
+    expect(succeeded).not.toHaveBeenCalled();
+  });
+
   it("marks a dispatched provider failure failed and exposes no provider detail", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     openaiCreate.mockRejectedValue(new Error("private scan text"));

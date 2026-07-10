@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
     > | null,
     reusable: null as PracticeQuestion | null,
     reservation: {} as Record<string, unknown>,
+    target: null as Record<string, unknown> | null,
   },
   openaiCreate: vi.fn(),
   reserve: vi.fn(),
@@ -19,8 +20,9 @@ const mocks = vi.hoisted(() => ({
   failed: vi.fn(async () => {}),
   save: vi.fn(),
   find: vi.fn(),
+  validate: vi.fn(),
 }));
-const { state, openaiCreate, reserve, succeeded, save, find } = mocks;
+const { state, openaiCreate, reserve, succeeded, failed, save, find, validate } = mocks;
 const QUESTION = {
   id: "44444444-4444-4444-8444-444444444444",
   createdAt: "2026-07-10T10:00:00.000Z",
@@ -54,14 +56,7 @@ vi.mock("@/lib/assessment/practice-reuse", () => ({
   reusablePracticeQuestion: () => mocks.state.reusable,
 }));
 vi.mock("@/lib/assessment/practice-target", () => ({
-  derivePracticeTarget: () => ({
-    framework: "generic_practice",
-    markTotal: 15,
-    topicCode: "2.8",
-    topicLabel: "Market failure",
-    skill: "evaluation",
-    why: "Evaluation is the next focus.",
-  }),
+  derivePracticeTarget: () => mocks.state.target,
 }));
 vi.mock("@/lib/ai/openai", () => ({
   getOpenAI: () => ({ responses: { create: mocks.openaiCreate } }),
@@ -70,10 +65,7 @@ vi.mock("@/lib/ai/practice-schema", () => ({
   PRACTICE_JSON_SCHEMA: { type: "object" },
   buildPracticeInstructions: () => "generate original practice",
   buildPracticeUserInput: () => "server target",
-  validateGeneratedPractice: () => ({
-    question: "Evaluate whether a carbon tax reduces emissions. [15 marks]",
-    sourceMaterial: null,
-  }),
+  validateGeneratedPractice: mocks.validate,
 }));
 vi.mock("@/lib/ai/usage-reservations", () => ({
   reserveAIUsage: mocks.reserve,
@@ -107,11 +99,16 @@ beforeEach(() => {
     relatedPracticeId: null,
     resultHash: null,
   };
+  state.target = { ...TARGET };
   vi.clearAllMocks();
   reserve.mockImplementation(async () => state.reservation);
   openaiCreate.mockResolvedValue({ status: "completed", output_text: "{}" });
   save.mockResolvedValue(QUESTION);
   find.mockResolvedValue(null);
+  validate.mockReturnValue({
+    question: "Evaluate whether a carbon tax reduces emissions. [15 marks]",
+    sourceMaterial: null,
+  });
 });
 
 describe("POST /api/practice server authority", () => {
@@ -136,6 +133,23 @@ describe("POST /api/practice server authority", () => {
     expect((await response.json()).reused).toBe(true);
     expect(reserve).not.toHaveBeenCalled();
     expect(openaiCreate).not.toHaveBeenCalled();
+  });
+
+  it("returns the honest no-focus response before quota/provider work", async () => {
+    state.target = null;
+    const response = await POST(request());
+    expect(response.status).toBe(409);
+    expect(reserve).not.toHaveBeenCalled();
+    expect(openaiCreate).not.toHaveBeenCalled();
+  });
+
+  it("explicit regeneration bypasses reuse but still uses the server target", async () => {
+    state.reusable = QUESTION;
+    const response = await POST(request({ regenerate: true, idempotencyKey: KEY }));
+    expect(response.status).toBe(200);
+    expect(reserve).toHaveBeenCalled();
+    expect(openaiCreate).toHaveBeenCalledTimes(1);
+    expect(save).toHaveBeenCalledWith(USER_ID, KEY, expect.objectContaining(TARGET));
   });
 
   it("handles atomic limit and in-progress outcomes without provider work", async () => {
@@ -166,5 +180,34 @@ describe("POST /api/practice server authority", () => {
       USER_ID,
       { practiceId: QUESTION.id }
     );
+  });
+
+  it("counts validation and persistence failures without exposing generated content", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    validate.mockImplementationOnce(() => {
+      throw new Error("private invalid generated question");
+    });
+    const invalid = await POST(request());
+    expect(invalid.status).toBe(502);
+    expect(failed).toHaveBeenCalledWith(
+      state.reservation.reservationId,
+      USER_ID,
+      "validation"
+    );
+    expect(JSON.stringify(await invalid.json())).not.toContain("private invalid");
+
+    vi.clearAllMocks();
+    reserve.mockImplementation(async () => state.reservation);
+    openaiCreate.mockResolvedValue({ status: "completed", output_text: "{}" });
+    validate.mockReturnValue({ question: QUESTION.question, sourceMaterial: null });
+    save.mockRejectedValue(new Error("private generated question"));
+    const persistence = await POST(request());
+    expect(persistence.status).toBe(502);
+    expect(failed).toHaveBeenCalledWith(
+      state.reservation.reservationId,
+      USER_ID,
+      "persistence"
+    );
+    expect(JSON.stringify(await persistence.json())).not.toContain("private generated");
   });
 });

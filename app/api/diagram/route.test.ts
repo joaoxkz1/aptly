@@ -126,6 +126,26 @@ describe("POST /api/diagram feedback-only reservation", () => {
     expect(JSON.stringify(succeeded.mock.calls)).not.toContain("demand and supply");
   });
 
+  it("fails closed and counts output containing marks or unexpected fields", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    openaiCreate.mockResolvedValue({
+      status: "completed",
+      output_text: JSON.stringify({
+        status: "reviewed_clearly",
+        graphTypeObserved: "demand and supply",
+        relevanceToQuestion: "appears_relevant",
+        elements: [{ element: "axes_labels", observed: "visible" }],
+        consistencyWithAnswer: "supports",
+        improvements: ["Label the new equilibrium."],
+        mark: 4,
+      }),
+    });
+    const response = await POST(request());
+    expect(response.status).toBe(502);
+    expect(failed).toHaveBeenCalledWith(RESERVATION_ID, USER_ID, "validation");
+    expect(succeeded).not.toHaveBeenCalled();
+  });
+
   it("marks provider failures as counted without exposing private context", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     openaiCreate.mockRejectedValue(new Error("private diagram context"));

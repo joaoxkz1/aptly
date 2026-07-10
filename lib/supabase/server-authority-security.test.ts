@@ -32,6 +32,18 @@ describe("service-role trust boundary", () => {
     }
   });
 
+  it("grants only the required authoritative table operations to service_role", () => {
+    expect(AUTHORITY_MIGRATION).toContain(
+      "grant select, insert, update, delete on table public.attempts to service_role"
+    );
+    expect(AUTHORITY_MIGRATION).toContain(
+      "grant select, insert on table public.practice_questions to service_role"
+    );
+    expect(AUTHORITY_MIGRATION).toContain(
+      "grant execute on function public.is_valid_diagram_evidence(jsonb) to service_role"
+    );
+  });
+
   it("no client dependency graph can reach the service-role module or key name", () => {
     function filesUnder(directory: string): string[] {
       return readdirSync(directory).flatMap((name) => {
@@ -81,7 +93,9 @@ describe("service-role trust boundary", () => {
 
 describe("diagram evidence database barrier", () => {
   it("requires exact keys, bounded JSON, unique elements, and normalized unable state", () => {
-    expect(AUTHORITY_MIGRATION).toContain("jsonb_object_length(value) = 7");
+    expect(AUTHORITY_MIGRATION).toContain(
+      "(select count(*) from jsonb_object_keys(value)) = 7"
+    );
     expect(AUTHORITY_MIGRATION).toContain("count(distinct element->>'element')");
     expect(AUTHORITY_MIGRATION).toContain("octet_length(value::text) <= 16384");
     expect(AUTHORITY_MIGRATION).toContain("value->>'status' <> 'unable_to_assess'");

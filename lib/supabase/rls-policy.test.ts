@@ -23,9 +23,15 @@ describe("server-authoritative attempts and practice RLS", () => {
     expect(SCHEMA).toContain(
       "grant select, delete on table public.practice_questions to authenticated"
     );
-    expect(SCHEMA).not.toMatch(/grant[^;]*insert[^;]*public\.attempts/i);
-    expect(SCHEMA).not.toMatch(/grant[^;]*update[^;]*public\.attempts/i);
-    expect(SCHEMA).not.toMatch(/grant[^;]*insert[^;]*public\.practice_questions/i);
+    expect(SCHEMA).not.toMatch(
+      /grant\s+[^;]*\binsert\b[^;]*on table public\.attempts to authenticated/i
+    );
+    expect(SCHEMA).not.toMatch(
+      /grant\s+[^;]*\bupdate\b[^;]*on table public\.attempts to authenticated/i
+    );
+    expect(SCHEMA).not.toMatch(
+      /grant\s+[^;]*\binsert\b[^;]*on table public\.practice_questions to authenticated/i
+    );
     expect(SCHEMA).not.toContain('create policy "insert_own_attempts"');
     expect(SCHEMA).not.toContain('create policy "update_own_attempts"');
     expect(SCHEMA).not.toContain('create policy "insert_own_practice_questions"');
