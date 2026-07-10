@@ -262,6 +262,8 @@ drop policy if exists "insert_own_diagram_usage" on public.diagram_review_usage;
 -- after normal user authentication and explicit relationship checks.
 revoke insert, update on table public.attempts from authenticated;
 revoke insert, update on table public.practice_questions from authenticated;
+grant select, insert, update, delete on table public.attempts to service_role;
+grant select, insert on table public.practice_questions to service_role;
 revoke execute on function public.owns_attempt(uuid) from authenticated;
 revoke execute on function public.owns_practice_question(uuid) from authenticated;
 
@@ -273,7 +275,7 @@ set search_path = ''
 as $$
   select
     jsonb_typeof(value) = 'object'
-    and jsonb_object_length(value) = 7
+    and (select count(*) from jsonb_object_keys(value)) = 7
     and value ?& array[
       'version', 'status', 'graphTypeObserved', 'relevanceToQuestion',
       'elements', 'consistencyWithAnswer', 'improvements'
@@ -301,7 +303,7 @@ as $$
       select 1
       from jsonb_array_elements(value->'elements') as item(element)
       where jsonb_typeof(element) <> 'object'
-        or jsonb_object_length(element) <> 2
+        or (select count(*) from jsonb_object_keys(element)) <> 2
         or not (element ?& array['element', 'observed'])
         or element->>'element' not in (
           'axes_labels', 'curve_labels', 'equilibrium', 'shift_arrows',
@@ -341,6 +343,7 @@ $$;
 
 revoke all on function public.is_valid_diagram_evidence(jsonb)
   from public, anon, authenticated;
+grant execute on function public.is_valid_diagram_evidence(jsonb) to service_role;
 
 alter table public.attempts
   drop constraint if exists attempts_diagram_evidence_valid_chk;
