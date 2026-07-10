@@ -67,8 +67,14 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
     const bodies = (fetchImpl.mock.calls as unknown as [string, RequestInit][]).map((call) =>
       JSON.parse(call[1].body as string)
     );
-    expect(bodies[0]).toEqual({ regenerate: false });
-    expect(bodies[1]).toEqual({ regenerate: true });
+    expect(bodies[0]).toMatchObject({
+      regenerate: false,
+      idempotencyKey: expect.stringMatching(/^[0-9a-f-]{36}$/),
+    });
+    expect(bodies[1]).toMatchObject({
+      regenerate: true,
+      idempotencyKey: expect.stringMatching(/^[0-9a-f-]{36}$/),
+    });
   });
 
   it("a failed request clears the slot so a retry is possible", async () => {

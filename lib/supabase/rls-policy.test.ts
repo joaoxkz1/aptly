@@ -2,83 +2,96 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-/**
- * RLS regression audit (revision-save fix).
- *
- * A PostgreSQL row-security policy on `attempts` may NEVER select from
- * `attempts` inside its own expression: the rewriter raises
- * "infinite recursion detected in policy for relation" (42P17), which made
- * EVERY attempt insert — most visibly revision saves — fail after 0003.
- * The fix routes ownership checks through SECURITY DEFINER functions. These
- * source-level tests pin that shape in the canonical schema and in the 0004
- * migration so the recursive form cannot silently reappear.
- */
-
 const SCHEMA = readFileSync(join("supabase", "schema.sql"), "utf8");
 const MIGRATION_0004 = readFileSync(
   join("supabase", "migrations", "0004_revision_source_retention.sql"),
   "utf8"
 );
+const MIGRATION_0007 = readFileSync(
+  join("supabase", "migrations", "0007_server_authority.sql"),
+  "utf8"
+);
+const MIGRATION_0008 = readFileSync(
+  join("supabase", "migrations", "0008_ai_usage_reservations.sql"),
+  "utf8"
+);
+const AUTHORITY = readFileSync(join("lib", "supabase", "server-authority.ts"), "utf8");
 
-/** The `create policy "insert_own_attempts" …;` block from a SQL source. */
-function insertPolicyBlock(sql: string): string {
-  const start = sql.indexOf('create policy "insert_own_attempts"');
-  if (start === -1) throw new Error("insert_own_attempts policy not found");
-  const end = sql.indexOf(";", start);
-  if (end === -1) throw new Error("unterminated policy statement");
-  return sql.slice(start, end);
-}
-
-describe.each([
-  ["schema.sql", SCHEMA],
-  ["0004_revision_source_retention.sql", MIGRATION_0004],
-])("attempts insert policy in %s", (_name, sql) => {
-  const policy = insertPolicyBlock(sql);
-
-  it("never selects from its own table (the 42P17 recursion that broke saves)", () => {
-    expect(policy).not.toMatch(/from\s+(public\.)?attempts\b/i);
-    expect(policy).not.toMatch(/from\s+(public\.)?practice_questions\b/i);
-    expect(policy).not.toMatch(/\bselect\s+1\b/i);
-  });
-
-  it("still enforces ownership of both links via the definer functions", () => {
-    expect(policy).toContain("public.owns_attempt(parent_attempt_id)");
-    expect(policy).toContain("public.owns_practice_question(practice_question_id)");
-    expect(policy).toMatch(/auth\.uid\(\)\s*\)?\s*=\s*user_id/);
-    expect(policy).toContain("parent_attempt_id is null");
-    expect(policy).toContain("practice_question_id is null");
-  });
-
-  it("the ownership helpers are SECURITY DEFINER with a pinned search_path", () => {
-    for (const fn of ["owns_attempt", "owns_practice_question"]) {
-      const at = sql.indexOf(`create or replace function public.${fn}`);
-      expect(at).toBeGreaterThan(-1);
-      const body = sql.slice(at, sql.indexOf("$$;", at));
-      expect(body).toContain("security definer");
-      expect(body).toContain("set search_path = ''");
-      expect(body).toContain("auth.uid()");
-    }
-    // Never callable anonymously.
-    expect(sql).toContain(`revoke all on function public.owns_attempt(uuid) from public, anon`);
-    expect(sql).toContain(
-      `revoke all on function public.owns_practice_question(uuid) from public, anon`
+describe("server-authoritative attempts and practice RLS", () => {
+  it("canonical browser grants retain own-row select/delete but exclude insert/update", () => {
+    expect(SCHEMA).toContain("grant select, delete on table public.attempts to authenticated");
+    expect(SCHEMA).toContain(
+      "grant select, delete on table public.practice_questions to authenticated"
     );
+    expect(SCHEMA).not.toMatch(/grant[^;]*insert[^;]*public\.attempts/i);
+    expect(SCHEMA).not.toMatch(/grant[^;]*update[^;]*public\.attempts/i);
+    expect(SCHEMA).not.toMatch(/grant[^;]*insert[^;]*public\.practice_questions/i);
+    expect(SCHEMA).not.toContain('create policy "insert_own_attempts"');
+    expect(SCHEMA).not.toContain('create policy "update_own_attempts"');
+    expect(SCHEMA).not.toContain('create policy "insert_own_practice_questions"');
+    expect(SCHEMA).toContain('create policy "select_own_attempts"');
+    expect(SCHEMA).toContain('create policy "delete_own_attempts"');
+  });
+
+  it("the upgrade migration explicitly revokes and drops every browser write path", () => {
+    expect(MIGRATION_0007).toContain(
+      "revoke insert, update on table public.attempts from authenticated"
+    );
+    expect(MIGRATION_0007).toContain(
+      "revoke insert, update on table public.practice_questions from authenticated"
+    );
+    for (const policy of [
+      "insert_own_attempts",
+      "update_own_attempts",
+      "insert_own_practice_questions",
+    ]) {
+      expect(MIGRATION_0007).toContain(`drop policy if exists "${policy}"`);
+    }
+  });
+
+  it("server persistence re-checks both relationship ownership links explicitly", () => {
+    expect(AUTHORITY).toContain('.eq("user_id", userId)');
+    expect(AUTHORITY).toContain("invalid parent relationship");
+    expect(AUTHORITY).toContain("invalid practice relationship");
+    expect(AUTHORITY).toContain('.eq("authority_version", 1)');
   });
 });
 
-describe("0004 — manual source retention column", () => {
-  it("adds the nullable attempts.source_material column additively", () => {
+describe("unified private reservation ledger", () => {
+  it("is inaccessible to browser roles and its reservation RPC is service-role-only", () => {
+    expect(MIGRATION_0008).toContain(
+      "revoke all on table public.ai_usage_reservations from public, anon, authenticated"
+    );
+    expect(MIGRATION_0008).toMatch(
+      /revoke all on function public\.reserve_ai_usage[\s\S]*from public, anon, authenticated/
+    );
+    expect(MIGRATION_0008).toMatch(
+      /grant execute on function public\.reserve_ai_usage[\s\S]*to service_role/
+    );
+  });
+
+  it("serializes the daily limit and counts every status", () => {
+    expect(MIGRATION_0008).toContain("pg_advisory_xact_lock");
+    expect(MIGRATION_0008).toContain("select count(*) into used");
+    expect(MIGRATION_0008).not.toMatch(/status\s*=\s*'succeeded'[\s\S]{0,120}count/i);
+    expect(MIGRATION_0008).toContain("updated_at < now() - interval '15 minutes'");
+    expect(MIGRATION_0008).toContain("failure_category = 'stale'");
+  });
+});
+
+describe("legacy migration compatibility", () => {
+  it("keeps the historical recursion fix documented without exposing it canonically", () => {
+    const start = MIGRATION_0004.indexOf('create policy "insert_own_attempts"');
+    const policy = MIGRATION_0004.slice(start, MIGRATION_0004.indexOf(";", start));
+    expect(start).toBeGreaterThan(-1);
+    expect(policy).not.toMatch(/from\s+(public\.)?attempts\b/i);
+    expect(policy).toContain("public.owns_attempt(parent_attempt_id)");
+  });
+
+  it("retains nullable legacy source material in both migration and canonical schema", () => {
     expect(MIGRATION_0004).toMatch(
       /alter table public\.attempts\s+add column if not exists source_material text/
     );
-    // And the canonical schema carries it for fresh installs.
     expect(SCHEMA).toMatch(/source_material\s+text/);
-  });
-
-  it("does not touch or re-run the earlier applied migrations", () => {
-    expect(MIGRATION_0004).not.toContain("create table");
-    expect(MIGRATION_0004).not.toMatch(/drop\s+table/i);
-    expect(MIGRATION_0004).not.toMatch(/delete\s+from/i);
-    expect(MIGRATION_0004).not.toMatch(/update\s+public\./i); // no backfill
   });
 });

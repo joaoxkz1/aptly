@@ -51,15 +51,21 @@ describe.each([
   it("is RLS-protected, per-user, and append-only (no update/delete grant)", () => {
     expect(sql).toContain("alter table public.scan_extraction_usage enable row level security");
     expect(sql).toContain("revoke all on table public.scan_extraction_usage from anon");
-    expect(sql).toMatch(
-      /grant select, insert on table public\.scan_extraction_usage to authenticated/
-    );
+    if (_name === "schema.sql") {
+      expect(sql).toContain("revoke all on table public.scan_extraction_usage from authenticated");
+    } else {
+      expect(sql).toMatch(
+        /grant select, insert on table public\.scan_extraction_usage to authenticated/
+      );
+    }
     expect(sql).not.toMatch(/grant[^;]*(update|delete)[^;]*scan_extraction_usage/i);
     // Both policies scope to the caller's own rows.
     for (const policy of ["select_own_scan_usage", "insert_own_scan_usage"]) {
       const at = sql.indexOf(`create policy "${policy}"`);
-      expect(at).toBeGreaterThan(-1);
-      expect(sql.slice(at, sql.indexOf(";", at))).toContain("(select auth.uid()) = user_id");
+      if (_name !== "schema.sql") {
+        expect(at).toBeGreaterThan(-1);
+        expect(sql.slice(at, sql.indexOf(";", at))).toContain("(select auth.uid()) = user_id");
+      }
     }
   });
 });
@@ -78,8 +84,8 @@ describe("0005 migration — additive only, never touches applied migrations", (
 describe("extraction route — transient image, no persistence beyond the usage row", () => {
   it("writes ONLY the no-content usage row (no attempts, no storage, no text)", () => {
     const inserts = EXTRACT_ROUTE.match(/\.insert\(/g) ?? [];
-    expect(inserts).toHaveLength(1);
-    expect(EXTRACT_ROUTE).toContain('from("scan_extraction_usage").insert({})');
+    expect(inserts).toHaveLength(0);
+    expect(EXTRACT_ROUTE).toContain("reserveAIUsage");
     expect(EXTRACT_ROUTE).not.toContain('from("attempts")');
     expect(EXTRACT_ROUTE).not.toContain('from("practice_questions")');
     expect(EXTRACT_ROUTE).not.toContain(".storage");
@@ -87,15 +93,14 @@ describe("extraction route — transient image, no persistence beyond the usage 
   });
 
   it("keeps the durable-cap primitives (no per-process memory counter)", () => {
-    expect(EXTRACT_ROUTE).toContain("utcDayStartIso()");
-    expect(EXTRACT_ROUTE).toContain("dailyLimitReached");
+    expect(EXTRACT_ROUTE).toContain('capability: "scan"');
     expect(EXTRACT_ROUTE).toContain("DAILY_EXTRACTION_LIMIT");
   });
 });
 
 describe("grading stays image-free (current diagram policy unchanged)", () => {
   it("the grade route still declares no image attachment for the model frame", () => {
-    expect(GRADE_ROUTE).toContain("const hasImageAttachment = false");
+    expect(GRADE_ROUTE).toContain("hasImageAttachment: false");
   });
 
   it("the grade request built by the submit page carries no image field", () => {

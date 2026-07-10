@@ -64,14 +64,20 @@ describe.each([
   it("is RLS-protected, per-user, and append-only (no update/delete grant)", () => {
     expect(sql).toContain("alter table public.diagram_review_usage enable row level security");
     expect(sql).toContain("revoke all on table public.diagram_review_usage from anon");
-    expect(sql).toMatch(
-      /grant select, insert on table public\.diagram_review_usage to authenticated/
-    );
+    if (_name === "schema.sql") {
+      expect(sql).toContain("revoke all on table public.diagram_review_usage from authenticated");
+    } else {
+      expect(sql).toMatch(
+        /grant select, insert on table public\.diagram_review_usage to authenticated/
+      );
+    }
     expect(sql).not.toMatch(/grant[^;]*(update|delete)[^;]*diagram_review_usage/i);
     for (const policy of ["select_own_diagram_usage", "insert_own_diagram_usage"]) {
       const at = sql.indexOf(`create policy "${policy}"`);
-      expect(at).toBeGreaterThan(-1);
-      expect(sql.slice(at, sql.indexOf(";", at))).toContain("(select auth.uid()) = user_id");
+      if (_name !== "schema.sql") {
+        expect(at).toBeGreaterThan(-1);
+        expect(sql.slice(at, sql.indexOf(";", at))).toContain("(select auth.uid()) = user_id");
+      }
     }
   });
 });
@@ -99,8 +105,8 @@ describe("0006 migration — additive only", () => {
 describe("diagram route — transient image, no persistence beyond the usage row", () => {
   it("writes ONLY the no-content usage row (no attempts, no storage, no findings)", () => {
     const inserts = DIAGRAM_ROUTE.match(/\.insert\(/g) ?? [];
-    expect(inserts).toHaveLength(1);
-    expect(DIAGRAM_ROUTE).toContain('from("diagram_review_usage").insert({})');
+    expect(inserts).toHaveLength(0);
+    expect(DIAGRAM_ROUTE).toContain("reserveAIUsage");
     expect(DIAGRAM_ROUTE).not.toContain('from("attempts")');
     expect(DIAGRAM_ROUTE).not.toContain('from("practice_questions")');
     expect(DIAGRAM_ROUTE).not.toContain('from("scan_extraction_usage")');
@@ -109,8 +115,7 @@ describe("diagram route — transient image, no persistence beyond the usage row
   });
 
   it("keeps the durable-cap primitives on its OWN independent cap", () => {
-    expect(DIAGRAM_ROUTE).toContain("utcDayStartIso()");
-    expect(DIAGRAM_ROUTE).toContain("dailyLimitReached");
+    expect(DIAGRAM_ROUTE).toContain('capability: "diagram"');
     expect(DIAGRAM_ROUTE).toContain("DAILY_DIAGRAM_REVIEW_LIMIT");
     expect(DIAGRAM_ROUTE).not.toContain("DAILY_EXTRACTION_LIMIT");
   });
@@ -118,7 +123,7 @@ describe("diagram route — transient image, no persistence beyond the usage row
 
 describe("grading stays text-only and diagram-blind", () => {
   it("the grade route still declares no image attachment and never reads evidence", () => {
-    expect(GRADE_ROUTE).toContain("const hasImageAttachment = false");
+    expect(GRADE_ROUTE).toContain("hasImageAttachment: false");
     expect(GRADE_ROUTE).not.toContain("diagram_evidence");
     expect(GRADE_ROUTE).not.toContain("diagramEvidence");
     expect(GRADE_ROUTE).not.toContain("/api/diagram");

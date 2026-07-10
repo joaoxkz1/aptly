@@ -23,7 +23,7 @@ describe("createSingleFlight — one extraction request per image per tab", () =
   it("an explicit retry AFTER a genuine failure makes exactly one new call", async () => {
     const flight = createSingleFlight<string>();
     const fn = vi
-      .fn<[], Promise<string>>()
+      .fn<() => Promise<string>>()
       .mockRejectedValueOnce(new Error("network"))
       .mockResolvedValueOnce("recovered");
 
