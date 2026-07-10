@@ -39,7 +39,8 @@ export const EXTRACT_UNREADABLE_CODE = "image_unreadable";
 
 /** User-facing extraction-failure message. No stage, no internals. */
 export function clientExtractionErrorMessage(reference?: string | null): string {
-  const base = "Aptly couldn't read your image. Nothing was changed. Please try again.";
+  const base =
+    "Aptly couldn't read your image. Nothing was changed. Please try again. If processing had already started, this try may count toward today's limit.";
   return reference ? `${base} Reference: ${reference}` : base;
 }
 
@@ -50,7 +51,7 @@ export function clientScanLimitMessage(): string {
 
 /** User-facing message for an unreadable image (honest, actionable). */
 export function clientUnreadableImageMessage(): string {
-  return "Aptly could not read that image clearly. Try a closer, brighter photo.";
+  return "Aptly could not read that image clearly. Try a closer, brighter photo. The review was processed, so it counts toward today's limit.";
 }
 
 /** User-facing message for an unsupported file type. */

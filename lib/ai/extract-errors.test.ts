@@ -20,7 +20,7 @@ describe("clientMessageForExtractionFailure — short, useful, non-technical", (
       "That image is too large. Choose an image under 8 MB."
     );
     expect(clientMessageForExtractionFailure(422, EXTRACT_UNREADABLE_CODE)).toBe(
-      "Aptly could not read that image clearly. Try a closer, brighter photo."
+      "Aptly could not read that image clearly. Try a closer, brighter photo. The review was processed, so it counts toward today's limit."
     );
     expect(clientMessageForExtractionFailure(429, EXTRACT_LIMIT_ERROR_CODE)).toContain(
       "scan limit"

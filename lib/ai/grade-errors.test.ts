@@ -25,7 +25,7 @@ describe("grade error mapping — no stage or secret ever reaches the client", (
   it("returns the user-facing message with no stage leaked", () => {
     const msg = clientGradeErrorMessage();
     expect(msg).toBe(
-      "We couldn't complete this mark estimate. Your answer has not been saved. Please try again."
+      "We couldn't complete this mark estimate. Your answer has not been saved. Please try again. If processing had already started, this try may count toward today's limit."
     );
     for (const stage of GRADE_STAGES) {
       expect(msg).not.toContain(stage);

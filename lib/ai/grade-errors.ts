@@ -42,7 +42,7 @@ export function supportReference(requestId: string): string {
  *  the safe id from `supportReference` so a tester can report the failure. */
 export function clientGradeErrorMessage(reference?: string | null): string {
   const base =
-    "We couldn't complete this mark estimate. Your answer has not been saved. Please try again.";
+    "We couldn't complete this mark estimate. Your answer has not been saved. Please try again. If processing had already started, this try may count toward today's limit.";
   return reference ? `${base} Reference: ${reference}` : base;
 }
 

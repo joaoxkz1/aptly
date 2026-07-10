@@ -34,7 +34,8 @@ export const PRACTICE_NO_FOCUS_CODE = "no_focus_available";
 
 /** User-facing generation-failure message. No stage, no internals. */
 export function clientPracticeErrorMessage(reference?: string | null): string {
-  const base = "We couldn't create this practice question. Nothing was saved. Please try again.";
+  const base =
+    "We couldn't create this practice question. Nothing was saved. Please try again. If processing had already started, this try may count toward today's limit.";
   return reference ? `${base} Reference: ${reference}` : base;
 }
 

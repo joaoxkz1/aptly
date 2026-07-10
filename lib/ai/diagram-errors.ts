@@ -52,7 +52,7 @@ export {
 /** User-facing review-failure message. No stage, no internals, never blocking. */
 export function clientDiagramReviewErrorMessage(reference?: string | null): string {
   const base =
-    "Aptly couldn't review your diagram this time. Your written feedback is unaffected.";
+    "Aptly couldn't review your diagram this time. Your written feedback is unaffected. If processing had already started, this try may count toward today's limit.";
   return reference ? `${base} Reference: ${reference}` : base;
 }
 
