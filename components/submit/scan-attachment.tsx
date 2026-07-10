@@ -15,6 +15,7 @@ import {
 } from "@/lib/scan/apply-extraction";
 import {
   SCAN_ACCEPT,
+  ProcessedImageTooLargeError,
   processScanImage,
   validateScanFile,
   type ScanFileError,
@@ -25,6 +26,8 @@ import { scanPrivacyDisclosure } from "@/lib/scan/privacy-disclosure";
 const FILE_ERROR_COPY: Record<ScanFileError, string> = {
   unsupported_type: "That file type is not supported. Use JPG, PNG, or WebP.",
   too_large: "That image is too large. Choose an image under 8 MB.",
+  processed_too_large:
+    "That photo is still too large after preparation. Crop it closer or choose a lower-resolution image.",
   unreadable: "Aptly could not read that image clearly. Try a closer, brighter photo.",
 };
 
@@ -69,6 +72,7 @@ export function ScanAttachment({
   // One extraction request at a time per tab: duplicate triggers join the
   // in-flight call instead of paying for a second one.
   const flightRef = useRef(createSingleFlight<void>());
+  const requestKeyRef = useRef<{ blob: Blob; key: string } | null>(null);
   const [attachment, setAttachment] = useState<{ previewUrl: string; blob: Blob } | null>(null);
   const [status, setStatus] = useState<ScanStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
@@ -100,6 +104,10 @@ export function ScanAttachment({
         const form = new FormData();
         // Generic name: the original file name never leaves the device.
         form.append("image", blob, "scan.jpg");
+        const current = requestKeyRef.current;
+        const key = current?.blob === blob ? current.key : crypto.randomUUID();
+        requestKeyRef.current = { blob, key };
+        form.append("idempotencyKey", key);
         const res = await fetch("/api/extract", {
           method: "POST",
           body: form,
@@ -118,6 +126,7 @@ export function ScanAttachment({
           }
           setStatus("error");
           setMessage(clientMessageForExtractionFailure(res.status, code, reference));
+          if (code !== "request_in_progress") requestKeyRef.current = null;
           return;
         }
 
@@ -158,9 +167,13 @@ export function ScanAttachment({
       // Downscale to ≤2048px, flatten to white, re-encode as JPEG — the fresh
       // bitstream carries none of the original EXIF/GPS metadata.
       blob = await processScanImage(file);
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setMessage(FILE_ERROR_COPY.unreadable);
+      setMessage(
+        error instanceof ProcessedImageTooLargeError
+          ? FILE_ERROR_COPY.processed_too_large
+          : FILE_ERROR_COPY.unreadable
+      );
       return;
     }
     if (attachment !== null) onRemoved(); // replacing: staged source resets
@@ -169,6 +182,7 @@ export function ScanAttachment({
   }
 
   function handleRemove() {
+    requestKeyRef.current = null;
     setAttachment(null);
     setStatus("idle");
     setMessage(null);

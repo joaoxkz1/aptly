@@ -20,7 +20,7 @@ import {
   MarkTotalNotice,
   type DetectedTotalOverride,
 } from "@/components/submit/mark-total-notice";
-import type { Assessment, AssessmentFramework, Attempt, Feedback, PracticeQuestion } from "@/lib/types";
+import type { AssessmentFramework, Attempt, PracticeQuestion } from "@/lib/types";
 import { MAX_ANSWER_CHARS, MAX_QUESTION_CHARS, REQUEST_TIMEOUT_MS } from "@/lib/ai/config";
 import {
   runPreflight,
@@ -44,7 +44,7 @@ import {
   SAMPLE_QUESTION,
   isUnmodifiedSample,
 } from "@/lib/assessment/sample-walkthrough";
-import { newId, useAttempts } from "@/lib/storage";
+import { broadcastAttemptsChanged, useAttempts } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { fetchPracticeQuestion } from "@/lib/supabase/practice-questions";
 import { cn } from "@/lib/utils";
@@ -88,7 +88,9 @@ function SubmitPageInner({
   startWithSample?: boolean;
 }) {
   const router = useRouter();
-  const { attempts, ready, addAttempt } = useAttempts();
+  const { attempts, status: attemptsStatus } = useAttempts();
+  const ready =
+    attemptsStatus === "ready" || (attemptsStatus === "error" && attempts.length > 0);
 
   // The ?sample=1 entry pre-fills the pristine sample text, so every existing
   // sample guard (never graded, never saved, upload controls unmounted)
@@ -127,7 +129,17 @@ function SubmitPageInner({
   const diagramImageRef = useRef<Blob | null>(null);
   // Memoised successful review for the CURRENT photo: a grade retry after a
   // grading failure reuses it instead of paying for a second review.
-  const diagramReviewRef = useRef<{ image: Blob; evidence: DiagramEvidence } | null>(null);
+  const diagramReviewRef = useRef<{
+    image: Blob;
+    operationKey: string;
+    evidence: DiagramEvidence;
+    reservationId: string;
+  } | null>(null);
+  const diagramRequestRef = useRef<{
+    image: Blob;
+    operationKey: string;
+    idempotencyKey: string;
+  } | null>(null);
   // A photo was attached but its review failed — gentle notice, never blocking.
   const [diagramReviewFailed, setDiagramReviewFailed] = useState(false);
 
@@ -191,8 +203,8 @@ function SubmitPageInner({
 
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
-  const persistingRef = useRef(false);
   const savedIdRef = useRef<string | null>(null);
+  const gradeRequestRef = useRef<{ signature: string; idempotencyKey: string } | null>(null);
 
   // Aptly Scan reads the LATEST field values when its response arrives (the
   // student may keep typing while the image is read) — a ref avoids handing
@@ -210,6 +222,7 @@ function SubmitPageInner({
   const handleDiagramChange = useCallback((image: Blob | null) => {
     diagramImageRef.current = image;
     diagramReviewRef.current = null;
+    diagramRequestRef.current = null;
     setDiagramReviewFailed(false);
   }, []);
 
@@ -219,15 +232,37 @@ function SubmitPageInner({
   async function reviewDiagramOnce(
     image: Blob,
     q: string,
-    a: string
+    a: string,
+    operationKey: string
   ): Promise<DiagramReviewResult> {
     const memo = diagramReviewRef.current;
-    if (memo !== null && memo.image === image) {
-      return { evidence: memo.evidence, failureMessage: null };
+    if (memo !== null && memo.image === image && memo.operationKey === operationKey) {
+      return {
+        evidence: memo.evidence,
+        reservationId: memo.reservationId,
+        failureMessage: null,
+      };
     }
-    const result = await requestDiagramReview(image, q, a);
-    if (result.evidence !== null) {
-      diagramReviewRef.current = { image, evidence: result.evidence };
+    const pending = diagramRequestRef.current;
+    const diagramIdempotencyKey =
+      pending !== null && pending.image === image && pending.operationKey === operationKey
+        ? pending.idempotencyKey
+        : crypto.randomUUID();
+    diagramRequestRef.current = { image, operationKey, idempotencyKey: diagramIdempotencyKey };
+    const result = await requestDiagramReview(
+      image,
+      q,
+      a,
+      diagramIdempotencyKey,
+      operationKey
+    );
+    if (result.evidence !== null && result.reservationId !== null) {
+      diagramReviewRef.current = {
+        image,
+        operationKey,
+        evidence: result.evidence,
+        reservationId: result.reservationId,
+      };
     }
     return result;
   }
@@ -290,26 +325,6 @@ function SubmitPageInner({
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
     setStagedSource(null);
     handleDiagramChange(null);
-  }
-
-  // Saves exactly once per successful grading result; safe against rerenders,
-  // retries, and repeated clicks. Never shows a false "saved" state. On
-  // success the result takes its DATABASE id so follow-up actions (Revise
-  // this answer) link to the real row.
-  async function persist(attempt: Attempt) {
-    if (savedIdRef.current === attempt.id || persistingRef.current) return;
-    persistingRef.current = true;
-    setSaveState("saving");
-    try {
-      const saved = await addAttempt(attempt);
-      savedIdRef.current = saved.id;
-      setResult(saved);
-      setSaveState("saved");
-    } catch {
-      setSaveState("error");
-    } finally {
-      persistingRef.current = false;
-    }
   }
 
   // Step 1: ONE pure, unit-tested decision (lib/assessment/submit-flow.ts)
@@ -386,13 +401,32 @@ function SubmitPageInner({
 
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS + 5000);
+    const operationSignature = JSON.stringify({
+      q,
+      a,
+      decision,
+      practiceQuestionId,
+      parentAttemptId: revisionCtx?.parentId ?? null,
+    });
+    const pendingGrade = gradeRequestRef.current;
+    const gradeIdempotencyKey =
+      pendingGrade?.signature === operationSignature
+        ? pendingGrade.idempotencyKey
+        : crypto.randomUUID();
+    gradeRequestRef.current = {
+      signature: operationSignature,
+      idempotencyKey: gradeIdempotencyKey,
+    };
 
     // Diagram Evidence V1: review the attached photo in PARALLEL with grading.
     // Two separate routes — grading stays text-only and never sees the photo;
     // the review (which never throws) is awaited only AFTER grading succeeds,
     // so a slow or failed review can never block or change written feedback.
     const diagramImage = diagramImageRef.current;
-    const diagramReview = diagramImage !== null ? reviewDiagramOnce(diagramImage, q, a) : null;
+    const diagramReview =
+      diagramImage !== null
+        ? reviewDiagramOnce(diagramImage, q, a, gradeIdempotencyKey)
+        : null;
 
     try {
       const res = await fetch("/api/grade", {
@@ -413,6 +447,7 @@ function SubmitPageInner({
           // Revisions: lets the server retrieve the parent's privately
           // retained source itself instead of trusting client source text.
           parentAttemptId: revisionCtx?.parentId ?? null,
+          idempotencyKey: gradeIdempotencyKey,
         }),
         signal: controller.signal,
       });
@@ -429,56 +464,73 @@ function SubmitPageInner({
         }
         // Fail closed: no result, nothing saved.
         setError(clientMessageForGradeFailure(res.status, code, reference));
+        if (code !== "request_in_progress") gradeRequestRef.current = null;
         return;
       }
 
-      const { feedback, assessment } = (await res.json()) as {
-        feedback: Feedback;
-        assessment?: Assessment | null;
-      };
+      const { attempt: savedAttempt } = (await res.json()) as { attempt: Attempt };
+      // Grade persistence is complete at this point. Show and broadcast it
+      // immediately; the feedback-only diagram review may finish later.
+      gradeRequestRef.current = null;
+      savedIdRef.current = savedAttempt.id;
+      setResult(savedAttempt);
+      setSaveState("saved");
+      broadcastAttemptsChanged();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      const feedback = savedAttempt.feedback;
+      const assessment = savedAttempt.assessment ?? null;
+      const retainedSource = savedAttempt.sourceMaterial ?? null;
       // Manual source retention: keep the attempt's own private copy of the
       // source it was actually graded against (the parent's retained source
       // for revisions, else the pasted source) — but ONLY when the server
       // confirmed usable source, and never for generated practice (its source
       // stays solely in practice_questions).
-      const usedSource = revisionCtx?.storedSource ?? decision.sourceMaterial ?? null;
-      const retainedSource =
-        practiceQuestionId == null && assessment?.sourceMaterialProvided === true
-          ? usedSource
-          : null;
       // The parallel diagram review (if any). Evidence attaches to THIS
       // attempt only; a failed review resolves to null with a gentle notice.
       let diagramEvidence: DiagramEvidence | null = null;
       if (diagramReview !== null) {
         const review = await diagramReview;
-        diagramEvidence = review.evidence;
-        setDiagramReviewFailed(review.evidence === null);
+        if (review.evidence !== null && review.reservationId !== null) {
+          try {
+            const attach = await fetch("/api/diagram/attach", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                attemptId: savedAttempt.id,
+                reservationId: review.reservationId,
+                evidence: review.evidence,
+              }),
+            });
+            if (attach.ok) diagramEvidence = review.evidence;
+            setDiagramReviewFailed(!attach.ok);
+          } catch {
+            setDiagramReviewFailed(true);
+          }
+        } else {
+          setDiagramReviewFailed(true);
+        }
       } else {
         setDiagramReviewFailed(false);
       }
       const attempt: Attempt = {
-        id: newId(),
-        createdAt: new Date().toISOString(),
-        subject: "Economics",
+        id: savedAttempt.id,
+        createdAt: savedAttempt.createdAt,
+        subject: savedAttempt.subject,
         // Stored topic comes from automatic detection, not a manual selector.
-        topic: assessment?.topicLabel?.trim() || "Economics",
-        question: q,
-        answer: a,
+        topic: savedAttempt.topic,
+        question: savedAttempt.question,
+        answer: savedAttempt.answer,
         feedback,
         assessment: assessment ?? null,
         // Durable Practice Loop links (RLS verifies both belong to this user).
-        parentAttemptId: revisionCtx?.parentId ?? null,
-        practiceQuestionId,
+        parentAttemptId: savedAttempt.parentAttemptId ?? null,
+        practiceQuestionId: savedAttempt.practiceQuestionId ?? null,
         sourceMaterial: retainedSource,
         // Diagram Evidence V1: structured feedback-only findings (never marks,
         // never image data). Strictly this attempt's own — revisions re-attach.
         diagramEvidence,
       };
       setResult(attempt);
-      setSaveState("idle");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      // Automatically save the successful grade to the signed-in account.
-      void persist(attempt);
     } catch {
       setError(clientGradeErrorMessage());
     } finally {
@@ -489,7 +541,7 @@ function SubmitPageInner({
   }
 
   function handleRetry() {
-    if (result !== null) void persist(result);
+    // Successful responses are already durably saved by the grade route.
   }
 
   function handleTryAnother() {

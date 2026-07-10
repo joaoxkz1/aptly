@@ -25,8 +25,12 @@ export interface PracticeGenerationOutcome {
 
 export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) {
   let pending: Promise<PracticeGenerationOutcome> | null = null;
+  let retryIdentity: { regenerate: boolean; key: string } | null = null;
 
-  async function issue(regenerate: boolean): Promise<PracticeGenerationOutcome> {
+  async function issue(
+    regenerate: boolean,
+    idempotencyKey: string
+  ): Promise<PracticeGenerationOutcome> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), PRACTICE_REQUEST_TIMEOUT_MS + 5000);
     try {
@@ -35,7 +39,7 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
         headers: { "Content-Type": "application/json" },
         // The boolean intent is the ONLY field sent — the server derives the
         // whole target from saved attempts and ignores anything else anyway.
-        body: JSON.stringify({ regenerate }),
+        body: JSON.stringify({ regenerate, idempotencyKey }),
         signal: controller.signal,
       });
       let body: Record<string, unknown> = {};
@@ -44,7 +48,7 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
       } catch {
         // ignore parse failure; fall back to the generic code
       }
-      return {
+      const outcome = {
         status: res.status,
         code: typeof body.error === "string" ? body.error : "practice_generation_failed",
         reference: typeof body.reference === "string" ? body.reference : null,
@@ -54,6 +58,8 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
             : null,
         reused: body.reused === true,
       };
+      if (outcome.code !== "request_in_progress") retryIdentity = null;
+      return outcome;
     } finally {
       clearTimeout(timer);
     }
@@ -67,7 +73,13 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
      */
     request(opts: { regenerate?: boolean } = {}): Promise<PracticeGenerationOutcome> {
       if (pending === null) {
-        pending = issue(opts.regenerate === true).finally(() => {
+        const regenerate = opts.regenerate === true;
+        const idempotencyKey =
+          retryIdentity?.regenerate === regenerate
+            ? retryIdentity.key
+            : crypto.randomUUID();
+        retryIdentity = { regenerate, key: idempotencyKey };
+        pending = issue(regenerate, idempotencyKey).finally(() => {
           pending = null;
         });
       }

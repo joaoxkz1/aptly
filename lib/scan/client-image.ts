@@ -1,4 +1,8 @@
-import { IMAGE_MAX_DIMENSION, MAX_IMAGE_BYTES } from "@/lib/ai/config";
+import {
+  IMAGE_MAX_DIMENSION,
+  MAX_IMAGE_BYTES,
+  MAX_PROCESSED_IMAGE_BYTES,
+} from "@/lib/ai/config";
 
 /**
  * Client-side image preparation for Aptly Scan (browser only — uses canvas).
@@ -17,7 +21,18 @@ import { IMAGE_MAX_DIMENSION, MAX_IMAGE_BYTES } from "@/lib/ai/config";
  * size) and never trusts anything computed here.
  */
 
-export type ScanFileError = "unsupported_type" | "too_large" | "unreadable";
+export type ScanFileError =
+  | "unsupported_type"
+  | "too_large"
+  | "processed_too_large"
+  | "unreadable";
+
+export class ProcessedImageTooLargeError extends Error {
+  constructor() {
+    super("processed image exceeds upload limit");
+    this.name = "ProcessedImageTooLargeError";
+  }
+}
 
 const ACCEPTED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -86,6 +101,7 @@ export async function processScanImage(file: File): Promise<Blob> {
       canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY)
     );
     if (blob === null || blob.size === 0) throw new Error("encode failed");
+    if (blob.size > MAX_PROCESSED_IMAGE_BYTES) throw new ProcessedImageTooLargeError();
     return blob;
   } finally {
     if (!(decoded instanceof HTMLImageElement)) decoded.close();

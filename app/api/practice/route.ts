@@ -1,6 +1,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isUuid, userIdFromClient } from "@/lib/auth/verified-user";
 import { getOpenAI } from "@/lib/ai/openai";
 import { fetchAttempts } from "@/lib/supabase/attempts";
 import { fetchLatestPracticeQuestion } from "@/lib/supabase/practice-questions";
@@ -21,7 +22,6 @@ import {
   supportReference,
   type PracticeStage,
 } from "@/lib/ai/practice-errors";
-import { dailyLimitReached, utcDayStartIso } from "@/lib/ai/rate-limit";
 import {
   DAILY_PRACTICE_GENERATION_LIMIT,
   GRADING_MODEL,
@@ -29,54 +29,51 @@ import {
   PRACTICE_REQUEST_TIMEOUT_MS,
   REASONING_EFFORT,
 } from "@/lib/ai/config";
+import { requestFingerprint } from "@/lib/ai/request-integrity";
+import {
+  markReservationFailed,
+  markReservationProcessing,
+  markReservationSucceeded,
+  reserveAIUsage,
+} from "@/lib/ai/usage-reservations";
+import {
+  findPracticeByIdempotency,
+  savePracticeQuestion,
+} from "@/lib/supabase/server-authority";
 
 export const runtime = "nodejs";
 
-/**
- * Targeted practice generation (Practice Loop).
- *
- * SERVER-AUTHORITATIVE: the ONLY client input read is the boolean `regenerate`
- * intent behind "Generate another question". The target topic, skill,
- * framework, and mark total are recomputed here from the user's own saved
- * attempts via the canonical next focus — the client cannot force any of them.
- *
- * IDEMPOTENT: unless `regenerate` is explicitly true, the route first reopens
- * the user's latest unanswered recent practice question (see
- * lib/assessment/practice-reuse.ts). A refresh, back-navigation, duplicate
- * tab, double-click, or network retry therefore never buys another paid
- * generation and never creates another row — and, because reuse is checked
- * BEFORE the daily cap, an existing question stays reachable even at the
- * limit. The limit itself counts only rows genuinely created.
- */
-export async function POST(request: Request) {
-  // 1. Require an authenticated user (verified via getClaims, not getSession).
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  if (data?.claims == null) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
+function fail(status: number, error: string) {
+  return NextResponse.json({ error }, { status });
+}
 
-  // 2. The one honored client field: an explicit `regenerate: true` boolean.
-  // Anything else — a missing/malformed body, a truthy string, extra fields —
-  // safely resolves to the idempotent reuse-first path. Forcing this flag
-  // gains nothing beyond what the visible button does: one rate-limited,
-  // server-targeted generation.
-  let regenerate = false;
+export async function POST(request: Request) {
+  const supabase = await createClient();
+  const userId = await userIdFromClient(supabase);
+  if (userId === null) return fail(401, "unauthorized");
+
+  let raw: Record<string, unknown>;
   try {
     const body: unknown = await request.json();
-    regenerate =
-      typeof body === "object" &&
-      body !== null &&
-      (body as Record<string, unknown>).regenerate === true;
+    if (typeof body !== "object" || body === null || Array.isArray(body)) throw new Error();
+    raw = body as Record<string, unknown>;
   } catch {
-    // No body (or invalid JSON) → reuse-first.
+    return fail(400, "invalid_request");
   }
-
+  if (
+    Object.keys(raw).some((key) => key !== "regenerate" && key !== "idempotencyKey") ||
+    typeof raw.regenerate !== "boolean" ||
+    !isUuid(raw.idempotencyKey)
+  ) {
+    return fail(400, "invalid_request");
+  }
+  const regenerate = raw.regenerate;
+  const idempotencyKey = raw.idempotencyKey;
   const requestId = crypto.randomUUID();
   let stage: PracticeStage = "reuse_lookup";
+  let reservationId: string | null = null;
+  let providerDispatched = false;
 
-  // Production-safe failure response: one structured log event (never student
-  // data, insights, the key, or raw model output) plus a generic client code.
   function failClosed(status: number, err: unknown) {
     console.error(JSON.stringify(buildPracticeFailureLog(stage, requestId, err, status)));
     return NextResponse.json(
@@ -85,10 +82,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. Idempotency: reopen the latest unanswered recent question instead of
-  // generating. The attempts are fetched once here and reused for target
-  // derivation below. Fails closed — a broken lookup never falls through to
-  // an unintended paid call.
   let attempts: Attempt[];
   try {
     attempts = await fetchAttempts(supabase);
@@ -101,27 +94,6 @@ export async function POST(request: Request) {
     return failClosed(502, err);
   }
 
-  // 4. Pilot safety: per-user daily generation cap, checked BEFORE the paid
-  // model call. Counts the user's practice questions created since the start
-  // of the current UTC day (RLS scopes the count) — reused questions never
-  // add to it. Fails closed.
-  stage = "rate_limit";
-  try {
-    const { count, error: countError } = await supabase
-      .from("practice_questions")
-      .select("id", { count: "exact", head: true })
-      .gte("created_at", utcDayStartIso());
-    if (countError) throw countError;
-    if (dailyLimitReached(count ?? 0, DAILY_PRACTICE_GENERATION_LIMIT)) {
-      return NextResponse.json({ error: PRACTICE_LIMIT_ERROR_CODE }, { status: 429 });
-    }
-  } catch (err) {
-    return failClosed(502, err);
-  }
-
-  // 5. Server-side target: recompute the canonical next focus from the user's
-  // SAVED attempts. An arbitrary topic/skill/framework/total can never be
-  // requested.
   stage = "target_derivation";
   let target;
   try {
@@ -129,23 +101,46 @@ export async function POST(request: Request) {
   } catch (err) {
     return failClosed(502, err);
   }
-  if (target == null) {
-    // Honest, expected outcome — not a failure: not enough marked evidence yet.
-    return NextResponse.json({ error: PRACTICE_NO_FOCUS_CODE }, { status: 409 });
+  if (target == null) return fail(409, PRACTICE_NO_FOCUS_CODE);
+
+  stage = "rate_limit";
+  try {
+    const reservation = await reserveAIUsage({
+      userId,
+      capability: "practice",
+      idempotencyKey,
+      fingerprint: requestFingerprint({ regenerate, target }),
+      dailyLimit: DAILY_PRACTICE_GENERATION_LIMIT,
+    });
+    reservationId = reservation.reservationId;
+    if (reservation.outcome === "limited") return fail(429, PRACTICE_LIMIT_ERROR_CODE);
+    if (reservation.outcome === "conflict") return fail(409, "idempotency_conflict");
+    if (reservation.outcome === "in_progress") return fail(409, "request_in_progress");
+    if (reservation.outcome === "replay" || reservation.outcome === "failed") {
+      const saved = await findPracticeByIdempotency(userId, idempotencyKey);
+      if (saved !== null && reservationId !== null) {
+        await markReservationSucceeded(reservationId, userId, { practiceId: saved.id });
+        return NextResponse.json({ practiceQuestion: saved, reused: true });
+      }
+      return fail(409, reservation.outcome === "failed" ? "request_failed" : "result_unavailable");
+    }
+    if (reservationId === null) throw new Error("missing reservation id");
+    await markReservationProcessing(reservationId, userId);
+  } catch (err) {
+    return failClosed(502, err);
   }
 
-  // 6. One OpenAI request with a hard timeout; fail closed on any problem.
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), PRACTICE_REQUEST_TIMEOUT_MS);
   try {
     stage = "openai";
-    const openai = getOpenAI();
-    const response = await openai.responses.create(
+    providerDispatched = true;
+    const response = await getOpenAI().responses.create(
       {
         model: GRADING_MODEL,
         reasoning: { effort: REASONING_EFFORT },
         max_output_tokens: PRACTICE_MAX_OUTPUT_TOKENS,
-        // No tools: no web search, no file search, no code interpreter.
+        store: false,
         input: [
           { role: "developer", content: buildPracticeInstructions() },
           { role: "user", content: buildPracticeUserInput(target) },
@@ -161,59 +156,39 @@ export async function POST(request: Request) {
       },
       { signal: controller.signal }
     );
-
     stage = "structured_output";
-    if (response.status !== "completed") {
-      throw new Error(`model status ${response.status}`);
-    }
-    const text = response.output_text;
-    if (typeof text !== "string" || text.trim() === "") {
+    if (response.status !== "completed") throw new Error(`model status ${response.status}`);
+    if (typeof response.output_text !== "string" || response.output_text.trim() === "") {
       throw new Error("empty model output");
     }
-    const parsed: unknown = JSON.parse(text);
-
-    // Deterministic, fail-closed validation against the server frame: explicit
-    // total, supported framework, no diagram reliance, no official-IB claim,
-    // usable original source where required.
     stage = "schema_validation";
-    const generated = validateGeneratedPractice(parsed, target);
+    const generated = validateGeneratedPractice(JSON.parse(response.output_text), target);
 
-    // 7. Persist privately (RLS; user_id stamped via `default auth.uid()`).
-    // The stored row — never client text — is what grading later reads.
     stage = "persistence";
-    const { data: row, error: insertError } = await supabase
-      .from("practice_questions")
-      .insert({
-        question: generated.question,
-        source_material: generated.sourceMaterial,
-        framework: target.framework,
-        mark_total: target.markTotal,
-        topic_code: target.topicCode,
-        topic_label: target.topicLabel,
-        skill: target.skill,
-        why: target.why,
-      })
-      .select("id, created_at")
-      .single();
-    if (insertError) throw insertError;
-    const saved = row as { id: string; created_at: string };
-
-    return NextResponse.json({
-      practiceQuestion: {
-        id: saved.id,
-        createdAt: saved.created_at,
-        question: generated.question,
-        sourceMaterial: generated.sourceMaterial,
-        framework: target.framework,
-        markTotal: target.markTotal,
-        topicCode: target.topicCode,
-        topicLabel: target.topicLabel,
-        skill: target.skill,
-        why: target.why,
-      },
-      reused: false,
+    const saved = await savePracticeQuestion(userId, idempotencyKey, {
+      question: generated.question,
+      sourceMaterial: generated.sourceMaterial,
+      framework: target.framework,
+      markTotal: target.markTotal,
+      topicCode: target.topicCode,
+      topicLabel: target.topicLabel,
+      skill: target.skill,
+      why: target.why,
     });
+    await markReservationSucceeded(reservationId, userId, { practiceId: saved.id });
+    return NextResponse.json({ practiceQuestion: saved, reused: false });
   } catch (err) {
+    await markReservationFailed(
+      reservationId,
+      userId,
+      providerDispatched
+        ? stage === "persistence"
+          ? "persistence"
+          : stage === "schema_validation"
+            ? "validation"
+            : "provider"
+        : "internal"
+    );
     return failClosed(502, err);
   } finally {
     clearTimeout(timer);

@@ -18,6 +18,8 @@ import { isDiagramEvidence, type DiagramEvidence } from "./evidence";
 
 export interface DiagramReviewResult {
   evidence: DiagramEvidence | null;
+  /** Server reservation authorizing attachment to the matching grade operation. */
+  reservationId: string | null;
   /** Non-null exactly when evidence is null: the user-facing reason. */
   failureMessage: string | null;
 }
@@ -25,7 +27,9 @@ export interface DiagramReviewResult {
 export async function requestDiagramReview(
   image: Blob,
   question: string,
-  answer: string
+  answer: string,
+  idempotencyKey: string,
+  attemptOperationKey: string
 ): Promise<DiagramReviewResult> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DIAGRAM_REQUEST_TIMEOUT_MS + 5000);
@@ -35,6 +39,8 @@ export async function requestDiagramReview(
     form.append("image", image, "diagram.jpg");
     form.append("question", question);
     form.append("answer", answer);
+    form.append("idempotencyKey", idempotencyKey);
+    form.append("attemptOperationKey", attemptOperationKey);
     const res = await fetch("/api/diagram", {
       method: "POST",
       body: form,
@@ -53,22 +59,29 @@ export async function requestDiagramReview(
       }
       return {
         evidence: null,
+        reservationId: null,
         failureMessage: clientMessageForDiagramReviewFailure(res.status, code, reference),
       };
     }
 
-    const body = (await res.json()) as { evidence?: unknown };
+    const body = (await res.json()) as { evidence?: unknown; reservationId?: unknown };
     // Defensive: only a well-formed review is ever attached to an attempt.
-    if (!isDiagramEvidence(body.evidence)) {
+    if (!isDiagramEvidence(body.evidence) || typeof body.reservationId !== "string") {
       return {
         evidence: null,
+        reservationId: null,
         failureMessage: clientMessageForDiagramReviewFailure(502, DIAGRAM_ERROR_CODE),
       };
     }
-    return { evidence: body.evidence, failureMessage: null };
+    return {
+      evidence: body.evidence,
+      reservationId: body.reservationId,
+      failureMessage: null,
+    };
   } catch {
     return {
       evidence: null,
+      reservationId: null,
       failureMessage: clientMessageForDiagramReviewFailure(502, DIAGRAM_ERROR_CODE),
     };
   } finally {

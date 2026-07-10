@@ -48,6 +48,7 @@ export async function fetchPracticeQuestion(
     .from(TABLE)
     .select(SELECT_COLUMNS)
     .eq("id", id)
+    .eq("authority_version", 1)
     .maybeSingle();
   if (error) throw error;
   return data == null ? null : rowToPracticeQuestion(data as unknown as PracticeQuestionRow);
@@ -64,6 +65,7 @@ export async function fetchLatestPracticeQuestion(
   const { data, error } = await supabase
     .from(TABLE)
     .select(SELECT_COLUMNS)
+    .eq("authority_version", 1)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();

@@ -18,6 +18,7 @@ export const REASONING_EFFORT = "medium" as const;
 // and extended essays are long. Enforced client + server.
 export const MAX_QUESTION_CHARS = 4000;
 export const MAX_ANSWER_CHARS = 9000;
+export const MAX_TOPIC_CHARS = 80;
 // Bigger structured JSON (classification + breakdown + metadata) plus reasoning
 // headroom for gpt-5.4. Calibration showed 3200 occasionally truncated the JSON
 // (status=incomplete -> fail-closed 502); 4400 gives reliable headroom.
@@ -62,6 +63,9 @@ export const EXTRACTION_REQUEST_TIMEOUT_MS = 60_000;
 // model is a ≤2048px JPEG — the 8 MB ceiling is an acceptance limit, not a
 // transport size.
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+// Processed request ceiling stays below Vercel's 4.5 MB body limit, leaving
+// room for multipart boundaries and the accompanying text fields.
+export const MAX_PROCESSED_IMAGE_BYTES = 4 * 1024 * 1024;
 // Client-side downscale target: longest dimension after processing.
 export const IMAGE_MAX_DIMENSION = 2048;
 

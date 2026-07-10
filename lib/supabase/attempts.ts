@@ -53,7 +53,7 @@ export function rowToAttempt(row: AttemptRow): Attempt {
  * (user_id via `default auth.uid()`, created_at via `default now()`).
  * Legacy/seed attempts (no assessment) write NULL into every assessment column.
  */
-function attemptToInsert(attempt: Attempt) {
+export function attemptToInsert(attempt: Attempt) {
   const f = attempt.feedback;
   const a = attempt.assessment ?? null;
   return {

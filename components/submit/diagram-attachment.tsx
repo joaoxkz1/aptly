@@ -5,6 +5,7 @@ import { CircleAlert, ImagePlus, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   SCAN_ACCEPT,
+  ProcessedImageTooLargeError,
   processScanImage,
   validateScanFile,
   type ScanFileError,
@@ -19,6 +20,8 @@ import { diagramPrivacyDisclosure } from "@/lib/diagram/evidence";
 const FILE_ERROR_COPY: Record<ScanFileError, string> = {
   unsupported_type: clientUnsupportedTypeMessage(),
   too_large: clientImageTooLargeMessage(),
+  processed_too_large:
+    "That photo is still too large after preparation. Crop it closer or choose a lower-resolution image.",
   unreadable: clientUnreadableImageMessage(),
 };
 
@@ -78,9 +81,13 @@ export function DiagramAttachment({
       // Downscale to ≤2048px, flatten to white, re-encode as JPEG — the fresh
       // bitstream carries none of the original EXIF/GPS metadata.
       blob = await processScanImage(file);
-    } catch {
+    } catch (error) {
       setStatus(attachment !== null ? "attached" : "error");
-      setMessage(FILE_ERROR_COPY.unreadable);
+      setMessage(
+        error instanceof ProcessedImageTooLargeError
+          ? FILE_ERROR_COPY.processed_too_large
+          : FILE_ERROR_COPY.unreadable
+      );
       return;
     }
     setAttachment({ previewUrl: URL.createObjectURL(blob), blob });
