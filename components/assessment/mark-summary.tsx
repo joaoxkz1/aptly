@@ -69,10 +69,9 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
 
   // Concise "why" for the recognised short (1–2 mark) analytic framework.
   const why =
-    a.bandRationale ??
-    (a.framework === "paper2_short_analytic" && a.markBreakdown.length > 0
+    a.framework === "paper2_short_analytic" && a.markBreakdown.length > 0
       ? a.markBreakdown[0].reason
-      : null);
+      : null;
 
   // Format-provenance line (Beta Trust). After the student confirms a format
   // in the preflight chooser, Aptly must say so — never "detected
