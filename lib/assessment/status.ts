@@ -22,7 +22,9 @@ export function stripUnassessableDiagramMistake(
   diagramSubmitted: boolean
 ): MistakeType[] {
   if (diagramExpected && !diagramSubmitted) {
-    return mistakes.filter((m) => m !== "Missing diagram explanation");
+    return mistakes.filter(
+      (m) => m !== "Missing diagram explanation" && m !== "Missing required diagram"
+    );
   }
   return mistakes;
 }

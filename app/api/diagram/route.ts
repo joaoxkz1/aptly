@@ -28,9 +28,9 @@ import {
 import {
   DAILY_DIAGRAM_REVIEW_LIMIT,
   DIAGRAM_MAX_OUTPUT_TOKENS,
+  DIAGRAM_MODEL,
   DIAGRAM_REASONING_EFFORT,
   DIAGRAM_REQUEST_TIMEOUT_MS,
-  GRADING_MODEL,
   IMAGE_MAX_DIMENSION,
   MAX_ANSWER_CHARS,
   MAX_PROCESSED_IMAGE_BYTES,
@@ -165,7 +165,7 @@ export async function POST(request: Request) {
     const imageUrl = `data:${mimeForSniffedType(sniffed)};base64,${Buffer.from(bytes).toString("base64")}`;
     const response = await getOpenAI().responses.create(
       {
-        model: GRADING_MODEL,
+        model: DIAGRAM_MODEL,
         reasoning: { effort: DIAGRAM_REASONING_EFFORT },
         max_output_tokens: DIAGRAM_MAX_OUTPUT_TOKENS,
         store: false,

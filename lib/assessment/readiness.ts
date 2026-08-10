@@ -1,5 +1,17 @@
-import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel, MistakeType } from "@/lib/types";
-import { ASSESSMENT_SKILLS, ASSESSMENT_SKILL_LABELS } from "./taxonomy";
+import type {
+  Assessment,
+  AssessmentSkill,
+  Attempt,
+  EconomicsTaxonomyVersion,
+  MarkBreakdownLabel,
+  MistakeType,
+} from "@/lib/types";
+import {
+  ASSESSMENT_SKILLS,
+  ASSESSMENT_SKILL_LABELS,
+  ECONOMICS_TAXONOMY_VERSION,
+  resolveEconomicsTaxonomyVersion,
+} from "./taxonomy";
 import { deriveScoringState, isCoreEligible } from "./status";
 import { collapseRevisionChains } from "./revisions";
 import { frameworkFormatKey, frameworkFormatLabel, topicDisplayLabel } from "./display";
@@ -343,24 +355,8 @@ export function assessmentStudyNext(attempts: Attempt[]): string | null {
 export interface TopicRecommendation {
   topicCode: string;
   topicLabel: string;
+  taxonomyVersion: EconomicsTaxonomyVersion;
   reason: string;
-}
-
-function mostCommonLabel(list: Attempt[]): string {
-  const counts = new Map<string, number>();
-  for (const a of list) {
-    const label = a.assessment?.topicLabel?.trim();
-    if (label) counts.set(label, (counts.get(label) ?? 0) + 1);
-  }
-  let best = "";
-  let bestN = 0;
-  for (const [label, n] of counts) {
-    if (n > bestN) {
-      best = label;
-      bestN = n;
-    }
-  }
-  return best || "this topic";
 }
 
 /**
@@ -375,6 +371,8 @@ export function assessmentTopicRecommendation(attempts: Attempt[]): TopicRecomme
     (a) =>
       a.subject === "Economics" &&
       a.assessment != null &&
+      resolveEconomicsTaxonomyVersion(a.assessment.gradingProvenance?.taxonomyVersion) ===
+        ECONOMICS_TAXONOMY_VERSION &&
       a.assessment.syllabusTopic !== "unknown" &&
       a.assessment.markDisplayMode !== "practice_feedback_only"
   );
@@ -426,7 +424,12 @@ export function assessmentTopicRecommendation(attempts: Attempt[]): TopicRecomme
       ? `You repeated the same issue (${weakest.repeatedMistake.toLowerCase()}) across ${weakest.list.length} marked answers here.`
       : `Your average there is ${avgPct}% across ${weakest.list.length} marked answers — the lowest of your covered topics.`;
 
-  return { topicCode: weakest.code, topicLabel: mostCommonLabel(weakest.list), reason };
+  return {
+    topicCode: weakest.code,
+    topicLabel: topicDisplayLabel(weakest.code, ECONOMICS_TAXONOMY_VERSION),
+    taxonomyVersion: ECONOMICS_TAXONOMY_VERSION,
+    reason,
+  };
 }
 
 // ============================================================================
@@ -450,6 +453,7 @@ export type Reliability = "early_signal" | "reliable_pattern";
 export interface TopicPerformanceRow {
   topicCode: string;
   topicLabel: string;
+  taxonomyVersion: EconomicsTaxonomyVersion;
   earned: number;
   available: number;
   percent: number; // Σearned / Σavailable
@@ -487,6 +491,7 @@ export interface NextFocus {
   skillLabel: MarkBreakdownLabel; // lead: "Weakest skill: <skillLabel>"
   topicCode: string;
   topicLabel: string; // context: "Most visible in <topicLabel>"
+  taxonomyVersion: EconomicsTaxonomyVersion;
   percentLost: number;
   responses: number;
   reliability: Reliability;
@@ -535,23 +540,35 @@ function rawPercent(list: Attempt[]): { earned: number; available: number; perce
   return { earned, available, percent: available > 0 ? Math.round((100 * earned) / available) : 0 };
 }
 
+function taxonomyVersionFor(a: Attempt): EconomicsTaxonomyVersion {
+  return resolveEconomicsTaxonomyVersion(a.assessment?.gradingProvenance?.taxonomyVersion);
+}
+
+function topicIdentity(a: Attempt): string {
+  return `${taxonomyVersionFor(a)}:${a.assessment!.syllabusTopic}`;
+}
+
 function groupByTopic(eligible: Attempt[]): Map<string, Attempt[]> {
   const byCode = new Map<string, Attempt[]>();
   for (const a of eligible) {
     const code = a.assessment!.syllabusTopic;
     if (code === "unknown") continue;
-    byCode.set(code, [...(byCode.get(code) ?? []), a]);
+    const key = topicIdentity(a);
+    byCode.set(key, [...(byCode.get(key) ?? []), a]);
   }
   return byCode;
 }
 
 function topicPerformanceRows(eligible: Attempt[]): TopicPerformanceRow[] {
   return [...groupByTopic(eligible).entries()]
-    .map(([code, list]) => {
+    .map(([, list]) => {
+      const code = list[0].assessment!.syllabusTopic;
+      const taxonomyVersion = taxonomyVersionFor(list[0]);
       const { earned, available, percent } = rawPercent(list);
       return {
         topicCode: code,
-        topicLabel: topicDisplayLabel(code),
+        topicLabel: topicDisplayLabel(code, taxonomyVersion),
+        taxonomyVersion,
         earned,
         available,
         percent,
@@ -572,7 +589,7 @@ function skillPriorityRows(eligible: Attempt[]): SkillPriorityRow[] {
       // A diagram Aptly cannot yet inspect is not a diagnosed skill weakness —
       // exclude it from diagnostic ranking / next-focus until upload support
       // assesses a real submitted diagram.
-      if (b.label === "Diagram") continue;
+      if (b.label === "Diagram" || b.label === "Structure and clarity") continue;
       const cur = map.get(b.label) ?? { lost: 0, available: 0, responses: 0 };
       cur.lost += Math.max(0, b.available - b.awarded);
       cur.available += b.available;
@@ -615,8 +632,10 @@ function evidenceCoverage(assessed: Attempt[]): EvidenceCoverage {
 function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null {
   let best: ImprovedTopic | null = null;
   let bestDelta = 0;
-  for (const [code, list] of groupByTopic(eligible)) {
+  for (const [, list] of groupByTopic(eligible)) {
     if (list.length < MIN_ATTEMPTS_FOR_IMPROVEMENT) continue;
+    const code = list[0].assessment!.syllabusTopic;
+    const taxonomyVersion = taxonomyVersionFor(list[0]);
     const sorted = [...list].sort(
       (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
@@ -627,7 +646,7 @@ function mostImprovedTopicAssessment(eligible: Attempt[]): ImprovedTopic | null 
     if (delta > bestDelta) {
       bestDelta = delta;
       best = {
-        topicLabel: topicDisplayLabel(code),
+        topicLabel: topicDisplayLabel(code, taxonomyVersion),
         fromPercent: older.percent,
         toPercent: newer.percent,
       };
@@ -659,31 +678,36 @@ function buildNextFocus(
     if (code === "unknown") continue;
     const cat = a.assessment!.markBreakdown.find((b) => b.label === top.label);
     if (cat == null) continue;
-    const cur = byTopic.get(code) ?? { lost: 0, available: 0, list: [] };
+    const key = topicIdentity(a);
+    const cur = byTopic.get(key) ?? { lost: 0, available: 0, list: [] };
     cur.lost += Math.max(0, cat.available - cat.awarded);
     cur.available += cat.available;
     cur.list.push(a);
-    byTopic.set(code, cur);
+    byTopic.set(key, cur);
   }
   const ranked = [...byTopic.entries()]
     .filter(([, v]) => v.available > 0 && v.lost > 0)
     .sort((a, b) => b[1].lost / b[1].available - a[1].lost / a[1].available);
   if (ranked.length === 0) return null;
 
-  const [code, v] = ranked[0];
+  const [, v] = ranked[0];
+  const code = v.list[0].assessment!.syllabusTopic;
+  const taxonomyVersion = taxonomyVersionFor(v.list[0]);
   const percentLost = Math.round((100 * v.lost) / v.available);
   const responses = v.list.length;
-  const topicLabel = topicDisplayLabel(code);
+  const topicLabel = topicDisplayLabel(code, taxonomyVersion);
   const reliability: Reliability =
     responses >= RELIABLE_TOPIC_ATTEMPTS ? "reliable_pattern" : "early_signal";
 
   // "Why this?" — only when a topic with a VISIBLY lower percent is skipped
   // because its evidence is an early signal (fewer than a reliable pattern).
   // Built strictly from stored data, never fabricated. NO marks/percentages.
-  const focusRow = topicPerformance.find((t) => t.topicCode === code);
+  const focusRow = topicPerformance.find(
+    (t) => t.topicCode === code && t.taxonomyVersion === taxonomyVersion
+  );
   const lowerButWeak = topicPerformance.find(
     (t) =>
-      t.topicCode !== code &&
+      (t.topicCode !== code || t.taxonomyVersion !== taxonomyVersion) &&
       focusRow != null &&
       t.percent < focusRow.percent &&
       t.reliability === "early_signal"
@@ -702,6 +726,7 @@ function buildNextFocus(
     skillLabel: top.label,
     topicCode: code,
     topicLabel,
+    taxonomyVersion,
     percentLost,
     responses,
     reliability,
@@ -734,7 +759,19 @@ export function buildLearningInsights(attempts: Attempt[]): LearningInsights {
   const distinctSkills = new Set(eligible.flatMap((a) => a.assessment!.assessmentSkills)).size;
   const distinctFormats = new Set(eligible.map((a) => a.assessment!.assessmentFormat)).size;
 
-  const nextFocus = buildNextFocus(eligible, skillPriority, topicPerformance, distinctTopics);
+  // Recommendations use only the current taxonomy. Historical attempts remain
+  // visible and analytically separate, but are never silently cross-walked.
+  const currentEligible = eligible.filter(
+    (a) => taxonomyVersionFor(a) === ECONOMICS_TAXONOMY_VERSION
+  );
+  const currentTopicPerformance = topicPerformanceRows(currentEligible);
+  const currentSkillPriority = skillPriorityRows(currentEligible);
+  const nextFocus = buildNextFocus(
+    currentEligible,
+    currentSkillPriority,
+    currentTopicPerformance,
+    currentTopicPerformance.length
+  );
 
   const markTrend = [...eligible]
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())

@@ -34,7 +34,6 @@ const TEMPLATE_POLICY = resolveScoringPolicy(
 /** A fully valid model output for the 4-mark written-only frame. */
 function modelOutput(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
-    score: 5,
     strengths: ["Clear causal chain from costs to supply to equilibrium."],
     improvements: ["State the new equilibrium explicitly."],
     mistakes: [],
@@ -52,9 +51,6 @@ function modelOutput(overrides: Record<string, unknown> = {}): Record<string, un
     topicLabel: "Government intervention",
     classificationConfidence: "high",
     markingConfidence: "high",
-    practiceLevelLow: 4,
-    practiceLevelHigh: 5,
-    practiceLevelConfidence: "medium",
     diagramExpected: true,
     diagramSubmitted: false,
     diagramAssessmentStatus: "not_submitted",
@@ -64,8 +60,9 @@ function modelOutput(overrides: Record<string, unknown> = {}): Record<string, un
     attachmentContent: "none",
     assessableEarned: 2,
     markBreakdown: [
-      { label: "Economic analysis", awarded: 2, available: 2, reason: "Correct causal chain." },
+      { label: "Economic analysis", awarded: 4, available: 4, reason: "Correct causal chain." },
     ],
+    bandRationale: null,
     limitations: [],
     ...overrides,
   };
@@ -101,10 +98,10 @@ describe("regression — 4-mark diagram part selected from a multi-part paste", 
 
   it("a missing diagram never becomes a recurring mistake", () => {
     const { feedback } = validateGradeResult(
-      modelOutput({ mistakes: ["Missing diagram explanation", "Weak definitions"] }),
+      modelOutput({ mistakes: ["Missing required diagram", "Weak definitions"] }),
       { hasImageAttachment: false, policy: TEMPLATE_POLICY }
     );
-    expect(feedback.mistakes).not.toContain("Missing diagram explanation");
+    expect(feedback.mistakes).not.toContain("Missing required diagram");
     expect(feedback.mistakes).toContain("Weak definitions");
   });
 

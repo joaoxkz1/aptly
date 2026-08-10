@@ -30,7 +30,9 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
   const limitations = presentedLimitations(attempt);
   const subject = attempt.subject;
   const topicLabel =
-    a.syllabusTopic !== "unknown" ? topicDisplayLabel(a.syllabusTopic) : a.topicLabel || subject;
+    a.syllabusTopic !== "unknown"
+      ? topicDisplayLabel(a.syllabusTopic, a.gradingProvenance?.taxonomyVersion)
+      : a.topicLabel || subject;
   const meta = frameworkMeta(a);
 
   // Paper 2(g)/3(b) with no supplied source → feedback-only, no mark/band/data-use.
@@ -45,8 +47,19 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
   const metaNote = sourceMissing ? null : meta.note;
 
   // Best-fit markband — ONLY for confirmed 10/15 paper frameworks with a mark.
+  const derivedLegacyBand =
+    a.markBand == null && a.framework != null && a.marksEarned != null
+      ? bestFitBand(a.framework, a.marksEarned)
+      : null;
   const band =
-    a.framework != null && a.marksEarned != null ? bestFitBand(a.framework, a.marksEarned) : null;
+    a.markBand != null && a.markBandLow != null && a.markBandHigh != null && a.bandPosition != null
+      ? {
+          markBand: a.markBand,
+          low: a.markBandLow,
+          high: a.markBandHigh,
+          placement: a.bandPosition,
+        }
+      : derivedLegacyBand;
   const bandText =
     band != null
       ? band.low === band.high
@@ -56,9 +69,10 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
 
   // Concise "why" for the recognised short (1–2 mark) analytic framework.
   const why =
-    a.framework === "paper2_short_analytic" && a.markBreakdown.length > 0
+    a.bandRationale ??
+    (a.framework === "paper2_short_analytic" && a.markBreakdown.length > 0
       ? a.markBreakdown[0].reason
-      : null;
+      : null);
 
   // Format-provenance line (Beta Trust). After the student confirms a format
   // in the preflight chooser, Aptly must say so — never "detected

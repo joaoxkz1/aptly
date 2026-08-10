@@ -22,6 +22,7 @@ function practiceQuestion(o: Partial<PracticeQuestion> = {}): PracticeQuestion {
     markTotal: 10,
     topicCode: "2.5",
     topicLabel: "Government Intervention",
+    taxonomyVersion: "economics-2022-v1",
     skill: "economic_analysis",
     why: "Evidence-backed reason.",
     ...o,
@@ -64,6 +65,12 @@ describe("reusablePracticeQuestion — refresh reopens, never regenerates", () =
 
   it("returns null when the user has no practice questions", () => {
     expect(reusablePracticeQuestion(null, [], NOW)).toBeNull();
+  });
+
+  it("never reopens an unversioned legacy question as current-taxonomy practice", () => {
+    expect(
+      reusablePracticeQuestion(practiceQuestion({ taxonomyVersion: undefined }), [], NOW)
+    ).toBeNull();
   });
 
   it("does NOT reuse a question once any attempt answers it", () => {

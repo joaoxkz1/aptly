@@ -47,6 +47,8 @@ export function isBestFitFramework(framework: AssessmentFramework): boolean {
 export type BandPlacement = "lower" | "middle" | "upper";
 
 export interface BestFitBand {
+  /** Stable inclusive range identifier, e.g. "7-9" or "0". */
+  markBand: string;
   low: number;
   high: number;
   placement: BandPlacement;
@@ -56,7 +58,7 @@ export interface BestFitBand {
 export function bestFitBand(framework: AssessmentFramework, earned: number): BestFitBand | null {
   const bands = FRAMEWORK_BANDS[framework];
   if (bands == null) return null;
-  if (earned <= 0) return { low: 0, high: 0, placement: "middle" };
+  if (earned <= 0) return { markBand: "0", low: 0, high: 0, placement: "middle" };
 
   const band = bands.find(([lo, hi]) => earned >= lo && earned <= hi);
   if (band == null) return null;
@@ -70,7 +72,7 @@ export function bestFitBand(framework: AssessmentFramework, earned: number): Bes
     const pos = (earned - low) / span; // 0..1
     placement = pos <= 0.33 ? "lower" : pos >= 0.67 ? "upper" : "middle";
   }
-  return { low, high, placement };
+  return { markBand: low === high ? String(low) : `${low}-${high}`, low, high, placement };
 }
 
 export function placementLabel(placement: BandPlacement): string {

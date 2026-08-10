@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
             {topicPerformance.length > 0 ? (
               topicPerformance.map((t, i) => (
                 <div
-                  key={t.topicCode}
+                  key={`${t.taxonomyVersion}:${t.topicCode}`}
                   className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 p-3"
                 >
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-card text-xs font-semibold text-muted-foreground">
@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium" title={t.topicLabel}>
-                      {topicShortLabel(t.topicCode)}
+                      {topicShortLabel(t.topicCode, t.taxonomyVersion)}
                     </p>
                     {/* Always the evidence count, with an early-signal qualifier —
                         never two different label kinds in the same slot. */}

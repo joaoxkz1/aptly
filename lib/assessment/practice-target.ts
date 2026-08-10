@@ -3,6 +3,7 @@ import type {
   AssessmentSkill,
   Attempt,
   MarkBreakdownLabel,
+  EconomicsTaxonomyVersion,
 } from "@/lib/types";
 import { buildLearningInsights, type NextFocus } from "./readiness";
 import { requiresSourceMaterial } from "./frameworks";
@@ -41,6 +42,7 @@ export function isGeneratedPracticeFramework(
 export interface PracticeTarget {
   topicCode: string;
   topicLabel: string;
+  taxonomyVersion: EconomicsTaxonomyVersion;
   /** The diagnostic skill the focus names (canonical breakdown label). */
   focusSkillLabel: MarkBreakdownLabel;
   /** The controlled assessment skill the generated question practises. */
@@ -133,6 +135,7 @@ export function derivePracticeTarget(attempts: Attempt[]): PracticeTarget | null
   return {
     topicCode: nf.topicCode,
     topicLabel: nf.topicLabel,
+    taxonomyVersion: nf.taxonomyVersion,
     focusSkillLabel: nf.skillLabel,
     skill: format.skill,
     framework: format.framework,

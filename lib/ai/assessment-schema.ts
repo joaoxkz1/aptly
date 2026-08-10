@@ -16,6 +16,7 @@ import {
   ATTACHMENT_CONTENTS,
   COMMAND_TERMS,
   CONFIDENCES,
+  CURRENT_SYLLABUS_TOPIC_LABELS,
   DIAGRAM_STATUSES,
   LEVEL_RELEVANCES,
   MARK_BREAKDOWN_LABELS,
@@ -24,11 +25,14 @@ import {
   SYLLABUS_TOPICS,
   SYLLABUS_UNITS,
   WORKINGS_STATUSES,
+  isCurrentTopLevelHlTopic,
 } from "@/lib/assessment/taxonomy";
 import { ASSESSMENT_VERSION } from "@/lib/assessment/config";
+import { bestFitBand } from "@/lib/assessment/bands";
 import type { ScoringPolicy } from "@/lib/assessment/policy";
 import { stripUnassessableDiagramMistake } from "@/lib/assessment/status";
-import { bandForScore, validateFeedback } from "./feedback-schema";
+import { CURRENT_ECONOMICS_GRADING_PROVENANCE } from "./grading-provenance";
+import { validateQualitativeFeedback } from "./feedback-schema";
 
 /**
  * Strict Structured Outputs schema + instructions + fail-closed validation.
@@ -43,13 +47,15 @@ import { bandForScore, validateFeedback } from "./feedback-schema";
 
 const strArr = () => ({ type: "array", items: { type: "string" } });
 const enumStr = (values: readonly string[]) => ({ type: "string", enum: [...values] });
+const ECON_V4_MISTAKE_TYPES = MISTAKE_TYPES.filter(
+  (value) => value !== "Missing diagram explanation"
+);
 
 const SCHEMA_PROPERTIES: Record<string, unknown> = {
-  // Feedback subset (back-compat).
-  score: { type: "integer", description: "Estimated IB-style 0–7 mark (internal signal, not shown)." },
+  // Model-owned qualitative feedback. Compatibility values are server-derived.
   strengths: strArr(),
   improvements: strArr(),
-  mistakes: { type: "array", items: { type: "string", enum: [...MISTAKE_TYPES] } },
+  mistakes: { type: "array", items: { type: "string", enum: [...ECON_V4_MISTAKE_TYPES] } },
   examinerComment: { type: "string" },
   studyNext: { type: "string" },
   // Classification.
@@ -65,18 +71,6 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
   topicLabel: { type: "string" },
   classificationConfidence: enumStr(CONFIDENCES),
   markingConfidence: enumStr(CONFIDENCES),
-  // Practice band (kept internal; not shown as a numeric band per Assessment
-  // Integrity). Bounds live in the description because strict mode forbids
-  // min/max — the server validator rejects anything outside 1–7.
-  practiceLevelLow: {
-    type: "integer",
-    description: "Integer from 1 to 7 (use 1 for very weak answers — never 0).",
-  },
-  practiceLevelHigh: {
-    type: "integer",
-    description: "Integer from 1 to 7, greater than or equal to practiceLevelLow.",
-  },
-  practiceLevelConfidence: enumStr(CONFIDENCES),
   // Evidence (drive coverage; NEVER a diagram cap).
   diagramExpected: { type: "boolean" },
   diagramSubmitted: { type: "boolean" },
@@ -100,15 +94,25 @@ const SCHEMA_PROPERTIES: Record<string, unknown> = {
       required: ["label", "awarded", "available", "reason"],
       properties: {
         label: { type: "string", enum: [...MARK_BREAKDOWN_LABELS] },
-        awarded: { type: "integer", description: "Integer 0..available." },
+        awarded: {
+          type: "integer",
+          enum: [0, 1, 2, 3, 4],
+          description: "Integer 0..4 on Aptly's fixed diagnostic scale.",
+        },
         available: {
           type: "integer",
+          enum: [4],
           description:
-            "Integer of at least 1. OMIT any criterion the question does not test — never emit a row with available 0.",
+            "Always exactly 4. OMIT any criterion the question does not test.",
         },
         reason: { type: "string", description: "Non-empty, specific to this answer." },
       },
     },
+  },
+  bandRationale: {
+    type: ["string", "null"],
+    description:
+      "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames.",
   },
   limitations: strArr(),
 };
@@ -130,7 +134,7 @@ const BEST_FIT_FOCUS: Partial<Record<ScoringPolicy["framework"], string>> = {
   paper2g_15_mark:
     "Paper 2(g) focus: relevant theory, coherent analysis, appropriate use of the SUPPLIED source, balanced evaluation and a supported judgement. Award data-use credit ONLY when source information is applied to build economic arguments — never for merely restating the stimulus. Do NOT require a diagram for the highest level automatically.",
   paper3b_10_mark:
-    "Paper 3(b) focus (five strands): appropriateness of the recommended policy; explanation of how it addresses the stated problem; relevant and accurate theory; effective use of the supplied text/data; balanced evaluation with a supported final judgement (alternatives, conditions, trade-offs, time lags, effectiveness where appropriate).",
+    "Paper 3(b) focus (five strands): (1) appropriateness of the recommended policy AND explanation of how it addresses the stated problem; (2) relevant and accurate theory; (3) accurate and appropriate terminology; (4) effective use of the supplied text/data; (5) weighing arguments before a supported final judgement/conclusion (alternatives, conditions, combinations, trade-offs, time lags and effectiveness where appropriate).",
 };
 
 /** A compact, deterministic description of the server-decided marking frame. */
@@ -138,7 +142,7 @@ function policyBrief(policy: ScoringPolicy): string {
   if (policy.scoringState === "feedback_only") {
     return [
       "MARKING FRAME (decided by Aptly, not you): FEEDBACK ONLY.",
-      "No reliable mark total exists. Set assessableEarned = null and markBreakdown = [].",
+      "No reliable mark total exists. Set assessableEarned = null, bandRationale = null, and markBreakdown = [].",
       "Give honest qualitative feedback only. Do NOT invent a mark total or a fraction.",
     ].join(" ");
   }
@@ -146,6 +150,12 @@ function policyBrief(policy: ScoringPolicy): string {
   const parts: string[] = [
     `MARKING FRAME (decided by Aptly, not you): framework = ${policy.framework}; total ${policy.total} marks; ASSESSABLE ${policy.assessable} marks.`,
   ];
+
+  if (policy.questionSpecificGuidance) {
+    parts.push(
+      `TRUSTED QUESTION-SPECIFIC GUIDANCE (server supplied; use as non-exhaustive guidance): ${policy.questionSpecificGuidance}`
+    );
+  }
 
   if (policy.recognizedTemplate != null) {
     // Recognised Paper 2(c)–(f)-STYLE 4-mark diagram-explain structure — the
@@ -155,7 +165,7 @@ function policyBrief(policy: ScoringPolicy): string {
     );
   } else if (policy.markingMethod === "best_fit") {
     parts.push(
-      `Use an IB BEST-FIT judgement. Judge the answer holistically against the markbands and set assessableEarned (0..${policy.assessable}) to the single best-fit mark. Do NOT compute the mark by adding up category points.`
+      `Use an IB BEST-FIT judgement. Judge the answer holistically against the markbands and set assessableEarned (0..${policy.assessable}) FIRST. Then write a concise bandRationale from observable answer features. Do NOT compute the mark by adding up category points.`
     );
     const focus = BEST_FIT_FOCUS[policy.framework];
     if (focus) parts.push(focus);
@@ -169,8 +179,12 @@ function policyBrief(policy: ScoringPolicy): string {
     );
   }
 
+  if (!policy.bestFit) {
+    parts.push("This is not a best-fit markband frame, so set bandRationale = null.");
+  }
+
   parts.push(
-    "markBreakdown is a per-criterion DIAGNOSTIC ONLY (Aptly's internal signal, shown to the student qualitatively — NOT the official IB allocation). It does NOT need to sum to assessableEarned. For each criterion the question genuinely tests, set awarded/available to reflect how well it was demonstrated."
+    "markBreakdown is a per-criterion DIAGNOSTIC ONLY, created AFTER assessableEarned. It is not an official allocation and never changes the headline mark. For every tested criterion set available = 4 and awarded = 0..4 (0 absent/incorrect, 1 very weak, 2 partial, 3 strong, 4 excellent); omit untested criteria."
   );
 
   if (policy.scoringState === "provisional") {
@@ -179,21 +193,38 @@ function policyBrief(policy: ScoringPolicy): string {
   return parts.join(" ");
 }
 
+const IB_ALIGNED_EXAMINER_METHOD = [
+  "IB-ALIGNED EXAMINER METHOD:",
+  "For best-fit marking, read the entire answer before fixing a mark.",
+  "Determine the exact demands of this question: command term, theory/issue, relevant application or supplied context, diagram relevance, analysis, and evaluation/synthesis.",
+  "Build an internal, non-exhaustive question-specific guide before marking. It is not output, not an additive checklist, and valid alternative economic approaches must receive credit.",
+  "Choose the single band that best fits the answer as a whole; the answer need not satisfy every characteristic, so compensate across characteristics.",
+  "Only after choosing the band choose the exact mark: lower when characteristics are just demonstrated, middle when secure, upper when demonstrated to a great extent.",
+  "Use positive marking. The top mark is attainable without literal perfection. Do not invent optional extras solely to avoid full marks.",
+  "Fix assessableEarned before diagnostics or feedback. Never derive it from markBreakdown, strengths, improvements, or weaknesses.",
+  "Judge example quality by relevance, development and integration, not count. One strong developed example can be sufficient application.",
+  "Evaluation is not a mechanical pro/con pair: credit conditions, stakeholders, assumptions, time horizons, magnitude, priorities, alternatives, limitations, trade-offs, effectiveness and supported conditional judgement.",
+  "Do not require stand-alone textbook definitions unless asked, do not double-penalise one error, and credit valid alternative diagrams or approaches.",
+  "A diagram is not universally required for a high Paper 1(b) or Paper 2(g) mark; follow the exact frame and question.",
+  "END EXAMINER METHOD.",
+].join(" ");
+
 export function buildAssessmentInstructions(): string {
   return [
     "You are Aptly, an IB Economics assistant that returns ESTIMATED study feedback for practice — never an official IB grade.",
+    IB_ALIGNED_EXAMINER_METHOD,
     "From the question and the student's typed answer, classify the likely IB assessment: format, paper, part, command term (normalized), the skills it tests, the syllabus topic code, and SL/HL relevance.",
     "You do NOT decide the mark total, whether the attempt is marked/provisional/feedback-only, the marking framework, or any diagram-cap policy — Aptly has already decided the MARKING FRAME and you must mark within it.",
     "Mark ONLY the assessable marks stated in the MARKING FRAME. Never invent, expand, or reduce the total. Never award marks for a diagram you cannot see; typed workings in the answer ARE assessable.",
-    "The overall mark is a best-fit / analytic judgement, NOT the sum of category points. The markBreakdown is a per-criterion diagnostic only and need not sum to the mark.",
+    "The overall mark is a best-fit / analytic judgement fixed FIRST. The later markBreakdown is a non-official diagnostic and cannot change it.",
     "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram. Do NOT set it true merely because a diagram would strengthen the answer. diagramExpected NEVER changes the mark total — the frame already accounts for any cap.",
     "Do NOT add limitations about a missing image, photo, upload, or drawn diagram unless the MARKING FRAME's framework expects a diagram or diagramExpected is true.",
     "For a data-response framework (Paper 2(g)/3(b)), assess data use ONLY against the SOURCE MATERIAL block when present. Never claim to assess charts, tables, figures, or images that were not pasted as readable text.",
     "Never award data-use credit for merely restating the stimulus; data use counts only when source information is applied to economic reasoning.",
     "In a recognised diagram-explain frame, a theoretically correct causal explanation earns the written marks even without a verbatim textbook definition — a precise definition is an optional refinement, not the main loss.",
     "Respect the FACT hasImageAttachment: when false, no image exists — diagramSubmitted must be false, attachmentContent must be none, diagramAssessmentStatus must not be submitted_and_assessed, and workingsAssessmentStatus must not be image_and_assessed.",
-    "Choose mistakes only from the fixed list. Keep strengths/improvements to at most 3 each. Use the full plausible mark range; do not cluster mid-band.",
-    "Numeric bounds are enforced: practiceLevelLow/practiceLevelHigh are ALWAYS integers 1–7 (use 1 for very weak answers, never 0); when the MARKING FRAME states an assessable total, assessableEarned is ALWAYS an integer in that range (use 0 rather than null for an answer earning nothing); every markBreakdown row has available ≥ 1 — omit untested criteria entirely.",
+    "Choose mistakes only from the econ-v4 list and distinguish absent from underdeveloped evaluation/examples. Keep strengths/improvements to at most 3 each. Use the full plausible mark range.",
+    "Numeric bounds are enforced: when the MARKING FRAME states an assessable total, assessableEarned is an integer in that range (0 rather than null for no credit); every emitted markBreakdown row has available exactly 4 and awarded 0..4.",
     "Return only the structured JSON defined by the response format.",
   ].join(" ");
 }
@@ -282,12 +313,15 @@ function stringArray(value: unknown): string[] {
 function parseBreakdown(value: unknown): AssessmentMarkBreakdownItem[] {
   if (!Array.isArray(value)) return fail("markBreakdown");
   const labels = new Set<string>(MARK_BREAKDOWN_LABELS);
+  const seen = new Set<string>();
   return value.map((raw) => {
     if (typeof raw !== "object" || raw === null) return fail("markBreakdown item");
     const o = raw as Record<string, unknown>;
     if (typeof o.label !== "string" || !labels.has(o.label)) return fail("markBreakdown label");
-    const available = intInRange(o.available, 1, 60, "markBreakdown.available");
-    const awarded = intInRange(o.awarded, 0, available, "markBreakdown.awarded");
+    if (seen.has(o.label)) return fail("duplicate markBreakdown label");
+    seen.add(o.label);
+    const available = intInRange(o.available, 4, 4, "markBreakdown.available");
+    const awarded = intInRange(o.awarded, 0, 4, "markBreakdown.awarded");
     const reason = nonEmptyString(o.reason, "markBreakdown.reason");
     return { label: o.label as MarkBreakdownLabel, awarded, available, reason };
   });
@@ -328,9 +362,6 @@ interface ModelAssessment {
   topicLabel: string;
   classificationConfidence: Assessment["classificationConfidence"];
   markingConfidence: Assessment["markingConfidence"];
-  practiceLevelLow: number;
-  practiceLevelHigh: number;
-  practiceLevelConfidence: Assessment["practiceLevelConfidence"];
   diagramExpected: boolean;
   diagramSubmitted: boolean;
   diagramAssessmentStatus: Assessment["diagramAssessmentStatus"];
@@ -340,7 +371,20 @@ interface ModelAssessment {
   attachmentContent: Assessment["attachmentContent"];
   assessableEarned: number | null;
   markBreakdown: AssessmentMarkBreakdownItem[];
+  bandRationale: string | null;
   limitations: string[];
+}
+
+/**
+ * Legacy 0–7 compatibility only: round(7 * earned / assessable).
+ * Active assessment decisions never read or use this value.
+ */
+export function compatibilityScoreFor(
+  earned: number | null,
+  assessable: number | null
+): number | null {
+  if (earned == null || assessable == null || assessable <= 0) return null;
+  return Math.min(7, Math.max(0, Math.round((7 * earned) / assessable)));
 }
 
 /**
@@ -349,12 +393,24 @@ interface ModelAssessment {
  */
 function validateModelOutput(
   raw: unknown,
-  opts: { hasImageAttachment: boolean; assessable: number | null }
+  opts: { hasImageAttachment: boolean; policy: ScoringPolicy }
 ): { feedback: Feedback; model: ModelAssessment } {
   if (typeof raw !== "object" || raw === null) return fail("not an object");
   const o = raw as Record<string, unknown>;
-
-  const feedback = validateFeedback(o);
+  const allowedKeys = new Set(Object.keys(SCHEMA_PROPERTIES));
+  for (const key of Object.keys(o)) {
+    if (!allowedKeys.has(key)) fail(`unexpected field ${key}`);
+  }
+  if (
+    !Array.isArray(o.mistakes) ||
+    o.mistakes.some(
+      (mistake) =>
+        typeof mistake !== "string" ||
+        !(ECON_V4_MISTAKE_TYPES as readonly string[]).includes(mistake)
+    )
+  ) {
+    fail("mistakes");
+  }
 
   const assessmentFormat = enumOf(o.assessmentFormat, ASSESSMENT_FORMATS, "assessmentFormat");
   const paper = enumOf(o.paper, PAPERS, "paper");
@@ -378,10 +434,6 @@ function validateModelOutput(
   const commandTermLabel = nonEmptyString(o.commandTermLabel, "commandTermLabel");
   const topicLabel = nonEmptyString(o.topicLabel, "topicLabel");
 
-  const practiceLevelLow = intInRange(o.practiceLevelLow, 1, 7, "practiceLevelLow");
-  const practiceLevelHigh = intInRange(o.practiceLevelHigh, 1, 7, "practiceLevelHigh");
-  if (practiceLevelHigh < practiceLevelLow) fail("practiceLevel range");
-
   const diagramExpected = bool(o.diagramExpected, "diagramExpected");
   const diagramSubmitted = bool(o.diagramSubmitted, "diagramSubmitted");
   const workingsExpected = bool(o.workingsExpected, "workingsExpected");
@@ -401,7 +453,7 @@ function validateModelOutput(
   let assessableEarned: number | null;
   let markBreakdown: AssessmentMarkBreakdownItem[];
 
-  if (opts.assessable == null) {
+  if (opts.policy.assessable == null) {
     // Feedback-only: ignore any model-proposed marks (no denominator exists).
     assessableEarned = null;
     markBreakdown = [];
@@ -410,12 +462,24 @@ function validateModelOutput(
     // denominator). The breakdown is a per-criterion DIAGNOSTIC only — it is NOT
     // required to sum to the mark, so it is never presented as the official IB
     // allocation. Each row is still validated for internal consistency.
-    assessableEarned = intInRange(o.assessableEarned, 0, opts.assessable, "assessableEarned");
+    assessableEarned = intInRange(
+      o.assessableEarned,
+      0,
+      opts.policy.assessable,
+      "assessableEarned"
+    );
     markBreakdown = parseBreakdown(o.markBreakdown);
     if (markBreakdown.length === 0) fail("markBreakdown required when marking");
   }
 
-  feedback.band = bandForScore(feedback.score);
+  const compatibilityScore = compatibilityScoreFor(assessableEarned, opts.policy.assessable);
+  const feedback = validateQualitativeFeedback(o, compatibilityScore);
+  const bandRationale =
+    opts.policy.bestFit && assessableEarned != null
+      ? nonEmptyString(o.bandRationale, "bandRationale")
+      : o.bandRationale === null
+        ? null
+        : fail("bandRationale must be null outside best-fit marking");
 
   return {
     feedback,
@@ -432,9 +496,6 @@ function validateModelOutput(
       topicLabel,
       classificationConfidence,
       markingConfidence,
-      practiceLevelLow,
-      practiceLevelHigh,
-      practiceLevelConfidence: enumOf(o.practiceLevelConfidence, CONFIDENCES, "practiceLevelConfidence"),
       diagramExpected,
       diagramSubmitted,
       diagramAssessmentStatus,
@@ -444,6 +505,7 @@ function validateModelOutput(
       attachmentContent,
       assessableEarned,
       markBreakdown,
+      bandRationale,
       limitations,
     },
   };
@@ -455,6 +517,69 @@ const MARKS_SOURCE_FOR: Record<ScoringPolicy["markTotalSource"], MarksSource> = 
   template_inferred: "canonical_inferred",
   unknown: "not_reliably_known",
 };
+
+type TrustedClassification = Pick<
+  Assessment,
+  "paper" | "assessmentFormat" | "questionPart"
+> & { levelRelevance?: Assessment["levelRelevance"] };
+
+const TRUSTED_CLASSIFICATION: Partial<
+  Record<ScoringPolicy["framework"], TrustedClassification>
+> = {
+  paper1a_10_mark: { paper: "paper_1", assessmentFormat: "paper_1_a", questionPart: "a" },
+  paper1b_15_mark: { paper: "paper_1", assessmentFormat: "paper_1_b", questionPart: "b" },
+  paper2a_definition: {
+    paper: "paper_2",
+    assessmentFormat: "paper_2_a_definition",
+    questionPart: "a",
+  },
+  paper2b_quantitative: {
+    paper: "paper_2",
+    assessmentFormat: "paper_2_b_quantitative_or_diagram",
+    questionPart: "b",
+  },
+  paper2g_15_mark: {
+    paper: "paper_2",
+    assessmentFormat: "paper_2_g_extended_response",
+    questionPart: "g",
+  },
+  paper3a_analytic: {
+    paper: "paper_3",
+    assessmentFormat: "paper_3_a_technical_or_quantitative",
+    questionPart: "a",
+    levelRelevance: "hl_only",
+  },
+  paper3b_10_mark: {
+    paper: "paper_3",
+    assessmentFormat: "paper_3_b_policy_recommendation",
+    questionPart: "b",
+    levelRelevance: "hl_only",
+  },
+};
+
+function currentUnitForTopic(topic: Assessment["syllabusTopic"]): Assessment["syllabusUnit"] {
+  if (topic.startsWith("1.")) return "unit_1";
+  if (topic.startsWith("2.")) return "unit_2";
+  if (topic.startsWith("3.")) return "unit_3";
+  if (topic.startsWith("4.")) return "unit_4";
+  return "unknown";
+}
+
+function compatibilityPracticeLevel(
+  score: number | null,
+  policy: ScoringPolicy
+): Pick<Assessment, "practiceLevelLow" | "practiceLevelHigh" | "practiceLevelConfidence"> {
+  if (score == null) {
+    return { practiceLevelLow: null, practiceLevelHigh: null, practiceLevelConfidence: null };
+  }
+  const centre = Math.max(1, score);
+  const width = policy.scoringState === "provisional" ? 1 : 0;
+  return {
+    practiceLevelLow: Math.max(1, centre - width),
+    practiceLevelHigh: Math.min(7, centre + width),
+    practiceLevelConfidence: policy.scoringState === "provisional" ? "medium" : "high",
+  };
+}
 
 function markDisplayModeFor(policy: ScoringPolicy): MarkDisplayMode {
   if (policy.scoringState === "feedback_only") return "practice_feedback_only";
@@ -471,19 +596,27 @@ function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Asse
   const unassessedMarks =
     total != null && assessable != null ? total - assessable : null;
   const showDiagram = diagramMessagingApplies(policy, model.diagramExpected);
+  const trusted = TRUSTED_CLASSIFICATION[policy.framework];
+  const levelRelevance =
+    trusted?.levelRelevance ??
+    (isCurrentTopLevelHlTopic(model.syllabusTopic) ? "hl_only" : model.levelRelevance);
+  const compatibilityScore = compatibilityScoreFor(earned, assessable);
+  const practiceLevel = compatibilityPracticeLevel(compatibilityScore, policy);
+  const band = earned == null ? null : bestFitBand(policy.framework, earned);
+  const topicLabel = CURRENT_SYLLABUS_TOPIC_LABELS[model.syllabusTopic];
 
   return {
     version: ASSESSMENT_VERSION,
-    assessmentFormat: model.assessmentFormat,
-    paper: model.paper,
-    questionPart: model.questionPart,
-    levelRelevance: model.levelRelevance,
+    assessmentFormat: trusted?.assessmentFormat ?? model.assessmentFormat,
+    paper: trusted?.paper ?? model.paper,
+    questionPart: trusted?.questionPart ?? model.questionPart,
+    levelRelevance,
     assessmentSkills: model.assessmentSkills,
     commandTerm: model.commandTerm,
     commandTermLabel: model.commandTermLabel,
-    syllabusUnit: model.syllabusUnit,
+    syllabusUnit: currentUnitForTopic(model.syllabusTopic),
     syllabusTopic: model.syllabusTopic,
-    topicLabel: model.topicLabel,
+    topicLabel,
     classificationConfidence: model.classificationConfidence,
     markingConfidence: model.markingConfidence,
     marksAvailable: total,
@@ -494,9 +627,7 @@ function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Asse
     markDisplayMode: markDisplayModeFor(policy),
     evidenceSplitSource: "not_specified",
     unassessedEvidence: null,
-    practiceLevelLow: model.practiceLevelLow,
-    practiceLevelHigh: model.practiceLevelHigh,
-    practiceLevelConfidence: model.practiceLevelConfidence,
+    ...practiceLevel,
     diagramExpected: model.diagramExpected,
     diagramSubmitted: model.diagramSubmitted,
     diagramAssessmentStatus: model.diagramAssessmentStatus,
@@ -505,6 +636,12 @@ function assembleAssessment(model: ModelAssessment, policy: ScoringPolicy): Asse
     workingsAssessmentStatus: model.workingsAssessmentStatus,
     attachmentContent: model.attachmentContent,
     markBreakdown: feedbackOnly ? [] : model.markBreakdown,
+    markBand: band?.markBand ?? null,
+    markBandLow: band?.low ?? null,
+    markBandHigh: band?.high ?? null,
+    bandPosition: band?.placement ?? null,
+    bandRationale: band == null ? null : model.bandRationale,
+    gradingProvenance: CURRENT_ECONOMICS_GRADING_PROVENANCE,
     limitations: filterLimitations(model.limitations, showDiagram),
     // Assessment Integrity — server-derived, authoritative:
     scoringState: policy.scoringState,
@@ -536,7 +673,7 @@ export function validateGradeResult(
 ): { feedback: Feedback; assessment: Assessment } {
   const { feedback, model } = validateModelOutput(raw, {
     hasImageAttachment: opts.hasImageAttachment,
-    assessable: opts.policy.assessable,
+    policy: opts.policy,
   });
   // A diagram Aptly cannot yet inspect is NOT a diagnosed student weakness:
   // never surface "Missing diagram explanation" as a recurring mistake when the

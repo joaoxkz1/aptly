@@ -103,7 +103,11 @@ describe("POST /api/extract atomic transcription", () => {
     const body = await response.json();
     expect(Object.keys(body)).toEqual(["extracted"]);
     expect(openaiCreate).toHaveBeenCalledTimes(1);
-    expect(openaiCreate.mock.calls[0][0]).toMatchObject({ store: false });
+    expect(openaiCreate.mock.calls[0][0]).toMatchObject({
+      model: "gpt-5.4",
+      reasoning: { effort: "low" },
+      store: false,
+    });
     expect(succeeded).toHaveBeenCalledWith(RESERVATION_ID, USER_ID);
   });
 

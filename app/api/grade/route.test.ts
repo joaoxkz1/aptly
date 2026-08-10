@@ -171,7 +171,12 @@ describe("POST /api/grade server authority", () => {
     const response = await POST(request());
     expect(response.status).toBe(200);
     expect(openaiCreate).toHaveBeenCalledTimes(1);
-    expect(openaiCreate.mock.calls[0][0]).toMatchObject({ store: false });
+    expect(openaiCreate.mock.calls[0][0]).toMatchObject({
+      model: "gpt-5.6-terra",
+      reasoning: { effort: "medium" },
+      max_output_tokens: 4400,
+      store: false,
+    });
     expect(save).toHaveBeenCalledWith(
       USER_ID,
       KEY,

@@ -54,7 +54,10 @@ export default function AttemptsPage() {
 
   function topicOf(a: (typeof attempts)[number]): string {
     if (a.assessment != null && a.assessment.syllabusTopic !== "unknown") {
-      return topicDisplayLabel(a.assessment.syllabusTopic);
+      return topicDisplayLabel(
+        a.assessment.syllabusTopic,
+        a.assessment.gradingProvenance?.taxonomyVersion
+      );
     }
     return a.assessment?.topicLabel || a.topic;
   }

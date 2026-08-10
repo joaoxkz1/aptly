@@ -264,10 +264,10 @@ export default function DashboardPage() {
         <CardContent className="flex flex-col gap-3">
           {insights.topicPerformance.length > 0 ? (
             insights.topicPerformance.slice(0, 6).map((t, i) => (
-              <div key={t.topicCode}>
+              <div key={`${t.taxonomyVersion}:${t.topicCode}`}>
                 <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
                   <span className="truncate font-medium" title={t.topicLabel}>
-                    {topicShortLabel(t.topicCode)}
+                    {topicShortLabel(t.topicCode, t.taxonomyVersion)}
                   </span>
                   {/* Always the evidence count, with an early-signal qualifier —
                       the same slot never alternates between two label kinds. */}
@@ -299,7 +299,10 @@ export default function DashboardPage() {
           {recent.map((a) => {
             const topic =
               a.assessment != null && a.assessment.syllabusTopic !== "unknown"
-                ? topicDisplayLabel(a.assessment.syllabusTopic)
+                ? topicDisplayLabel(
+                    a.assessment.syllabusTopic,
+                    a.assessment.gradingProvenance?.taxonomyVersion
+                  )
                 : a.assessment?.topicLabel || a.topic;
             return (
               <div key={a.id} className="flex items-center gap-4 py-3 first:pt-1 last:pb-1">

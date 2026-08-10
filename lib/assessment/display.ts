@@ -1,8 +1,8 @@
 import type { Assessment, AssessmentMarkBreakdownItem, Attempt, Confidence } from "@/lib/types";
 import {
   ASSESSMENT_FRAMEWORK_LABELS,
-  SYLLABUS_TOPIC_LABELS,
-  SYLLABUS_TOPIC_SHORT_LABELS,
+  economicsTopicLabels,
+  economicsTopicShortLabels,
 } from "./taxonomy";
 import { markPresentation } from "./status";
 
@@ -177,15 +177,17 @@ export function confidenceLabel(c: Confidence): string {
 // group by the code; these normalise display so raw classifier variants can
 // never fragment a topic. Never a truncated fragment.
 
-export function topicDisplayLabel(code: string): string {
-  return SYLLABUS_TOPIC_LABELS[code as keyof typeof SYLLABUS_TOPIC_LABELS] ?? "Unclassified topic";
+export function topicDisplayLabel(code: string, taxonomyVersion?: string | null): string {
+  const labels = economicsTopicLabels(taxonomyVersion);
+  return labels[code as keyof typeof labels] ?? "Unclassified topic";
 }
 
 /** A deliberate compact label for dense/compact layouts; full label as fallback. */
-export function topicShortLabel(code: string): string {
+export function topicShortLabel(code: string, taxonomyVersion?: string | null): string {
+  const labels = economicsTopicShortLabels(taxonomyVersion);
   return (
-    SYLLABUS_TOPIC_SHORT_LABELS[code as keyof typeof SYLLABUS_TOPIC_SHORT_LABELS] ??
-    topicDisplayLabel(code)
+    labels[code as keyof typeof labels] ??
+    topicDisplayLabel(code, taxonomyVersion)
   );
 }
 

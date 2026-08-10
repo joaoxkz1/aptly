@@ -24,7 +24,7 @@ function markedAssessment(o: {
   breakdown?: AssessmentMarkBreakdownItem[];
 }): Assessment {
   return {
-    version: 2,
+    version: 3,
     assessmentFormat: o.assessmentFormat ?? "custom_extended_response",
     paper: "custom",
     questionPart: "unknown",
@@ -56,9 +56,21 @@ function markedAssessment(o: {
     workingsAssessmentStatus: "not_relevant",
     attachmentContent: "none",
     markBreakdown: o.breakdown ?? [
-      { label: "Economic analysis", awarded: o.earned, available: o.total, reason: "x" },
+      {
+        label: "Economic analysis",
+        awarded: Math.round((4 * o.earned) / o.total),
+        available: 4,
+        reason: "x",
+      },
     ],
     limitations: [],
+    gradingProvenance: {
+      rubricVersion: "econ-v4",
+      taxonomyVersion: "economics-2022-v1",
+      gradingContractVersion: "ib-econ-2026-v1",
+      modelId: "gpt-5.6-terra",
+      reasoningEffort: "medium",
+    },
     scoringState: "marked",
     markTotalSource: "explicit",
     recognizedTemplate: null,

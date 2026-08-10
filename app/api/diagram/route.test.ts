@@ -117,7 +117,11 @@ describe("POST /api/diagram feedback-only reservation", () => {
     const body = await response.json();
     expect(body.reservationId).toBe(RESERVATION_ID);
     expect(body.evidence.version).toBe(1);
-    expect(openaiCreate.mock.calls[0][0]).toMatchObject({ store: false });
+    expect(openaiCreate.mock.calls[0][0]).toMatchObject({
+      model: "gpt-5.4",
+      reasoning: { effort: "low" },
+      store: false,
+    });
     expect(succeeded).toHaveBeenCalledWith(
       RESERVATION_ID,
       USER_ID,

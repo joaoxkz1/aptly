@@ -1,12 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AssessmentFramework, AssessmentSkill, PracticeQuestion } from "@/lib/types";
+import { resolveEconomicsTaxonomyVersion } from "@/lib/assessment/taxonomy";
 
 const TABLE = "practice_questions";
 
 // user_id is never selected or written by the app — it is stamped server-side
 // via `default auth.uid()` and enforced by RLS on every read.
 const SELECT_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, skill, why";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why";
 
 export interface PracticeQuestionRow {
   id: string;
@@ -17,6 +18,7 @@ export interface PracticeQuestionRow {
   mark_total: number;
   topic_code: string;
   topic_label: string;
+  taxonomy_version?: string | null;
   skill: string;
   why: string;
 }
@@ -31,6 +33,7 @@ export function rowToPracticeQuestion(row: PracticeQuestionRow): PracticeQuestio
     markTotal: row.mark_total,
     topicCode: row.topic_code,
     topicLabel: row.topic_label,
+    taxonomyVersion: resolveEconomicsTaxonomyVersion(row.taxonomy_version),
     skill: row.skill as AssessmentSkill,
     why: row.why,
   };

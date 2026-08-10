@@ -119,6 +119,26 @@ export function validateFeedback(raw: unknown): Feedback {
   }
   const score = Math.min(7, Math.max(0, Math.round(obj.score)));
 
+  return validateQualitativeFeedback(obj, score);
+}
+
+/**
+ * Validate only model-owned qualitative feedback while accepting a
+ * deterministic server-owned compatibility score (null for feedback-only).
+ */
+export function validateQualitativeFeedback(
+  raw: unknown,
+  compatibilityScore: number | null
+): Feedback {
+  if (typeof raw !== "object" || raw === null) {
+    throw new Error("invalid feedback: not an object");
+  }
+  const obj = raw as Record<string, unknown>;
+  const score =
+    compatibilityScore == null
+      ? null
+      : Math.min(7, Math.max(0, Math.round(compatibilityScore)));
+
   const examinerComment =
     typeof obj.examinerComment === "string" ? obj.examinerComment.trim() : "";
   const studyNext = typeof obj.studyNext === "string" ? obj.studyNext.trim() : "";
@@ -139,7 +159,7 @@ export function validateFeedback(raw: unknown): Feedback {
 
   return {
     score,
-    band: bandForScore(score),
+    band: score == null ? null : bandForScore(score),
     strengths,
     improvements,
     mistakes,

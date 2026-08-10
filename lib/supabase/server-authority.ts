@@ -8,11 +8,12 @@ import {
   type PracticeQuestionRow,
 } from "@/lib/supabase/practice-questions";
 import { getAdminClient } from "@/lib/supabase/admin";
+import { ECONOMICS_TAXONOMY_VERSION } from "@/lib/assessment/taxonomy";
 
 const ATTEMPT_COLUMNS =
   "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material, diagram_evidence";
 const PRACTICE_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, skill, why";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why";
 
 export interface SavedAttemptInput {
   subject: Subject;
@@ -60,6 +61,11 @@ function attemptInsertRow(
     mark_total_source: a.markTotalSource ?? null,
     recognized_template: a.recognizedTemplate ?? null,
     eligible_for_core: a.eligibleForCoreAnalytics ?? null,
+    rubric_version: a.gradingProvenance?.rubricVersion ?? null,
+    taxonomy_version: a.gradingProvenance?.taxonomyVersion ?? null,
+    grading_model_id: a.gradingProvenance?.modelId ?? null,
+    grading_reasoning_effort: a.gradingProvenance?.reasoningEffort ?? null,
+    grading_contract_version: a.gradingProvenance?.gradingContractVersion ?? null,
     parent_attempt_id: input.parentAttemptId,
     practice_question_id: input.practiceQuestionId,
     source_material: input.sourceMaterial,
@@ -196,6 +202,7 @@ export async function savePracticeQuestion(
       mark_total: input.markTotal,
       topic_code: input.topicCode,
       topic_label: input.topicLabel,
+      taxonomy_version: ECONOMICS_TAXONOMY_VERSION,
       skill: input.skill,
       why: input.why,
     })

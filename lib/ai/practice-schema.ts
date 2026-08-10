@@ -2,7 +2,7 @@ import "server-only";
 import { detectMarkTotals } from "@/lib/assessment/preflight";
 import { matchTemplate } from "@/lib/assessment/templates";
 import { hasUsableSourceMaterial } from "@/lib/assessment/policy";
-import { ASSESSMENT_SKILL_LABELS, SYLLABUS_TOPIC_LABELS } from "@/lib/assessment/taxonomy";
+import { ASSESSMENT_SKILL_LABELS, economicsTopicLabels } from "@/lib/assessment/taxonomy";
 import { MAX_QUESTION_CHARS } from "./config";
 import type { PracticeTarget } from "@/lib/assessment/practice-target";
 
@@ -65,9 +65,8 @@ export function buildPracticeInstructions(): string {
 }
 
 export function buildPracticeUserInput(target: PracticeTarget): string {
-  const topicName =
-    SYLLABUS_TOPIC_LABELS[target.topicCode as keyof typeof SYLLABUS_TOPIC_LABELS] ??
-    target.topicLabel;
+  const labels = economicsTopicLabels(target.taxonomyVersion);
+  const topicName = labels[target.topicCode as keyof typeof labels] ?? target.topicLabel;
   return [
     "PRACTICE FRAME (decided by Aptly — write inside it exactly):",
     `Syllabus topic: ${topicName} (IB Economics topic ${target.topicCode})`,

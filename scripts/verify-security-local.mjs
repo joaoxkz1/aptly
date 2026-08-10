@@ -248,7 +248,7 @@ try {
   });
 
   if (!userA || !userB) {
-    for (let number = 2; number <= 19; number += 1) {
+    for (let number = 2; number <= 21; number += 1) {
       results.push({
         number,
         label: "dependent verification",
@@ -302,10 +302,16 @@ try {
     await run(4, "browser authoritative attempt UPDATE denied", async () => {
       const response = await userA.client
         .from("attempts")
-        .update({ score: 7, feedback: { forged: true }, parent_attempt_id: userBAttemptId })
+        .update({
+          score: 7,
+          feedback: { forged: true },
+          parent_attempt_id: userBAttemptId,
+          rubric_version: "forged",
+          taxonomy_version: "economics-legacy-v3",
+        })
         .eq("id", userAAttemptId);
       assert(response.error, "authenticated browser authoritative UPDATE succeeded");
-      return "score, feedback, and relationship mutation was denied";
+      return "score, feedback, relationship, rubric, and taxonomy mutation was denied";
     });
 
     userAPracticeId = await insertPractice(userA.id);
@@ -316,7 +322,10 @@ try {
       });
       const updated = await userA.client
         .from("practice_questions")
-        .update({ question: "Forged replacement [45 marks]" })
+        .update({
+          question: "Forged replacement [45 marks]",
+          taxonomy_version: "economics-legacy-v3",
+        })
         .eq("id", userAPracticeId);
       assert(inserted.error, "authenticated browser practice INSERT succeeded");
       assert(updated.error, "authenticated browser practice UPDATE succeeded");
@@ -579,6 +588,82 @@ try {
         assert(response.error, "ordinary client reached private reservation surface");
       }
       return "SELECT, INSERT, UPDATE, DELETE, and reservation RPC all returned permission errors";
+    });
+
+    await run(20, "grading provenance completeness and server authority", async () => {
+      const historicalId = await insertAttempt(userA.id);
+      const currentId = await insertAttempt(userA.id, {
+        score: null,
+        rubric_version: "econ-v4",
+        taxonomy_version: "economics-2022-v1",
+        grading_contract_version: "ib-econ-2026-v1",
+        grading_model_id: "gpt-5.6-terra",
+        grading_reasoning_effort: "medium",
+      });
+      const rows = await admin
+        .from("attempts")
+        .select(
+          "id,score,rubric_version,taxonomy_version,grading_contract_version,grading_model_id,grading_reasoning_effort"
+        )
+        .in("id", [historicalId, currentId]);
+      if (rows.error) throw rows.error;
+      const historical = rows.data.find((row) => row.id === historicalId);
+      const current = rows.data.find((row) => row.id === currentId);
+      assert(historical, "historical-style attempt was not persisted");
+      assert(
+        historical.rubric_version === null &&
+          historical.taxonomy_version === null &&
+          historical.grading_contract_version === null &&
+          historical.grading_model_id === null &&
+          historical.grading_reasoning_effort === null,
+        "historical-style attempt did not preserve all-NULL provenance"
+      );
+      assert(current?.score === null, "current attempt did not persist a nullable score");
+      assert(
+        current.rubric_version === "econ-v4" &&
+          current.taxonomy_version === "economics-2022-v1" &&
+          current.grading_contract_version === "ib-econ-2026-v1" &&
+          current.grading_model_id === "gpt-5.6-terra" &&
+          current.grading_reasoning_effort === "medium",
+        "current attempt did not round-trip complete server provenance"
+      );
+      const partial = await admin.from("attempts").insert({
+        ...minimalAttempt,
+        user_id: userA.id,
+        idempotency_key: randomUUID(),
+        rubric_version: "econ-v4",
+      });
+      assert(partial.error, "partial grading provenance unexpectedly persisted");
+      return "legacy all-NULL and current all-present rows persisted; NULL score worked; partial provenance was rejected";
+    });
+
+    await run(21, "practice taxonomy server authority", async () => {
+      const currentId = await insertPractice(userA.id, {
+        taxonomy_version: "economics-2022-v1",
+      });
+      const saved = await admin
+        .from("practice_questions")
+        .select("taxonomy_version")
+        .eq("id", currentId)
+        .single();
+      if (saved.error) throw saved.error;
+      assert(
+        saved.data.taxonomy_version === "economics-2022-v1",
+        "current practice taxonomy did not round-trip"
+      );
+      const forged = await userA.client
+        .from("practice_questions")
+        .update({ taxonomy_version: "economics-legacy-v3" })
+        .eq("id", currentId);
+      assert(forged.error, "authenticated browser changed practice taxonomy");
+      const invalid = await admin.from("practice_questions").insert({
+        ...minimalPractice,
+        user_id: userA.id,
+        idempotency_key: randomUUID(),
+        taxonomy_version: "forged-taxonomy",
+      });
+      assert(invalid.error, "invalid practice taxonomy unexpectedly persisted");
+      return "current taxonomy persisted; browser mutation and invalid taxonomy were rejected";
     });
   }
 } finally {

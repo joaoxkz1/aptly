@@ -7,11 +7,14 @@ import type { Subject } from "@/lib/types";
  * lib/ai/openai.ts, read from a server-only env var).
  */
 
-// Default grading model. Swap to a cheaper model here without touching the route.
-export const GRADING_MODEL = "gpt-5.4";
-
-// Reasoning effort for the grader.
-export const REASONING_EFFORT = "medium" as const;
+// Endpoint-specific model settings. Written-grading calibration is isolated
+// from generation, extraction, and Diagram Evidence.
+export const WRITTEN_GRADING_MODEL = "gpt-5.6-terra";
+export const WRITTEN_GRADING_REASONING_EFFORT = "medium" as const;
+export const PRACTICE_MODEL = "gpt-5.4";
+export const PRACTICE_REASONING_EFFORT = "medium" as const;
+export const EXTRACTION_MODEL = "gpt-5.4";
+export const DIAGRAM_MODEL = "gpt-5.4";
 
 // --- Cost controls ---------------------------------------------------------
 // Generous limits: a data-response question can include pasted stimulus text,
@@ -20,7 +23,7 @@ export const MAX_QUESTION_CHARS = 4000;
 export const MAX_ANSWER_CHARS = 9000;
 export const MAX_TOPIC_CHARS = 80;
 // Bigger structured JSON (classification + breakdown + metadata) plus reasoning
-// headroom for gpt-5.4. Calibration showed 3200 occasionally truncated the JSON
+// headroom for the written grader. Calibration showed 3200 occasionally truncated the JSON
 // (status=incomplete -> fail-closed 502); 4400 gives reliable headroom.
 export const MAX_OUTPUT_TOKENS = 4400;
 export const REQUEST_TIMEOUT_MS = 45_000;
@@ -32,8 +35,7 @@ export const REQUEST_TIMEOUT_MS = 45_000;
 export const DAILY_GRADE_LIMIT = 30;
 
 // --- Targeted practice generation (Practice Loop) ---------------------------
-// Generation uses the SAME model as grading (one model everywhere this
-// release). Separate, conservative per-user UTC-day cap — each generation is
+// Separate, conservative per-user UTC-day cap — each generation is
 // its own paid call, distinct from the grading cap above. Counted from the
 // user's practice_questions rows created today (RLS-scoped, no new storage).
 export const DAILY_PRACTICE_GENERATION_LIMIT = 10;
@@ -43,8 +45,7 @@ export const PRACTICE_MAX_OUTPUT_TOKENS = 2600;
 export const PRACTICE_REQUEST_TIMEOUT_MS = 45_000;
 
 // --- Aptly Scan (image → candidate text extraction) --------------------------
-// Extraction uses the SAME model as grading (one model everywhere this
-// release), in vision mode, for exactly one job: transcribing visible text
+// Extraction has its own model setting and exactly one job: transcribing visible text
 // into candidate editable fields. It never marks, classifies, or persists.
 //
 // Separate durable per-user UTC-day cap: each SUCCESSFUL extraction records
@@ -70,8 +71,7 @@ export const MAX_PROCESSED_IMAGE_BYTES = 4 * 1024 * 1024;
 export const IMAGE_MAX_DIMENSION = 2048;
 
 // --- Diagram Evidence (image → structured study feedback) --------------------
-// Diagram review uses the SAME model as grading (one model everywhere this
-// release), in vision mode, for exactly one job: cautious, feedback-only
+// Diagram review has its own model setting and exactly one job: cautious, feedback-only
 // observations about one close-up diagram photo. It never marks, never
 // classifies the paper, and never changes an estimate.
 //

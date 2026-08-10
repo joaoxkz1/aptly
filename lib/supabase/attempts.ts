@@ -17,7 +17,7 @@ export interface AttemptRow {
   topic: string;
   question: string;
   answer: string;
-  score: number;
+  score: number | null;
   max_score: number;
   feedback: Feedback;
   mistake_type: string | null;
@@ -85,6 +85,11 @@ export function attemptToInsert(attempt: Attempt) {
     mark_total_source: a?.markTotalSource ?? null,
     recognized_template: a?.recognizedTemplate ?? null,
     eligible_for_core: a?.eligibleForCoreAnalytics ?? null,
+    rubric_version: a?.gradingProvenance?.rubricVersion ?? null,
+    taxonomy_version: a?.gradingProvenance?.taxonomyVersion ?? null,
+    grading_model_id: a?.gradingProvenance?.modelId ?? null,
+    grading_reasoning_effort: a?.gradingProvenance?.reasoningEffort ?? null,
+    grading_contract_version: a?.gradingProvenance?.gradingContractVersion ?? null,
     // Practice Loop links. RLS verifies the referenced rows belong to this
     // user, so a link can never point at another user's data.
     parent_attempt_id: attempt.parentAttemptId ?? null,

@@ -28,13 +28,13 @@ import { ASSESSMENT_FRAMEWORKS } from "@/lib/assessment/taxonomy";
 import type { AssessmentFramework } from "@/lib/types";
 import {
   DAILY_GRADE_LIMIT,
-  GRADING_MODEL,
   MAX_ANSWER_CHARS,
   MAX_OUTPUT_TOKENS,
   MAX_QUESTION_CHARS,
   MAX_TOPIC_CHARS,
-  REASONING_EFFORT,
   REQUEST_TIMEOUT_MS,
+  WRITTEN_GRADING_MODEL,
+  WRITTEN_GRADING_REASONING_EFFORT,
   isGradableSubject,
 } from "@/lib/ai/config";
 import { requestFingerprint } from "@/lib/ai/request-integrity";
@@ -278,8 +278,8 @@ export async function POST(request: Request) {
     providerDispatched = true;
     const response = await getOpenAI().responses.create(
       {
-        model: GRADING_MODEL,
-        reasoning: { effort: REASONING_EFFORT },
+        model: WRITTEN_GRADING_MODEL,
+        reasoning: { effort: WRITTEN_GRADING_REASONING_EFFORT },
         max_output_tokens: MAX_OUTPUT_TOKENS,
         store: false,
         input: [

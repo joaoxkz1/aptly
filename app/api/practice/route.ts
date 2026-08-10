@@ -24,10 +24,10 @@ import {
 } from "@/lib/ai/practice-errors";
 import {
   DAILY_PRACTICE_GENERATION_LIMIT,
-  GRADING_MODEL,
   PRACTICE_MAX_OUTPUT_TOKENS,
+  PRACTICE_MODEL,
   PRACTICE_REQUEST_TIMEOUT_MS,
-  REASONING_EFFORT,
+  PRACTICE_REASONING_EFFORT,
 } from "@/lib/ai/config";
 import { requestFingerprint } from "@/lib/ai/request-integrity";
 import {
@@ -137,8 +137,8 @@ export async function POST(request: Request) {
     providerDispatched = true;
     const response = await getOpenAI().responses.create(
       {
-        model: GRADING_MODEL,
-        reasoning: { effort: REASONING_EFFORT },
+        model: PRACTICE_MODEL,
+        reasoning: { effort: PRACTICE_REASONING_EFFORT },
         max_output_tokens: PRACTICE_MAX_OUTPUT_TOKENS,
         store: false,
         input: [

@@ -48,7 +48,7 @@ export function NextFocusCard({
                 single-answer focus is honestly "Early focus to test". */}
             <h2 className={cn(titleSize, "font-semibold tracking-tight")}>{focusCopy.heading}</h2>
             <p className="text-sm font-medium text-muted-foreground" title={nf.topicLabel}>
-              Most visible in {topicShortLabel(nf.topicCode)}
+              Most visible in {topicShortLabel(nf.topicCode, nf.taxonomyVersion)}
             </p>
             {focusCopy.evidenceLine !== null && (
               <p className="text-xs text-muted-foreground">{focusCopy.evidenceLine}</p>

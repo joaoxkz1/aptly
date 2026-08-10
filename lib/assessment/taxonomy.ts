@@ -104,6 +104,13 @@ export const WORKINGS_STATUSES = [
 
 export const SYLLABUS_UNITS = ["unit_1", "unit_2", "unit_3", "unit_4", "unknown"] as const;
 
+export const ECONOMICS_LEGACY_TAXONOMY_VERSION = "economics-legacy-v3" as const;
+export const ECONOMICS_TAXONOMY_VERSION = "economics-2022-v1" as const;
+export const ECONOMICS_TAXONOMY_VERSIONS = [
+  ECONOMICS_LEGACY_TAXONOMY_VERSION,
+  ECONOMICS_TAXONOMY_VERSION,
+] as const;
+
 // Controlled syllabus topic codes (1.1–4.10). Analytics group by these codes;
 // the human label is carried per-attempt in `topicLabel`.
 export const SYLLABUS_TOPICS = [
@@ -250,7 +257,8 @@ export const ASSESSMENT_FRAMEWORK_LABELS: Record<(typeof ASSESSMENT_FRAMEWORKS)[
 // `SYLLABUS_TOPIC_SHORT_LABELS` is a deliberate compact label for dense/compact
 // layouts (never a truncated fragment); the full label stays available for
 // title attributes and supporting copy.
-export const SYLLABUS_TOPIC_LABELS: Record<(typeof SYLLABUS_TOPICS)[number], string> = {
+/** Frozen pre-econ-v4 labels. Missing version always resolves here. */
+export const LEGACY_SYLLABUS_TOPIC_LABELS: Record<(typeof SYLLABUS_TOPICS)[number], string> = {
   "1.1": "What is Economics",
   "1.2": "Economic Methodology",
   "2.1": "Demand",
@@ -285,9 +293,49 @@ export const SYLLABUS_TOPIC_LABELS: Record<(typeof SYLLABUS_TOPICS)[number], str
   unknown: "Unclassified topic",
 };
 
+/** Current IB Economics 2022 syllabus top-level topics. */
+export const CURRENT_SYLLABUS_TOPIC_LABELS: Record<(typeof SYLLABUS_TOPICS)[number], string> = {
+  "1.1": "What is economics?",
+  "1.2": "How do economists approach the world?",
+  "2.1": "Demand",
+  "2.2": "Supply",
+  "2.3": "Competitive market equilibrium",
+  "2.4": "Critique of the maximizing behaviour of consumers and producers",
+  "2.5": "Elasticity of demand",
+  "2.6": "Elasticity of supply",
+  "2.7": "Role of government in microeconomics",
+  "2.8": "Market failure — externalities and common pool/common access resources",
+  "2.9": "Market failure — public goods",
+  "2.10": "Market failure — asymmetric information",
+  "2.11": "Market failure — market power",
+  "2.12": "The market's inability to achieve equity",
+  "3.1": "Measuring economic activity and illustrating its variations",
+  "3.2": "Variations in economic activity — aggregate demand and aggregate supply",
+  "3.3": "Macroeconomic objectives",
+  "3.4": "Economics of inequality and poverty",
+  "3.5": "Demand management — monetary policy",
+  "3.6": "Demand management — fiscal policy",
+  "3.7": "Supply-side policies",
+  "4.1": "Benefits of international trade",
+  "4.2": "Types of trade protection",
+  "4.3": "Arguments for and against trade control/protection",
+  "4.4": "Economic integration",
+  "4.5": "Exchange rates",
+  "4.6": "Balance of payments",
+  "4.7": "Sustainable development",
+  "4.8": "Measuring development",
+  "4.9": "Barriers to economic growth and/or economic development",
+  "4.10": "Economic growth and/or economic development strategies",
+  unknown: "Unclassified topic",
+};
+
+// Current aliases are for generation/schema consumers. Historical display
+// must select a registry through the version-aware helpers below.
+export const SYLLABUS_TOPIC_LABELS = CURRENT_SYLLABUS_TOPIC_LABELS;
+
 // Compact labels only where the full curated label is long. Deliberate, never
 // a broken phrase. Codes not listed fall back to the full curated label.
-export const SYLLABUS_TOPIC_SHORT_LABELS: Partial<Record<(typeof SYLLABUS_TOPICS)[number], string>> = {
+export const LEGACY_SYLLABUS_TOPIC_SHORT_LABELS: Partial<Record<(typeof SYLLABUS_TOPICS)[number], string>> = {
   "1.2": "Methodology",
   "2.3": "Equilibrium",
   "2.6": "Market Failure",
@@ -299,3 +347,51 @@ export const SYLLABUS_TOPIC_SHORT_LABELS: Partial<Record<(typeof SYLLABUS_TOPICS
   "4.6": "Sustainable Dev.",
   "4.10": "Global Relations",
 };
+
+export const CURRENT_SYLLABUS_TOPIC_SHORT_LABELS: Partial<Record<(typeof SYLLABUS_TOPICS)[number], string>> = {
+  "1.2": "Economists' approach",
+  "2.3": "Market equilibrium",
+  "2.4": "Maximizing behaviour",
+  "2.7": "Government role",
+  "2.8": "Externalities & common access",
+  "2.9": "Public goods",
+  "2.10": "Asymmetric information",
+  "2.11": "Market power",
+  "2.12": "Equity",
+  "3.1": "Economic activity",
+  "3.2": "AD–AS variations",
+  "3.4": "Inequality & poverty",
+  "3.5": "Monetary policy",
+  "3.6": "Fiscal policy",
+  "4.3": "Trade-control arguments",
+  "4.9": "Growth/development barriers",
+  "4.10": "Growth/development strategies",
+};
+
+export const SYLLABUS_TOPIC_SHORT_LABELS = CURRENT_SYLLABUS_TOPIC_SHORT_LABELS;
+
+export type EconomicsTaxonomyVersion = (typeof ECONOMICS_TAXONOMY_VERSIONS)[number];
+
+export function resolveEconomicsTaxonomyVersion(
+  version: string | null | undefined
+): EconomicsTaxonomyVersion {
+  return version === ECONOMICS_TAXONOMY_VERSION
+    ? ECONOMICS_TAXONOMY_VERSION
+    : ECONOMICS_LEGACY_TAXONOMY_VERSION;
+}
+
+export function economicsTopicLabels(version: string | null | undefined) {
+  return resolveEconomicsTaxonomyVersion(version) === ECONOMICS_TAXONOMY_VERSION
+    ? CURRENT_SYLLABUS_TOPIC_LABELS
+    : LEGACY_SYLLABUS_TOPIC_LABELS;
+}
+
+export function economicsTopicShortLabels(version: string | null | undefined) {
+  return resolveEconomicsTaxonomyVersion(version) === ECONOMICS_TAXONOMY_VERSION
+    ? CURRENT_SYLLABUS_TOPIC_SHORT_LABELS
+    : LEGACY_SYLLABUS_TOPIC_SHORT_LABELS;
+}
+
+export function isCurrentTopLevelHlTopic(code: string): boolean {
+  return code === "2.10" || code === "2.11" || code === "2.12";
+}

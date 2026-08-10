@@ -1,4 +1,49 @@
 -- Aptly — assessment-aware grading fields (additive, idempotent).
+-- This is also the first migration in the repository, so it creates the
+-- historical attempts baseline when replayed against a blank local database.
+-- The security setup is intentionally the final least-privilege shape:
+-- re-running 0001 against a hardened database cannot restore browser writes.
+create table if not exists public.attempts (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users (id) on delete cascade default auth.uid(),
+  subject      text not null check (subject in ('Economics', 'Business', 'Physics')),
+  topic        text not null,
+  question     text not null,
+  answer       text not null,
+  score        integer not null check (score between 0 and 7),
+  max_score    integer not null default 7,
+  feedback     jsonb not null,
+  mistake_type text,
+  next_step    text,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists attempts_user_created_idx
+  on public.attempts (user_id, created_at desc);
+
+alter table public.attempts enable row level security;
+
+revoke all on table public.attempts from anon;
+revoke insert, update on table public.attempts from authenticated;
+grant select, delete on table public.attempts to authenticated;
+
+drop policy if exists "select_own_attempts" on public.attempts;
+drop policy if exists "insert_own_attempts" on public.attempts;
+drop policy if exists "update_own_attempts" on public.attempts;
+drop policy if exists "delete_own_attempts" on public.attempts;
+
+create policy "select_own_attempts"
+on public.attempts
+for select
+to authenticated
+using ((select auth.uid()) = user_id);
+
+create policy "delete_own_attempts"
+on public.attempts
+for delete
+to authenticated
+using ((select auth.uid()) = user_id);
+
 -- Run manually in the Supabase SQL Editor. Safe to re-run.
 --
 -- All columns are NULLABLE, so every existing (legacy) row stays valid and

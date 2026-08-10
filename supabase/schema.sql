@@ -24,6 +24,10 @@ create table if not exists public.practice_questions (
   mark_total      integer not null check (mark_total between 1 and 60),
   topic_code      text not null,
   topic_label     text not null,
+  taxonomy_version text check (
+    taxonomy_version is null
+    or taxonomy_version in ('economics-legacy-v3', 'economics-2022-v1')
+  ),
   skill           text not null,
   why             text not null,
   idempotency_key uuid,
@@ -68,7 +72,7 @@ create table if not exists public.attempts (
   topic        text not null,
   question     text not null,
   answer       text not null,
-  score        integer not null check (score between 0 and 7),
+  score        integer check (score between 0 and 7),
   max_score    integer not null default 7,
   feedback     jsonb not null,            -- full Feedback object (strengths, improvements, mistakes[], examinerComment, studyNext)
   mistake_type text,                      -- denormalized main mistake (feedback.mistakes[0]); null if none
@@ -109,6 +113,28 @@ create table if not exists public.attempts (
   diagram_evidence          jsonb,
   -- Server-issued operation identity; NULL only for legacy/imported rows.
   idempotency_key           uuid,
+  -- econ-v4 server-stamped provenance. All NULL means a historical row.
+  rubric_version            text,
+  taxonomy_version          text check (
+    taxonomy_version is null
+    or taxonomy_version in ('economics-legacy-v3', 'economics-2022-v1')
+  ),
+  grading_contract_version  text,
+  grading_model_id          text,
+  grading_reasoning_effort  text,
+  constraint attempts_grading_provenance_complete_chk check (
+    (rubric_version is null
+      and taxonomy_version is null
+      and grading_contract_version is null
+      and grading_model_id is null
+      and grading_reasoning_effort is null)
+    or
+    (rubric_version is not null
+      and taxonomy_version is not null
+      and grading_contract_version is not null
+      and grading_model_id is not null
+      and grading_reasoning_effort is not null)
+  ),
   constraint attempts_marks_chk check (
     marks_available is null
     or (

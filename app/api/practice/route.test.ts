@@ -40,6 +40,7 @@ const TARGET = {
   markTotal: 15,
   topicCode: "2.8",
   topicLabel: "Market failure",
+  taxonomyVersion: "economics-2022-v1",
   skill: "evaluation",
   why: "Evaluation is the next focus.",
 };
@@ -149,7 +150,18 @@ describe("POST /api/practice server authority", () => {
     expect(response.status).toBe(200);
     expect(reserve).toHaveBeenCalled();
     expect(openaiCreate).toHaveBeenCalledTimes(1);
-    expect(save).toHaveBeenCalledWith(USER_ID, KEY, expect.objectContaining(TARGET));
+    expect(save).toHaveBeenCalledWith(
+      USER_ID,
+      KEY,
+      expect.objectContaining({
+        framework: TARGET.framework,
+        markTotal: TARGET.markTotal,
+        topicCode: TARGET.topicCode,
+        topicLabel: TARGET.topicLabel,
+        skill: TARGET.skill,
+        why: TARGET.why,
+      })
+    );
   });
 
   it("handles atomic limit and in-progress outcomes without provider work", async () => {
@@ -173,8 +185,23 @@ describe("POST /api/practice server authority", () => {
     const response = await POST(request());
     expect(response.status).toBe(200);
     expect(openaiCreate).toHaveBeenCalledTimes(1);
-    expect(openaiCreate.mock.calls[0][0]).toMatchObject({ store: false });
-    expect(save).toHaveBeenCalledWith(USER_ID, KEY, expect.objectContaining(TARGET));
+    expect(openaiCreate.mock.calls[0][0]).toMatchObject({
+      model: "gpt-5.4",
+      reasoning: { effort: "medium" },
+      store: false,
+    });
+    expect(save).toHaveBeenCalledWith(
+      USER_ID,
+      KEY,
+      expect.objectContaining({
+        framework: TARGET.framework,
+        markTotal: TARGET.markTotal,
+        topicCode: TARGET.topicCode,
+        topicLabel: TARGET.topicLabel,
+        skill: TARGET.skill,
+        why: TARGET.why,
+      })
+    );
     expect(succeeded).toHaveBeenCalledWith(
       state.reservation.reservationId,
       USER_ID,

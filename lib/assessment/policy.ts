@@ -86,6 +86,8 @@ export interface ScoringPolicy {
    * selected part, not every part. Null when the whole paste is the question.
    */
   selectedQuestionPart: string | null;
+  /** Future server-trusted blueprint; never accepted from browser/model input. */
+  questionSpecificGuidance?: string | null;
 }
 
 const FEEDBACK_ONLY: ScoringPolicy = {

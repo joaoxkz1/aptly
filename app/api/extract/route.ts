@@ -30,9 +30,9 @@ import {
 import {
   DAILY_EXTRACTION_LIMIT,
   EXTRACTION_MAX_OUTPUT_TOKENS,
+  EXTRACTION_MODEL,
   EXTRACTION_REASONING_EFFORT,
   EXTRACTION_REQUEST_TIMEOUT_MS,
-  GRADING_MODEL,
   IMAGE_MAX_DIMENSION,
   MAX_PROCESSED_IMAGE_BYTES,
 } from "@/lib/ai/config";
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
     const imageUrl = `data:${mimeForSniffedType(sniffed)};base64,${Buffer.from(bytes).toString("base64")}`;
     const response = await getOpenAI().responses.create(
       {
-        model: GRADING_MODEL,
+        model: EXTRACTION_MODEL,
         reasoning: { effort: EXTRACTION_REASONING_EFFORT },
         max_output_tokens: EXTRACTION_MAX_OUTPUT_TOKENS,
         store: false,

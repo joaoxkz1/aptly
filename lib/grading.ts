@@ -204,10 +204,20 @@ function buildStudyNext(topic: string, mistakes: MistakeType[]): string {
   }
   const focus: Record<MistakeType, string> = {
     "Lack of evaluation": "practise writing two-sided evaluations",
+    "Underdeveloped evaluation": "develop evaluation with conditions and supported judgement",
     "Weak definitions": "drill the key definitions",
+    "Weak terminology": "practise precise economic terminology",
+    "Inaccurate economic theory": "revisit the underlying economic theory",
+    "Underdeveloped economic analysis": "develop each causal chain fully",
     "Missing diagram explanation": "redraw and annotate the core diagrams",
+    "Missing required diagram": "redraw and annotate the required diagram",
+    "Incorrect diagram explanation": "connect the diagram accurately to the written analysis",
     "No real-world example": "collect two real-world case studies",
+    "Irrelevant real-world example": "choose an example that directly supports the argument",
+    "Underdeveloped real-world example": "integrate the example into the economic reasoning",
+    "Insufficient source use": "apply source facts and data to the economic reasoning",
     "Calculation/setup error": "rework the standard calculation setups",
+    "Unsupported judgement": "support the final judgement with the preceding analysis",
     "Unclear structure": "rebuild answers with a PEEE paragraph plan",
   };
   return `Revisit ${topic}: ${focus[mistakes[0]]} before your next attempt.`;

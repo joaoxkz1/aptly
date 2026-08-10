@@ -46,7 +46,7 @@ function assess(o: {
 }): Assessment {
   const marked = o.total != null && o.earned != null;
   return {
-    version: 2,
+    version: 3,
     assessmentFormat: "custom_extended_response",
     paper: "custom",
     questionPart: "unknown",
@@ -77,8 +77,24 @@ function assess(o: {
     workingsSubmitted: false,
     workingsAssessmentStatus: "not_relevant",
     attachmentContent: "none",
-    markBreakdown: o.breakdown ?? (marked ? [{ label: "Economic analysis", awarded: o.earned!, available: o.total!, reason: "x" }] : []),
+    markBreakdown:
+      o.breakdown ??
+      (marked
+        ? [{
+            label: "Economic analysis",
+            awarded: Math.round((4 * o.earned!) / o.total!),
+            available: 4,
+            reason: "x",
+          }]
+        : []),
     limitations: [],
+    gradingProvenance: {
+      rubricVersion: "econ-v4",
+      taxonomyVersion: "economics-2022-v1",
+      gradingContractVersion: "ib-econ-2026-v1",
+      modelId: "gpt-5.6-terra",
+      reasoningEffort: "medium",
+    },
     scoringState: o.scoringState ?? (marked ? "marked" : "feedback_only"),
     markTotalSource: marked ? "explicit" : "unknown",
     recognizedTemplate: null,

@@ -1,4 +1,8 @@
 import type { Attempt, PracticeQuestion } from "@/lib/types";
+import {
+  ECONOMICS_TAXONOMY_VERSION,
+  resolveEconomicsTaxonomyVersion,
+} from "./taxonomy";
 
 /**
  * Practice Loop hardening — idempotent generation policy. Pure, no secrets.
@@ -43,6 +47,10 @@ export function reusablePracticeQuestion(
   now: Date = new Date()
 ): PracticeQuestion | null {
   if (latest === null) return null;
+  // Never reopen a historical question under current taxonomy semantics.
+  if (resolveEconomicsTaxonomyVersion(latest.taxonomyVersion) !== ECONOMICS_TAXONOMY_VERSION) {
+    return null;
+  }
   if (referencedPracticeQuestionIds(attempts).has(latest.id)) return null; // answered
   const ageMs = now.getTime() - new Date(latest.createdAt).getTime();
   if (!(ageMs <= PRACTICE_REUSE_WINDOW_DAYS * 24 * 60 * 60 * 1000)) return null; // expired

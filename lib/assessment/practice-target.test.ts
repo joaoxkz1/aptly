@@ -44,10 +44,10 @@ function markedAttempt(o: {
   const earned = o.earned ?? 6;
   const breakdown: AssessmentMarkBreakdownItem[] = [
     { label: o.lostOn, awarded: 1, available: 4, reason: "gap" },
-    { label: "Knowledge and terminology", awarded: 3, available: 3, reason: "fine" },
+    { label: "Knowledge and terminology", awarded: 4, available: 4, reason: "fine" },
   ];
   const assessment: Assessment = {
-    version: 2,
+    version: 3,
     assessmentFormat: "custom_extended_response",
     paper: "custom",
     questionPart: "unknown",
@@ -80,6 +80,13 @@ function markedAttempt(o: {
     attachmentContent: "none",
     markBreakdown: breakdown,
     limitations: [],
+    gradingProvenance: {
+      rubricVersion: "econ-v4",
+      taxonomyVersion: "economics-2022-v1",
+      gradingContractVersion: "ib-econ-2026-v1",
+      modelId: "gpt-5.6-terra",
+      reasoningEffort: "medium",
+    },
     scoringState: "marked",
     markTotalSource: "explicit",
     recognizedTemplate: null,

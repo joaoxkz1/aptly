@@ -10,6 +10,7 @@ function target(overrides: Partial<PracticeTarget> = {}): PracticeTarget {
   return {
     topicCode: "2.6",
     topicLabel: "Market Failure & Externalities",
+    taxonomyVersion: "economics-2022-v1",
     focusSkillLabel: "Evaluation and judgment",
     skill: "evaluation",
     framework: "generic_practice",

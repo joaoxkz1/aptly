@@ -2,101 +2,99 @@ import "server-only";
 import type { Subject } from "@/lib/types";
 
 /**
- * Assessment-aware Economics grading rubric for Aptly (version econ-v3).
- * Original Aptly-owned wording — paraphrased marking principles, NOT official
- * IB markscheme text. Outputs are ESTIMATED study feedback, never an official
- * IB grade. v1 supports Economics only; getRubric returns null otherwise.
+ * Aptly-owned, operational paraphrase of current IB Economics marking
+ * principles. It is not an official markscheme and contains no reproduced
+ * question-specific markscheme text.
  */
+export const ECONOMICS_RUBRIC_VERSION = "econ-v4" as const;
 
-export const ECONOMICS_RUBRIC_VERSION = "econ-v3";
+const ECONOMICS_RUBRIC = `APTLY IB-ALIGNED ECONOMICS RUBRIC — ${ECONOMICS_RUBRIC_VERSION}
+Estimated practice marking only. This is not an official IB grade or a substitute for a supplied question-specific markscheme.
 
-const ECONOMICS_RUBRIC: string = `APTLY IB ECONOMICS RUBRIC — ${ECONOMICS_RUBRIC_VERSION}
-Estimated study feedback for IB Economics practice. NOT official IB grading.
+CURRENT SYLLABUS — classify to one top-level code; use unknown when genuinely unclear:
+Unit 1: 1.1 What is economics?; 1.2 How do economists approach the world?
+Unit 2: 2.1 Demand; 2.2 Supply; 2.3 Competitive market equilibrium; 2.4 Critique of maximizing behaviour;
+2.5 Elasticity of demand; 2.6 Elasticity of supply; 2.7 Government's role in microeconomics;
+2.8 Externalities and common pool/common access resources; 2.9 Public goods; 2.10 Asymmetric information (HL);
+2.11 Market power (HL); 2.12 The market's inability to achieve equity (HL).
+Unit 3: 3.1 Measuring economic activity and variations; 3.2 AD/AS variations; 3.3 Macroeconomic objectives;
+3.4 Economics of inequality and poverty; 3.5 Monetary policy; 3.6 Fiscal policy; 3.7 Supply-side policies.
+Unit 4: 4.1 Benefits of international trade; 4.2 Types of trade protection; 4.3 Arguments for/against trade control;
+4.4 Economic integration; 4.5 Exchange rates; 4.6 Balance of payments; 4.7 Sustainable development;
+4.8 Measuring development; 4.9 Barriers to growth/development; 4.10 Growth/development strategies.
+Paper 3 is HL-only. Shared top-level topics may still contain HL extensions: classify the exact content, not just its code.
 
-SYLLABUS UNITS & TOPIC CODES (map the question to ONE code; use "unknown" if unclear):
-- Unit 1 Introduction: 1.1 What is economics, 1.2 How economists approach the world.
-- Unit 2 Microeconomics: 2.1 demand, 2.2 supply, 2.3 competitive market equilibrium,
-  2.4 elasticities, 2.5 role of government in microeconomics, 2.6 market failure/externalities,
-  2.7 public/common goods & asymmetric info, 2.8 market failure & market power, 2.9 (HL) the firm/costs,
-  2.10 (HL) market structures, 2.11 (HL) price discrimination, 2.12 behavioural economics.
-- Unit 3 Macroeconomics: 3.1 measuring economic activity, 3.2 variations in activity (AD/AS),
-  3.3 macro objectives (growth, low unemployment, low inflation), 3.4 fiscal policy,
-  3.5 monetary policy, 3.6 supply-side policies, 3.7 (HL) inequality/poverty.
-- Unit 4 Global economy: 4.1 benefits of trade, 4.2 trade protection, 4.3 economic integration,
-  4.4 exchange rates, 4.5 balance of payments, 4.6 (HL) sustainable development goals,
-  4.7 measuring development, 4.8 barriers to development, 4.9 strategies for development,
-  4.10 (HL) global economic relations.
+BEST-FIT PRINCIPLES:
+- Read the whole answer and determine the exact question demands before selecting a level.
+- Infer an internal, non-exhaustive question-specific guide: relevant theory, valid analysis, application/source use,
+  diagrams where genuinely relevant, and plausible evaluation. It is not an additive checklist and is not output.
+- Credit valid alternative economic approaches even when absent from the first inferred guide.
+- Select the one band that best fits the answer as a whole. Compensate across characteristics; every descriptor need not appear.
+- Then select the exact mark: lower = just demonstrates the band; middle = secure; upper = to a great extent.
+- Mark positively. The top mark is attainable without literal perfection. Do not invent optional extras to avoid full marks.
+- Fix assessableEarned before producing rationale, diagnostics, strengths, improvements, or weaknesses.
+- Never calculate assessableEarned by adding diagnostic categories.
+- Do not double-penalise one conceptual error.
+- Accurate terminology can demonstrate knowledge without a stand-alone definition unless a definition is requested.
+- Do not mechanically count examples. One relevant, fully developed example can be strong application.
+- Evaluation is genuine critical thinking, not a mechanical advantage/disadvantage pair. Credit conditions, assumptions,
+  stakeholders, time horizons, magnitude, prioritisation, alternatives, trade-offs, effectiveness and supported judgements.
+- Credit theoretically valid alternative diagrams and approaches. A diagram is not universally required for a high
+  Paper 1(b) or Paper 2(g) mark.
 
-ASSESSMENT FORMATS & MARKING PRINCIPLES (classification label only — the format name NEVER forces a diagram):
-- paper_1_a: explain/analysis, up to 10 marks. Knowledge + theory + diagram + application. No evaluation demanded.
-- paper_1_b: evaluate/discuss essay, up to 15 marks. Adds genuine two-sided evaluation & judgement.
-- paper_2_a_definition: short definition(s), small mark total.
-- paper_2_b_quantitative_or_diagram: a calculation OR a diagram task.
-- paper_2_c_to_f_diagram_and_explanation: explanation supported by a diagram, data-response.
-- paper_2_g_extended_response: extended data-response using the stimulus, up to ~15 marks, evaluation expected.
-- paper_3_a_technical_or_quantitative: (HL) technical/quantitative problem with method + answer.
-- paper_3_b_policy_recommendation: (HL) policy recommendation, up to 10 marks, justified with data.
-- custom_short_response / custom_extended_response: teacher questions not matching a standard paper part.
+BEST-FIT BAND ANCHORS:
+Paper 1(a), 10 marks — 1–2 little relevant understanding/coherent explanation; 3–4 some relevant theory but limited or
+descriptive; 5–6 partly explained theory and coherent but incomplete analysis; 7–8 accurate developed explanation and
+effective relevant diagrams where appropriate; 9–10 fully focused, accurate, well-developed and coherent analysis with
+effective relevant diagrams where appropriate. Do not require evaluation or automatically require a real-world example.
 
-MARK BANDS (0–7 internal score for back-compat; mark estimate is the headline when honest):
-7 excellent · 6 strong · 5 secure · 4 developing · 3 limited · 2 fragmentary · 0–1 minimal.
-Reward: precise definitions; correct theory; accurate EXPLAINED diagrams; specific real-world/stimulus examples;
-genuine two-sided evaluation answering the command term; clear structure; correct method + units for calculations.
+Paper 1(b), 15 marks — 1–3 little relevant understanding or meaningful evaluation; 4–6 some theory, mainly descriptive,
+superficial evaluation and undeveloped application; 7–9 partly explained theory with genuine but limited evaluation and
+partly developed application; 10–12 accurate theory, developed analysis, mostly balanced evaluation and supporting
+real-world application; 13–15 fully focused theory and analysis, effective balanced evaluation, supported judgement and
+fully developed integrated real-world evidence. Never impose a multiple-example rule or withhold 15 merely because another
+optional example, policy, comparison, definition or diagram could have been added.
 
-WEAKNESS LABELS — use ONLY these exact strings in "mistakes":
-"Lack of evaluation" · "Weak definitions" · "Missing diagram explanation" · "No real-world example" ·
-"Calculation/setup error" · "Unclear structure".
+Paper 2(g), 15 marks — use 1–3/4–6/7–9/10–12/13–15 as above, replacing Paper 1 real-world-example emphasis with effective
+use of supplied text/data. Restatement is not strong application. Applying theory to source facts/data to develop an
+economic conclusion is stronger. Evaluation may appear anywhere; prioritisation and weighing can be high-quality.
+No source means feedback-only under the server frame. Do not automatically require a diagram for the top band.
 
-HONESTY RULES (mandatory):
-- Never hallucinate source text, mark totals, diagrams, or calculations the student did not provide.
-- You do NOT decide the mark total or whether the attempt is marked/provisional/feedback-only. Aptly gives you a MARKING
-  FRAME (the total and the assessable marks). Mark ONLY the assessable marks in that frame. Never expand or reduce the total.
-- diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a
-  diagram. Do NOT set diagramExpected = true just because a diagram would strengthen an explanation. diagramExpected does NOT
-  change the mark total — any diagram cap is already reflected in the assessable marks of the frame.
-- Do NOT demand evaluation in a 10-mark explain. Do NOT penalise a missing diagram when the frame does not exclude diagram marks.
-- Do NOT reward a diagram you cannot see; typed workings IN the answer ARE assessable.
-- No full method marks for a calculation without shown workings.
-- Distinguish "marks lost" (assessed, not earned) from "marks not assessable" (evidence not submitted).
-- Use the FULL plausible mark range; do not cluster everything mid-band.
-- Never claim official IB grading. Do not assume HL unless the question is clearly HL-only (P3 or an HL extension).
-- The overall mark (assessableEarned) is a best-fit / analytic judgement — NOT the sum of category points.
-- markBreakdown is a per-criterion DIAGNOSTIC only (Aptly's internal signal, shown to the student qualitatively, never as an
-  official IB allocation). It does NOT need to sum to assessableEarned. Score each criterion the question genuinely tests.
+Paper 3(b), 10 marks — use 1–2/3–4/5–6/7–8/9–10. Judge five areas: (1) appropriate recommendation plus how it addresses
+the issue, (2) relevant accurate theory, (3) accurate appropriate terminology, (4) effective supplied text/data use,
+(5) weighing arguments before a supported conclusion. At higher levels credit alternatives/combinations, conditions,
+trade-offs, time lags and likely effectiveness where relevant. Paper 3 is HL-only.
 
-FRAMEWORK MARKING (Aptly tells you the framework in the MARKING FRAME — follow it):
-There is NO universal point allocation shared by every 2/4/10/15-mark question. Each framework below has its own method.
-- paper2_short_analytic (1–2 marks): analytic mini-markscheme. Reward an accurate definition/meaning even if the wording
-  differs from a canonical one; for a calculation reward valid method, units, rounding and own-figure logic only where the
-  question calls for it; do not demand an explanation the question does not ask for.
-- paper2a_definition: Paper 2(a) analytic definition marking (typically 2 marks, 0/1/2). Accept an accurate description an
-  Economics educator would recognise as correct even when it is not word-for-word a textbook definition. No invented 1+1 split.
-- paper2b_quantitative: Paper 2(b) question-specific quantitative/diagram task. Credit valid method and workings, own-figure
-  logic carried forward from an earlier error, and units/rounding only where relevant. Accept relevant explanation where it
-  appropriately substitutes for annotations. NEVER impose a generic diagram-and-explanation 2+2 split.
-- paper2_four_mark_diagram_explain: the RECOGNISED 2 written + 2 diagram structure. Mark ONLY the written explanation (0–2);
-  the diagram marks are excluded (no diagram submitted). A theoretically correct causal explanation earns the written marks
-  even without a formal definition — suggest a precise definition only as an optional refinement. Never call it unmarkable.
-  Do not double-penalise one conceptual error twice.
-- paper1a_10_mark: Paper 1(a) best-fit (bands 1–2/3–4/5–6/7–8/9–10) — answers the exact question, accurate terminology,
-  depth of explanation, coherent analysis; diagrams only where relevant and necessary. No fixed diagram allocation. No
-  evaluation demanded.
-- paper1b_15_mark: Paper 1(b) best-fit (bands 1–3/4–6/7–9/10–12/13–15) — theory, genuine real-world application, analysis,
-  critical thinking, balanced synthesis/evaluation, supported judgement. Diagrams never universally compulsory.
-- paper2g_15_mark: Paper 2(g) data-response best-fit (bands 1–3/4–6/7–9/10–12/13–15) — theory, coherent analysis,
-  appropriate use of the SUPPLIED text/data, balanced evaluation, supported judgement. Data-use credit only when source
-  information builds arguments, never for restating the stimulus. No automatic diagram requirement for the top level.
-- paper3a_analytic: Paper 3(a) HL question-specific analytic subparts (variable totals, including some 4-mark explains).
-  Use the exact question's demands: method, own-figure logic, units, graph labels, workings where relevant. NEVER apply the
-  Paper 2 diagram-explain 2+2 template merely because the task is worth four marks. No universal diagram cap.
-- paper3b_10_mark: Paper 3(b) HL recommendation best-fit (bands 1–2/3–4/5–6/7–8/9–10) — five strands: appropriateness of the
-  recommended policy; how it addresses the stated problem; relevant accurate theory; effective use of supplied text/data;
-  balanced evaluation with a supported final judgement (alternatives, conditions, trade-offs, time lags, effectiveness).
-  This is NOT Paper 1(a).
-- generic_practice: paper format is not confirmed. Give an honest best-fit practice estimate out of the stated total; do not
-  assume a specific IB paper's markscheme and do not name any paper.`;
+ANALYTIC FRAMEWORKS:
+- Paper 2(a): accept economically accurate definitions/descriptions without textbook-perfect wording; invent no universal 1+1 split.
+- Paper 2(b): use a question-specific analytic guide; credit valid method/workings and justified own-figure continuation;
+  units and rounding matter only where relevant; require no explanation the question did not ask for.
+- Recognised Paper 2(c)–(f)-style diagram/explanation: use a written/diagram split only when the server frame specifies it;
+  credit valid alternative diagrams; allow appropriate error carry-forward; avoid double penalties; required context matters;
+  essential wrong labels can limit diagram credit; judge consistency between diagram and prose.
+- Paper 3(a): question-specific HL analytic marking; never infer the generic 2+2 split from a four-mark total alone.
+- Generic practice: do not claim an official paper or exact official markscheme.
+
+DIAGNOSTIC SCALE — internal and non-official:
+For every qualitative criterion genuinely tested, available must be exactly 4 and awarded must be 0..4:
+0 absent/fundamentally incorrect; 1 very weak; 2 partial/developing; 3 strong; 4 excellent for this question.
+Omit untested criteria. Never add these numbers to determine assessableEarned.
+
+NEW WEAKNESS LABELS — emit only these:
+"Lack of evaluation"; "Underdeveloped evaluation"; "Weak definitions"; "Weak terminology";
+"Inaccurate economic theory"; "Underdeveloped economic analysis"; "No real-world example";
+"Irrelevant real-world example"; "Underdeveloped real-world example"; "Missing required diagram";
+"Incorrect diagram explanation"; "Insufficient source use"; "Calculation/setup error";
+"Unsupported judgement"; "Unclear structure".
+No example means none exists; irrelevant and underdeveloped examples use their distinct labels. Lack of evaluation means
+essentially absent; shallow evaluation is underdeveloped. Never flag a missing diagram unless the exact task requires it.
+
+HONESTY AND AUTHORITY:
+- The server's MARKING FRAME owns total, assessable marks, framework, source gate and diagram cap. Never alter them.
+- Never fabricate an official markscheme, source, diagram, calculation, example or student content.
+- Never reward an unseen diagram. Typed workings remain assessable.
+- The output is estimated study feedback, never official IB grading.`;
 
 export function getRubric(subject: Subject): string | null {
-  if (subject === "Economics") return ECONOMICS_RUBRIC;
-  return null;
+  return subject === "Economics" ? ECONOMICS_RUBRIC : null;
 }

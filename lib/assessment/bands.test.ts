@@ -19,19 +19,19 @@ describe("isBestFitFramework", () => {
 describe("bestFitBand — 10-mark bands", () => {
   it("places 7/10 in band 7–8 at the lower end", () => {
     const b = bestFitBand("paper1a_10_mark", 7);
-    expect(b).toEqual({ low: 7, high: 8, placement: "lower" });
+    expect(b).toEqual({ markBand: "7-8", low: 7, high: 8, placement: "lower" });
   });
   it("places 8/10 in band 7–8 at the upper end", () => {
     expect(bestFitBand("paper1a_10_mark", 8)?.placement).toBe("upper");
   });
   it("returns band 0 for a zero mark", () => {
-    expect(bestFitBand("paper3b_10_mark", 0)).toEqual({ low: 0, high: 0, placement: "middle" });
+    expect(bestFitBand("paper3b_10_mark", 0)).toEqual({ markBand: "0", low: 0, high: 0, placement: "middle" });
   });
 });
 
 describe("bestFitBand — 15-mark bands", () => {
   it("places 13/15 in band 13–15 at the lower end", () => {
-    expect(bestFitBand("paper1b_15_mark", 13)).toEqual({ low: 13, high: 15, placement: "lower" });
+    expect(bestFitBand("paper1b_15_mark", 13)).toEqual({ markBand: "13-15", low: 13, high: 15, placement: "lower" });
   });
   it("places 14/15 in the middle", () => {
     expect(bestFitBand("paper1b_15_mark", 14)?.placement).toBe("middle");
@@ -49,5 +49,26 @@ describe("bestFitBand — no band for non-best-fit frameworks", () => {
     expect(bestFitBand("paper2a_definition", 2)).toBeNull();
     expect(bestFitBand("paper2b_quantitative", 3)).toBeNull();
     expect(bestFitBand("paper3a_analytic", 4)).toBeNull();
+  });
+});
+
+describe("bestFitBand — every boundary", () => {
+  it("pins all 10-mark boundaries", () => {
+    const expected = [
+      "0", "1-2", "1-2", "3-4", "3-4", "5-6", "5-6", "7-8", "7-8", "9-10", "9-10",
+    ];
+    expect(expected.map((_, mark) => bestFitBand("paper3b_10_mark", mark)?.markBand)).toEqual(
+      expected
+    );
+  });
+
+  it("pins all 15-mark boundaries", () => {
+    const expected = [
+      "0", "1-3", "1-3", "1-3", "4-6", "4-6", "4-6", "7-9", "7-9", "7-9",
+      "10-12", "10-12", "10-12", "13-15", "13-15", "13-15",
+    ];
+    expect(expected.map((_, mark) => bestFitBand("paper2g_15_mark", mark)?.markBand)).toEqual(
+      expected
+    );
   });
 });

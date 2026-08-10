@@ -7,6 +7,7 @@ import type {
   COMMAND_TERMS,
   CONFIDENCES,
   DIAGRAM_STATUSES,
+  ECONOMICS_TAXONOMY_VERSIONS,
   EVIDENCE_SPLIT_SOURCES,
   LEVEL_RELEVANCES,
   MARK_BREAKDOWN_LABELS,
@@ -27,18 +28,29 @@ export type Subject = "Economics" | "Business" | "Physics";
 
 export const MISTAKE_TYPES = [
   "Lack of evaluation",
+  "Underdeveloped evaluation",
   "Weak definitions",
-  "Missing diagram explanation",
+  "Weak terminology",
+  "Inaccurate economic theory",
+  "Underdeveloped economic analysis",
   "No real-world example",
+  "Irrelevant real-world example",
+  "Underdeveloped real-world example",
+  "Missing required diagram",
+  "Incorrect diagram explanation",
+  "Insufficient source use",
   "Calculation/setup error",
+  "Unsupported judgement",
   "Unclear structure",
+  // Historical output retained for legacy reads; econ-v4 never emits it.
+  "Missing diagram explanation",
 ] as const;
 
 export type MistakeType = (typeof MISTAKE_TYPES)[number];
 
 export interface Feedback {
-  score: number; // out of 7
-  band: string; // e.g. "Strong 6"
+  score: number | null; // deterministic compatibility value; null for feedback-only
+  band: string | null; // compatibility label; never an IB subject grade
   strengths: string[];
   improvements: string[];
   mistakes: MistakeType[];
@@ -69,6 +81,15 @@ export type MarkTotalSource = (typeof MARK_TOTAL_SOURCES)[number];
 export type ScoringState = (typeof SCORING_STATES)[number];
 export type RubricTemplateId = (typeof RUBRIC_TEMPLATE_IDS)[number];
 export type AssessmentFramework = (typeof ASSESSMENT_FRAMEWORKS)[number];
+export type EconomicsTaxonomyVersion = (typeof ECONOMICS_TAXONOMY_VERSIONS)[number];
+
+export interface GradingProvenance {
+  rubricVersion: string;
+  taxonomyVersion: EconomicsTaxonomyVersion;
+  gradingContractVersion: string;
+  modelId: string;
+  reasoningEffort: string;
+}
 
 // Structured proof that a partial estimate's missing-evidence marks are
 // explicitly allocated in the question (server-verified against the text).
@@ -81,7 +102,7 @@ export interface UnassessedEvidence {
 export interface AssessmentMarkBreakdownItem {
   label: MarkBreakdownLabel;
   awarded: number;
-  available: number; // counts toward marksAssessable, NOT unassessed evidence
+  available: number; // econ-v4 diagnostic denominator is always 4; never summed into marks
   reason: string;
 }
 
@@ -112,9 +133,9 @@ export interface Assessment {
   // marks are explicitly allocated in the question (server-verified). Null
   // for exact_estimate and practice_feedback_only.
   unassessedEvidence: UnassessedEvidence | null;
-  practiceLevelLow: number; // 1..7
-  practiceLevelHigh: number; // 1..7, >= low
-  practiceLevelConfidence: Confidence;
+  practiceLevelLow: number | null; // deterministic compatibility range; null for feedback-only
+  practiceLevelHigh: number | null;
+  practiceLevelConfidence: Confidence | null;
   diagramExpected: boolean; // true ONLY when the question genuinely needs a diagram
   diagramSubmitted: boolean; // commit 1: always false (no image)
   diagramAssessmentStatus: DiagramStatus;
@@ -122,9 +143,17 @@ export interface Assessment {
   workingsSubmitted: boolean; // typed workings count even without an image
   workingsAssessmentStatus: WorkingsStatus;
   attachmentContent: AttachmentContent; // commit 1: always "none"
-  markBreakdown: AssessmentMarkBreakdownItem[]; // sums to marksAssessable
+  // Non-official fixed-/4 diagnostics; never summed to derive marksEarned.
+  markBreakdown: AssessmentMarkBreakdownItem[];
   limitations: string[]; // honest caveats shown in UI
-  // --- Assessment Integrity (v2): canonical, server-derived policy ----------
+  markBand?: string | null;
+  markBandLow?: number | null;
+  markBandHigh?: number | null;
+  bandPosition?: "lower" | "middle" | "upper" | null;
+  bandRationale?: string | null;
+  /** Server-stamped for v3+; absence always resolves as legacy. */
+  gradingProvenance?: GradingProvenance;
+  // --- Assessment Integrity: canonical, server-derived policy ---------------
   // Decided by trusted server logic from the preflight result + an explicit or
   // user-confirmed total + a recognised controlled template + validated model
   // evidence. NEVER chosen by the model. Optional so a legacy (v1 / no
@@ -200,6 +229,8 @@ export interface PracticeQuestion {
   markTotal: number;
   topicCode: string;
   topicLabel: string;
+  /** Missing on historical rows and resolved as economics-legacy-v3. */
+  taxonomyVersion?: EconomicsTaxonomyVersion;
   skill: AssessmentSkill;
   /** Evidence-backed "Why this question?" copy shown to the student. */
   why: string;

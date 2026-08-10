@@ -10,6 +10,10 @@ const RESERVATION_MIGRATION = readFileSync(
   join("supabase", "migrations", "0008_ai_usage_reservations.sql"),
   "utf8"
 );
+const ECON_V4_MIGRATION = readFileSync(
+  join("supabase", "migrations", "0009_econ_v4_provenance.sql"),
+  "utf8"
+);
 const ADMIN = readFileSync(join("lib", "supabase", "admin.ts"), "utf8");
 const ROUTES = ["grade", "practice", "extract", "diagram"].map((name) =>
   readFileSync(join("app", "api", name, "route.ts"), "utf8")
@@ -135,5 +139,26 @@ describe("atomic reservation semantics", () => {
     for (const forbidden of ["question", "answer", "prompt", "image", "extracted", "evidence"]) {
       expect(columnNames).not.toContain(forbidden);
     }
+  });
+});
+
+describe("econ-v4 legacy-safe migration", () => {
+  it("adds nullable provenance and a nullable feedback-only score without backfilling", () => {
+    expect(ECON_V4_MIGRATION).toContain("alter column score drop not null");
+    for (const column of [
+      "rubric_version",
+      "taxonomy_version",
+      "grading_contract_version",
+      "grading_model_id",
+      "grading_reasoning_effort",
+    ]) {
+      expect(ECON_V4_MIGRATION).toContain(`add column if not exists ${column} text`);
+    }
+    expect(ECON_V4_MIGRATION).not.toMatch(/\bupdate\s+public\.(attempts|practice_questions)\b/i);
+  });
+
+  it("keeps all five attempt provenance values all-null or all-present", () => {
+    expect(ECON_V4_MIGRATION).toContain("attempts_grading_provenance_complete_chk");
+    expect(ECON_V4_MIGRATION).toContain("'economics-legacy-v3', 'economics-2022-v1'");
   });
 });

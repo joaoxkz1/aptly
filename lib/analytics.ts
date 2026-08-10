@@ -15,9 +15,12 @@ export function attemptsThisWeek(attempts: Attempt[]): Attempt[] {
 }
 
 export function averageScore(attempts: Attempt[]): number | null {
-  if (attempts.length === 0) return null;
-  const sum = attempts.reduce((s, a) => s + a.feedback.score, 0);
-  return Math.round((sum / attempts.length) * 10) / 10;
+  const scores = attempts.flatMap((a) =>
+    a.feedback.score == null ? [] : [a.feedback.score]
+  );
+  if (scores.length === 0) return null;
+  const sum = scores.reduce((s, score) => s + score, 0);
+  return Math.round((sum / scores.length) * 10) / 10;
 }
 
 /** Consecutive days with at least one attempt, counting back from today (or yesterday). */
@@ -47,6 +50,7 @@ export interface TopicStat {
 export function topicStats(attempts: Attempt[]): TopicStat[] {
   const map = new Map<string, TopicStat & { total: number }>();
   for (const a of attempts) {
+    if (a.feedback.score == null) continue;
     const key = `${a.subject}::${a.topic}`;
     const cur =
       map.get(key) ??
@@ -146,6 +150,25 @@ function shortMistakeLabel(m: MistakeType): string {
       return "calculation";
     case "Unclear structure":
       return "structure";
+    case "Underdeveloped evaluation":
+      return "evaluation";
+    case "Weak terminology":
+      return "terminology";
+    case "Inaccurate economic theory":
+      return "theory";
+    case "Underdeveloped economic analysis":
+      return "analysis";
+    case "Irrelevant real-world example":
+    case "Underdeveloped real-world example":
+      return "example";
+    case "Incorrect diagram explanation":
+      return "diagram-analysis";
+    case "Missing required diagram":
+      return "diagram";
+    case "Insufficient source use":
+      return "source-use";
+    case "Unsupported judgement":
+      return "judgement";
   }
 }
 
@@ -172,7 +195,10 @@ export function mostImprovedTopic(
     const mid = Math.floor(sorted.length / 2);
     const older = sorted.slice(0, mid);
     const newer = sorted.slice(mid);
-    const avg = (xs: Attempt[]) => xs.reduce((s, a) => s + a.feedback.score, 0) / xs.length;
+    const avg = (xs: Attempt[]) => {
+      const scores = xs.flatMap((a) => (a.feedback.score == null ? [] : [a.feedback.score]));
+      return scores.length === 0 ? 0 : scores.reduce((s, score) => s + score, 0) / scores.length;
+    };
     const from = Math.round(avg(older) * 10) / 10;
     const to = Math.round(avg(newer) * 10) / 10;
     const delta = to - from;
@@ -188,7 +214,8 @@ export function mostImprovedTopic(
 /** Last N scores, oldest → newest, for the sparkline. */
 export function scoreTrend(attempts: Attempt[], n = 10): number[] {
   return [...attempts]
+    .filter((a) => a.feedback.score != null)
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .slice(-n)
-    .map((a) => a.feedback.score);
+    .map((a) => a.feedback.score!);
 }
