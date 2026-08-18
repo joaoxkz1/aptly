@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   CircleAlert,
@@ -14,6 +15,7 @@ import { Input, Label } from "@/components/ui/field";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrandMark } from "@/components/brand-mark";
 import { createClient } from "@/lib/supabase/client";
+import { MINIMUM_AGE } from "@/lib/legal/operator";
 
 // Client-side cooldown between magic-link sends (>= Supabase's own OTP rate limit).
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -31,6 +33,9 @@ function LoginForm() {
   );
   const [cooldown, setCooldown] = useState(0);
   const [resent, setResent] = useState(false);
+  // Set by the account-deletion redirect so the student gets a plain
+  // confirmation instead of landing on a bare sign-in form.
+  const deleted = searchParams.get("deleted") === "1";
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -114,6 +119,12 @@ function LoginForm() {
           </div>
         ) : (
           <>
+            {deleted && (
+              <div className="mb-4 rounded-xl border border-border bg-muted/60 px-3.5 py-2.5 text-sm text-muted-foreground">
+                Your account and its saved data have been deleted.
+              </div>
+            )}
+
             <div className="mb-5">
               <h1 className="text-lg font-semibold tracking-tight">Sign in to Aptly</h1>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -154,6 +165,20 @@ function LoginForm() {
                   </>
                 )}
               </Button>
+              {/* The one legal line on this screen. No checkbox: the lawful
+                  basis is contract, not consent, so a tickbox would
+                  misrepresent it. */}
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                By continuing, you agree to the{" "}
+                <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
+                  Terms of Use
+                </Link>{" "}
+                and acknowledge the{" "}
+                <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+                  Privacy Notice
+                </Link>
+                . You must be {MINIMUM_AGE} or over to use Aptly.
+              </p>
             </form>
           </>
         )}
@@ -164,7 +189,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="absolute right-4 top-4">
         <ThemeToggle />
       </div>
@@ -181,10 +206,12 @@ export default function LoginPage() {
       </Suspense>
 
       {/* Concrete value in one line — a cold student should know what Aptly
-          does within seconds, with no generic branding words. */}
+          does within seconds, with no generic branding words. The closing
+          sentence keeps the first claim a student reads as honest as the
+          estimate wording used throughout the product. */}
       <p className="mt-6 max-w-sm text-center text-xs leading-relaxed text-muted-foreground">
         Aptly grades your IB Economics practice answers, tracks the patterns in your mistakes,
-        and shows you what to study next.
+        and shows you what to study next. Marks are practice estimates, not official IB grades.
       </p>
     </div>
   );

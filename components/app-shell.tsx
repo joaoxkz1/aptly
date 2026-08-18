@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { BrandMark } from "./brand-mark";
 import { ThemeToggle } from "./theme-toggle";
+import { LegalFooter } from "./legal/legal-footer";
 
 const NAV = [
   { href: "/", label: "Home", icon: LayoutDashboard },
@@ -128,9 +129,14 @@ export function AppShell({
         {/* Modest widening on large desktops for Dashboard / Learning log /
             Analytics. The Submit and feedback flows self-constrain to max-w-3xl,
             so they are unaffected. */}
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-24 md:px-8 md:py-9 md:pb-12 lg:px-10">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-8 md:px-8 md:py-9 md:pb-10 lg:px-10">
           {children}
         </main>
+
+        {/* Tiny legal footer. It carries the bottom clearance the mobile nav
+            needs (previously main's pb-24), so total page tail space is
+            unchanged and study content keeps its spacing. */}
+        <LegalFooter className="pb-24 md:pb-8" includeYourData />
 
         {/* Mobile bottom nav */}
         <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-border bg-card/95 backdrop-blur md:hidden">

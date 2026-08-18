@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { geistSans, geistMono } from "../fonts";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LegalFooter } from "@/components/legal/legal-footer";
 
 export const metadata: Metadata = {
   title: "Sign in — Aptly",
@@ -19,8 +20,13 @@ export default function PublicLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
-        <ThemeProvider>{children}</ThemeProvider>
+      {/* Column layout so the tiny legal footer sits below the page content
+          instead of being pushed off-screen by a full-height child. */}
+      <body className="flex min-h-dvh flex-col">
+        <ThemeProvider>
+          <div className="flex flex-1 flex-col">{children}</div>
+          <LegalFooter />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -500,6 +500,7 @@ declare
   existing public.ai_usage_reservations%rowtype;
   created public.ai_usage_reservations%rowtype;
   utc_today date := (now() at time zone 'utc')::date;
+  retention_days constant integer := 30;
   used integer;
 begin
   if p_capability not in ('grade', 'scan', 'diagram', 'practice')
@@ -513,6 +514,14 @@ begin
     hashtext(p_user_id::text),
     hashtext(p_capability || ':' || utc_today::text)
   );
+
+  -- Retention sweep. Same user + capability as the held lock; only rows from
+  -- completed days outside the window. Never touches today's rows, so quota
+  -- counting and idempotency for the current day are unaffected.
+  delete from public.ai_usage_reservations r
+  where r.user_id = p_user_id
+    and r.capability = p_capability
+    and r.usage_date < utc_today - retention_days;
 
   update public.ai_usage_reservations r
   set status = 'failed', updated_at = now(), completed_at = now(),

@@ -3,7 +3,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { readDisplayName } from "@/lib/auth/display-name";
 
 // Routes reachable while signed out. Everything else requires a session.
-const PUBLIC_PATHS = ["/login", "/auth/callback"];
+// The legal pages are public so anyone can read what Aptly does with their
+// work BEFORE creating an account — and so a signed-in user who has not
+// finished onboarding can still open them from the footer.
+const PUBLIC_PATHS = ["/login", "/auth/callback", "/privacy", "/terms"];
 
 function isPublicPath(pathname: string) {
   return PUBLIC_PATHS.some(

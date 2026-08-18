@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CircleAlert, GraduationCap, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +62,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+    <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-10">
       <div className="absolute right-4 top-4">
         <ThemeToggle />
       </div>
@@ -91,17 +92,17 @@ export default function OnboardingPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <Label htmlFor="name">Your name</Label>
+              <Label htmlFor="name">Your name or nickname</Label>
               <Input
                 id="name"
                 type="text"
-                autoComplete="given-name"
+                autoComplete="nickname"
                 autoFocus
                 required
                 maxLength={40}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Maya"
+                placeholder="e.g. Maya, or a nickname"
               />
             </div>
             <fieldset>
@@ -121,6 +122,17 @@ export default function OnboardingPage() {
                 ))}
               </div>
             </fieldset>
+            {/* The one just-in-time note: why these two fields exist, and the
+                single fact a student should know before submitting work.
+                Terms, age and the IB line are handled at sign-in. */}
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              A nickname is enough. Your course level helps Aptly tailor your practice. When you
+              submit work, Aptly uses AI to give feedback and build your learning insights.{" "}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+                Learn how your data is used
+              </Link>
+              .
+            </p>
             <Button type="submit" size="lg" disabled={status === "saving"}>
               {status === "saving" ? (
                 <>
@@ -134,10 +146,6 @@ export default function OnboardingPage() {
           </form>
         </CardContent>
       </Card>
-
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        A first name, nickname, or preferred name is perfect.
-      </p>
     </div>
   );
 }
