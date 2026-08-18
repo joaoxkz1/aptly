@@ -7,7 +7,7 @@ const TABLE = "practice_questions";
 // user_id is never selected or written by the app — it is stamped server-side
 // via `default auth.uid()` and enforced by RLS on every read.
 const SELECT_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus";
 
 export interface PracticeQuestionRow {
   id: string;
@@ -21,6 +21,7 @@ export interface PracticeQuestionRow {
   taxonomy_version?: string | null;
   skill: string;
   why: string;
+  from_current_focus?: boolean;
 }
 
 export function rowToPracticeQuestion(row: PracticeQuestionRow): PracticeQuestion {
@@ -36,7 +37,29 @@ export function rowToPracticeQuestion(row: PracticeQuestionRow): PracticeQuestio
     taxonomyVersion: resolveEconomicsTaxonomyVersion(row.taxonomy_version),
     skill: row.skill as AssessmentSkill,
     why: row.why,
+    fromCurrentFocus: row.from_current_focus === true,
   };
+}
+
+/**
+ * Real-state onboarding signal: which answered Practice rows were generated
+ * from a server-verified Current Focus. Only ids/boolean flags cross the
+ * browser boundary; hidden provenance and grading guidance remain unreadable.
+ */
+export async function fetchCurrentFocusPracticeIds(
+  supabase: SupabaseClient,
+  ids: string[]
+): Promise<Set<string>> {
+  if (ids.length === 0) return new Set();
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select("id, from_current_focus")
+    .in("id", ids)
+    .eq("from_current_focus", true);
+  if (error) throw error;
+  return new Set(
+    (data as unknown as { id: string; from_current_focus: boolean }[]).map((row) => row.id)
+  );
 }
 
 /**

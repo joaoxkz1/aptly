@@ -15,14 +15,28 @@ const MIGRATION_0008 = readFileSync(
   join("supabase", "migrations", "0008_ai_usage_reservations.sql"),
   "utf8"
 );
+const MIGRATION_0010 = readFileSync(
+  join("supabase", "migrations", "0010_question_bank_and_onboarding.sql"),
+  "utf8"
+);
 const AUTHORITY = readFileSync(join("lib", "supabase", "server-authority.ts"), "utf8");
 
 describe("server-authoritative attempts and practice RLS", () => {
   it("canonical browser grants retain own-row select/delete but exclude insert/update", () => {
     expect(SCHEMA).toContain("grant select, delete on table public.attempts to authenticated");
-    expect(SCHEMA).toContain(
-      "grant select, delete on table public.practice_questions to authenticated"
+    expect(SCHEMA).toContain("grant delete on table public.practice_questions to authenticated");
+    expect(SCHEMA).toMatch(
+      /grant select \([\s\S]*?from_current_focus[\s\S]*?\) on table public\.practice_questions to authenticated/i
     );
+    expect(MIGRATION_0010).toContain(
+      "revoke select on table public.practice_questions from authenticated"
+    );
+    const browserGrant = MIGRATION_0010.match(
+      /grant select \([\s\S]*?\) on table public\.practice_questions to authenticated/i
+    )?.[0];
+    expect(browserGrant).toBeTruthy();
+    expect(browserGrant).not.toContain("grading_blueprint");
+    expect(browserGrant).not.toContain("bank_question_id");
     expect(SCHEMA).not.toMatch(
       /grant\s+[^;]*\binsert\b[^;]*on table public\.attempts to authenticated/i
     );

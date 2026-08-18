@@ -168,9 +168,33 @@ describe("server-authoritative econ-v4 persistence", () => {
         topicLabel: "Critique of the maximizing behaviour of consumers and producers",
         skill: "economic_analysis",
         why: "Current focus",
+        questionOrigin: "curated_bank",
+        bankQuestionId: "econ-v1-2.4-10-001",
+        questionBankVersion: "economics-question-bank-v1",
+        gradingBlueprint: {
+          kind: "extended",
+          theoryAreas: ["Consumer behaviour"],
+          analysisPaths: ["Explain bounded rationality"],
+          applicationExpectations: ["Examples optional"],
+          evaluationDirections: ["Evaluation not required"],
+          validAlternativeApproaches: ["Credit valid alternatives"],
+          commonMisconceptions: ["Consumers always optimize"],
+          diagramPolicy: "Not required",
+          notes: ["Non-exhaustive"],
+        },
+        gradingBlueprintVersion: "economics-grading-blueprint-v1",
+        levelRelevance: "shared_sl_hl",
+        commandTerm: "explain",
+        targetSkills: ["economic_analysis"],
+        angleTags: ["bounded_rationality"],
+        fromCurrentFocus: true,
+        requestFingerprint: "a".repeat(64),
       }
     );
     expect(mocks.payloads[0].payload.taxonomy_version).toBe("economics-2022-v1");
     expect(saved.taxonomyVersion).toBe("economics-2022-v1");
+    expect(mocks.payloads[0].payload.grading_blueprint).toMatchObject({
+      kind: "extended",
+    });
   });
 });

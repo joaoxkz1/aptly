@@ -9,6 +9,12 @@ import { cn } from "@/lib/utils";
 import { nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
 
+function practiceMarksForFocus(skillLabel: string): 2 | 10 | 15 {
+  if (skillLabel === "Knowledge and terminology") return 2;
+  if (skillLabel === "Evaluation and judgment" || skillLabel === "Data use") return 15;
+  return 10;
+}
+
 /**
  * The single canonical global recommendation. Rendered identically on the
  * Dashboard (hero) and Mistake Analytics so they never disagree — both read the
@@ -78,10 +84,10 @@ export function NextFocusCard({
               <Badge>{nf.confidenceTier}</Badge>
               {/* The loop's one clear next action: Aptly writes the question. */}
               <Link
-                href="/practice"
+                href={`/practice?topic=${encodeURIComponent(nf.topicCode)}&marks=${practiceMarksForFocus(nf.skillLabel)}&focus=1`}
                 className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
               >
-                Practice this focus <ArrowRight className="h-4 w-4" />
+                Practice this <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/submit"

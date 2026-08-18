@@ -6,6 +6,7 @@ import {
   TOPICS_WITH_ESTIMATES_TITLE,
   basedOnEstimatesLabel,
   nextFocusPresentation,
+  practiceProvenanceLabel,
   withConfirmedTotalsLabel,
 } from "./display";
 
@@ -89,5 +90,12 @@ describe("nextFocusPresentation — evidence-honest next-focus wording (display 
   it("the threshold sits exactly at two independent marked answers", () => {
     expect(nextFocusPresentation({ ...base, responses: 1 }).early).toBe(true);
     expect(nextFocusPresentation({ ...base, responses: 2 }).early).toBe(false);
+  });
+});
+
+describe("practice provenance wording", () => {
+  it("claims Current Focus only when the saved practice row proves it", () => {
+    expect(practiceProvenanceLabel(true)).toBe("Practice generated from your next focus");
+    expect(practiceProvenanceLabel(false)).toBe("Practice generated from your selected topic");
   });
 });

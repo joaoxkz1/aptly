@@ -234,4 +234,6 @@ export interface PracticeQuestion {
   skill: AssessmentSkill;
   /** Evidence-backed "Why this question?" copy shown to the student. */
   why: string;
+  /** Server-verified origin signal used only for the real-state onboarding loop. */
+  fromCurrentFocus?: boolean;
 }

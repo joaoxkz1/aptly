@@ -31,7 +31,59 @@ create table if not exists public.practice_questions (
   skill           text not null,
   why             text not null,
   idempotency_key uuid,
-  authority_version smallint not null check (authority_version = 1)
+  authority_version smallint not null check (authority_version = 1),
+  -- Question Generator V1 trusted provenance. All NULL denotes a historical
+  -- pre-bank row; current rows carry the complete server-authored bundle.
+  question_origin          text,
+  bank_question_id         text,
+  question_bank_version    text,
+  grading_blueprint        jsonb,
+  grading_blueprint_version text,
+  level_relevance          text,
+  command_term             text,
+  target_skills            text[],
+  angle_tags               text[],
+  from_current_focus       boolean not null default false,
+  request_fingerprint      char(64),
+  constraint practice_questions_question_bank_bundle_chk check (
+    (
+      question_origin is null
+      and bank_question_id is null
+      and question_bank_version is null
+      and grading_blueprint is null
+      and grading_blueprint_version is null
+      and level_relevance is null
+      and command_term is null
+      and target_skills is null
+      and angle_tags is null
+      and request_fingerprint is null
+    )
+    or
+    (
+      question_origin in ('curated_bank', 'adaptive_generated')
+      and jsonb_typeof(grading_blueprint) = 'object'
+      and octet_length(grading_blueprint::text) <= 32768
+      and grading_blueprint_version = 'economics-grading-blueprint-v1'
+      and level_relevance in ('shared_sl_hl', 'hl_only')
+      and command_term is not null
+      and cardinality(target_skills) >= 1
+      and cardinality(angle_tags) >= 1
+      and request_fingerprint ~ '^[0-9a-f]{64}$'
+      and (
+        (
+          question_origin = 'curated_bank'
+          and bank_question_id is not null
+          and question_bank_version = 'economics-question-bank-v1'
+        )
+        or
+        (
+          question_origin = 'adaptive_generated'
+          and bank_question_id is null
+          and question_bank_version is null
+        )
+      )
+    )
+  )
 );
 
 create index if not exists practice_questions_user_created_idx
@@ -41,10 +93,20 @@ create unique index if not exists practice_questions_user_idempotency_idx
   on public.practice_questions (user_id, idempotency_key)
   where idempotency_key is not null;
 
+create index if not exists practice_questions_user_bank_history_idx
+  on public.practice_questions (user_id, bank_question_id, created_at desc)
+  where bank_question_id is not null;
+
 alter table public.practice_questions enable row level security;
 
 revoke all on table public.practice_questions from anon;
-grant select, delete on table public.practice_questions to authenticated;
+revoke select on table public.practice_questions from authenticated;
+grant delete on table public.practice_questions to authenticated;
+grant select (
+  id, created_at, question, source_material, framework, mark_total,
+  topic_code, topic_label, taxonomy_version, skill, why, from_current_focus,
+  authority_version
+) on table public.practice_questions to authenticated;
 
 drop policy if exists "select_own_practice_questions" on public.practice_questions;
 drop policy if exists "insert_own_practice_questions" on public.practice_questions;

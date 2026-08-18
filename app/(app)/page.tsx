@@ -12,8 +12,14 @@ import { NextFocusCard } from "@/components/assessment/next-focus-card";
 import { MarkBar } from "@/components/ui/mark-bar";
 import { useAttempts } from "@/lib/storage";
 import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
+import { EconomicsCourseSelector } from "@/components/economics-course-selector";
+import { GettingStartedCard } from "@/components/onboarding/getting-started-card";
 import { createClient } from "@/lib/supabase/client";
 import { readDisplayName } from "@/lib/auth/display-name";
+import {
+  readEconomicsCourseLevel,
+  type EconomicsCourseLevel,
+} from "@/lib/assessment/course-level";
 import { attemptsThisWeek, currentStreak } from "@/lib/analytics";
 import { buildLearningInsights, stateBreakdown } from "@/lib/assessment/readiness";
 import {
@@ -51,11 +57,15 @@ export default function DashboardPage() {
   // Resolve the signed-in user's chosen name for the greeting. Until it loads
   // we show a neutral "Welcome back" rather than risk the wrong name.
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [courseLevel, setCourseLevel] = useState<EconomicsCourseLevel | null>(null);
   useEffect(() => {
     const supabase = createClient();
     let active = true;
     supabase.auth.getSession().then(({ data }) => {
-      if (active) setDisplayName(readDisplayName(data.session?.user?.user_metadata));
+      if (active) {
+        setDisplayName(readDisplayName(data.session?.user?.user_metadata));
+        setCourseLevel(readEconomicsCourseLevel(data.session?.user?.user_metadata));
+      }
     });
     return () => {
       active = false;
@@ -91,24 +101,38 @@ export default function DashboardPage() {
         </div>
         <Card>
           <CardContent className="flex flex-col items-start gap-3 p-6">
+            <div>
+              <h2 className="text-lg font-semibold">Welcome to Aptly</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Practice IB Economics answers, get IB-style feedback, and learn what to work on next.
+              </p>
+            </div>
+            <div>
+              <p className="mb-2 text-sm font-medium">First, choose your course:</p>
+              <EconomicsCourseSelector
+                key={courseLevel ?? "unset"}
+                initialLevel={courseLevel}
+                onSaved={setCourseLevel}
+                compact
+              />
+            </div>
             <p className="text-sm text-muted-foreground">
-              Paste any Economics question and your answer. Aptly estimates the mark, breaks down
-              where marks are won and lost, and tracks your progress privately.
+              Your learning profile starts with your first answer.
             </p>
-            <Link
-              href="/submit"
-              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
-            >
-              <PenLine className="h-4 w-4" />
-              Submit your first answer
-            </Link>
-            {/* Low-friction cold-start path: see real example feedback before
-                writing anything — nothing is graded or saved on that route. */}
+            {courseLevel !== null && (
+              <Link
+                href="/practice"
+                className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+              >
+                <PenLine className="h-4 w-4" />
+                Generate my first question
+              </Link>
+            )}
             <Link
               href="/submit?sample=1"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
-              Or see sample feedback first — no writing needed
+              See sample feedback
             </Link>
           </CardContent>
         </Card>
@@ -119,6 +143,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <AttemptsLoadNotice status={status} hasData onRetry={retry} />
+      <GettingStartedCard attempts={attempts} />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>

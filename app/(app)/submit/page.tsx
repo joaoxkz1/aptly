@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronDown, CircleAlert, History, Info, Loader2, PenLine, Wand2 } from "lucide-react";
+import { ChevronDown, CircleAlert, History, Info, Loader2, PenLine, Sparkles, Wand2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
@@ -35,8 +35,8 @@ import { revisionContextFor, type RevisionContext } from "@/lib/assessment/revis
 import {
   APTLY_PRACTICE_LABEL,
   NOT_OFFICIAL_IB_LABEL,
-  PRACTICE_FROM_FOCUS_LABEL,
   REVISION_ATTEMPT_LABEL,
+  practiceProvenanceLabel,
 } from "@/lib/assessment/display";
 import { clientGradeErrorMessage, clientMessageForGradeFailure } from "@/lib/ai/grade-errors";
 import {
@@ -626,7 +626,9 @@ function SubmitPageInner({
   const subheading = isRevision
     ? "Write a fresh answer to the same question. Aptly grades it like any attempt and links it to the original."
     : isPractice
-      ? "This question was generated from your next focus. Write your answer below."
+      ? practiceQuestion?.fromCurrentFocus === true
+        ? "This question was generated from your next focus. Write your answer below."
+        : "Write your answer to this Aptly practice question below."
       : "Paste your Economics question and answer. Aptly will identify the format and give you an estimated mark with feedback.";
 
   // Revision/practice context still loading (attempts or practice fetch).
@@ -648,7 +650,7 @@ function SubmitPageInner({
           <span>
             {revisionMissing
               ? "The original attempt could not be found — it may have been deleted. You can still submit a fresh answer below."
-              : "This practice question could not be found — it may have been removed. Generate a new one from your next focus."}
+              : "This practice question could not be found — it may have been removed. Generate a new one from Practice."}
           </span>
         </div>
       )}
@@ -738,8 +740,8 @@ function SubmitPageInner({
             {APTLY_PRACTICE_LABEL}
           </p>
           <p className="text-sm text-muted-foreground">
-            {PRACTICE_FROM_FOCUS_LABEL}: {practiceQuestion.topicLabel} · {practiceQuestion.markTotal}{" "}
-            marks. {NOT_OFFICIAL_IB_LABEL}.
+            {practiceProvenanceLabel(practiceQuestion.fromCurrentFocus === true)}:{" "}
+            {practiceQuestion.topicLabel} · {practiceQuestion.markTotal} marks. {NOT_OFFICIAL_IB_LABEL}.
           </p>
         </div>
       )}
@@ -784,6 +786,13 @@ function SubmitPageInner({
                     placeholder="Paste the full question, including any mark total or source text reference."
                     className="min-h-20"
                   />
+                  <Link
+                    href="/practice"
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Generate a question
+                  </Link>
                   {/* Visible pre-grade detection: the total Aptly found (and where),
                       with a small way to change it or choose feedback-only — no
                       silent denominators, no forced extra click. */}

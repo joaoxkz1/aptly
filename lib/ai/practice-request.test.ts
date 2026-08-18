@@ -21,6 +21,12 @@ const QUESTION = {
   why: "Evidence-backed reason.",
 };
 
+const REQUEST = {
+  marks: 10 as const,
+  topicCode: "2.7",
+  context: "general" as const,
+};
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -38,8 +44,8 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
     const client = createPracticeGenerationClient(fetchImpl as unknown as typeof fetch);
 
     // Double-click / double mount: both calls start before the first settles.
-    const first = client.request();
-    const second = client.request();
+    const first = client.request(REQUEST);
+    const second = client.request(REQUEST);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
 
     release(jsonResponse({ practiceQuestion: QUESTION, reused: true }));
@@ -52,8 +58,8 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
   it("a settled request clears the slot so the NEXT intentional call fetches again", async () => {
     const fetchImpl = vi.fn(async () => jsonResponse({ practiceQuestion: QUESTION, reused: false }));
     const client = createPracticeGenerationClient(fetchImpl as unknown as typeof fetch);
-    await client.request();
-    await client.request({ regenerate: true });
+    await client.request(REQUEST);
+    await client.request({ ...REQUEST, regenerate: true });
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
@@ -61,13 +67,16 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
     const fetchImpl = vi.fn(async () => jsonResponse({ practiceQuestion: QUESTION, reused: true }));
     const client = createPracticeGenerationClient(fetchImpl as unknown as typeof fetch);
 
-    await client.request();
-    await client.request({ regenerate: true });
+    await client.request(REQUEST);
+    await client.request({ ...REQUEST, regenerate: true });
 
     const bodies = (fetchImpl.mock.calls as unknown as [string, RequestInit][]).map((call) =>
       JSON.parse(call[1].body as string)
     );
     expect(bodies[0]).toMatchObject({
+      marks: 10,
+      topicCode: "2.7",
+      context: "general",
       regenerate: false,
       idempotencyKey: expect.stringMatching(/^[0-9a-f-]{36}$/),
     });
@@ -84,8 +93,8 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
       .mockResolvedValueOnce(jsonResponse({ practiceQuestion: QUESTION, reused: true }));
     const client = createPracticeGenerationClient(fetchImpl as unknown as typeof fetch);
 
-    await expect(client.request()).rejects.toBeTruthy();
-    const retry = await client.request();
+    await expect(client.request(REQUEST)).rejects.toBeTruthy();
+    const retry = await client.request(REQUEST);
     expect(retry.practiceQuestion?.id).toBe("pq-1");
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
@@ -95,7 +104,7 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
       jsonResponse({ error: "daily_practice_limit_reached" }, 429)
     );
     const client = createPracticeGenerationClient(fetchImpl as unknown as typeof fetch);
-    const outcome = await client.request({ regenerate: true });
+    const outcome = await client.request({ ...REQUEST, regenerate: true });
     expect(outcome.status).toBe(429);
     expect(outcome.code).toBe("daily_practice_limit_reached");
     expect(outcome.practiceQuestion).toBeNull();

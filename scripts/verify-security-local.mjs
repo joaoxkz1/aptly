@@ -93,6 +93,41 @@ const minimalPractice = {
   why: "Local verification",
 };
 
+const currentBankPractice = {
+  authority_version: 1,
+  question: "Explain how a producer subsidy may affect market price and output. [10 marks]",
+  source_material: null,
+  framework: "paper1a_10_mark",
+  mark_total: 10,
+  topic_code: "2.7",
+  topic_label: "Role of government in microeconomics",
+  taxonomy_version: "economics-2022-v1",
+  skill: "economic_analysis",
+  why: "Local trusted-bundle verification",
+  question_origin: "curated_bank",
+  bank_question_id: "econ-v1-2.7-10-001",
+  question_bank_version: "economics-question-bank-v1",
+  grading_blueprint: {
+    kind: "extended",
+    theoryAreas: ["Producer subsidies and supply"],
+    analysisPaths: ["Trace lower production costs into supply, price, and output"],
+    applicationExpectations: ["A relevant real-world example is optional"],
+    evaluationDirections: ["Evaluation is not required for this part"],
+    validAlternativeApproaches: ["Credit other valid subsidy transmission chains"],
+    commonMisconceptions: ["Consumers necessarily receive the full subsidy"],
+    diagramPolicy:
+      "A diagram may support a written answer but is not required and is not assessed by this question.",
+    notes: ["This guidance is non-exhaustive"],
+  },
+  grading_blueprint_version: "economics-grading-blueprint-v1",
+  level_relevance: "shared_sl_hl",
+  command_term: "explain",
+  target_skills: ["economic_analysis"],
+  angle_tags: ["subsidy", "market_outcomes"],
+  from_current_focus: true,
+  request_fingerprint: "c".repeat(64),
+};
+
 const validEvidence = {
   version: 1,
   status: "reviewed_clearly",
@@ -248,7 +283,7 @@ try {
   });
 
   if (!userA || !userB) {
-    for (let number = 2; number <= 21; number += 1) {
+    for (let number = 2; number <= 25; number += 1) {
       results.push({
         number,
         label: "dependent verification",
@@ -317,14 +352,16 @@ try {
     userAPracticeId = await insertPractice(userA.id);
     await run(5, "browser practice INSERT and UPDATE denied", async () => {
       const inserted = await userA.client.from("practice_questions").insert({
-        ...minimalPractice,
-        question: "Forged practice [45 marks]",
+        ...currentBankPractice,
+        question: "Forged practice [15 marks]",
       });
       const updated = await userA.client
         .from("practice_questions")
         .update({
-          question: "Forged replacement [45 marks]",
+          question: "Forged replacement [15 marks]",
           taxonomy_version: "economics-legacy-v3",
+          grading_blueprint: { forged: true },
+          from_current_focus: true,
         })
         .eq("id", userAPracticeId);
       assert(inserted.error, "authenticated browser practice INSERT succeeded");
@@ -664,6 +701,111 @@ try {
       });
       assert(invalid.error, "invalid practice taxonomy unexpectedly persisted");
       return "current taxonomy persisted; browser mutation and invalid taxonomy were rejected";
+    });
+
+    await run(22, "course-level profile persistence", async () => {
+      const slUpdate = await userA.client.auth.updateUser({
+        data: { economics_level: "sl" },
+      });
+      if (slUpdate.error) throw slUpdate.error;
+      const slRead = await userA.client.auth.getUser();
+      if (slRead.error) throw slRead.error;
+      assert(
+        slRead.data.user?.user_metadata?.economics_level === "sl",
+        "SL level did not persist in authenticated user metadata"
+      );
+
+      const hlUpdate = await userA.client.auth.updateUser({
+        data: { economics_level: "hl" },
+      });
+      if (hlUpdate.error) throw hlUpdate.error;
+      const hlRead = await userA.client.auth.getUser();
+      if (hlRead.error) throw hlRead.error;
+      assert(
+        hlRead.data.user?.user_metadata?.economics_level === "hl",
+        "HL level edit did not persist in authenticated user metadata"
+      );
+      return "SL persisted, then an authenticated edit to HL persisted and read back";
+    });
+
+    let trustedPracticeId;
+    await run(23, "trusted question bundle service-role round-trip", async () => {
+      const inserted = await admin
+        .from("practice_questions")
+        .insert({
+          ...currentBankPractice,
+          user_id: userA.id,
+          idempotency_key: randomUUID(),
+        })
+        .select(
+          "id,question_origin,bank_question_id,question_bank_version,grading_blueprint,grading_blueprint_version,level_relevance,command_term,target_skills,angle_tags,from_current_focus,request_fingerprint"
+        )
+        .single();
+      if (inserted.error) throw inserted.error;
+      trustedPracticeId = inserted.data.id;
+      assert(inserted.data.question_origin === "curated_bank", "question origin was not stored");
+      assert(
+        inserted.data.bank_question_id === currentBankPractice.bank_question_id,
+        "bank question identity was not stored"
+      );
+      assert(
+        inserted.data.grading_blueprint?.kind === "extended",
+        "hidden grading blueprint did not round-trip"
+      );
+      assert(inserted.data.from_current_focus === true, "current-focus provenance was lost");
+      assert(
+        inserted.data.request_fingerprint === currentBankPractice.request_fingerprint,
+        "request fingerprint did not round-trip"
+      );
+      return "service role persisted and read back the complete curated provenance/guidance bundle";
+    });
+
+    await run(24, "trusted guidance hidden from browser clients", async () => {
+      assert(trustedPracticeId, "trusted practice setup did not complete");
+      const publicRead = await userA.client
+        .from("practice_questions")
+        .select("id,question,from_current_focus")
+        .eq("id", trustedPracticeId)
+        .maybeSingle();
+      if (publicRead.error) throw publicRead.error;
+      assert(publicRead.data?.from_current_focus === true, "public rendering fields were unavailable");
+
+      const hiddenRead = await userA.client
+        .from("practice_questions")
+        .select("id,grading_blueprint,bank_question_id")
+        .eq("id", trustedPracticeId);
+      assert(hiddenRead.error, "authenticated browser read hidden trusted fields");
+
+      const hiddenUpdate = await userA.client
+        .from("practice_questions")
+        .update({ grading_blueprint: { forged: true } })
+        .eq("id", trustedPracticeId);
+      assert(hiddenUpdate.error, "authenticated browser changed hidden trusted fields");
+      return "public display fields were readable; hidden blueprint/identity reads and writes were denied";
+    });
+
+    await run(25, "legacy practice compatibility", async () => {
+      const legacy = await admin
+        .from("practice_questions")
+        .select(
+          "id,question_origin,bank_question_id,question_bank_version,grading_blueprint,grading_blueprint_version,level_relevance,command_term,target_skills,angle_tags,request_fingerprint"
+        )
+        .eq("id", userAPracticeId)
+        .single();
+      if (legacy.error) throw legacy.error;
+      const newFields = Object.entries(legacy.data).filter(([key]) => key !== "id");
+      assert(
+        newFields.every(([, value]) => value === null),
+        "legacy practice did not retain the permitted all-NULL bundle"
+      );
+      const browserRead = await userA.client
+        .from("practice_questions")
+        .select("id,question,mark_total")
+        .eq("id", userAPracticeId)
+        .maybeSingle();
+      if (browserRead.error) throw browserRead.error;
+      assert(browserRead.data !== null, "legacy practice was not readable by its owner");
+      return "pre-0010 style all-NULL provenance remained valid and owner-readable";
     });
   }
 } finally {

@@ -10,6 +10,7 @@ import {
   type MarkDisplayMode,
   type Subject,
 } from "@/lib/types";
+import type { EconomicsGradingBlueprint } from "@/lib/assessment/question-bank/economics-v1/types";
 import {
   ASSESSMENT_FORMATS,
   ASSESSMENT_SKILLS,
@@ -237,7 +238,8 @@ export function buildAssessmentUserInput(
   rubric: string,
   hasImageAttachment: boolean,
   policy: ScoringPolicy,
-  sourceMaterial: string | null
+  sourceMaterial: string | null,
+  questionSpecificGuidance: EconomicsGradingBlueprint | null = null
 ): string {
   const hasSource = typeof sourceMaterial === "string" && sourceMaterial.trim() !== "";
   // Multi-part paste with a confirmed part: the model marks the SELECTED part
@@ -264,6 +266,15 @@ export function buildAssessmentUserInput(
       ? [
           "SOURCE MATERIAL (pasted by the student — assess data use ONLY against this readable text):",
           sourceMaterial!.trim(),
+          "",
+        ]
+      : []),
+    ...(questionSpecificGuidance !== null
+      ? [
+          "TRUSTED QUESTION-SPECIFIC GUIDANCE (authored or validated by Aptly for this exact stored Practice question):",
+          "Use this as a non-exhaustive relevance guide, never as an additive checklist or a source of numerical submarks. Credit valid alternative economic approaches.",
+          JSON.stringify(questionSpecificGuidance),
+          "END TRUSTED QUESTION-SPECIFIC GUIDANCE.",
           "",
         ]
       : []),

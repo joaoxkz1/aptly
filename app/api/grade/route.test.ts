@@ -64,6 +64,7 @@ vi.mock("@/lib/supabase/server-authority", () => ({
   saveGradeAttempt: mocks.save,
   findAttemptById: mocks.findById,
   findAttemptByIdempotency: mocks.findByKey,
+  fetchTrustedPracticeGuidance: vi.fn(async () => null),
 }));
 vi.mock("@/lib/ai/assessment-schema", () => ({
   GRADE_RESULT_JSON_SCHEMA: { type: "object" },

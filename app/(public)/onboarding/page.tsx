@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { createClient } from "@/lib/supabase/client";
+import type { EconomicsCourseLevel } from "@/lib/assessment/course-level";
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
 
   const [name, setName] = useState("");
+  const [courseLevel, setCourseLevel] = useState<EconomicsCourseLevel | null>(null);
   const [status, setStatus] = useState<"idle" | "saving">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -26,13 +28,17 @@ export default function OnboardingPage() {
       setError("Please enter a name between 1 and 40 characters.");
       return;
     }
+    if (courseLevel === null) {
+      setError("Choose IB Economics SL or HL.");
+      return;
+    }
 
     setError(null);
     setStatus("saving");
 
     // Save into Supabase Auth user metadata — no table, no migration.
     const { error: updateError } = await supabase.auth.updateUser({
-      data: { display_name: trimmed },
+      data: { display_name: trimmed, economics_level: courseLevel },
     });
     if (updateError) {
       setStatus("idle");
@@ -72,7 +78,7 @@ export default function OnboardingPage() {
           <div className="mb-5">
             <h1 className="text-lg font-semibold tracking-tight">What should we call you?</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              This is how Aptly will greet you in your study space.
+              Set your name and course once. You can change your course later.
             </p>
           </div>
 
@@ -98,6 +104,23 @@ export default function OnboardingPage() {
                 placeholder="e.g. Maya"
               />
             </div>
+            <fieldset>
+              <legend className="text-sm font-medium">IB Economics course</legend>
+              <div className="mt-2 flex gap-2">
+                {(["sl", "hl"] as const).map((level) => (
+                  <Button
+                    key={level}
+                    type="button"
+                    variant={courseLevel === level ? "primary" : "outline"}
+                    aria-pressed={courseLevel === level}
+                    onClick={() => setCourseLevel(level)}
+                    className="min-w-24"
+                  >
+                    {level.toUpperCase()}
+                  </Button>
+                ))}
+              </div>
+            </fieldset>
             <Button type="submit" size="lg" disabled={status === "saving"}>
               {status === "saving" ? (
                 <>

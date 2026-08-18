@@ -113,8 +113,8 @@ describe("Learning log — no internal/developer controls in the student UI", ()
 });
 
 describe("Dashboard — no duplicate empty-state CTA", () => {
-  it("the dashboard page has exactly one 'Submit your first answer' action", () => {
-    expect(count(DASHBOARD, "Submit your first answer")).toBe(1);
+  it("the dashboard page has exactly one primary first-question action", () => {
+    expect(count(DASHBOARD, "Generate my first question")).toBe(1);
   });
 });
 

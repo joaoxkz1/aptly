@@ -24,8 +24,18 @@ import {
   supportReference,
   type GradeStage,
 } from "@/lib/ai/grade-errors";
-import { ASSESSMENT_FRAMEWORKS } from "@/lib/assessment/taxonomy";
-import type { AssessmentFramework } from "@/lib/types";
+import {
+  ASSESSMENT_FRAMEWORKS,
+  ASSESSMENT_SKILLS,
+  COMMAND_TERMS,
+  SYLLABUS_TOPICS,
+} from "@/lib/assessment/taxonomy";
+import type {
+  AssessmentFramework,
+  AssessmentSkill,
+  CommandTerm,
+  SyllabusTopic,
+} from "@/lib/types";
 import {
   DAILY_GRADE_LIMIT,
   MAX_ANSWER_CHARS,
@@ -47,7 +57,9 @@ import {
 import {
   findAttemptById,
   findAttemptByIdempotency,
+  fetchTrustedPracticeGuidance,
   saveGradeAttempt,
+  type TrustedPracticeGuidance,
 } from "@/lib/supabase/server-authority";
 
 export const runtime = "nodejs";
@@ -93,6 +105,19 @@ function fail(status: number, code: string) {
 function optionalUuid(value: unknown): string | null | undefined {
   if (value == null || value === "") return null;
   return isUuid(value) ? value : undefined;
+}
+
+function unitForCurrentTopic(topic: SyllabusTopic) {
+  if (topic.startsWith("1.")) return "unit_1" as const;
+  if (topic.startsWith("2.")) return "unit_2" as const;
+  if (topic.startsWith("3.")) return "unit_3" as const;
+  if (topic.startsWith("4.")) return "unit_4" as const;
+  return "unknown" as const;
+}
+
+function commandTermLabel(command: CommandTerm): string {
+  if (command === "to_what_extent") return "To what extent";
+  return command.charAt(0).toUpperCase() + command.slice(1);
 }
 
 export async function POST(request: Request) {
@@ -175,13 +200,17 @@ export async function POST(request: Request) {
   // Resolve every relationship and scoring gate through the user's RLS-scoped
   // session before reserving paid capacity or touching the admin client.
   let gradedQuestion = q;
+  let gradedTopic = t;
+  let trustedPracticeGuidance: TrustedPracticeGuidance | null = null;
   let policy: ScoringPolicy;
   if (practiceQuestionId !== null) {
     stage = "practice_context";
     try {
       const { data: pq, error } = await supabase
         .from("practice_questions")
-        .select("question, source_material, framework, mark_total, authority_version")
+        .select(
+          "question, source_material, framework, mark_total, topic_code, topic_label, authority_version"
+        )
         .eq("id", practiceQuestionId)
         .eq("authority_version", 1)
         .maybeSingle();
@@ -192,14 +221,22 @@ export async function POST(request: Request) {
         source_material: string | null;
         framework: string;
         mark_total: number;
+        topic_code: string;
+        topic_label: string;
       };
       gradedQuestion = row.question;
+      gradedTopic = row.topic_label;
       sourceMaterial = row.source_material;
       policy = policyForGeneratedPractice({
         framework: row.framework,
         markTotal: row.mark_total,
         sourceMaterial: row.source_material,
       });
+      trustedPracticeGuidance = await fetchTrustedPracticeGuidance(
+        userId,
+        practiceQuestionId
+      );
+      if (trustedPracticeGuidance === null) return fail(400, "invalid_request");
     } catch (err) {
       return failClosed(502, err);
     }
@@ -288,13 +325,14 @@ export async function POST(request: Request) {
             role: "user",
             content: buildAssessmentUserInput(
               subject,
-              t,
+              gradedTopic,
               gradedQuestion,
               a,
               rubric,
               false,
               policy,
-              policy.sourceMaterialProvided === true ? sourceMaterial : null
+              policy.sourceMaterialProvided === true ? sourceMaterial : null,
+              trustedPracticeGuidance?.gradingBlueprint ?? null
             ),
           },
         ],
@@ -316,15 +354,48 @@ export async function POST(request: Request) {
     }
     const parsed: unknown = JSON.parse(response.output_text);
     stage = "schema_validation";
-    const { feedback, assessment } = validateGradeResult(parsed, {
+    const validated = validateGradeResult(parsed, {
       hasImageAttachment: false,
       policy,
     });
+    const feedback = validated.feedback;
+    let assessment = validated.assessment;
+    if (
+      trustedPracticeGuidance?.gradingBlueprint != null &&
+      trustedPracticeGuidance.levelRelevance != null &&
+      (SYLLABUS_TOPICS as readonly string[]).includes(trustedPracticeGuidance.topicCode) &&
+      trustedPracticeGuidance.topicCode !== "unknown"
+    ) {
+      const trustedTopic = trustedPracticeGuidance.topicCode as SyllabusTopic;
+      const trustedSkills = trustedPracticeGuidance.targetSkills.filter(
+        (skill): skill is AssessmentSkill =>
+          (ASSESSMENT_SKILLS as readonly string[]).includes(skill)
+      );
+      const trustedCommand =
+        trustedPracticeGuidance.commandTerm != null &&
+        (COMMAND_TERMS as readonly string[]).includes(trustedPracticeGuidance.commandTerm)
+          ? trustedPracticeGuidance.commandTerm
+          : null;
+      assessment = {
+        ...assessment,
+        syllabusTopic: trustedTopic,
+        syllabusUnit: unitForCurrentTopic(trustedTopic),
+        topicLabel: trustedPracticeGuidance.topicLabel,
+        levelRelevance: trustedPracticeGuidance.levelRelevance,
+        assessmentSkills:
+          trustedSkills.length > 0 ? trustedSkills : assessment.assessmentSkills,
+        commandTerm: trustedCommand ?? assessment.commandTerm,
+        commandTermLabel:
+          trustedCommand == null
+            ? assessment.commandTermLabel
+            : commandTermLabel(trustedCommand),
+      };
+    }
 
     stage = "persistence";
     const attempt = await saveGradeAttempt(userId, idempotencyKey, {
       subject,
-      topic: assessment.topicLabel.trim() || t,
+      topic: assessment.topicLabel.trim() || gradedTopic,
       question: gradedQuestion,
       answer: a,
       feedback,

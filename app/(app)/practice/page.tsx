@@ -1,142 +1,347 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CircleAlert, Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import {
+  ArrowRight,
+  CircleAlert,
+  Loader2,
+  RefreshCw,
+  Search,
+  Sparkles,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input, Label } from "@/components/ui/field";
+import { EconomicsCourseSelector } from "@/components/economics-course-selector";
 import {
   APTLY_PRACTICE_LABEL,
   NOT_OFFICIAL_IB_LABEL,
-  PRACTICE_FROM_FOCUS_LABEL,
 } from "@/lib/assessment/display";
-import { ASSESSMENT_FRAMEWORK_LABELS, ASSESSMENT_SKILL_LABELS } from "@/lib/assessment/taxonomy";
+import {
+  ASSESSMENT_FRAMEWORK_LABELS,
+  ASSESSMENT_SKILL_LABELS,
+  CURRENT_SYLLABUS_TOPIC_LABELS,
+  CURRENT_SYLLABUS_TOPIC_SHORT_LABELS,
+  SYLLABUS_TOPICS,
+  isCurrentTopLevelHlTopic,
+} from "@/lib/assessment/taxonomy";
+import {
+  PRACTICE_MARK_TOTALS,
+  readEconomicsCourseLevel,
+  type EconomicsCourseLevel,
+  type PracticeMarkTotal,
+} from "@/lib/assessment/course-level";
 import { clientMessageForPracticeFailure } from "@/lib/ai/practice-errors";
 import { createPracticeGenerationClient } from "@/lib/ai/practice-request";
+import { createClient } from "@/lib/supabase/client";
 import type { PracticeQuestion } from "@/lib/types";
 
-/** Student-facing format line for a generated question (never a false paper claim). */
-function practiceFormatLabel(pq: PracticeQuestion): string {
-  if (pq.framework === "generic_practice") return `${pq.markTotal}-mark practice`;
-  if (pq.framework === "paper2_short_analytic") return `${pq.markTotal}-mark short response`;
-  return ASSESSMENT_FRAMEWORK_LABELS[pq.framework];
+const generationClient = createPracticeGenerationClient();
+const CURRENT_TOPICS = SYLLABUS_TOPICS.filter((topic) => topic !== "unknown");
+const LAST_MARKS_KEY = "aptly:practice:last-marks";
+
+function validMark(value: string | null): PracticeMarkTotal | null {
+  const number = Number(value);
+  return (PRACTICE_MARK_TOTALS as readonly number[]).includes(number)
+    ? (number as PracticeMarkTotal)
+    : null;
 }
 
-// ONE shared client (module scope): concurrent renders/mounts in this tab
-// share a single in-flight request, so no duplicate paid calls can be issued.
-// The server's reuse-first idempotency covers refreshes and other tabs.
-const generationClient = createPracticeGenerationClient();
+function validTopic(value: string | null): string | null {
+  return value !== null && (CURRENT_TOPICS as readonly string[]).includes(value)
+    ? value
+    : null;
+}
 
-/**
- * Targeted practice (Practice Loop): Aptly generates ONE original question
- * from the student's canonical next focus. The server derives the target —
- * this page only asks for "the next question" and shows the result. It is
- * deliberately not an open-ended generator UI: "Generate another" appears
- * only after a question is shown, and it is the ONLY action that requests a
- * new paid generation — a refresh simply reopens the unanswered question.
- */
+function practiceFormatLabel(question: PracticeQuestion): string {
+  if (question.framework === "paper2_short_analytic") {
+    return `${question.markTotal}-mark short response`;
+  }
+  return ASSESSMENT_FRAMEWORK_LABELS[question.framework];
+}
+
+function unitLabel(topicCode: string): string {
+  return `Unit ${topicCode.split(".")[0]}`;
+}
+
 export default function PracticePage() {
-  // Starts in the loading state: the student arrived by clicking "Practice
-  // this focus", so the very first render already reflects the request.
-  // `intent` carries the seq (one request per bump) and whether the student
-  // explicitly asked for a replacement question.
-  const [generating, setGenerating] = useState(true);
+  return (
+    <Suspense fallback={null}>
+      <PracticeGenerator />
+    </Suspense>
+  );
+}
+
+function PracticeGenerator() {
+  const params = useSearchParams();
+  const requestedTopic = validTopic(params.get("topic"));
+  const requestedMark = validMark(params.get("marks"));
+  const fromCurrentFocus = params.get("focus") === "1";
+
+  const [courseLevel, setCourseLevel] = useState<EconomicsCourseLevel | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [editingCourse, setEditingCourse] = useState(false);
+  const [marks, setMarks] = useState<PracticeMarkTotal>(requestedMark ?? 10);
+  const [topicCode, setTopicCode] = useState(requestedTopic ?? "1.1");
+  const [search, setSearch] = useState("");
+  const [generating, setGenerating] = useState(false);
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [intent, setIntent] = useState<{ seq: number; regenerate: boolean }>({
-    seq: 0,
-    regenerate: false,
-  });
 
   useEffect(() => {
+    const supabase = createClient();
     let active = true;
-    const load = async () => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      if (requestedMark === null) {
+        const remembered = validMark(window.sessionStorage.getItem(LAST_MARKS_KEY));
+        if (remembered !== null) setMarks(remembered);
+      }
+      setCourseLevel(readEconomicsCourseLevel(data.session?.user.user_metadata));
+      setProfileLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [requestedMark]);
+
+  const eligibleTopics = useMemo(
+    () =>
+      CURRENT_TOPICS.filter(
+        (topic) => courseLevel !== "sl" || !isCurrentTopLevelHlTopic(topic)
+      ),
+    [courseLevel]
+  );
+  const selectedTopicCode =
+    courseLevel === "sl" && isCurrentTopLevelHlTopic(topicCode) ? "2.9" : topicCode;
+
+  const filteredByUnit = useMemo(() => {
+    const needle = search.trim().toLowerCase();
+    const topics = eligibleTopics.filter((topic) => {
+      if (topic === selectedTopicCode || needle === "") return true;
+      const label = CURRENT_SYLLABUS_TOPIC_LABELS[topic];
+      return topic.includes(needle) || label.toLowerCase().includes(needle);
+    });
+    return [1, 2, 3, 4].map((unit) => ({
+      unit,
+      topics: topics.filter((topic) => topic.startsWith(`${unit}.`)),
+    }));
+  }, [eligibleTopics, search, selectedTopicCode]);
+
+  const generate = useCallback(
+    async (regenerate = false) => {
+      if (courseLevel === null || generating) return;
+      setGenerating(true);
+      setError(null);
+      if (regenerate) setQuestion(null);
       try {
-        const outcome = await generationClient.request({ regenerate: intent.regenerate });
-        if (!active) return;
+        const outcome = await generationClient.request({
+          marks,
+          topicCode: selectedTopicCode,
+          context: fromCurrentFocus ? "current_focus" : "general",
+          regenerate,
+        });
         if (outcome.status === 200 && outcome.practiceQuestion !== null) {
           setQuestion(outcome.practiceQuestion);
         } else {
           setError(
-            clientMessageForPracticeFailure(outcome.status, outcome.code, outcome.reference)
+            clientMessageForPracticeFailure(
+              outcome.status,
+              outcome.code,
+              outcome.reference
+            )
           );
         }
       } catch {
-        if (active) setError(clientMessageForPracticeFailure(502, "practice_generation_failed"));
+        setError(clientMessageForPracticeFailure(502, "practice_generation_failed"));
       } finally {
-        if (active) setGenerating(false);
+        setGenerating(false);
       }
-    };
-    void load();
-    return () => {
-      active = false;
-    };
-  }, [intent]);
+    },
+    [courseLevel, fromCurrentFocus, generating, marks, selectedTopicCode]
+  );
 
-  // The explicit "Generate another question" action — the ONLY normal way to
-  // request a replacement paid generation. Only reachable after the previous
-  // question is shown (never a parallel call).
-  const generateAnother = useCallback(() => {
-    setGenerating(true);
-    setError(null);
+  function chooseMarks(value: PracticeMarkTotal) {
+    setMarks(value);
     setQuestion(null);
-    setIntent((i) => ({ seq: i.seq + 1, regenerate: true }));
-  }, []);
-
-  // Retry after a failure keeps the student's last intent: retrying a failed
-  // first load stays reuse-first (never a surprise extra generation), while
-  // retrying a failed "Generate another" still asks for the replacement.
-  const retry = useCallback(() => {
-    setGenerating(true);
     setError(null);
-    setIntent((i) => ({ seq: i.seq + 1, regenerate: i.regenerate }));
-  }, []);
+    window.sessionStorage.setItem(LAST_MARKS_KEY, String(value));
+  }
+
+  function chooseTopic(value: string) {
+    setTopicCode(value);
+    setQuestion(null);
+    setError(null);
+  }
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-5">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Practice this focus</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          One original Aptly question, chosen from the evidence in your marked answers.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Generate practice question
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Choose the marks and topic. Aptly handles the question style.
+          </p>
+        </div>
+        {!profileLoading && courseLevel !== null && (
+          <div className="text-right text-xs text-muted-foreground">
+            <p>
+              Course: <span className="font-semibold text-foreground">{courseLevel.toUpperCase()}</span>
+            </p>
+            <button
+              type="button"
+              className="font-medium text-primary hover:underline"
+              onClick={() => setEditingCourse((value) => !value)}
+            >
+              Change course
+            </button>
+          </div>
+        )}
       </div>
 
-      {generating && (
+      {profileLoading ? (
         <Card>
-          <CardContent className="flex items-center gap-3 py-10">
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              Aptly is checking your next focus and preparing your practice question…
-            </p>
+          <CardContent className="flex items-center gap-2 py-8 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading your course…
           </CardContent>
         </Card>
+      ) : courseLevel === null || editingCourse ? (
+        <Card>
+          <CardContent className="flex flex-col items-start gap-3 p-6">
+            <div>
+              <h2 className="font-semibold">Choose your IB Economics course</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Aptly saves this once and uses it to keep every generated question relevant.
+              </p>
+            </div>
+            <EconomicsCourseSelector
+              key={courseLevel ?? "unset"}
+              initialLevel={courseLevel}
+              onSaved={(level) => {
+                setCourseLevel(level);
+                setEditingCourse(false);
+              }}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {fromCurrentFocus && (
+            <div className="rounded-xl border border-primary/25 bg-accent/40 px-4 py-3 text-sm text-muted-foreground">
+              Your Current Focus topic is preselected. You can still change the topic or marks
+              before generating.
+            </div>
+          )}
+
+          <Card>
+            <CardContent className="flex flex-col gap-5 p-6">
+              <fieldset>
+                <legend className="text-sm font-medium">Marks</legend>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {PRACTICE_MARK_TOTALS.map((value) => (
+                    <Button
+                      key={value}
+                      type="button"
+                      variant={marks === value ? "primary" : "outline"}
+                      aria-pressed={marks === value}
+                      onClick={() => chooseMarks(value)}
+                      className="min-w-16"
+                    >
+                      {value}
+                    </Button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div>
+                <Label htmlFor="topic-search">Topic</Label>
+                <div className="relative mt-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="topic-search"
+                    type="search"
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Search current syllabus topics"
+                    className="pl-9"
+                  />
+                </div>
+                <Label htmlFor="topic-picker" className="sr-only">
+                  Select syllabus topic
+                </Label>
+                <select
+                  id="topic-picker"
+                  value={selectedTopicCode}
+                  onChange={(event) => chooseTopic(event.target.value)}
+                  className="mt-2 min-h-44 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  size={Math.min(9, Math.max(5, eligibleTopics.length))}
+                >
+                  {filteredByUnit.map(({ unit, topics }) =>
+                    topics.length > 0 ? (
+                      <optgroup key={unit} label={`Unit ${unit}`}>
+                        {topics.map((topic) => (
+                          <option key={topic} value={topic}>
+                            {topic} ·{" "}
+                            {CURRENT_SYLLABUS_TOPIC_SHORT_LABELS[topic] ??
+                              CURRENT_SYLLABUS_TOPIC_LABELS[topic]}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ) : null
+                  )}
+                </select>
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  {unitLabel(selectedTopicCode)} · {CURRENT_SYLLABUS_TOPIC_LABELS[selectedTopicCode as keyof typeof CURRENT_SYLLABUS_TOPIC_LABELS]}
+                </p>
+              </div>
+
+              <Button
+                type="button"
+                size="lg"
+                disabled={generating}
+                onClick={() => void generate(false)}
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Finding your question…
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generate question
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      {!generating && error !== null && (
+      {error !== null && (
         <Card>
-          <CardContent className="flex flex-col gap-3 py-8">
-            <div className="flex items-start gap-2 text-sm">
+          <CardContent className="flex flex-col gap-3 py-6">
+            <p className="flex items-start gap-2 text-sm" role="alert">
               <CircleAlert className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-              <span>{error}</span>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button size="sm" variant="outline" onClick={retry}>
+              {error}
+            </p>
+            <div>
+              <Button variant="outline" size="sm" onClick={() => void generate(false)}>
                 <RefreshCw className="h-3.5 w-3.5" />
                 Try again
               </Button>
-              <Link
-                href="/submit"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-              >
-                Submit your own answer instead <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {!generating && error === null && question !== null && (
+      {question !== null && (
         <>
           <Card className="overflow-hidden">
             <div className="flex flex-col gap-3 bg-gradient-to-br from-accent/70 to-card p-6">
@@ -153,21 +358,13 @@ export default function PracticePage() {
                 <Badge>{practiceFormatLabel(question)}</Badge>
                 <Badge>{question.markTotal} marks</Badge>
               </div>
-              {question.sourceMaterial !== null && (
-                <div className="rounded-xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Source material (Aptly-generated)
-                  </p>
-                  <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                    {question.sourceMaterial}
-                  </p>
-                </div>
-              )}
               <div className="border-t border-border pt-3">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Why this question?
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{question.why}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {question.why}
+                </p>
               </div>
               <p className="text-xs text-muted-foreground">{NOT_OFFICIAL_IB_LABEL}</p>
             </div>
@@ -180,13 +377,17 @@ export default function PracticePage() {
             >
               Start answer <ArrowRight className="h-4 w-4" />
             </Link>
-            {/* Only offered once a question is shown — never an open generator. */}
-            <Button variant="ghost" size="sm" onClick={generateAnother}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={generating}
+              onClick={() => void generate(true)}
+            >
               <RefreshCw className="h-3.5 w-3.5" />
-              Generate another question
+              Another question
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">{PRACTICE_FROM_FOCUS_LABEL}.</p>
         </>
       )}
     </div>

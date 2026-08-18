@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LogOut,
   PenLine,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +19,7 @@ import { ThemeToggle } from "./theme-toggle";
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/submit", label: "Submit answer", icon: PenLine },
+  { href: "/practice", label: "Practice", icon: Sparkles },
   { href: "/attempts", label: "Learning log", icon: History },
   { href: "/analytics", label: "Mistake analytics", icon: BarChart3 },
 ];

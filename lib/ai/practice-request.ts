@@ -23,12 +23,19 @@ export interface PracticeGenerationOutcome {
   reused: boolean;
 }
 
+export interface PracticeGenerationRequest {
+  marks: 2 | 10 | 15;
+  topicCode: string;
+  context: "general" | "current_focus";
+  regenerate?: boolean;
+}
+
 export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) {
   let pending: Promise<PracticeGenerationOutcome> | null = null;
-  let retryIdentity: { regenerate: boolean; key: string } | null = null;
+  let retryIdentity: { signature: string; key: string } | null = null;
 
   async function issue(
-    regenerate: boolean,
+    input: PracticeGenerationRequest,
     idempotencyKey: string
   ): Promise<PracticeGenerationOutcome> {
     const controller = new AbortController();
@@ -39,7 +46,13 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
         headers: { "Content-Type": "application/json" },
         // The boolean intent is the ONLY field sent — the server derives the
         // whole target from saved attempts and ignores anything else anyway.
-        body: JSON.stringify({ regenerate, idempotencyKey }),
+        body: JSON.stringify({
+          marks: input.marks,
+          topicCode: input.topicCode,
+          context: input.context,
+          regenerate: input.regenerate === true,
+          idempotencyKey,
+        }),
         signal: controller.signal,
       });
       let body: Record<string, unknown> = {};
@@ -71,15 +84,16 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
      * pending promise (whatever their flag — the UI can only express one
      * intent at a time). A settled request clears the slot for the next.
      */
-    request(opts: { regenerate?: boolean } = {}): Promise<PracticeGenerationOutcome> {
+    request(opts: PracticeGenerationRequest): Promise<PracticeGenerationOutcome> {
       if (pending === null) {
-        const regenerate = opts.regenerate === true;
+        const normalized = { ...opts, regenerate: opts.regenerate === true };
+        const signature = JSON.stringify(normalized);
         const idempotencyKey =
-          retryIdentity?.regenerate === regenerate
+          retryIdentity?.signature === signature
             ? retryIdentity.key
             : crypto.randomUUID();
-        retryIdentity = { regenerate, key: idempotencyKey };
-        pending = issue(regenerate, idempotencyKey).finally(() => {
+        retryIdentity = { signature, key: idempotencyKey };
+        pending = issue(normalized, idempotencyKey).finally(() => {
           pending = null;
         });
       }

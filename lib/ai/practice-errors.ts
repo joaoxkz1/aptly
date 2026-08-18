@@ -12,6 +12,8 @@ import { safeErrorClass, supportReference } from "./grade-errors";
 
 export const PRACTICE_STAGES = [
   "reuse_lookup", // reopening an existing unanswered question (idempotency)
+  "profile_lookup",
+  "bank_selection",
   "rate_limit",
   "target_derivation",
   "openai",
@@ -31,6 +33,7 @@ export const PRACTICE_LIMIT_ERROR_CODE = "daily_practice_limit_reached";
 
 /** Dedicated code when there is not yet enough marked evidence for a focus. */
 export const PRACTICE_NO_FOCUS_CODE = "no_focus_available";
+export const PRACTICE_LEVEL_REQUIRED_CODE = "economics_level_required";
 
 /** User-facing generation-failure message. No stage, no internals. */
 export function clientPracticeErrorMessage(reference?: string | null): string {
@@ -57,6 +60,9 @@ export function clientMessageForPracticeFailure(
 ): string {
   if (status === 401) return "Your session expired. Please sign in again.";
   if (status === 429 || code === PRACTICE_LIMIT_ERROR_CODE) return clientPracticeLimitMessage();
+  if (code === PRACTICE_LEVEL_REQUIRED_CODE) {
+    return "Choose IB Economics SL or HL before generating a question.";
+  }
   if (code === PRACTICE_NO_FOCUS_CODE) return clientPracticeNoFocusMessage();
   return clientPracticeErrorMessage(reference);
 }

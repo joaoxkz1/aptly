@@ -321,6 +321,13 @@ export const APTLY_PRACTICE_LABEL = "Aptly practice question";
 
 /** One-line provenance note for generated practice. */
 export const PRACTICE_FROM_FOCUS_LABEL = "Practice generated from your next focus";
+export const PRACTICE_FROM_SELECTED_TOPIC_LABEL = "Practice generated from your selected topic";
+
+export function practiceProvenanceLabel(fromCurrentFocus: boolean): string {
+  return fromCurrentFocus
+    ? PRACTICE_FROM_FOCUS_LABEL
+    : PRACTICE_FROM_SELECTED_TOPIC_LABEL;
+}
 
 /** The honest non-official disclaimer every generated question carries. */
 export const NOT_OFFICIAL_IB_LABEL = "Original Aptly practice, not an official IB question";

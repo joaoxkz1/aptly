@@ -393,5 +393,5 @@ export function economicsTopicShortLabels(version: string | null | undefined) {
 }
 
 export function isCurrentTopLevelHlTopic(code: string): boolean {
-  return code === "2.10" || code === "2.11" || code === "2.12";
+  return code === "2.4" || code === "2.10" || code === "2.11" || code === "2.12";
 }

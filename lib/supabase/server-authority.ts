@@ -9,11 +9,17 @@ import {
 } from "@/lib/supabase/practice-questions";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { ECONOMICS_TAXONOMY_VERSION } from "@/lib/assessment/taxonomy";
+import type {
+  EconomicsGradingBlueprint,
+  QuestionOrigin,
+} from "@/lib/assessment/question-bank/economics-v1";
+import type { CommandTerm, LevelRelevance } from "@/lib/types";
 
 const ATTEMPT_COLUMNS =
   "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material, diagram_evidence";
 const PRACTICE_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus";
+const TRUSTED_PRACTICE_COLUMNS = `${PRACTICE_COLUMNS}, question_origin, bank_question_id, question_bank_version, grading_blueprint, grading_blueprint_version, level_relevance, command_term, target_skills, angle_tags, request_fingerprint`;
 
 export interface SavedAttemptInput {
   subject: Subject;
@@ -166,23 +172,44 @@ export interface SavedPracticeInput {
   topicLabel: string;
   skill: string;
   why: string;
+  questionOrigin: QuestionOrigin;
+  bankQuestionId: string | null;
+  questionBankVersion: string | null;
+  gradingBlueprint: EconomicsGradingBlueprint;
+  gradingBlueprintVersion: string;
+  levelRelevance: Exclude<LevelRelevance, "unknown">;
+  commandTerm: CommandTerm;
+  targetSkills: string[];
+  angleTags: string[];
+  fromCurrentFocus: boolean;
+  requestFingerprint: string;
+}
+
+export class PracticeIdempotencyConflictError extends Error {
+  constructor() {
+    super("practice idempotency conflict");
+  }
 }
 
 export async function findPracticeByIdempotency(
   userId: string,
-  idempotencyKey: string
+  idempotencyKey: string,
+  expectedFingerprint?: string
 ): Promise<PracticeQuestion | null> {
   const { data, error } = await getAdminClient()
     .from("practice_questions")
-    .select(PRACTICE_COLUMNS)
+    .select(TRUSTED_PRACTICE_COLUMNS)
     .eq("user_id", userId)
     .eq("idempotency_key", idempotencyKey)
     .eq("authority_version", 1)
     .maybeSingle();
   if (error) throw error;
-  return data == null
-    ? null
-    : rowToPracticeQuestion(data as unknown as PracticeQuestionRow);
+  if (data == null) return null;
+  const row = data as unknown as PracticeQuestionRow & { request_fingerprint: string | null };
+  if (expectedFingerprint !== undefined && row.request_fingerprint !== expectedFingerprint) {
+    throw new PracticeIdempotencyConflictError();
+  }
+  return rowToPracticeQuestion(row);
 }
 
 export async function savePracticeQuestion(
@@ -205,15 +232,92 @@ export async function savePracticeQuestion(
       taxonomy_version: ECONOMICS_TAXONOMY_VERSION,
       skill: input.skill,
       why: input.why,
+      question_origin: input.questionOrigin,
+      bank_question_id: input.bankQuestionId,
+      question_bank_version: input.questionBankVersion,
+      grading_blueprint: input.gradingBlueprint,
+      grading_blueprint_version: input.gradingBlueprintVersion,
+      level_relevance: input.levelRelevance,
+      command_term: input.commandTerm,
+      target_skills: input.targetSkills,
+      angle_tags: input.angleTags,
+      from_current_focus: input.fromCurrentFocus,
+      request_fingerprint: input.requestFingerprint,
     })
     .select(PRACTICE_COLUMNS)
     .single();
   if (error) {
-    const existing = await findPracticeByIdempotency(userId, idempotencyKey);
+    const existing = await findPracticeByIdempotency(
+      userId,
+      idempotencyKey,
+      input.requestFingerprint
+    );
     if (existing !== null) return existing;
     throw error;
   }
   return rowToPracticeQuestion(data as unknown as PracticeQuestionRow);
+}
+
+export interface PracticeBankHistoryRow {
+  bankQuestionId: string | null;
+  createdAt: string;
+}
+
+export async function fetchPracticeBankHistory(
+  userId: string
+): Promise<PracticeBankHistoryRow[]> {
+  const { data, error } = await getAdminClient()
+    .from("practice_questions")
+    .select("bank_question_id, created_at")
+    .eq("user_id", userId)
+    .eq("authority_version", 1)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data as unknown as { bank_question_id: string | null; created_at: string }[]).map(
+    (row) => ({ bankQuestionId: row.bank_question_id, createdAt: row.created_at })
+  );
+}
+
+export interface TrustedPracticeGuidance {
+  gradingBlueprint: EconomicsGradingBlueprint | null;
+  topicCode: string;
+  topicLabel: string;
+  levelRelevance: Exclude<LevelRelevance, "unknown"> | null;
+  commandTerm: CommandTerm | null;
+  targetSkills: string[];
+}
+
+export async function fetchTrustedPracticeGuidance(
+  userId: string,
+  practiceQuestionId: string
+): Promise<TrustedPracticeGuidance | null> {
+  const { data, error } = await getAdminClient()
+    .from("practice_questions")
+    .select(
+      "grading_blueprint, topic_code, topic_label, level_relevance, command_term, target_skills"
+    )
+    .eq("id", practiceQuestionId)
+    .eq("user_id", userId)
+    .eq("authority_version", 1)
+    .maybeSingle();
+  if (error) throw error;
+  if (data == null) return null;
+  const row = data as unknown as {
+    grading_blueprint: EconomicsGradingBlueprint | null;
+    topic_code: string;
+    topic_label: string;
+    level_relevance: Exclude<LevelRelevance, "unknown"> | null;
+    command_term: CommandTerm | null;
+    target_skills: string[] | null;
+  };
+  return {
+    gradingBlueprint: row.grading_blueprint,
+    topicCode: row.topic_code,
+    topicLabel: row.topic_label,
+    levelRelevance: row.level_relevance,
+    commandTerm: row.command_term,
+    targetSkills: row.target_skills ?? [],
+  };
 }
 
 export async function attachDiagramEvidence(input: {

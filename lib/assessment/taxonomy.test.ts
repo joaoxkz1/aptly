@@ -150,8 +150,8 @@ describe("versioned Economics taxonomy", () => {
     );
   });
 
-  it("treats only current 2.10–2.12 as unambiguous top-level HL extensions", () => {
-    expect(["2.10", "2.11", "2.12"].every(isCurrentTopLevelHlTopic)).toBe(true);
+  it("treats current 2.4 and 2.10–2.12 as top-level HL-only content", () => {
+    expect(["2.4", "2.10", "2.11", "2.12"].every(isCurrentTopLevelHlTopic)).toBe(true);
     expect(isCurrentTopLevelHlTopic("3.4")).toBe(false);
     expect(isCurrentTopLevelHlTopic("2.9")).toBe(false);
   });
