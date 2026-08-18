@@ -138,7 +138,7 @@ describe("derivePracticeTarget — server-side, evidence-gated", () => {
   it("with ONE independent marked answer, the why uses honest early-focus wording", () => {
     const attempts = evidenceFor("Evaluation and judgment"); // 1 answer backs the focus
     const target = derivePracticeTarget(attempts)!;
-    expect(target.why).toContain("Early focus to test");
+    expect(target.why).toContain("Focus to test");
     expect(target.why).toContain("Based on 1 marked answer so far.");
     expect(target.why.toLowerCase()).not.toContain("losing the most marks");
     expect(target.why.toLowerCase()).not.toContain("weakest");
@@ -174,7 +174,7 @@ describe("derivePracticeTarget — server-side, evidence-gated", () => {
     ];
     const strongFocus = buildLearningInsights(strong).nextFocus!;
     expect(nextFocusPresentation(strongFocus).early).toBe(false);
-    expect(nextFocusPresentation(strongFocus).heading).toContain("Weakest skill");
+    expect(nextFocusPresentation(strongFocus).heading).toContain("Focus area");
     expect(derivePracticeTarget(strong)!.why).toContain("losing the most marks");
   });
 

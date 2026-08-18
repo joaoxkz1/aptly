@@ -6,7 +6,7 @@ import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
+import { evidenceStrengthLabel, nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
 
 function practiceMarksForFocus(skillLabel: string): 2 | 10 | 15 {
@@ -38,11 +38,11 @@ export function NextFocusCard({
   const titleSize = variant === "hero" ? "text-xl md:text-2xl" : "text-base";
 
   return (
-    <Card className="border-primary/25 bg-gradient-to-br from-accent/80 to-card">
-      <CardContent className="flex flex-col gap-2 p-6">
+    <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-accent via-accent/55 to-card shadow-[0_18px_55px_-38px_rgba(31,28,89,0.52)]">
+      <CardContent className={cn("flex flex-col gap-2.5", variant === "hero" ? "p-6 md:p-7" : "p-6")}>
         <div className="flex items-center gap-2 text-accent-foreground">
           <Sparkles className="h-4 w-4" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Your next focus</span>
+          <span className="text-xs font-bold uppercase tracking-[0.12em]">Continue practising</span>
         </div>
 
         {!ready ? (
@@ -53,13 +53,13 @@ export function NextFocusCard({
                 claim strength come from the ONE evidence-aware helper, so a
                 single-answer focus is honestly "Early focus to test". */}
             <h2 className={cn(titleSize, "font-semibold tracking-tight")}>{focusCopy.heading}</h2>
-            <p className="text-sm font-medium text-muted-foreground" title={nf.topicLabel}>
+            <p className="text-sm font-semibold text-muted-foreground" title={nf.topicLabel}>
               Most visible in {topicShortLabel(nf.topicCode, nf.taxonomyVersion)}
             </p>
             {focusCopy.evidenceLine !== null && (
               <p className="text-xs text-muted-foreground">{focusCopy.evidenceLine}</p>
             )}
-            <p className="max-w-prose text-sm text-muted-foreground">{focusCopy.explanation}</p>
+            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">{focusCopy.explanation}</p>
 
             {nf.whyThis !== null && (
               <div>
@@ -81,19 +81,19 @@ export function NextFocusCard({
             )}
 
             <div className="mt-1 flex flex-wrap items-center gap-3">
-              <Badge>{nf.confidenceTier}</Badge>
+              <Badge>{evidenceStrengthLabel(nf.responses)}</Badge>
               {/* The loop's one clear next action: Aptly writes the question. */}
               <Link
                 href={`/practice?topic=${encodeURIComponent(nf.topicCode)}&marks=${practiceMarksForFocus(nf.skillLabel)}&focus=1`}
                 className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
               >
-                Practice this <ArrowRight className="h-4 w-4" />
+                Practise this focus <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/submit"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
               >
-                Submit a related answer <ArrowRight className="h-4 w-4" />
+                Use my own question <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </>

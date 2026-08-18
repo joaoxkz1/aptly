@@ -70,7 +70,7 @@ export function diagnosticSignalStrength(percentLost: number): DiagnosticSignalS
  * copy is tested and cannot drift.
  */
 export const DIAGNOSTIC_BAR_EXPLANATION =
-  "Bar length shows how much of that skill's marks were missed in your marked answers — a practice signal, not an IB mark.";
+  "Longer bars show where more marks were missed.";
 
 /**
  * The qualitative diagnostic rows a student may see. Excludes "Diagram" — a
@@ -243,15 +243,14 @@ export function nextFocusPresentation(nf: {
   if (nf.responses < NEXT_FOCUS_STRONG_EVIDENCE_MIN) {
     return {
       early: true,
-      heading: `Early focus to test: ${shortSkillLabel(nf.skillLabel)}`,
+      heading: `Focus to test: ${shortSkillLabel(nf.skillLabel)}`,
       evidenceLine: `Based on ${nf.responses} marked answer${nf.responses === 1 ? "" : "s"} so far.`,
-      explanation:
-        "One answer is a signal to test, not a confirmed pattern — practise this skill again to see if it holds.",
+      explanation: "Try this skill again to see whether the pattern holds.",
     };
   }
   return {
     early: false,
-    heading: `Weakest skill: ${shortSkillLabel(nf.skillLabel)}`,
+    heading: `Focus area: ${shortSkillLabel(nf.skillLabel)}`,
     evidenceLine: null,
     explanation: nf.explanation,
   };
@@ -269,10 +268,10 @@ export function nextFocusPresentation(nf: {
 export const LEVEL_ESTIMATE_DISCLAIMER = "Aptly practice estimate — not an IB grade prediction.";
 
 /** Dashboard stat-card title for topics backed by mark-estimate evidence. */
-export const TOPICS_WITH_ESTIMATES_TITLE = "Topics with marked answers";
+export const TOPICS_WITH_ESTIMATES_TITLE = "Topic coverage";
 
 /** Dashboard stat-card caption under the topics count. */
-export const TOPICS_WITH_ESTIMATES_CAPTION = "from answers marked out of a confirmed total";
+export const TOPICS_WITH_ESTIMATES_CAPTION = "from scored answers";
 
 /** "3 marked with a confirmed total" — the state-breakdown lead (weekly card). */
 export function withConfirmedTotalsLabel(n: number): string {
@@ -295,7 +294,14 @@ export function feedbackOnlyCountLabel(n: number): string {
  * this count can honestly sit beside submission counts that include both.
  */
 export function basedOnEstimatesLabel(n: number): string {
-  return `Based on ${n} marked answer${n === 1 ? "" : "s"} — revisions of the same question count once`;
+  return `Based on ${n} marked answer${n === 1 ? "" : "s"}`;
+}
+
+/** Conservative evidence label used anywhere a percentage or focus is shown. */
+export function evidenceStrengthLabel(responses: number): string {
+  if (responses <= 2) return "Low evidence";
+  if (responses <= 5) return "Developing signal";
+  return "Reliable pattern";
 }
 
 /**

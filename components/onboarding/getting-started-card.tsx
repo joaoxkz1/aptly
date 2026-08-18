@@ -55,10 +55,10 @@ export function GettingStartedCard({ attempts }: { attempts: Attempt[] }) {
   if (progress.complete) return null;
 
   return (
-    <Card>
+    <Card className="border-dashed bg-card/70 shadow-none">
       <CardContent className="flex flex-col gap-3 p-5">
         <div>
-          <p className="text-sm font-semibold">Getting started · {progress.completed}/3</p>
+          <p className="text-sm font-semibold">Build your practice loop · {progress.completed}/3</p>
           {steps[0].done && (
             <p className="mt-1 text-xs text-muted-foreground">
               Your first answer is now part of your learning profile.

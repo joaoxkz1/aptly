@@ -13,8 +13,10 @@ import {
   LATEST_ATTEMPT_PER_QUESTION_NOTE,
   diagnosticSignalStrength,
   diagramEvidenceNote,
+  evidenceStrengthLabel,
   topicShortLabel,
 } from "@/lib/assessment/display";
+import { cn } from "@/lib/utils";
 
 export default function AnalyticsPage() {
   const { attempts, status, retry } = useAttempts();
@@ -27,10 +29,9 @@ export default function AnalyticsPage() {
     return (
       <div className="flex flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Progress</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Estimated practice insights from your graded Economics answers — not official IB
-            grades.
+            Patterns from your recent marked answers, translated into what to practise next.
           </p>
         </div>
         <AttemptsLoadNotice status={status} hasData={false} onRetry={retry} />
@@ -42,10 +43,9 @@ export default function AnalyticsPage() {
     return (
       <div className="flex flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Progress</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Estimated practice insights from your graded Economics answers — not official IB
-            grades.
+            Patterns from your recent marked answers, translated into what to practise next.
           </p>
         </div>
         <Card>
@@ -73,17 +73,17 @@ export default function AnalyticsPage() {
     <div className="flex flex-col gap-5">
       <AttemptsLoadNotice status={status} hasData onRetry={retry} />
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Mistake analytics</h1>
+        <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Progress</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Estimated practice insights from your graded Economics answers — not official IB grades.
+          Patterns from your recent marked answers, translated into what to practise next.
         </p>
       </div>
 
       {/* One canonical global recommendation (identical to the Dashboard hero) */}
-      <NextFocusCard insights={insights} />
+      <NextFocusCard insights={insights} variant="hero" />
 
       {(insights.provisionalCount > 0 || insights.feedbackOnlyCount > 0) && (
-        <p className="text-xs text-muted-foreground">
+        <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
           {[
             insights.provisionalCount > 0
               ? `${insights.provisionalCount} answer${insights.provisionalCount === 1 ? "" : "s"} with an inferred total`
@@ -94,8 +94,7 @@ export default function AnalyticsPage() {
           ]
             .filter(Boolean)
             .join(" · ")}{" "}
-          are saved and analysed, but only answers marked with a confirmed total feed the
-          numbers below.
+          are saved in your history. The patterns below use confirmed marked answers.
         </p>
       )}
 
@@ -111,12 +110,12 @@ export default function AnalyticsPage() {
               Marks earned per topic · lowest first · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
+          <CardContent className="flex flex-col divide-y divide-border">
             {topicPerformance.length > 0 ? (
               topicPerformance.map((t, i) => (
                 <div
                   key={`${t.taxonomyVersion}:${t.topicCode}`}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 p-3"
+                  className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-card text-xs font-semibold text-muted-foreground">
                     {i + 1}
@@ -128,12 +127,18 @@ export default function AnalyticsPage() {
                     {/* Always the evidence count, with an early-signal qualifier —
                         never two different label kinds in the same slot. */}
                     <p className="text-xs text-muted-foreground">
-                      Based on {t.responses} answer{t.responses === 1 ? "" : "s"}
-                      {t.reliability === "early_signal" ? " · early signal" : ""} · {t.earned}/
+                      Based on {t.responses} answer{t.responses === 1 ? "" : "s"} · {evidenceStrengthLabel(t.responses).toLowerCase()} · {t.earned}/
                       {t.available} marks
                     </p>
                   </div>
-                  <span className="shrink-0 text-lg font-semibold tabular-nums">
+                  <span
+                    className={cn(
+                      "shrink-0 tabular-nums",
+                      t.responses <= 2
+                        ? "text-sm font-semibold text-muted-foreground"
+                        : "text-lg font-semibold text-foreground"
+                    )}
+                  >
                     {t.percent}%
                   </span>
                 </div>
@@ -151,11 +156,11 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-rose-500" />
-              Diagnostic focus by skill
+              <BarChart3 className="h-4 w-4 text-amber-500" />
+              Skills to strengthen
             </CardTitle>
             <CardDescription>
-              Where marks slipped away, by skill. {DIAGNOSTIC_BAR_EXPLANATION}
+              Where another focused answer could have the most impact. {DIAGNOSTIC_BAR_EXPLANATION}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -187,7 +192,7 @@ export default function AnalyticsPage() {
                     <div role="img" aria-label={`${s.label}: ${signal}`}>
                       <MarkBar
                         percent={s.percentLost}
-                        colorClass="bg-rose-400 dark:bg-rose-500"
+                        colorClass="bg-amber-400 dark:bg-amber-500"
                         delayMs={i * 60}
                       />
                     </div>
@@ -201,7 +206,7 @@ export default function AnalyticsPage() {
 
       {/* Section divider — restores two-tier hierarchy from 680ea3a */}
       <h2 className="mt-1 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-        Exam-readiness insights
+        More progress patterns
       </h2>
 
       <div className="grid gap-3 lg:grid-cols-2">
@@ -213,7 +218,7 @@ export default function AnalyticsPage() {
               Performance by question format
             </CardTitle>
             <CardDescription>
-              Estimated mark % on marked answers · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
+              Mark pattern by response length · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -248,8 +253,7 @@ export default function AnalyticsPage() {
                 answers "what have I practised?", so revisions and answers
                 without a confirmed total count too — and it says so. */}
             <CardDescription>
-              Skills your questions have practised — counts every analysed answer, including
-              revisions
+              Skills you have practised across all analysed answers, including revisions
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">

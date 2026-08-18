@@ -34,7 +34,6 @@ import { buildLearningInsights, recurringMistakeSummary } from "@/lib/assessment
 import { revisionContextFor, type RevisionContext } from "@/lib/assessment/revisions";
 import {
   APTLY_PRACTICE_LABEL,
-  NOT_OFFICIAL_IB_LABEL,
   REVISION_ATTEMPT_LABEL,
   practiceProvenanceLabel,
 } from "@/lib/assessment/display";
@@ -566,9 +565,9 @@ function SubmitPageInner({
   // Sample walkthrough: a fixed example — nothing is graded, saved, or counted.
   if (showWalkthrough) {
     return (
-      <div className="mx-auto flex max-w-3xl flex-col gap-5">
+      <div className="mx-auto flex max-w-4xl flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sample feedback</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Sample feedback</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             An example of the feedback Aptly gives, for the sample Economics answer.
           </p>
@@ -583,11 +582,11 @@ function SubmitPageInner({
 
   if (result !== null) {
     return (
-      <div className="mx-auto flex max-w-3xl flex-col gap-5">
+      <div className="mx-auto flex max-w-4xl flex-col gap-5">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Your feedback</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Your feedback</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Aptly&apos;s estimated feedback on your Economics answer.
+            See what worked, what to improve, and what to practise next.
           </p>
         </div>
         <FeedbackResult
@@ -629,7 +628,7 @@ function SubmitPageInner({
       ? practiceQuestion?.fromCurrentFocus === true
         ? "This question was generated from your next focus. Write your answer below."
         : "Write your answer to this Aptly practice question below."
-      : "Paste your Economics question and answer. Aptly will identify the format and give you an estimated mark with feedback.";
+      : "Add your Economics question, then write or upload your answer.";
 
   // Revision/practice context still loading (attempts or practice fetch).
   const contextLoading =
@@ -637,9 +636,9 @@ function SubmitPageInner({
     (practiceQuestionId !== null && practiceQuestion === null && !practiceMissing);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-5">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{heading}</h1>
+        <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">{heading}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{subheading}</p>
       </div>
 
@@ -741,16 +740,16 @@ function SubmitPageInner({
           </p>
           <p className="text-sm text-muted-foreground">
             {practiceProvenanceLabel(practiceQuestion.fromCurrentFocus === true)}:{" "}
-            {practiceQuestion.topicLabel} · {practiceQuestion.markTotal} marks. {NOT_OFFICIAL_IB_LABEL}.
+            {practiceQuestion.topicLabel} · {practiceQuestion.markTotal} marks.
           </p>
         </div>
       )}
 
       {/* One purpose statement (the header above) — the card adds no repeated
           instructions; contextual help appears only when detection needs it. */}
-      <Card>
-        <CardContent className="pt-5">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <Card className="overflow-hidden shadow-[0_18px_55px_-38px_rgba(31,28,89,0.5)]">
+        <CardContent className="p-6 md:p-7">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div>
               <Label htmlFor="question">Question</Label>
               {fixedQuestion !== null ? (
@@ -758,7 +757,7 @@ function SubmitPageInner({
                 // context (total, framework, stored source) stays valid.
                 <div
                   id="question"
-                  className="mt-1 rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-sm leading-relaxed"
+                  className="mt-1 rounded-2xl border border-primary/15 bg-accent/45 px-4 py-3.5 text-sm font-medium leading-relaxed"
                 >
                   {contextLoading ? (
                     <span className="inline-flex items-center gap-2 text-muted-foreground">
@@ -784,14 +783,14 @@ function SubmitPageInner({
                       setTotalOverride(DEFAULT_TOTAL_OVERRIDE); // and any total override
                     }}
                     placeholder="Paste the full question, including any mark total or source text reference."
-                    className="min-h-20"
+                    className="min-h-16"
                   />
                   <Link
                     href="/practice"
-                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-muted/70 px-2.5 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-accent"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
-                    Generate a question
+                    Prefer a generated question?
                   </Link>
                   {/* Visible pre-grade detection: the total Aptly found (and where),
                       with a small way to change it or choose feedback-only — no
@@ -838,7 +837,7 @@ function SubmitPageInner({
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 placeholder="Write your answer here."
-                className="min-h-52"
+                className="min-h-72 text-[15px] leading-7"
               />
             </div>
 
@@ -847,27 +846,28 @@ function SubmitPageInner({
                 so an attachment would have no honest function there), and
                 never in pristine sample mode (the sample is never graded, so
                 upload controls return only after the sample is edited). */}
-            {fixedQuestion === null && !isSample && (
-              <ScanAttachment
-                disabled={grading || preflight !== null}
-                getFields={getScanFields}
-                onFill={handleScanFill}
-                onRemoved={() => setStagedSource(null)}
-                onReadingChange={setScanReading}
-              />
-            )}
+            <div className="grid gap-3 empty:hidden md:grid-cols-2">
+              {fixedQuestion === null && !isSample && (
+                <ScanAttachment
+                  disabled={grading || preflight !== null}
+                  getFields={getScanFields}
+                  onFill={handleScanFill}
+                  onRemoved={() => setStagedSource(null)}
+                  onReadingChange={setScanReading}
+                />
+              )}
 
-            {/* Diagram Evidence V1: one optional close-up diagram photo,
-                reviewed separately at grade time — feedback only, never
-                marks. Available in every mode: revising a diagram-explain
-                answer is exactly when a student wants their diagram seen.
-                Hidden in pristine sample mode (nothing gradable there). */}
-            {!isSample && (
-              <DiagramAttachment
-                disabled={grading || preflight !== null}
-                onAttachedChange={handleDiagramChange}
-              />
-            )}
+              {/* Diagram Evidence V1: one optional close-up diagram photo,
+                  reviewed separately at grade time — feedback only, never
+                  marks. Available in every mode: revising a diagram-explain
+                  answer is exactly when a student wants their diagram seen. */}
+              {!isSample && (
+                <DiagramAttachment
+                  disabled={grading || preflight !== null}
+                  onAttachedChange={handleDiagramChange}
+                />
+              )}
+            </div>
 
 
             {/* Untouched sample: two calm paths — the free fixed walkthrough,
@@ -958,8 +958,8 @@ function SubmitPageInner({
                   )}
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  Your response is sent to OpenAI for feedback and stored privately in Aptly. Avoid
-                  including personal information.
+                  Your answer is sent to OpenAI for feedback and saved to your account. Don&apos;t
+                  include personal information. Aptly provides practice estimates, not official IB grades.
                 </p>
               </div>
             )}
@@ -984,9 +984,6 @@ function SubmitPageInner({
         </Link>
       )}
 
-      <p className="text-xs text-muted-foreground">
-        Aptly provides practice estimates, not official IB grades.
-      </p>
     </div>
   );
 }

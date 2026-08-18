@@ -26,7 +26,7 @@ const FILE_ERROR_COPY: Record<ScanFileError, string> = {
 };
 
 const HELPER_COPY =
-  "If you drew a diagram or graph for this answer, attach a close-up photo of just the diagram. If it is on your answer page, take a separate close-up of the diagram.";
+  "Attach one clear, close-up photo if your response includes a diagram or graph.";
 
 type DiagramAttachStatus = "idle" | "preparing" | "attached" | "error";
 
@@ -121,18 +121,18 @@ export function DiagramAttachment({
       />
 
       {attachment === null ? (
-        <div>
+        <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3.5 transition-colors hover:border-primary/25 hover:bg-accent/20">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
             disabled={disabled || preparing}
             onClick={() => inputRef.current?.click()}
           >
             <ImagePlus className="h-3.5 w-3.5" />
-            Add your diagram (optional)
+            Add a diagram photo
           </Button>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{HELPER_COPY}</p>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{HELPER_COPY}</p>
         </div>
       ) : (
         <div className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/40 px-2.5 py-2">

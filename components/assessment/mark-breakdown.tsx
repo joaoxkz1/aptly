@@ -44,7 +44,7 @@ export function MarkBreakdown({ assessment }: { assessment: Assessment }) {
           {heading}
         </CardTitle>
         <CardDescription>
-          Aptly&apos;s qualitative read on your answer — not an official IB mark allocation.
+          How your answer performed in the skills this question tested.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col divide-y divide-border">

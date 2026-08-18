@@ -92,7 +92,7 @@ describe("Paper 3(b) is never offered without its HL marker", () => {
 describe("diagnostic focus panel — explained encoding, no strength-words for gaps", () => {
   it("the analytics page renders the one bar-encoding explanation", () => {
     expect(ANALYTICS).toContain("DIAGNOSTIC_BAR_EXPLANATION");
-    expect(DIAGNOSTIC_BAR_EXPLANATION).toContain("not an IB mark");
+    expect(DIAGNOSTIC_BAR_EXPLANATION).toBe("Longer bars show where more marks were missed.");
   });
 
   it("no student-facing source ever labels a gap 'Strong signal' or 'Developing signal' again", () => {
@@ -120,7 +120,7 @@ describe("metric cards state their basis (revision collapsing, weighting)", () =
   });
 
   it("coverage says it counts every analysed answer including revisions", () => {
-    expect(ANALYTICS).toContain("counts every analysed answer, including");
+    expect(ANALYTICS).toContain("across all analysed answers, including revisions");
   });
 
   it("state-breakdown captions use student words, not raw state names", () => {
@@ -147,9 +147,10 @@ describe("student-language wording", () => {
     }
   });
 
-  it("the level card is a practice level, not an implied IB grade", () => {
+  it("the level card is framed as a performance range, not an implied IB grade", () => {
     const LEVEL_CARD = read(join("components", "assessment", "economics-level-card.tsx"));
-    expect(LEVEL_CARD).toContain("Estimated practice level");
+    expect(LEVEL_CARD).toContain("Recent performance range");
+    expect(LEVEL_CARD).toContain("LEVEL_ESTIMATE_DISCLAIMER");
     expect(LEVEL_CARD).not.toContain("Estimated Economics level");
   });
 });
@@ -251,8 +252,9 @@ describe("revision feedback follows up prior issues", () => {
 
 describe("Scan vs Diagram Evidence clarity", () => {
   it("the Scan control states its transcription-only purpose", () => {
-    expect(SCAN_ATTACHMENT).toContain("Scan your answer page (optional)");
-    expect(SCAN_ATTACHMENT).toContain("doesn't review diagrams");
+    expect(SCAN_ATTACHMENT).toContain("Upload handwritten answer");
+    expect(SCAN_ATTACHMENT).toContain("editable text");
+    expect(SCAN_ATTACHMENT).toContain("Diagrams can be added separately");
   });
 
   it("the revision banner explains Scan's absence honestly", () => {

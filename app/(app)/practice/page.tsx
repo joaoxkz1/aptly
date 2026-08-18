@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
+  Check,
   CircleAlert,
   Loader2,
   RefreshCw,
@@ -38,6 +39,7 @@ import { clientMessageForPracticeFailure } from "@/lib/ai/practice-errors";
 import { createPracticeGenerationClient } from "@/lib/ai/practice-request";
 import { createClient } from "@/lib/supabase/client";
 import type { PracticeQuestion } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 const generationClient = createPracticeGenerationClient();
 const CURRENT_TOPICS = SYLLABUS_TOPICS.filter((topic) => topic !== "unknown");
@@ -178,14 +180,14 @@ function PracticeGenerator() {
   }
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-5">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Generate practice question
+          <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">
+            Create a practice question
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Choose the marks and topic. Aptly handles the question style.
+            Pick a topic and mark total. Aptly will shape the question for you.
           </p>
         </div>
         {!profileLoading && courseLevel !== null && (
@@ -233,16 +235,16 @@ function PracticeGenerator() {
       ) : (
         <>
           {fromCurrentFocus && (
-            <div className="rounded-xl border border-primary/25 bg-accent/40 px-4 py-3 text-sm text-muted-foreground">
-              Your Current Focus topic is preselected. You can still change the topic or marks
-              before generating.
+            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-accent/55 px-4 py-3 text-sm text-accent-foreground">
+              <Sparkles className="h-4 w-4 shrink-0" />
+              Your recommended focus is selected. You can change it before generating.
             </div>
           )}
 
-          <Card>
-            <CardContent className="flex flex-col gap-5 p-6">
+          <Card className="overflow-hidden">
+            <CardContent className="flex flex-col gap-6 p-6 md:p-7">
               <fieldset>
-                <legend className="text-sm font-medium">Marks</legend>
+                <legend className="text-sm font-semibold">Question length</legend>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {PRACTICE_MARK_TOTALS.map((value) => (
                     <Button
@@ -251,16 +253,24 @@ function PracticeGenerator() {
                       variant={marks === value ? "primary" : "outline"}
                       aria-pressed={marks === value}
                       onClick={() => chooseMarks(value)}
-                      className="min-w-16"
+                      className="min-w-20"
                     >
-                      {value}
+                      {value} marks
                     </Button>
                   ))}
                 </div>
               </fieldset>
 
               <div>
-                <Label htmlFor="topic-search">Topic</Label>
+                <div className="mb-2 flex items-end justify-between gap-3">
+                  <div>
+                    <Label htmlFor="topic-search" className="mb-0">Topic</Label>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Choose one syllabus area to practise.</p>
+                  </div>
+                  <span className="hidden text-xs font-medium text-muted-foreground sm:inline">
+                    {eligibleTopics.length} topics
+                  </span>
+                </div>
                 <div className="relative mt-1">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -272,38 +282,72 @@ function PracticeGenerator() {
                     className="pl-9"
                   />
                 </div>
-                <Label htmlFor="topic-picker" className="sr-only">
-                  Select syllabus topic
-                </Label>
-                <select
-                  id="topic-picker"
-                  value={selectedTopicCode}
-                  onChange={(event) => chooseTopic(event.target.value)}
-                  className="mt-2 min-h-44 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                  size={Math.min(9, Math.max(5, eligibleTopics.length))}
-                >
-                  {filteredByUnit.map(({ unit, topics }) =>
-                    topics.length > 0 ? (
-                      <optgroup key={unit} label={`Unit ${unit}`}>
-                        {topics.map((topic) => (
-                          <option key={topic} value={topic}>
-                            {topic} ·{" "}
-                            {CURRENT_SYLLABUS_TOPIC_SHORT_LABELS[topic] ??
-                              CURRENT_SYLLABUS_TOPIC_LABELS[topic]}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ) : null
-                  )}
-                </select>
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  {unitLabel(selectedTopicCode)} · {CURRENT_SYLLABUS_TOPIC_LABELS[selectedTopicCode as keyof typeof CURRENT_SYLLABUS_TOPIC_LABELS]}
-                </p>
+                <div className="mt-2 overflow-hidden rounded-xl border border-border bg-background/55">
+                  <div
+                    role="listbox"
+                    aria-label="Select syllabus topic"
+                    className="aptly-scrollbar max-h-72 overflow-y-auto p-1.5"
+                  >
+                    {filteredByUnit.map(({ unit, topics }) =>
+                      topics.length > 0 ? (
+                        <div key={unit} className="not-first:mt-2">
+                          <p className="sticky top-0 z-10 bg-background/95 px-2.5 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground backdrop-blur">
+                            Unit {unit}
+                          </p>
+                          <div className="flex flex-col gap-1">
+                            {topics.map((topic) => {
+                              const selected = topic === selectedTopicCode;
+                              return (
+                                <button
+                                  key={topic}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={selected}
+                                  onClick={() => chooseTopic(topic)}
+                                  className={cn(
+                                    "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                                    selected
+                                      ? "bg-accent font-semibold text-accent-foreground"
+                                      : "text-foreground hover:bg-muted"
+                                  )}
+                                >
+                                  <span className="w-8 shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
+                                    {topic}
+                                  </span>
+                                  <span className="min-w-0 flex-1">
+                                    {CURRENT_SYLLABUS_TOPIC_SHORT_LABELS[topic] ??
+                                      CURRENT_SYLLABUS_TOPIC_LABELS[topic]}
+                                  </span>
+                                  {selected && <Check className="h-4 w-4 shrink-0 text-primary" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null
+                    )}
+                    {filteredByUnit.every(({ topics }) => topics.length === 0) && (
+                      <p className="px-3 py-8 text-center text-sm text-muted-foreground">
+                        No topics match “{search.trim()}”.
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-3 flex items-start gap-2.5 rounded-xl bg-accent/55 px-3.5 py-3">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-accent-foreground">Selected topic</p>
+                    <p className="mt-0.5 text-sm font-medium">
+                      {unitLabel(selectedTopicCode)} · {CURRENT_SYLLABUS_TOPIC_LABELS[selectedTopicCode as keyof typeof CURRENT_SYLLABUS_TOPIC_LABELS]}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <Button
                 type="button"
                 size="lg"
+                className="w-full sm:w-auto sm:self-start"
                 disabled={generating}
                 onClick={() => void generate(false)}
               >

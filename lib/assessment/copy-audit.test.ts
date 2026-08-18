@@ -44,7 +44,7 @@ describe("Submit page — one purpose statement, no repeated setup copy", () => 
 
   it("uses the consolidated header, labels, and placeholders", () => {
     expect(SUBMIT).toContain(
-      "Paste your Economics question and answer. Aptly will identify the format and give you an"
+      "Add your Economics question, then write or upload your answer."
     );
     expect(SUBMIT).toContain(
       "Paste the full question, including any mark total or source text reference."
@@ -54,7 +54,8 @@ describe("Submit page — one purpose statement, no repeated setup copy", () => 
 
   it("keeps exactly one privacy disclosure and one academic disclaimer", () => {
     expect(count(SUBMIT, "sent to OpenAI")).toBe(1);
-    expect(SUBMIT).toContain("stored privately in Aptly. Avoid");
+    expect(SUBMIT).toContain("saved to your account");
+    expect(SUBMIT).toContain("include personal information");
     expect(count(SUBMIT, "Aptly provides practice estimates, not official IB grades.")).toBe(1);
   });
 });
@@ -98,8 +99,8 @@ describe("Learning log — no internal/developer controls in the student UI", ()
   });
 
   it("keeps only the header title and its subtitle", () => {
-    expect(LEARNING_LOG).toContain("Learning log");
-    expect(LEARNING_LOG).toContain("Every answer you submit, saved privately to your Aptly account.");
+    expect(LEARNING_LOG).toContain("History");
+    expect(LEARNING_LOG).toContain("Revisit your answers, feedback, and revisions in one place.");
   });
 
   it("preserves the per-attempt delete flow and its confirmation", () => {
@@ -120,8 +121,8 @@ describe("Dashboard — no duplicate empty-state CTA", () => {
 
 describe("Navigation — sentence-case labels, consistent with page headings", () => {
   it("nav labels match the sentence case used across the product", () => {
-    expect(APP_SHELL).toContain("Submit answer");
-    expect(APP_SHELL).toContain("Mistake analytics");
+    expect(APP_SHELL).toContain('label: "Submit"');
+    expect(APP_SHELL).toContain('label: "Progress"');
     expect(APP_SHELL).not.toContain("Submit Answer");
     expect(APP_SHELL).not.toContain("Mistake Analytics");
   });

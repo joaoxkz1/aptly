@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Flame, Layers, LineChart, PenLine, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Sparkline } from "@/components/sparkline";
 import { MarkPill } from "@/components/assessment/mark-pill";
 import { EconomicsLevelCard } from "@/components/assessment/economics-level-card";
@@ -28,14 +27,14 @@ import {
   TOPICS_WITH_ESTIMATES_TITLE,
   WEIGHTED_PERCENT_EXPLANATION,
   attemptMetaLine,
+  evidenceStrengthLabel,
   feedbackOnlyCountLabel,
   topicDisplayLabel,
   topicShortLabel,
   withConfirmedTotalsLabel,
   withInferredTotalLabel,
 } from "@/lib/assessment/display";
-import { SUBJECT_BADGE } from "@/lib/subjects";
-import { cn, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 function greeting() {
   const h = new Date().getHours();
@@ -141,14 +140,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-7">
       <AttemptsLoadNotice status={status} hasData onRetry={retry} />
-      <GettingStartedCard attempts={attempts} />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{heading}</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.035em] md:text-3xl">{heading}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Here is where your IB Economics preparation stands.
+            Pick up your practice loop and keep the momentum going.
           </p>
         </div>
         <Link
@@ -156,78 +154,8 @@ export default function DashboardPage() {
           className="hidden h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90 sm:inline-flex"
         >
           <PenLine className="h-4 w-4" />
-          Submit an answer
+          Write an answer
         </Link>
-      </div>
-
-      {/* Top metric cards */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Send className="h-4 w-4" />
-              <span className="text-xs font-medium">Submitted this week</span>
-            </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums">{ready ? week.length : "–"}</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              {ready
-                ? [
-                    withConfirmedTotalsLabel(weekly.confirmed),
-                    weekly.provisional > 0 ? withInferredTotalLabel(weekly.provisional) : null,
-                    weekly.feedbackOnly > 0 ? feedbackOnlyCountLabel(weekly.feedbackOnly) : null,
-                    weekly.unscored > 0 ? `${weekly.unscored} earlier (no mark data)` : null,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")
-                : withConfirmedTotalsLabel(0)}
-            </p>
-          </CardContent>
-        </Card>
-        <EconomicsLevelCard
-          level={insights.level}
-          ready={ready}
-          provisionalCount={insights.provisionalCount}
-          feedbackOnlyCount={insights.feedbackOnlyCount}
-        />
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Flame className="h-4 w-4" />
-              <span className="text-xs font-medium">Current streak</span>
-            </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums">
-              {ready ? streak : "–"}
-              <span className="text-base font-normal text-muted-foreground">
-                {" "}
-                day{streak === 1 ? "" : "s"}
-              </span>
-            </p>
-            {/* The streak counts consecutive DAYS with an answer (yesterday
-                keeps it alive), so 0 can honestly sit beside a busy week —
-                the caption states the rule instead of looking contradictory. */}
-            <p className="mt-1 text-xs text-muted-foreground">
-              {ready && streak === 0
-                ? "days in a row with an answer — submit today to start one"
-                : "keep it going today"}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Layers className="h-4 w-4" />
-              <span className="text-xs font-medium">{TOPICS_WITH_ESTIMATES_TITLE}</span>
-            </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums">
-              {ready ? insights.distinctTopics : "–"}
-            </p>
-            {/* All-time provisional/feedback-only context lives on the level card
-                (same time basis as the level); this card stays purely about
-                topics with confirmed-total estimates so the counts never appear
-                to mismatch. */}
-            <p className="mt-1 text-xs text-muted-foreground">{TOPICS_WITH_ESTIMATES_CAPTION}</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Hero recommendation + mark trend */}
@@ -244,8 +172,11 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <LineChart className="h-4 w-4 text-muted-foreground" />
-              Mark trend
+              Recent mark trend
             </CardTitle>
+            <CardDescription>
+              Last {insights.markTrend.length} marked answer{insights.markTrend.length === 1 ? "" : "s"} · 0–100% scale
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex items-end justify-between gap-3 lg:flex-1 lg:items-center">
             {insights.markTrend.length >= 3 ? (
@@ -257,9 +188,9 @@ export default function DashboardPage() {
                       {insights.weightedPercent}%
                     </p>
                     <p className="text-[10px] leading-snug text-muted-foreground">
-                      weighted toward
+                      recent weighted
                       <br />
-                      recent answers
+                      average
                     </p>
                   </div>
                 )}
@@ -273,6 +204,67 @@ export default function DashboardPage() {
         </Card>
       </div>
 
+      {/* Compact supporting metrics — the recommended next action stays above them. */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Send className="h-4 w-4" />
+              <span className="text-xs font-semibold">This week</span>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{ready ? week.length : "–"}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              {ready
+                ? [
+                    withConfirmedTotalsLabel(weekly.confirmed),
+                    weekly.provisional > 0 ? withInferredTotalLabel(weekly.provisional) : null,
+                    weekly.feedbackOnly > 0 ? feedbackOnlyCountLabel(weekly.feedbackOnly) : null,
+                    weekly.unscored > 0 ? `${weekly.unscored} without mark data` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
+                : withConfirmedTotalsLabel(0)}
+            </p>
+          </CardContent>
+        </Card>
+        <EconomicsLevelCard
+          level={insights.level}
+          ready={ready}
+        />
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Flame className="h-4 w-4" />
+              <span className="text-xs font-semibold">Practice streak</span>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
+              {ready ? streak : "–"}
+              <span className="text-base font-normal text-muted-foreground">
+                {" "}
+                day{streak === 1 ? "" : "s"}
+              </span>
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {ready && streak === 0 ? "Submit today to start" : "Keep it going today"}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Layers className="h-4 w-4" />
+              <span className="text-xs font-semibold">{TOPICS_WITH_ESTIMATES_TITLE}</span>
+            </div>
+            <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">
+              {ready ? insights.distinctTopics : "–"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{TOPICS_WITH_ESTIMATES_CAPTION}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <GettingStartedCard attempts={attempts} />
+
       {/* Topic performance (canonical) */}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
@@ -282,8 +274,8 @@ export default function DashboardPage() {
               Marks earned across your assessed topics · {LATEST_ATTEMPT_PER_QUESTION_NOTE}
             </CardDescription>
           </div>
-          <Link href="/analytics" className="text-xs font-medium text-primary hover:underline">
-            View analytics
+            <Link href="/analytics" className="text-xs font-semibold text-primary hover:underline">
+              View progress
           </Link>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
@@ -296,9 +288,12 @@ export default function DashboardPage() {
                   </span>
                   {/* Always the evidence count, with an early-signal qualifier —
                       the same slot never alternates between two label kinds. */}
-                  <span className="shrink-0 tabular-nums text-muted-foreground">
-                    {t.percent}% · {t.responses} answer{t.responses === 1 ? "" : "s"}
-                    {t.reliability === "early_signal" ? " · early signal" : ""}
+                  <span className="shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                    <span className={t.responses <= 2 ? "font-medium" : "font-semibold text-foreground"}>
+                      {t.percent}%
+                    </span>{" "}
+                    · {t.responses} answer{t.responses === 1 ? "" : "s"}
+                    {" · "}{evidenceStrengthLabel(t.responses).toLowerCase()}
                   </span>
                 </div>
                 <MarkBar percent={t.percent} delayMs={i * 60} />
@@ -336,9 +331,6 @@ export default function DashboardPage() {
                   <p className="truncate text-sm font-medium">{topic}</p>
                   <p className="truncate text-xs text-muted-foreground">{attemptMetaLine(a)}</p>
                 </div>
-                <Badge className={cn("hidden sm:inline-flex", SUBJECT_BADGE[a.subject])}>
-                  {a.subject}
-                </Badge>
                 <span className="w-14 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
                   {formatDate(a.createdAt)}
                 </span>

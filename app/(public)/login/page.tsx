@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   CircleAlert,
-  GraduationCap,
   Loader2,
   MailCheck,
   Send,
@@ -13,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BrandMark } from "@/components/brand-mark";
 import { createClient } from "@/lib/supabase/client";
 
 // Client-side cooldown between magic-link sends (>= Supabase's own OTP rate limit).
@@ -71,8 +71,8 @@ function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-sm sm:max-w-[26.5rem]">
-      <CardContent className="p-6 pt-6">
+    <Card className="w-full max-w-sm border-border/80 shadow-[0_22px_70px_-42px_rgba(31,28,89,0.48)] sm:max-w-[26.5rem]">
+      <CardContent className="p-7 pt-7">
         {status === "sent" ? (
           <div className="flex flex-col items-center gap-3 py-4 text-center">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent text-accent-foreground">
@@ -169,11 +169,9 @@ export default function LoginPage() {
         <ThemeToggle />
       </div>
 
-      <div className="mb-6 flex items-center gap-2.5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-          <GraduationCap className="h-5 w-5" />
-        </span>
-        <span className="text-lg font-semibold tracking-tight">Aptly</span>
+      <div className="mb-7 flex items-center gap-2.5">
+        <BrandMark />
+        <span className="text-xl font-bold tracking-[-0.04em]">Aptly</span>
       </div>
 
       <Suspense

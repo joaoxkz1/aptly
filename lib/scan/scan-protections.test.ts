@@ -129,7 +129,7 @@ describe("image privacy disclosure — conditional, single, attachment-scoped", 
   it("adds no permanent copy to the submit page (existing privacy copy intact)", () => {
     expect(SUBMIT_PAGE).not.toContain("Attached photos");
     expect(SUBMIT_PAGE).toContain(
-      "Your response is sent to OpenAI for feedback and stored privately in Aptly."
+      "Your answer is sent to OpenAI for feedback and saved to your account."
     );
   });
 });

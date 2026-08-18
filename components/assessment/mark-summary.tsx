@@ -1,7 +1,6 @@
 import { ScanSearch, TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SUBJECT_BADGE } from "@/lib/subjects";
 import type { Attempt } from "@/lib/types";
 import { confidenceLabel, frameworkMeta, topicDisplayLabel } from "@/lib/assessment/display";
 import {
@@ -86,8 +85,8 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
         : `Question type detected automatically · ${confidenceLabel(a.classificationConfidence)} confidence`;
 
   return (
-    <Card className="overflow-hidden">
-      <div className="flex flex-col gap-5 bg-gradient-to-br from-accent/70 to-card p-6 sm:flex-row sm:items-center">
+    <Card className="overflow-hidden border-primary/20 shadow-[0_18px_55px_-38px_rgba(31,28,89,0.52)]">
+      <div className="flex flex-col gap-3 bg-gradient-to-br from-accent via-accent/45 to-card p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
         {/* Headline: state-aware, never a 0–7 ring or band */}
         <div className="sm:min-w-[10rem]">
           {sourceMissing ? (
@@ -140,12 +139,11 @@ export function MarkSummary({ attempt }: { attempt: Attempt }) {
             {metaLabel}
             {metaNote && <span className="text-muted-foreground"> · {metaNote}</span>}
           </p>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <p className="mt-1 hidden items-center gap-1.5 text-xs text-muted-foreground sm:flex">
             <ScanSearch className="h-3.5 w-3.5" />
             {detectionLine}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Badge className={SUBJECT_BADGE[subject]}>{subject}</Badge>
             <Badge>{topicLabel}</Badge>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">

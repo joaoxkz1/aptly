@@ -13,7 +13,7 @@ export function Label({
 }
 
 const fieldBase =
-  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-shadow";
+  "w-full rounded-xl border border-border bg-card px-3.5 py-2.5 text-sm text-foreground shadow-[0_1px_1px_rgba(22,24,35,0.025)] placeholder:text-muted-foreground/65 transition-[border-color,box-shadow] focus-visible:border-primary/55 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/10";
 
 export function Select({
   className,

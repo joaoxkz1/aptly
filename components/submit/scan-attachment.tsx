@@ -39,7 +39,7 @@ const KEPT_COPY = "Your typed text was kept — nothing was empty to fill.";
 // What Scan is FOR, stated up front — so it is never confused with the
 // separate close-up diagram review next to it (Upload Clarity audit).
 const SCAN_HELPER_COPY =
-  "Reads the written text from a photo of your answer page into the empty fields. It doesn't review diagrams — use “Add your diagram” for that.";
+  "Aptly will turn a clear photo into editable text. Diagrams can be added separately.";
 
 type ScanStatus = "idle" | "preparing" | "reading" | "done" | "error";
 
@@ -207,18 +207,18 @@ export function ScanAttachment({
       />
 
       {attachment === null ? (
-        <div>
+        <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3.5 transition-colors hover:border-primary/25 hover:bg-accent/20">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
             disabled={disabled || reading}
             onClick={() => inputRef.current?.click()}
           >
             <Paperclip className="h-3.5 w-3.5" />
-            Scan your answer page (optional)
+            Upload handwritten answer
           </Button>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{SCAN_HELPER_COPY}</p>
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{SCAN_HELPER_COPY}</p>
         </div>
       ) : (
         <div className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/40 px-2.5 py-2">

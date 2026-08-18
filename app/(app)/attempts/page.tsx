@@ -10,7 +10,6 @@ import { MarkPill } from "@/components/assessment/mark-pill";
 import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
 import { useAttempts } from "@/lib/storage";
 import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
-import { SUBJECT_BADGE } from "@/lib/subjects";
 import {
   APTLY_PRACTICE_LABEL,
   REVISION_ATTEMPT_LABEL,
@@ -65,9 +64,9 @@ export default function AttemptsPage() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Learning log</h1>
+        <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">History</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Every answer you submit, saved privately to your Aptly account.
+          Revisit your answers, feedback, and revisions in one place.
         </p>
       </div>
 
@@ -83,19 +82,18 @@ export default function AttemptsPage() {
           const f = presentedFeedback(a);
           const sourceMissing = a.assessment != null && isSourceMaterialMissing(a.assessment);
           return (
-            <Card key={a.id} className="overflow-hidden">
+            <Card key={a.id} className="overflow-hidden transition-colors hover:border-primary/20">
               <button
                 type="button"
                 onClick={() => setExpanded(open ? null : a.id)}
                 aria-expanded={open}
                 aria-controls={open ? detailsId : undefined}
-                className="flex w-full items-center gap-4 p-4 text-left"
+                className="flex w-full items-center gap-3.5 p-3.5 text-left sm:px-4"
               >
                 <MarkPill attempt={a} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-medium">{topicOf(a)}</span>
-                    <Badge className={SUBJECT_BADGE[a.subject]}>{a.subject}</Badge>
                     {/* Practice Loop provenance — concise, never hidden. */}
                     {a.parentAttemptId != null && <Badge>{REVISION_ATTEMPT_LABEL}</Badge>}
                     {a.practiceQuestionId != null && <Badge>{APTLY_PRACTICE_LABEL}</Badge>}
@@ -239,7 +237,7 @@ export default function AttemptsPage() {
                       >
                         <p className="text-xs leading-relaxed text-muted-foreground">
                           Delete this attempt permanently? It will also be removed from your
-                          Dashboard and Analytics.
+                      Home and Progress.
                         </p>
                         <div className="flex flex-wrap items-center gap-2">
                           <Button

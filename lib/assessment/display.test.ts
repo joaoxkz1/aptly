@@ -5,6 +5,7 @@ import {
   TOPICS_WITH_ESTIMATES_CAPTION,
   TOPICS_WITH_ESTIMATES_TITLE,
   basedOnEstimatesLabel,
+  evidenceStrengthLabel,
   nextFocusPresentation,
   practiceProvenanceLabel,
   withConfirmedTotalsLabel,
@@ -26,18 +27,14 @@ describe("estimate vocabulary — exact shared labels", () => {
     expect(withConfirmedTotalsLabel(0)).toBe("0 marked with a confirmed total");
   });
 
-  it("level-card evidence line counts marked answers AND states the revision rule", () => {
-    expect(basedOnEstimatesLabel(1)).toBe(
-      "Based on 1 marked answer — revisions of the same question count once"
-    );
-    expect(basedOnEstimatesLabel(4)).toBe(
-      "Based on 4 marked answers — revisions of the same question count once"
-    );
+  it("level-card evidence line keeps the visible count concise", () => {
+    expect(basedOnEstimatesLabel(1)).toBe("Based on 1 marked answer");
+    expect(basedOnEstimatesLabel(4)).toBe("Based on 4 marked answers");
   });
 
   it("topics card is framed as marked-answer evidence in student words", () => {
-    expect(TOPICS_WITH_ESTIMATES_TITLE).toBe("Topics with marked answers");
-    expect(TOPICS_WITH_ESTIMATES_CAPTION).toBe("from answers marked out of a confirmed total");
+    expect(TOPICS_WITH_ESTIMATES_TITLE).toBe("Topic coverage");
+    expect(TOPICS_WITH_ESTIMATES_CAPTION).toBe("from scored answers");
   });
 
   it("the Economics-level disclaimer is the exact required microcopy", () => {
@@ -68,7 +65,7 @@ describe("nextFocusPresentation — evidence-honest next-focus wording (display 
   it("one independent marked answer uses the early-focus wording", () => {
     const p = nextFocusPresentation({ ...base, responses: 1 });
     expect(p.early).toBe(true);
-    expect(p.heading).toBe("Early focus to test: Data use");
+    expect(p.heading).toBe("Focus to test: Data use");
     expect(p.evidenceLine).toBe("Based on 1 marked answer so far.");
     // Never the strong claims on a single answer.
     expect(p.heading).not.toContain("Weakest skill");
@@ -81,7 +78,7 @@ describe("nextFocusPresentation — evidence-honest next-focus wording (display 
     for (const responses of [NEXT_FOCUS_STRONG_EVIDENCE_MIN, 3, 7]) {
       const p = nextFocusPresentation({ ...base, responses });
       expect(p.early).toBe(false);
-      expect(p.heading).toBe("Weakest skill: Data use");
+      expect(p.heading).toBe("Focus area: Data use");
       expect(p.evidenceLine).toBeNull();
       expect(p.explanation).toBe(base.explanation);
     }
@@ -97,5 +94,13 @@ describe("practice provenance wording", () => {
   it("claims Current Focus only when the saved practice row proves it", () => {
     expect(practiceProvenanceLabel(true)).toBe("Practice generated from your next focus");
     expect(practiceProvenanceLabel(false)).toBe("Practice generated from your selected topic");
+  });
+
+  it("uses one conservative evidence vocabulary everywhere", () => {
+    expect(evidenceStrengthLabel(1)).toBe("Low evidence");
+    expect(evidenceStrengthLabel(2)).toBe("Low evidence");
+    expect(evidenceStrengthLabel(3)).toBe("Developing signal");
+    expect(evidenceStrengthLabel(5)).toBe("Developing signal");
+    expect(evidenceStrengthLabel(6)).toBe("Reliable pattern");
   });
 });

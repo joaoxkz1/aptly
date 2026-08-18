@@ -96,7 +96,7 @@ export function FeedbackResult({
     isRevisionOf && parentAttempt !== null ? revisionIssueFollowUp(parentAttempt, attempt) : [];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {isRevisionOf && (
         <Card>
           <CardContent className="flex items-start gap-3 p-5">
@@ -163,8 +163,7 @@ export function FeedbackResult({
                 </div>
               )}
               <p className="mt-1 text-xs text-muted-foreground">
-                Revision of an earlier attempt — both stay in your learning log. Practice
-                estimates, not an official grade change.
+                Both versions stay together in your History.
               </p>
             </div>
           </CardContent>
@@ -172,11 +171,9 @@ export function FeedbackResult({
       )}
       {assessment !== null ? (
         <>
-          {/* Header → recognised component structure (4-mark diagram only) →
-              qualitative diagnostic feedback */}
+          {/* Lead with the result. Detailed component diagnostics appear after
+              the most useful strengths and improvements. */}
           <MarkSummary attempt={attempt} />
-          <AssessmentComponents attempt={attempt} />
-          <MarkBreakdown assessment={assessment} />
         </>
       ) : (
         /* Legacy attempt (no assessment) — conservative header, no score or band */
@@ -237,7 +234,7 @@ export function FeedbackResult({
         <div className="grid gap-4 md:grid-cols-2">
           {/* Strengths */}
           {f.strengths.length > 0 && (
-            <Card>
+            <Card className="border-emerald-200/70 bg-emerald-50/40 shadow-none dark:border-emerald-900/70 dark:bg-emerald-950/15">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                   <Check className="h-4 w-4" />
@@ -259,11 +256,11 @@ export function FeedbackResult({
 
           {/* Improvements */}
           {f.improvements.length > 0 && (
-            <Card>
+            <Card className="border-amber-200/80 bg-amber-50/45 shadow-none dark:border-amber-900/70 dark:bg-amber-950/15">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
                   <Lightbulb className="h-4 w-4" />
-                  Improvements
+                  What to improve next
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -281,10 +278,17 @@ export function FeedbackResult({
         </div>
       )}
 
+      {assessment !== null && (
+        <div className="grid gap-4 md:grid-cols-2 [&>*:only-child]:md:col-span-2">
+          <AssessmentComponents attempt={attempt} />
+          <MarkBreakdown assessment={assessment} />
+        </div>
+      )}
+
       {/* Issues in THIS answer — single-answer evidence, honestly separated
           from cross-attempt recurring patterns (one weakness is never called
           "recurring"). */}
-      <Card>
+      <Card className="bg-card/70 shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {f.mistakes.length > 0 ? (
@@ -334,7 +338,7 @@ export function FeedbackResult({
 
       {/* Examiner comment */}
       {f.examinerComment && (
-        <Card>
+        <Card className="bg-card/70 shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Quote className="h-4 w-4 text-muted-foreground" />
@@ -356,7 +360,7 @@ export function FeedbackResult({
             <Zap className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
-                Improve this answer
+                What to practise next
               </p>
               <p className="mt-1 text-sm leading-relaxed">{f.studyNext}</p>
             </div>
@@ -391,17 +395,16 @@ export function FeedbackResult({
               Saved to your learning log
             </span>
           )}
-          <Button size="lg" onClick={onTryAnother}>
-            <RotateCcw className="h-4 w-4" />
-            {tryAnotherLabel}
-          </Button>
-          {/* Deliberately quieter than the feedback itself: act on this answer. */}
           {onRevise !== undefined && (
-            <Button size="lg" variant="outline" onClick={onRevise}>
+            <Button size="lg" onClick={onRevise}>
               <PenLine className="h-4 w-4" />
               Revise this answer
             </Button>
           )}
+          <Button size="lg" variant={onRevise !== undefined ? "outline" : "primary"} onClick={onTryAnother}>
+            <RotateCcw className="h-4 w-4" />
+            {tryAnotherLabel}
+          </Button>
         </div>
         {/* Practice the evidence-backed focus — only when one actually exists. */}
         {nextFocus !== null && (

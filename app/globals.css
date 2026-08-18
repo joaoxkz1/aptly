@@ -3,30 +3,30 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #f7f7f5;
-  --foreground: #18181b;
+  --background: #f7f8fc;
+  --foreground: #171821;
   --card: #ffffff;
-  --card-foreground: #18181b;
-  --muted: #f1f1ef;
-  --muted-foreground: #71717a;
-  --border: #e4e4e7;
-  --primary: #4f46e5;
+  --card-foreground: #171821;
+  --muted: #f1f3f8;
+  --muted-foreground: #656978;
+  --border: #e2e5ee;
+  --primary: #5548e7;
   --primary-foreground: #ffffff;
-  --accent: #eef2ff;
-  --accent-foreground: #3730a3;
+  --accent: #eeefff;
+  --accent-foreground: #3f35b5;
   --destructive: #dc2626;
   --ring: #6366f1;
 }
 
 .dark {
-  --background: #0c0c0e;
+  --background: #0d0e13;
   --foreground: #f4f4f5;
-  --card: #151518;
+  --card: #15161d;
   --card-foreground: #f4f4f5;
-  --muted: #1e1e22;
+  --muted: #1d1f29;
   /* One restrained step lighter for better dark-mode secondary-text contrast. */
   --muted-foreground: #b4b4bd;
-  --border: #27272a;
+  --border: #292c38;
   --primary: #818cf8;
   --primary-foreground: #1e1b4b;
   --accent: #1e1b3a;
@@ -55,8 +55,41 @@
 
 body {
   background: var(--background);
+  background-image:
+    radial-gradient(circle at 72% -10%, color-mix(in srgb, var(--primary) 8%, transparent) 0, transparent 30rem),
+    linear-gradient(to bottom, color-mix(in srgb, var(--card) 30%, transparent), transparent 24rem);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline-offset: 2px;
+}
+
+.aptly-scrollbar {
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 42%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.aptly-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.aptly-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted-foreground) 38%, transparent);
+  background-clip: padding-box;
 }
 
 ::selection {
