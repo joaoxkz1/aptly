@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import {
-  ArrowRight,
   BookOpenCheck,
   Check,
   CircleAlert,
@@ -11,10 +9,8 @@ import {
   History,
   Lightbulb,
   Loader2,
-  PenLine,
   Quote,
   RotateCcw,
-  Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +38,7 @@ import {
   REVISION_SAVED_LABEL,
 } from "@/lib/assessment/display";
 import type { RecurringMistakeSummary } from "@/lib/assessment/readiness";
-import { answerPracticeFocus, focusLabel, focusedPracticeHref } from "@/lib/assessment/focused-practice";
+import { AnswerNextStep } from "@/components/assessment/answer-next-step";
 import type { Attempt } from "@/lib/types";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
@@ -74,12 +70,12 @@ export function FeedbackResult({
   onTryAnother: () => void;
 }) {
   const assessment = attempt.assessment ?? null;
-  const practiceFocus = saveState === "saved" ? answerPracticeFocus(attempt) : null;
   // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness. The
   // canonical presentation helper (shared with the Learning log) strips any
   // source-data corrective wording from the model's feedback.
   const sourceMissing = assessment !== null && isSourceMaterialMissing(assessment);
   const f = presentedFeedback(attempt);
+  const mistakes = f.mistakes ?? [];
 
   // Revision of an earlier attempt: a restrained estimate comparison ONLY when
   // both are marked with matching totals and a compatible framework; otherwise
@@ -193,6 +189,9 @@ export function FeedbackResult({
         </Card>
       )}
 
+      <AnswerNextStep attempt={attempt} saved={saveState === "saved"}
+        onRevise={onRevise} onTryAnother={onTryAnother} tryAnotherLabel={tryAnotherLabel} />
+
       {/* Source-less data response: data use is unavailable, with a clear path
           (the exact same notice the Learning log shows) */}
       {sourceMissing && (
@@ -289,7 +288,7 @@ export function FeedbackResult({
       <Card className="bg-card/70 shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            {f.mistakes.length > 0 ? (
+            {mistakes.length > 0 ? (
               <CircleAlert className="h-4 w-4 text-rose-500" />
             ) : (
               <CircleCheck className="h-4 w-4 text-emerald-500" />
@@ -299,8 +298,8 @@ export function FeedbackResult({
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-2">
-            {f.mistakes.length > 0 ? (
-              f.mistakes.map((m) => (
+            {mistakes.length > 0 ? (
+              mistakes.map((m) => (
                 <Badge
                   key={m}
                   className="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300"
@@ -351,21 +350,6 @@ export function FeedbackResult({
         </Card>
       )}
 
-      {/* Improve this answer — the fastest fix for THIS response, shown as the closing focus */}
-      {f.studyNext && (
-        <Card className="border-primary/25 bg-gradient-to-br from-accent/70 to-card">
-          <CardContent className="flex items-start gap-3 p-5">
-            <Zap className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground" />
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">
-                What to practise next
-              </p>
-              <p className="mt-1 text-sm leading-relaxed">{f.studyNext}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Save status + actions */}
       <div className="flex flex-col gap-3">
         {saveState === "error" && (
@@ -393,27 +377,7 @@ export function FeedbackResult({
               Saved to your learning log
             </span>
           )}
-          {onRevise !== undefined && (
-            <Button size="lg" onClick={onRevise}>
-              <PenLine className="h-4 w-4" />
-              Revise this answer
-            </Button>
-          )}
-          <Button size="lg" variant={onRevise !== undefined ? "outline" : "primary"} onClick={onTryAnother}>
-            <RotateCcw className="h-4 w-4" />
-            {tryAnotherLabel}
-          </Button>
         </div>
-        {/* Practice the evidence-backed focus — only when one actually exists. */}
-        {practiceFocus !== null && (
-          <Link
-            href={focusedPracticeHref(practiceFocus)}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            Practise {focusLabel(practiceFocus)} from this answer{" "}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        )}
       </div>
     </div>
   );

@@ -267,7 +267,16 @@ describe("Privacy Notice is accurate about how Aptly actually works", () => {
   it("explains device storage without promising a cookie banner", () => {
     expect(PRIVACY).toContain("Sign-in cookies");
     expect(PRIVACY).toContain("theme choice");
-    expect(PRIVACY).toContain("require a cookie banner");
+    expect(PRIVACY).toContain("Temporary typed drafts");
+    expect(PRIVACY).toContain("after 24 hours");
+    const copy = PRIVACY.replace(/\s+/g, " ");
+    expect(copy).toContain("checks this cutoff when it next accesses draft storage, without a background deletion timer");
+    expect(copy).toContain("When storage is accessible, Aptly clears the matching draft after a confirmed save or discard");
+    expect(copy).toContain("account drafts when you sign out, switch accounts or delete your account");
+    expect(copy).toContain("If the browser blocks storage access, removal of stored drafts cannot be guaranteed");
+    expect(copy).toContain("Pending cleanup is retried before the next draft access or account event in the same loaded page");
+    expect(copy).toContain("these pending retries do not survive reloading or closing it");
+    expect(copy).toContain("clear this site data through your browser settings");
     expect(PRIVACY).toContain("no advertising cookies");
   });
 });

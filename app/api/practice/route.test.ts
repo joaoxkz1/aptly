@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Attempt, PracticeQuestion } from "@/lib/types";
 import { focusHistory, focusAttempt } from "@/lib/testing/focused-practice-fixtures";
+import { learningLoopAttempt } from "@/lib/testing/learning-loop-fixtures";
+import { answerPracticeFocus } from "@/lib/assessment/focused-practice";
 import { ECONOMICS_QUESTION_BANK } from "@/lib/assessment/question-bank/economics-v1";
 import { requestFingerprint } from "@/lib/ai/request-integrity";
 
@@ -172,6 +174,34 @@ describe("verified focused Practice", () => {
     mocks.validate.mockReturnValue({ question: "Using real-world examples, evaluate policies to reduce negative production externalities. [15 marks]", commandTerm: "evaluate", targetSkills: ["economic_analysis", "application", "evaluation"], angleTags: ["externality"], gradingBlueprint: BANK_ITEM.gradingBlueprint });
   }
   beforeEach(() => { mocks.state.attempts = focusHistory(); });
+  it.each([
+    ["analysis", false], ["analysis", true], ["evaluation", false], ["evaluation", true],
+  ] as const)("the audited %s priority survives the route and saved focus (API fallback: %s)", async (scenario, exhausted) => {
+    const answer = learningLoopAttempt(scenario);
+    answer.id = "77777777-7777-4777-8777-777777777777";
+    const focus = answerPracticeFocus(answer)!;
+    const skill = scenario === "analysis" ? "economic_analysis" : "evaluation";
+    mocks.state.attempts.push(answer);
+    const compatible = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === focus.topicCode &&
+      q.marks === focus.recommendedMarks && q.targetSkills.includes(skill));
+    expect(compatible.length).toBeGreaterThan(0);
+    if (exhausted) {
+      mocks.state.history = compatible.map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+      mocks.validate.mockReturnValue(compatible[0]); // Validator itself is exercised with real outputs in practice-schema.test.
+    }
+    expect((await POST(request({ context: "answer_feedback", sourceAttemptId: answer.id,
+      marks: focus.recommendedMarks, topicCode: focus.topicCode }))).status).toBe(200);
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({
+      skill: focus.targetSkill, markTotal: focus.recommendedMarks, topicCode: focus.topicCode,
+      fromCurrentFocus: false, questionOrigin: exhausted ? "adaptive_generated" : "curated_bank",
+      targetSkills: expect.arrayContaining([focus.targetSkill]),
+      focus: { ...focus, serverVerified: true, courseLevel: "sl" },
+    });
+    expect(mocks.openaiCreate).toHaveBeenCalledTimes(exhausted ? 1 : 0);
+    if (exhausted) expect(mocks.validate.mock.calls[0][1]).toMatchObject({
+      targetSkill: focus.targetSkill, topicCode: focus.topicCode, markTotal: focus.recommendedMarks, evidenceQuestion: answer.question,
+    });
+  });
   it("serves Application at 15 marks with truthful primary skill and no reservation", async () => {
     expect((await POST(request(focused))).status).toBe(200);
     expect(mocks.save.mock.calls[0][2]).toMatchObject({ skill: "application", markTotal: 15, framework: "paper1b_15_mark", fromCurrentFocus: true, targetSkills: expect.arrayContaining(["application"]), focus: { source: "current_focus", serverVerified: true, targetSkill: "application", courseLevel: "sl" } });

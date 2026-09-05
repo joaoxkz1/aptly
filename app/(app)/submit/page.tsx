@@ -48,6 +48,9 @@ import { broadcastAttemptsChanged, useAttempts } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/client";
 import { fetchPracticeQuestion } from "@/lib/supabase/practice-questions";
 import { cn } from "@/lib/utils";
+import { useDraftAccount } from "@/components/draft-account-boundary";
+import { useSubmitDraft } from "@/lib/drafts/use-submit-draft";
+import { draftTask } from "@/lib/drafts/session-draft";
 
 // useSearchParams needs a Suspense boundary; the inner page is keyed on the
 // params so entering/leaving revision or practice mode fully resets its state.
@@ -61,6 +64,7 @@ export default function SubmitPage() {
 
 function SubmitPageFromParams() {
   const params = useSearchParams();
+  const accountId = useDraftAccount();
   const reviseId = params.get("revise");
   const practiceId = params.get("practice");
   // Cold-start deep link (?sample=1): open straight into the free sample
@@ -68,9 +72,11 @@ function SubmitPageFromParams() {
   // in revision/practice modes, where the question is fixed.
   const startWithSample =
     params.get("sample") === "1" && reviseId === null && practiceId === null;
+  if (!accountId) return <p className="text-sm text-muted-foreground">Checking your account…</p>;
   return (
     <SubmitPageInner
       key={`${reviseId ?? ""}|${practiceId ?? ""}|${startWithSample ? "s" : ""}`}
+      accountId={accountId}
       reviseId={reviseId}
       practiceId={practiceId}
       startWithSample={startWithSample}
@@ -79,10 +85,12 @@ function SubmitPageFromParams() {
 }
 
 function SubmitPageInner({
+  accountId,
   reviseId,
   practiceId,
   startWithSample = false,
 }: {
+  accountId: string;
   reviseId: string | null;
   practiceId: string | null;
   startWithSample?: boolean;
@@ -95,12 +103,12 @@ function SubmitPageInner({
   // The ?sample=1 entry pre-fills the pristine sample text, so every existing
   // sample guard (never graded, never saved, upload controls unmounted)
   // applies exactly as if the student had clicked "Use a sample answer".
-  const [typedQuestion, setTypedQuestion] = useState(startWithSample ? SAMPLE_QUESTION : "");
-  const [answer, setAnswer] = useState(startWithSample ? SAMPLE_ANSWER : "");
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<Attempt | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [savedEarlier, setSavedEarlier] = useState(false);
+  const [attachmentVersion, setAttachmentVersion] = useState(0);
   // Non-null when a compact preflight choice is needed before grading.
   const [preflight, setPreflight] = useState<PreflightResult | null>(null);
   // True while the Paper 2(g)/3(b) source-material step is active — the bottom
@@ -116,7 +124,7 @@ function SubmitPageInner({
   // Aptly Scan: candidate source text read from an attached photo. It only
   // seeds the existing source-material step (still reviewed/edited there) —
   // it never bypasses the source gate and is cleared with the photo.
-  const [stagedSource, setStagedSource] = useState<string | null>(null);
+  const [sourceFromScan, setSourceFromScan] = useState(false);
   // True while a scan extraction is in flight — grading pauses so the scanned
   // text is always reviewable before the grade call.
   const [scanReading, setScanReading] = useState(false);
@@ -176,6 +184,19 @@ function SubmitPageInner({
     };
   }, [practiceQuestionId]);
 
+  const draftReady = (reviseId === null || parent !== null) &&
+    (practiceQuestionId === null || practiceQuestion !== null);
+  const draft = useSubmitDraft(accountId, draftTask(reviseId, practiceId), {
+    question: startWithSample ? SAMPLE_QUESTION : "",
+    answer: startWithSample ? SAMPLE_ANSWER : "", source: "",
+  }, draftReady, startWithSample);
+  const typedQuestion = draft.text.question;
+  const answer = draft.text.answer;
+  const stagedSource = draft.text.source || null;
+  function setTypedQuestion(value: string) { draft.edit({ question: value }); }
+  function setAnswer(value: string) { draft.edit({ answer: value }); }
+  function setStagedSource(value: string | null) { draft.edit({ source: value ?? "" }); }
+
   // The question being answered. Fixed (read-only) in revision and practice
   // modes so the trusted context always matches what gets graded and saved.
   const isPractice = practiceId !== null;
@@ -202,7 +223,6 @@ function SubmitPageInner({
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
   const savedIdRef = useRef<string | null>(null);
-  const gradeRequestRef = useRef<{ signature: string; idempotencyKey: string } | null>(null);
 
   // Aptly Scan reads the LATEST field values when its response arrives (the
   // student may keep typing while the image is read) — a ref avoids handing
@@ -281,7 +301,7 @@ function SubmitPageInner({
       setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
     }
     if (fill.answer !== null) setAnswer(fill.answer);
-    if (fill.stagedSource !== null) setStagedSource(fill.stagedSource);
+    if (fill.stagedSource !== null) { setStagedSource(fill.stagedSource); setSourceFromScan(true); }
   }
 
   function fillSample() {
@@ -291,8 +311,8 @@ function SubmitPageInner({
     ) {
       return;
     }
-    setTypedQuestion(SAMPLE_QUESTION);
-    setAnswer(SAMPLE_ANSWER);
+    draft.discard();
+    draft.edit({ question: SAMPLE_QUESTION, answer: SAMPLE_ANSWER }, false);
     // Replacing the question invalidates any pending choice/override for it.
     setPreflight(null);
     setSourceStep(false);
@@ -302,7 +322,7 @@ function SubmitPageInner({
     // graded, so nothing may look gradable alongside it. Both upload controls
     // unmount (their gates check isSample), any staged scan text and diagram
     // photo are dropped, and an in-flight scan can no longer pause grading.
-    setStagedSource(null);
+    setSourceFromScan(false);
     setScanReading(false);
     handleDiagramChange(null);
   }
@@ -312,16 +332,19 @@ function SubmitPageInner({
   // exactly like a normal submission — no hidden free-sample treatment.
   const isSample = fixedQuestion === null && isUnmodifiedSample(typedQuestion, answer);
 
-  // "Try your own answer" from the walkthrough: back to an empty form.
+  // A separately opened walkthrough must preserve any unfinished manual draft.
   function handleTryYourOwn() {
+    if (startWithSample) {
+      router.push("/submit");
+      return;
+    }
     setShowWalkthrough(false);
-    setTypedQuestion("");
-    setAnswer("");
+    draft.discard();
     setPreflight(null);
     setSourceStep(false);
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
-    setStagedSource(null);
+    setSourceFromScan(false);
     handleDiagramChange(null);
   }
 
@@ -332,7 +355,7 @@ function SubmitPageInner({
   // step first — the paid grading call can never run before that choice.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (inFlight.current || grading) return;
+    if (inFlight.current || grading || !draftReady || !draft.session.isCurrent()) return;
     // Handler-level protection: the pristine sample is NEVER graded — its only
     // path is the free walkthrough. (The Grade CTA is hidden in sample mode;
     // this guard holds even if submit is triggered outside the visible UI.)
@@ -380,7 +403,7 @@ function SubmitPageInner({
   // practice the server swaps in ITS stored question/source before grading and
   // ignores every preflight field (requestedSource stays null).
   async function grade(decision: PreflightDecision | GradeDecision) {
-    if (inFlight.current || grading) return;
+    if (inFlight.current || grading || !draftReady || !draft.session.isCurrent()) return;
     // Defense in depth (mirrors handleSubmit): pristine sample content can
     // never reach the paid grade call or the diagram review, whatever path
     // tried to invoke grading.
@@ -406,15 +429,19 @@ function SubmitPageInner({
       practiceQuestionId,
       parentAttemptId: revisionCtx?.parentId ?? null,
     });
-    const pendingGrade = gradeRequestRef.current;
-    const gradeIdempotencyKey =
-      pendingGrade?.signature === operationSignature
-        ? pendingGrade.idempotencyKey
-        : crypto.randomUUID();
-    gradeRequestRef.current = {
-      signature: operationSignature,
-      idempotencyKey: gradeIdempotencyKey,
-    };
+    let ticket;
+    try { ticket = await draft.session.beginSubmission(operationSignature); }
+    catch {
+      setError("Couldn't prepare this request. Your text is still here; please try again.");
+      window.clearTimeout(timer); inFlight.current = false; setGrading(false); return;
+    }
+    const gradeIdempotencyKey = ticket.idempotencyKey;
+    if (!draft.session.isCurrent()) {
+      window.clearTimeout(timer);
+      inFlight.current = false;
+      setGrading(false);
+      return;
+    }
 
     // Diagram Evidence V1: review the attached photo in PARALLEL with grading.
     // Two separate routes — grading stays text-only and never sees the photo;
@@ -450,6 +477,7 @@ function SubmitPageInner({
         signal: controller.signal,
       });
 
+      if (!draft.session.isCurrent()) return;
       if (!res.ok) {
         let code = "grading_failed";
         let reference: string | null = null;
@@ -460,21 +488,27 @@ function SubmitPageInner({
         } catch {
           // ignore parse failure; use default code
         }
-        // Fail closed: no result, nothing saved.
+        // Keep the draft and retry identity, including uncertain completion.
         setError(clientMessageForGradeFailure(res.status, code, reference));
-        if (code !== "request_in_progress") gradeRequestRef.current = null;
         return;
       }
 
       const { attempt: savedAttempt } = (await res.json()) as { attempt: Attempt };
+      if (!draft.session.isCurrent()) return;
       // Grade persistence is complete at this point. Show and broadcast it
       // immediately; the feedback-only diagram review may finish later.
-      gradeRequestRef.current = null;
-      savedIdRef.current = savedAttempt.id;
-      setResult(savedAttempt);
-      setSaveState("saved");
+      if (!savedAttempt?.id) throw new Error("Missing saved attempt");
+      const unchanged = draft.session.saved(ticket);
+      draft.refresh();
+      if (!unchanged) {
+        setSavedEarlier(true);
+      } else {
+        savedIdRef.current = savedAttempt.id;
+        setResult(savedAttempt);
+        setSaveState("saved");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
       broadcastAttemptsChanged();
-      window.scrollTo({ top: 0, behavior: "smooth" });
       const feedback = savedAttempt.feedback;
       const assessment = savedAttempt.assessment ?? null;
       const retainedSource = savedAttempt.sourceMaterial ?? null;
@@ -488,6 +522,7 @@ function SubmitPageInner({
       let diagramEvidence: DiagramEvidence | null = null;
       if (diagramReview !== null) {
         const review = await diagramReview;
+        if (!draft.session.isCurrent()) return;
         if (review.evidence !== null && review.reservationId !== null) {
           try {
             const attach = await fetch("/api/diagram/attach", {
@@ -528,9 +563,9 @@ function SubmitPageInner({
         // never image data). Strictly this attempt's own — revisions re-attach.
         diagramEvidence,
       };
-      setResult(attempt);
+      if (unchanged && draft.session.matches(ticket)) setResult(attempt);
     } catch {
-      setError(clientGradeErrorMessage());
+      if (draft.session.isCurrent()) setError(clientGradeErrorMessage());
     } finally {
       setGrading(false);
       inFlight.current = false;
@@ -551,14 +586,20 @@ function SubmitPageInner({
     setResult(null);
     setSaveState("idle");
     savedIdRef.current = null;
-    setTypedQuestion("");
-    setAnswer("");
+    draft.discard();
     setPreflight(null);
     setSourceStep(false);
     setSourceFrameworkHint(null);
     setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
-    setStagedSource(null);
+    setSourceFromScan(false);
     handleDiagramChange(null);
+  }
+
+  if (!draftReady) {
+    return <div className="space-y-3 text-sm text-muted-foreground">
+      <p>{revisionMissing || practiceMissing ? "This question could not be loaded. Your draft has not been replaced." : "Loading your question…"}</p>
+      {(revisionMissing || practiceMissing) && <Link href="/practice" className="text-primary hover:underline">Choose a practice question</Link>}
+    </div>;
   }
 
   // Sample walkthrough: a fixed example — nothing is graded, saved, or counted.
@@ -601,6 +642,7 @@ function SubmitPageInner({
           }
           onRetry={handleRetry}
           onTryAnother={handleTryAnother}
+          tryAnotherLabel="Use my own question"
         />
         {saveState === "saved" && (
           <Link
@@ -649,7 +691,7 @@ function SubmitPageInner({
           <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             {revisionMissing
-              ? "The original attempt could not be found — it may have been deleted. You can still submit a fresh answer below."
+              ? "The original attempt could not be found — it may have been deleted. Open Submit to start a fresh answer."
               : "This practice question could not be found — it may have been removed. Generate a new one from Practice."}
           </span>
         </div>
@@ -749,6 +791,20 @@ function SubmitPageInner({
           instructions; contextual help appears only when detection needs it. */}
       <Card className="overflow-hidden shadow-[0_18px_55px_-38px_rgba(31,28,89,0.5)]">
         <CardContent className="p-6 md:p-7">
+          {(draft.restored || !draft.available || savedEarlier) && (
+            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" role="status">
+              <span>{!draft.available
+                ? "Temporary draft recovery is unavailable in this tab. Keep a copy of your text before leaving."
+                : savedEarlier ? "Your earlier answer was saved to History. Your newer edits are still here."
+                : "Draft restored for this question in this tab. Reattach any photo you still need."}</span>
+              <button type="button" className="font-medium text-primary hover:underline" onClick={() => {
+                draft.discard(); setPreflight(null); setSourceStep(false);
+                setSourceFrameworkHint(null); setTotalOverride(DEFAULT_TOTAL_OVERRIDE);
+                setSourceFromScan(false); setSavedEarlier(false); setError(null); handleDiagramChange(null);
+                setAttachmentVersion(value => value + 1);
+              }}>Discard draft</button>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div>
               <Label htmlFor="question">Question</Label>
@@ -849,10 +905,11 @@ function SubmitPageInner({
             <div className="grid gap-3 empty:hidden md:grid-cols-2">
               {fixedQuestion === null && !isSample && (
                 <ScanAttachment
+                  key={`scan-${attachmentVersion}`}
                   disabled={grading || preflight !== null}
                   getFields={getScanFields}
                   onFill={handleScanFill}
-                  onRemoved={() => setStagedSource(null)}
+                  onRemoved={() => { setStagedSource(null); setSourceFromScan(false); }}
                   onReadingChange={setScanReading}
                 />
               )}
@@ -863,6 +920,7 @@ function SubmitPageInner({
                   answer is exactly when a student wants their diagram seen. */}
               {!isSample && (
                 <DiagramAttachment
+                  key={`diagram-${attachmentVersion}`}
                   disabled={grading || preflight !== null}
                   onAttachedChange={handleDiagramChange}
                 />
@@ -907,7 +965,7 @@ function SubmitPageInner({
             {error !== null && (
               <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
                 <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{error}</span>
+                <span>{error} <Link href="/attempts" className="underline">Check History</Link></span>
               </div>
             )}
 
@@ -921,6 +979,8 @@ function SubmitPageInner({
                 // Candidate source read from an attached photo — it only seeds
                 // the editable source box; the student still reviews it here.
                 initialSource={stagedSource}
+                sourceFromScan={sourceFromScan}
+                onSourceChange={setStagedSource}
                 onChoose={(d) => void grade(d)}
                 onEnterSourceStep={() => setSourceStep(true)}
               />

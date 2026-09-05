@@ -38,6 +38,8 @@ import {
 import { clientMessageForPracticeFailure } from "@/lib/ai/practice-errors";
 import { createPracticeGenerationClient } from "@/lib/ai/practice-request";
 import { createClient } from "@/lib/supabase/client";
+import { fetchAttempts } from "@/lib/supabase/attempts";
+import { generalPracticeSuggestion } from "@/lib/assessment/general-practice";
 import type { PracticeQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { focusMatchesSettings, focusPolicy, focusSummary, savedPracticeFocus, type PracticeFocus } from "@/lib/assessment/focused-practice";
@@ -88,6 +90,7 @@ function PracticeGenerator() {
   const requestedMark = validMark(params.get("marks"));
   const requestedSource = params.get("source") ?? (params.get("focus") === "1" ? "current_focus" : null);
   const sourceAttemptId = params.get("attempt");
+  const suggestUncovered = params.get("suggest") === "uncovered" && requestedSource === null;
 
   const [courseLevel, setCourseLevel] = useState<EconomicsCourseLevel | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -95,6 +98,7 @@ function PracticeGenerator() {
   const [marks, setMarks] = useState<PracticeMarkTotal>(requestedMark ?? 10);
   const [topicCode, setTopicCode] = useState(requestedTopic ?? "1.1");
   const [search, setSearch] = useState("");
+  const [suggestedTopic, setSuggestedTopic] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -110,10 +114,22 @@ function PracticeGenerator() {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!active) return;
       if (requestedMark === null) {
-        const remembered = validMark(window.sessionStorage.getItem(LAST_MARKS_KEY));
-        if (remembered !== null) setMarks(remembered);
+        try {
+          const remembered = validMark(window.sessionStorage.getItem(LAST_MARKS_KEY));
+          if (remembered !== null && !suggestUncovered) setMarks(remembered);
+        } catch { /* A blocked preference store cannot block Practice. */ }
       }
       setCourseLevel(readEconomicsCourseLevel(data.session?.user.user_metadata));
+      if (suggestUncovered && requestedTopic === null) {
+        try {
+          const attempts = await fetchAttempts(supabase);
+          if (!active) return;
+          const suggestion = generalPracticeSuggestion(attempts, readEconomicsCourseLevel(data.session?.user.user_metadata));
+          setTopicCode(suggestion.topicCode);
+          if (requestedMark === null) setMarks(suggestion.marks);
+          setSuggestedTopic(suggestion.suggested ? suggestion.topicCode : null);
+        } catch { /* Ordinary Practice defaults are valid if coverage is unavailable. */ }
+      }
       if (requestedSource) {
         try {
           const query = new URLSearchParams({ source: requestedSource });
@@ -143,7 +159,7 @@ function PracticeGenerator() {
       active = false;
       selectionVersion.current += 1;
     };
-  }, [requestedMark, requestedSource, sourceAttemptId]);
+  }, [requestedMark, requestedSource, sourceAttemptId, suggestUncovered, requestedTopic]);
 
   const eligibleTopics = useMemo(
     () =>
@@ -210,13 +226,14 @@ function PracticeGenerator() {
     setMarks(value);
     setQuestion(null);
     setError(null);
-    window.sessionStorage.setItem(LAST_MARKS_KEY, String(value));
+    try { window.sessionStorage.setItem(LAST_MARKS_KEY, String(value)); } catch { /* Optional preference. */ }
   }
 
   function chooseTopic(value: string) {
     selectionVersion.current += 1;
     if (focus && !focusMatchesSettings(focus, value, marks)) exitFocus(value, marks);
     setTopicCode(value);
+    setSuggestedTopic(null);
     setQuestion(null);
     setError(null);
   }
@@ -296,6 +313,7 @@ function PracticeGenerator() {
             </div>
           )}
           {exitedFocus && <p className="text-sm text-muted-foreground" role="status">General practice — choose a topic and question length.</p>}
+          {suggestedTopic === selectedTopicCode && !focus && <p className="text-sm text-muted-foreground">This topic has no saved answer yet. Choose a topic you have studied, and change the question length if you like.</p>}
           {!canGenerateFocus && <Button variant="outline" onClick={() => exitFocus()}>Practise this topic instead</Button>}
 
           <Card className="overflow-hidden">

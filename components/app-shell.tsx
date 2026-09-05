@@ -16,6 +16,8 @@ import { createClient } from "@/lib/supabase/client";
 import { BrandMark } from "./brand-mark";
 import { ThemeToggle } from "./theme-toggle";
 import { LegalFooter } from "./legal/legal-footer";
+import { DraftAccountBoundary } from "./draft-account-boundary";
+import { clearBrowserDrafts } from "@/lib/drafts/session-draft";
 
 const NAV = [
   { href: "/", label: "Home", icon: LayoutDashboard },
@@ -42,6 +44,7 @@ function SignOutButton() {
   async function signOut() {
     if (busy) return;
     setBusy(true);
+    clearBrowserDrafts();
     await supabase.auth.signOut();
     router.replace("/login");
     router.refresh();
@@ -130,7 +133,7 @@ export function AppShell({
             Analytics. The Submit and feedback flows self-constrain to max-w-3xl,
             so they are unaffected. */}
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 pb-8 md:px-8 md:py-9 md:pb-10 lg:px-10">
-          {children}
+          <DraftAccountBoundary>{children}</DraftAccountBoundary>
         </main>
 
         {/* Tiny legal footer. It carries the bottom clearance the mobile nav

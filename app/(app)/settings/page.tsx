@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/legal/operator";
+import { clearBrowserDrafts } from "@/lib/drafts/session-draft";
 
 export default function SettingsPage() {
   const [supabase] = useState(() => createClient());
@@ -21,6 +22,7 @@ export default function SettingsPage() {
     try {
       const response = await fetch("/api/account/delete", { method: "POST" });
       if (!response.ok) throw new Error("delete failed");
+      clearBrowserDrafts();
       // Clear the local session directly: the account it belonged to no longer
       // exists, so a server-side sign-out would have nothing to revoke.
       try {

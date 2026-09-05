@@ -3,6 +3,7 @@ import type { EconomicsCourseLevel } from "@/lib/assessment/course-level";
 import type { AssessmentFramework, AssessmentSkill } from "@/lib/types";
 import { ECONOMICS_TAXONOMY_VERSION } from "@/lib/assessment/taxonomy";
 import type { EconomicsBankQuestion, GeneratorMarkTotal } from "./types";
+import { questionIdentity } from "@/lib/assessment/question-identity";
 
 export interface BankSelectionTarget {
   marks: GeneratorMarkTotal;
@@ -37,6 +38,7 @@ export function eligibleBankQuestions(
       question.marks === target.marks &&
       question.taxonomyVersion === ECONOMICS_TAXONOMY_VERSION &&
       question.topicCode === target.topicCode &&
+      (!target.evidenceQuestion || questionIdentity(question.question) !== questionIdentity(target.evidenceQuestion)) &&
       (target.framework === undefined || question.framework === target.framework) &&
       (!target.requireSkill || (target.targetSkill != null && question.targetSkills.includes(target.targetSkill))) &&
       // Definitions must name a concept present in the student's evidence.
@@ -74,6 +76,15 @@ export function selectCuratedQuestion(
       question.targetSkills.includes(target.targetSkill!)
     );
     if (skillMatched.length > 0) unseen = skillMatched;
+  }
+
+  // Only a known bank source establishes reusable angle metadata. Prefer less
+  // overlap within the exact eligible pool; do not claim semantic novelty.
+  const original = target.evidenceQuestion && bank.find(q => questionIdentity(q.question) === questionIdentity(target.evidenceQuestion!));
+  if (target.requireSkill && original && original.angleTags.length > 0) {
+    const overlap = (q: EconomicsBankQuestion) => q.angleTags.filter(tag => original.angleTags.includes(tag)).length;
+    const leastOverlap = Math.min(...unseen.map(overlap));
+    unseen = unseen.filter(q => overlap(q) === leastOverlap);
   }
 
   const ordered = [...unseen].sort((a, b) => a.id.localeCompare(b.id));

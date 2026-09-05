@@ -107,7 +107,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <div>
-              <p className="mb-2 text-sm font-medium">First, choose your course:</p>
+              <p className="mb-2 text-sm font-medium">{courseLevel === null ? "First, choose your course:" : "Your course:"}</p>
               <EconomicsCourseSelector
                 key={courseLevel ?? "unset"}
                 initialLevel={courseLevel}

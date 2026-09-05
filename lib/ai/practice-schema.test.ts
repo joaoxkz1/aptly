@@ -65,6 +65,17 @@ describe("validateGeneratedPractice — strict adaptive fallback", () => {
     expect(result.gradingBlueprint.kind).toBe("extended");
   });
 
+  it("rejects the source question even when casing, punctuation or mark formatting differ", () => {
+    const original = generated().question;
+    expect(() => validateGeneratedPractice(generated(), target({ evidenceQuestion: original }))).toThrow();
+    expect(() => validateGeneratedPractice(generated(), target({
+      evidenceQuestion: original.toUpperCase().replace(". [15 MARKS]", "!"),
+    }))).toThrow();
+    expect(validateGeneratedPractice(generated(), target({
+      evidenceQuestion: "Using real-world examples, evaluate a central bank's response to falling aggregate demand. [15 marks]",
+    })).question).toBe(original);
+  });
+
   it("requires the exact single trusted mark total and compatible command term", () => {
     expect(() =>
       validateGeneratedPractice(

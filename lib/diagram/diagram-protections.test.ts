@@ -308,7 +308,8 @@ describe("QA patch — pristine sample mode is grade-free and attachment-free", 
     const at = SUBMIT_PAGE.indexOf("function fillSample()");
     expect(at).toBeGreaterThan(-1);
     const fn = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("\n  }", at));
-    expect(fn).toContain("setStagedSource(null)");
+    // The unified draft reset clears source text before installing the sample.
+    expect(fn).toContain("draft.discard()");
     expect(fn).toContain("setScanReading(false)");
     expect(fn).toContain("handleDiagramChange(null)");
   });

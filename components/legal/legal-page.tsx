@@ -14,10 +14,12 @@ import { LEGAL_LAST_UPDATED } from "@/lib/legal/operator";
 export function LegalPage({
   title,
   intro,
+  lastUpdated = LEGAL_LAST_UPDATED,
   children,
 }: {
   title: string;
   intro: string;
+  lastUpdated?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -37,7 +39,7 @@ export function LegalPage({
         <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">{title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{intro}</p>
         <p className="mt-3 text-xs text-muted-foreground">
-          Last updated {LEGAL_LAST_UPDATED}
+          Last updated {lastUpdated}
         </p>
       </header>
 

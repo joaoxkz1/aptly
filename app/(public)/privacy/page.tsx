@@ -19,6 +19,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Notice"
+      lastUpdated="5 September 2026"
       intro="What Aptly saves, why it saves it, and what you can do about it. Written to be read, not skimmed past."
     >
       <section className="rounded-2xl border border-border bg-card p-5">
@@ -303,7 +304,7 @@ export default function PrivacyPage() {
       </LegalSection>
 
       <LegalSection title="Cookies and what Aptly stores on your device">
-        <p>Aptly stores three things on your device, and none of them are for advertising:</p>
+        <p>Aptly stores the following on your device, and none of it is for advertising:</p>
         <ul>
           <li>
             <strong>Sign-in cookies</strong>, set by Supabase, that keep you logged in as you move
@@ -316,12 +317,25 @@ export default function PrivacyPage() {
             <strong>The mark total you last picked on Practice</strong>, kept for the current
             browser session so the page remembers it.
           </li>
+          <li>
+            <strong>Temporary typed drafts</strong>, kept separately for your account and question in
+            the current browser tab&apos;s session storage. They can help recover your question,
+            answer and typed source text after a reload or navigation in that tab. Drafts expire
+            after 24 hours; Aptly checks this cutoff when it next accesses draft storage, without
+            a background deletion timer. When storage is accessible, Aptly clears the matching
+            draft after a confirmed save or discard, and account drafts when you sign out, switch
+            accounts or delete your account. If the browser blocks storage access, removal of
+            stored drafts cannot be guaranteed. Pending cleanup is retried before the next draft
+            access or account event in the same loaded page; these pending retries do not survive
+            reloading or closing it. Photos are not included; you may need to attach them again.
+            This is not cloud saving or cross-device sync, and recovery after closing the browser
+            is not guaranteed. If browser storage is unavailable, draft recovery cannot work.
+          </li>
         </ul>
         <p>
-          All three are needed for the things you have actually asked Aptly to do, so UK rules do
-          not require a cookie banner for them — which is why you have not been shown one. Aptly
+          This storage supports sign-in, your preferences and recovering unfinished work. Aptly
           uses no advertising cookies, no tracking pixels and no analytics service. You can clear
-          any of this through your browser settings at any time.
+          this site data through your browser settings at any time.
         </p>
       </LegalSection>
 

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { evidenceStrengthLabel, nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
 import { currentPracticeFocus, focusedPracticeHref } from "@/lib/assessment/focused-practice";
+import { NEXT_TOPIC_PRACTICE_HREF } from "@/lib/assessment/general-practice";
 
 /**
  * The single canonical global recommendation. Rendered identically on the
@@ -125,19 +126,20 @@ export function NextFocusCard({
         ) : (
           <>
             <h2 className={cn(titleSize, "font-semibold tracking-tight")}>
-              {insights.distinctTopics < 2 ? "Test this skill next" : "Keep building evidence"}
+              {insights.distinctTopics < 2 ? "Choose your next topic" : "Keep building evidence"}
             </h2>
             <p className="max-w-prose text-sm text-muted-foreground">
               {insights.distinctTopics < 2
-                ? "Answer questions across at least two Economics topics so Aptly can pinpoint one reliable focus."
+                ? "There is not enough evidence for one reliable focus yet. Practise a topic you have studied; you can change the suggestion."
                 : "No single weakness is standing out yet — keep practising to surface a clear next focus."}
             </p>
             <Link
-              href="/submit"
+              href={NEXT_TOPIC_PRACTICE_HREF}
               className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
               Practise another topic <ArrowRight className="h-4 w-4" />
             </Link>
+            <Link href="/submit" className="text-sm font-medium text-primary hover:underline">Use my own question</Link>
           </>
         )}
       </CardContent>

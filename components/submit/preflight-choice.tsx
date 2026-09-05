@@ -40,6 +40,8 @@ export function PreflightChoice({
   disabled,
   initialSourceFramework = null,
   initialSource = null,
+  sourceFromScan = false,
+  onSourceChange,
   onChoose,
   onEnterSourceStep,
 }: {
@@ -52,6 +54,8 @@ export function PreflightChoice({
       only SEEDS the editable source box — the student still reviews it here
       before any source-based grading, exactly like a manual paste. */
   initialSource?: string | null;
+  sourceFromScan?: boolean;
+  onSourceChange?: (value: string) => void;
   onChoose: (d: PreflightDecision) => void;
   /** Called when the compact source-material step becomes active (parent hides the bottom Grade CTA). */
   onEnterSourceStep?: () => void;
@@ -69,7 +73,7 @@ export function PreflightChoice({
   const [source, setSource] = useState(initialSource?.trim() ?? "");
   // Whether the box was seeded from a scanned photo (shown once; the text
   // stays fully editable and the student must still choose to grade with it).
-  const scanSeeded = (initialSource?.trim() ?? "") !== "";
+  const scanSeeded = sourceFromScan && (initialSource?.trim() ?? "") !== "";
 
   const isInference = preflight.kind === "inference";
   const needsFramework =
@@ -113,7 +117,7 @@ export function PreflightChoice({
         </div>
         <Textarea
           value={source}
-          onChange={(e) => setSource(e.target.value)}
+          onChange={(e) => { setSource(e.target.value); onSourceChange?.(e.target.value); }}
           placeholder="Paste the source text or data here…"
           className="min-h-24"
           aria-label="Source text or data"

@@ -1,4 +1,4 @@
-import type { AssessmentSkill, Attempt, MarkBreakdownLabel, PracticeQuestion } from "@/lib/types";
+import type { Assessment, AssessmentSkill, Attempt, MarkBreakdownLabel, MistakeType, PracticeQuestion } from "@/lib/types";
 import type { EconomicsCourseLevel } from "./course-level";
 import type { NextFocus } from "./readiness";
 import { CURRENT_SYLLABUS_TOPIC_SHORT_LABELS, ECONOMICS_TAXONOMY_VERSION, resolveEconomicsTaxonomyVersion } from "./taxonomy";
@@ -57,16 +57,74 @@ export function currentPracticeFocus(focus: NextFocus | null): PracticeFocus | n
   if (!focus || focus.taxonomyVersion !== ECONOMICS_TAXONOMY_VERSION) return null;
   return intent("current_focus", focus.topicCode, focus.skillLabel, focus.explanation, null);
 }
-/** Answer-specific diagnostics; never substitute the student's global focus. */
+// Only existing controlled issue labels. A theory error is not evidence that
+// a definition exercise is needed; source/diagram/calculation gaps stay distinct.
+const SKILL_FOR_ISSUE: Partial<Record<MistakeType, FocusSkill>> = {
+  "Weak definitions": "definition",
+  "Weak terminology": "definition",
+  "Inaccurate economic theory": "economic_analysis",
+  "Underdeveloped economic analysis": "economic_analysis",
+  "Lack of evaluation": "evaluation",
+  "Underdeveloped evaluation": "evaluation",
+  "Unsupported judgement": "evaluation",
+  "No real-world example": "application",
+  "Irrelevant real-world example": "application",
+  "Underdeveloped real-world example": "application",
+  "Insufficient source use": "data_interpretation",
+  "Calculation/setup error": "calculation",
+  "Unclear structure": "structure",
+};
+
+export const FOCUS_INSTRUCTIONS: Record<SupportedFocusSkill, string> = {
+  definition: "Check the meaning of the relevant concept and use its terminology accurately.",
+  economic_analysis: "Develop the causal chain from the initial change to the outcome the question asks about.",
+  application: "Connect relevant example details to your economic reasoning and judgment.",
+  evaluation: "Explain how a condition or trade-off changes your reasoning, then use it to support your judgment.",
+};
+
+function diagnosticAssessed(a: Assessment, label: MarkBreakdownLabel): boolean {
+  // Knowledge/clarity have no dedicated assessmentSkills entry for essays.
+  // Their saved qualitative rows are the evidence that they were assessed.
+  if (label === "Knowledge and terminology" || label === "Structure and clarity") return true;
+  if (label === "Diagram") return false; // Keep Diagram Evidence isolated.
+  const skill = SKILL_FOR_DIAGNOSTIC[label];
+  if (!a.assessmentSkills.includes(skill as AssessmentSkill)) return false;
+  // A stray diagnostic/tag must not impose evaluation on an explanation.
+  if (skill === "evaluation") return ["paper1b_15_mark", "paper2g_15_mark", "paper3b_10_mark", "generic_practice"].includes(a.framework ?? "");
+  return true;
+}
+
+/**
+ * Answer-specific policy (also recomputed by the server):
+ * 1. Only valid, genuinely assessed, non-excellent diagnostic rows qualify.
+ * 2. Lowest ratio wins. At a tied lowest ratio, a unique issue-supported skill
+ *    wins; multiple supported skills or an unsupported tie remain ambiguous.
+ * 3. A lone 0..2/4 (partial or weaker) needs no issue tag. A 3/4 is STRONG,
+ *    so it needs a matching structured issue before being called a priority.
+ * Never rank by row order, issue order/count, or free-text keywords. Excellent
+ * rows cannot be made into gaps by contradictory tags. No global substitution.
+ */
 export function answerPracticeFocus(attempt: Attempt): PracticeFocus | null {
   const a = attempt.assessment;
   if (!a || a.scoringState !== "marked" || a.eligibleForCoreAnalytics !== true ||
       resolveEconomicsTaxonomyVersion(a.gradingProvenance?.taxonomyVersion) !== ECONOMICS_TAXONOMY_VERSION ||
       a.syllabusTopic === "unknown" || isSourceMaterialMissing(a)) return null;
-  const weakest = a.markBreakdown.filter(row => row.label !== "Diagram" && row.available > 0 && row.awarded < row.available)
-    .sort((left, right) => left.awarded / left.available - right.awarded / right.available)[0];
-  if (!weakest) return null;
-  return intent("answer_feedback", a.syllabusTopic, weakest.label, weakest.reason, attempt.id);
+  const rows = a.markBreakdown.filter(row => diagnosticAssessed(a, row.label) &&
+    Number.isFinite(row.available) && Number.isFinite(row.awarded) &&
+    row.available > 0 && row.awarded >= 0 && row.awarded < row.available);
+  if (!rows.length) return null;
+  const lowest = Math.min(...rows.map(row => row.awarded / row.available));
+  const weakest = rows.filter(row => row.awarded / row.available === lowest);
+  const diagnosed = new Set((attempt.feedback.mistakes ?? []).map(issue => SKILL_FOR_ISSUE[issue]).filter(Boolean));
+  const supported = weakest.filter(row => diagnosed.has(SKILL_FOR_DIAGNOSTIC[row.label]));
+  const candidates = supported.length ? supported : lowest <= 0.5 ? weakest : [];
+  const skills = new Set(candidates.map(row => SKILL_FOR_DIAGNOSTIC[row.label]));
+  if (skills.size !== 1) return null;
+  const skill = SKILL_FOR_DIAGNOSTIC[candidates[0].label];
+  const instruction = focusPolicy(skill)
+    ? FOCUS_INSTRUCTIONS[skill as SupportedFocusSkill]
+    : "Review the feedback for this skill; this focused-practice format is not available yet.";
+  return intent("answer_feedback", a.syllabusTopic, candidates[0].label, instruction, attempt.id);
 }
 export function focusedPracticeHref(focus: PracticeFocus): string {
   const params = new URLSearchParams({ source: focus.source, topic: focus.topicCode,

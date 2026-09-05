@@ -101,11 +101,28 @@ see §9.
 | Account (email, nickname, level) | Life of the account | Account deletion |
 | Attempts, feedback, assessments | Life of the account | Account deletion, or per-attempt delete |
 | Practice questions | Life of the account | Account deletion; also auto-removed when the last attempt referencing them is deleted |
+| Temporary typed drafts | Current tab session; 24-hour absolute cutoff from draft creation, checked on restore/read/write | Confirmed matching save, discard, sign-out/account change, account deletion, or stale-draft sweep |
 | Scan / diagram photos | **Not retained** | n/a — transient request data |
 | Derived profile | **Not retained** | n/a — recomputed each render |
 | `ai_usage_reservations` | **30 days** | Automatic sweep |
 | Failure logs | Provider default | Hosting platform |
 | Provider backups | Provider cycle | Ages out after deletion |
+
+**Temporary draft recovery (V1).** Account- and task-scoped sessionStorage only,
+with schema version, creation/update timestamps, and allowlisted editable text.
+Manual drafts include the question and typed source; Practice uses only answer
+text and re-fetches its authoritative question. Revisions never restore a
+browser-owned question or grading frame. No photos, data/blob URLs, blueprints,
+auth tokens or credentials are stored. A request fingerprint and random
+idempotency key support unchanged retries; neither authorizes grading.
+Writes are synchronous on edits and tolerate unavailable/full storage. Old
+submission completion cannot clear newer edits. Cleanup touches draft keys only.
+The 24-hour cutoff is a product retention choice, not a claimed legal rule;
+there is no server draft table, cross-device sync, or guaranteed closed-browser
+recovery. Device cleanup requires storage access; rejected access is reported
+in the editor and pending cleanup is retried before the next draft read/write
+or account lifecycle event in the same document. Cleanup cannot be guaranteed
+while the browser refuses storage access.
 
 **Why study history is kept for the life of the account.** The Learning log,
 progress, Current Focus and revision chains are all computed from the full

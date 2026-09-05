@@ -20,7 +20,7 @@ describe("rendered focus entry points", () => {
     const html = renderToStaticMarkup(React.createElement(FeedbackResult, { attempt, saveState: "saved", onRetry: () => {}, onTryAnother: () => {} }));
     expect(html).toContain("source=answer_feedback&amp;topic=3.5&amp;skill=economic_analysis");
     expect(html).toContain(`attempt=${attempt.id}`);
-    expect(html).toContain("from this answer");
+    expect(html).toContain("Practise Analysis on a new question");
     expect(html).not.toContain('href="/practice"');
     expect(html).not.toContain("source=current_focus");
   });
