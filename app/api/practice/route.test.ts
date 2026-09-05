@@ -1,6 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { PracticeQuestion } from "@/lib/types";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Attempt, PracticeQuestion } from "@/lib/types";
+import { focusHistory, focusAttempt } from "@/lib/testing/focused-practice-fixtures";
 import { ECONOMICS_QUESTION_BANK } from "@/lib/assessment/question-bank/economics-v1";
+import { requestFingerprint } from "@/lib/ai/request-integrity";
 
 const USER_ID = "11111111-1111-4111-8111-111111111111";
 const KEY = "22222222-2222-4222-8222-222222222222";
@@ -15,6 +17,7 @@ const mocks = vi.hoisted(() => ({
     latest: null as PracticeQuestion | null,
     history: [] as { bankQuestionId: string | null; createdAt: string }[],
     replay: null as PracticeQuestion | null,
+    attempts: [] as Attempt[],
     reservation: {} as Record<string, unknown>,
   },
   openaiCreate: vi.fn(),
@@ -80,7 +83,7 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getClaims: async () => ({ data: { claims: mocks.state.claims } }) },
   }),
 }));
-vi.mock("@/lib/supabase/attempts", () => ({ fetchAttempts: async () => [] }));
+vi.mock("@/lib/supabase/attempts", () => ({ fetchAttempts: async () => mocks.state.attempts }));
 vi.mock("@/lib/supabase/practice-questions", () => ({
   fetchLatestPracticeQuestion: async () => mocks.state.latest,
 }));
@@ -106,6 +109,7 @@ vi.mock("@/lib/supabase/server-authority", () => {
     savePracticeQuestion: mocks.save,
     findPracticeByIdempotency: mocks.find,
     fetchPracticeBankHistory: async () => mocks.state.history,
+    fetchLatestTrustedPracticeQuestion: async () => mocks.state.latest ? { question: mocks.state.latest, targetSkills: [mocks.state.latest.skill], levelRelevance: "shared_sl_hl" } : null,
   };
 });
 
@@ -127,6 +131,8 @@ function request(overrides: Record<string, unknown> = {}) {
 }
 
 beforeEach(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-08-18T12:00:00Z"));
   mocks.state.claims = {
     sub: USER_ID,
     user_metadata: { economics_level: "sl" },
@@ -134,6 +140,7 @@ beforeEach(() => {
   mocks.state.latest = null;
   mocks.state.history = [];
   mocks.state.replay = null;
+  mocks.state.attempts = [];
   mocks.state.reservation = {
     outcome: "reserved",
     reservationId: RESERVATION_ID,
@@ -153,6 +160,87 @@ beforeEach(() => {
     targetSkills: ["economic_analysis"],
     angleTags: ["subsidy"],
     gradingBlueprint: BANK_ITEM.gradingBlueprint,
+  });
+});
+afterEach(() => vi.useRealTimers());
+
+describe("verified focused Practice", () => {
+  const focused = { context: "current_focus", marks: 15, topicCode: "2.8" };
+  function exhaustApplication() {
+    mocks.state.history = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === "2.8" && q.marks === 15 && q.targetSkills.includes("application"))
+      .map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+    mocks.validate.mockReturnValue({ question: "Using real-world examples, evaluate policies to reduce negative production externalities. [15 marks]", commandTerm: "evaluate", targetSkills: ["economic_analysis", "application", "evaluation"], angleTags: ["externality"], gradingBlueprint: BANK_ITEM.gradingBlueprint });
+  }
+  beforeEach(() => { mocks.state.attempts = focusHistory(); });
+  it("serves Application at 15 marks with truthful primary skill and no reservation", async () => {
+    expect((await POST(request(focused))).status).toBe(200);
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({ skill: "application", markTotal: 15, framework: "paper1b_15_mark", fromCurrentFocus: true, targetSkills: expect.arrayContaining(["application"]), focus: { source: "current_focus", serverVerified: true, targetSkill: "application", courseLevel: "sl" } });
+    expect(mocks.reserve).not.toHaveBeenCalled(); expect(mocks.openaiCreate).not.toHaveBeenCalled();
+  });
+  it("uses AI after matching questions are exhausted despite unrelated unseen bank questions", async () => {
+    exhaustApplication();
+    expect((await POST(request(focused))).status).toBe(200);
+    expect(mocks.reserve).toHaveBeenCalledTimes(1); expect(mocks.openaiCreate).toHaveBeenCalledTimes(1);
+    expect(mocks.reserve.mock.calls[0][0]).toMatchObject({ capability: "practice", userId: USER_ID, idempotencyKey: KEY });
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({ questionOrigin: "adaptive_generated", skill: "application", bankQuestionId: null, focus: { source: "current_focus" }, generationProvenance: { modelId: "gpt-5.4", reasoningEffort: "medium", schemaHash: expect.stringMatching(/^[0-9a-f]{64}$/) } });
+  });
+  it("uses AI for a relevant definition with no concept-compatible bank match", async () => {
+    mocks.state.attempts = focusHistory("Knowledge and terminology");
+    mocks.state.attempts.forEach(a => { a.question = "Explain an unfamiliar narrowly specified concept. [10 marks]"; });
+    mocks.validate.mockReturnValue({ question: "Define a negative externality of production. [2 marks]", targetSkills: ["definition"], commandTerm: "define", angleTags: ["externality"], gradingBlueprint: BANK_ITEM.gradingBlueprint });
+    expect((await POST(request({ ...focused, marks: 2 }))).status).toBe(200);
+    expect(mocks.reserve).toHaveBeenCalledTimes(1);
+  });
+  it("verifies feedback against its own saved answer, not global focus", async () => {
+    const answer = focusAttempt("Economic analysis", "3.5", "77777777-7777-4777-8777-777777777777");
+    mocks.state.attempts.push(answer);
+    expect((await POST(request({ context: "answer_feedback", sourceAttemptId: answer.id, marks: 10, topicCode: "3.5" }))).status).toBe(200);
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({ skill: "economic_analysis", fromCurrentFocus: false, focus: { source: "answer_feedback", sourceAttemptId: answer.id, topicCode: "3.5" } });
+  });
+  it("rejects client-forged guidance, skill, provenance and unsupported source claims", async () => {
+    for (const forged of [{ targetSkill: "evaluation" }, { focus: { serverVerified: true } }, { focusSource: "current_focus" }, { bankQuestionId: "forged" }, { questionOrigin: "curated_bank" }, { gradingBlueprint: {} }, { taxonomyVersion: "economics-2022-v1" }, { framework: "paper1b_15_mark" }, { levelRelevance: "hl_only" }]) {
+      expect((await POST(request({ ...focused, ...forged }))).status).toBe(400);
+    }
+    expect((await POST(request({ ...focused, context: "answer_feedback", sourceAttemptId: USER_ID }))).status).toBe(409);
+    expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.reserve).not.toHaveBeenCalled();
+  });
+  it("rejects unsupported and stale focus instead of substituting an essay", async () => {
+    expect((await POST(request({ ...focused, marks: 10 }))).status).toBe(409);
+    mocks.state.attempts = focusHistory("Data use");
+    const result = await POST(request(focused));
+    expect((await result.json()).error).toBe("unsupported_focus");
+    expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.reserve).not.toHaveBeenCalled();
+  });
+  it("does not reuse an old focus boolean or a different source", async () => {
+    mocks.state.latest = { ...QUESTION, topicCode: "2.8", markTotal: 15, framework: "paper1b_15_mark", skill: "application", fromCurrentFocus: true };
+    expect((await POST(request(focused))).status).toBe(200); expect(mocks.save).toHaveBeenCalledTimes(1);
+  });
+  it("retries invalid output once under one reservation and saves only the valid result", async () => {
+    exhaustApplication(); mocks.validate.mockImplementationOnce(() => { throw new Error("wrong skill"); });
+    expect((await POST(request(focused))).status).toBe(200);
+    expect(mocks.reserve).toHaveBeenCalledTimes(1); expect(mocks.openaiCreate).toHaveBeenCalledTimes(2); expect(mocks.save).toHaveBeenCalledTimes(1);
+  });
+  it("exhausted validation retries return an honest failure with no saved row", async () => {
+    exhaustApplication(); mocks.validate.mockImplementation(() => { throw new Error("raw private model detail"); });
+    const response = await POST(request(focused));
+    expect(response.status).toBe(502); expect((await response.json()).error).toBe("focused_generation_failed");
+    expect(mocks.openaiCreate).toHaveBeenCalledTimes(2); expect(mocks.reserve).toHaveBeenCalledTimes(1); expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.failed).toHaveBeenCalledWith(RESERVATION_ID, USER_ID, "validation");
+  });
+  it("an in-progress duplicate cannot dispatch another model operation", async () => {
+    exhaustApplication();
+    let finish!: (value: unknown) => void;
+    mocks.openaiCreate.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const first = POST(request(focused));
+    await vi.waitFor(() => expect(mocks.openaiCreate).toHaveBeenCalledTimes(1));
+    mocks.reserve.mockResolvedValueOnce({ outcome: "in_progress", reservationId: RESERVATION_ID });
+    expect((await POST(request(focused))).status).toBe(409);
+    finish({ status: "completed", output_text: "{}" });
+    expect((await first).status).toBe(200); expect(mocks.openaiCreate).toHaveBeenCalledTimes(1); expect(mocks.save).toHaveBeenCalledTimes(1);
+  });
+  it("replays an existing focused result with its immutable original metadata", async () => {
+    mocks.state.replay = { ...QUESTION, focus: { source: "answer_feedback", sourceAttemptId: USER_ID, topicCode: "2.7", targetSkill: "economic_analysis", taxonomyVersion: "economics-2022-v1", recommendedMarks: 10, courseLevel: "sl", explanation: "Stored reason", serverVerified: true } };
+    expect((await (await POST(request(focused))).json()).practiceQuestion).toEqual(mocks.state.replay);
+    expect(mocks.reserve).not.toHaveBeenCalled(); expect(mocks.save).not.toHaveBeenCalled();
   });
 });
 
@@ -183,6 +271,7 @@ describe("POST /api/practice bank-first authority", () => {
     expect(response.status).toBe(200);
     expect(mocks.reserve).not.toHaveBeenCalled();
     expect(mocks.openaiCreate).not.toHaveBeenCalled();
+    expect(mocks.find).toHaveBeenCalledWith(USER_ID, KEY, requestFingerprint({ marks: 10, topicCode: "2.7", context: "general", regenerate: false, courseLevel: "sl" }));
     expect(mocks.save).toHaveBeenCalledWith(
       USER_ID,
       KEY,

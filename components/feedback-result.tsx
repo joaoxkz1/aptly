@@ -40,9 +40,9 @@ import {
   REVISION_ATTEMPT_LABEL,
   REVISION_SAVED_BODY,
   REVISION_SAVED_LABEL,
-  shortSkillLabel,
 } from "@/lib/assessment/display";
-import type { NextFocus, RecurringMistakeSummary } from "@/lib/assessment/readiness";
+import type { RecurringMistakeSummary } from "@/lib/assessment/readiness";
+import { answerPracticeFocus, focusLabel, focusedPracticeHref } from "@/lib/assessment/focused-practice";
 import type { Attempt } from "@/lib/types";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
@@ -52,7 +52,6 @@ export function FeedbackResult({
   saveState,
   recurring,
   parentAttempt = null,
-  nextFocus = null,
   tryAnotherLabel = "Try another answer",
   diagramReviewFailed = false,
   onRevise,
@@ -65,8 +64,6 @@ export function FeedbackResult({
   recurring?: RecurringMistakeSummary;
   /** The original attempt when THIS result is a revision of it. */
   parentAttempt?: Attempt | null;
-  /** The canonical next focus, when one exists — enables "Practice this focus". */
-  nextFocus?: NextFocus | null;
   /** Primary action label — the sample walkthrough uses "Try your own answer". */
   tryAnotherLabel?: string;
   /** A diagram photo was attached but its review failed (grading unaffected). */
@@ -77,6 +74,7 @@ export function FeedbackResult({
   onTryAnother: () => void;
 }) {
   const assessment = attempt.assessment ?? null;
+  const practiceFocus = saveState === "saved" ? answerPracticeFocus(attempt) : null;
   // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness. The
   // canonical presentation helper (shared with the Learning log) strips any
   // source-data corrective wording from the model's feedback.
@@ -407,12 +405,12 @@ export function FeedbackResult({
           </Button>
         </div>
         {/* Practice the evidence-backed focus — only when one actually exists. */}
-        {nextFocus !== null && (
+        {practiceFocus !== null && (
           <Link
-            href="/practice"
+            href={focusedPracticeHref(practiceFocus)}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
           >
-            Practice this focus: {shortSkillLabel(nextFocus.skillLabel)}{" "}
+            Practise {focusLabel(practiceFocus)} from this answer{" "}
             <ArrowRight className="h-4 w-4" />
           </Link>
         )}

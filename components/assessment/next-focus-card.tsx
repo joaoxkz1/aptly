@@ -8,12 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { evidenceStrengthLabel, nextFocusPresentation, topicShortLabel } from "@/lib/assessment/display";
 import type { LearningInsights } from "@/lib/assessment/readiness";
-
-function practiceMarksForFocus(skillLabel: string): 2 | 10 | 15 {
-  if (skillLabel === "Knowledge and terminology") return 2;
-  if (skillLabel === "Evaluation and judgment" || skillLabel === "Data use") return 15;
-  return 10;
-}
+import { currentPracticeFocus, focusedPracticeHref } from "@/lib/assessment/focused-practice";
 
 /**
  * The single canonical global recommendation. Rendered identically on the
@@ -32,6 +27,7 @@ export function NextFocusCard({
   ready?: boolean;
 }) {
   const nf = insights.nextFocus;
+  const practiceFocus = currentPracticeFocus(nf);
   // Evidence-aware wording (shared with the practice "Why this question?").
   const focusCopy = nf !== null ? nextFocusPresentation(nf) : null;
   const [showWhy, setShowWhy] = useState(false);
@@ -84,7 +80,7 @@ export function NextFocusCard({
               <Badge>{evidenceStrengthLabel(nf.responses)}</Badge>
               {/* The loop's one clear next action: Aptly writes the question. */}
               <Link
-                href={`/practice?topic=${encodeURIComponent(nf.topicCode)}&marks=${practiceMarksForFocus(nf.skillLabel)}&focus=1`}
+                href={practiceFocus ? focusedPracticeHref(practiceFocus) : "/practice"}
                 className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary px-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
               >
                 Practise this focus <ArrowRight className="h-4 w-4" />

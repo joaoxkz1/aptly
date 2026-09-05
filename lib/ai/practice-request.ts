@@ -26,12 +26,14 @@ export interface PracticeGenerationOutcome {
 export interface PracticeGenerationRequest {
   marks: 2 | 10 | 15;
   topicCode: string;
-  context: "general" | "current_focus";
+  context: "general" | "current_focus" | "answer_feedback";
+  sourceAttemptId?: string | null;
   regenerate?: boolean;
 }
 
 export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) {
   let pending: Promise<PracticeGenerationOutcome> | null = null;
+  let pendingSignature: string | null = null;
   let retryIdentity: { signature: string; key: string } | null = null;
 
   async function issue(
@@ -44,12 +46,13 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
       const res = await fetchImpl("/api/practice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // The boolean intent is the ONLY field sent — the server derives the
-        // whole target from saved attempts and ignores anything else anyway.
+        // Only request selectors cross this boundary. Focus evidence and all
+        // question/grading metadata are resolved again by the server.
         body: JSON.stringify({
           marks: input.marks,
           topicCode: input.topicCode,
           context: input.context,
+          ...(input.context === "answer_feedback" ? { sourceAttemptId: input.sourceAttemptId } : {}),
           regenerate: input.regenerate === true,
           idempotencyKey,
         }),
@@ -78,16 +81,21 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
     }
   }
 
-  return {
+  const client = {
     /**
      * At most one request in flight: concurrent callers adopt the same
      * pending promise (whatever their flag — the UI can only express one
      * intent at a time). A settled request clears the slot for the next.
      */
     request(opts: PracticeGenerationRequest): Promise<PracticeGenerationOutcome> {
+      const normalized = { ...opts, regenerate: opts.regenerate === true };
+      const signature = JSON.stringify(normalized);
+      if (pending !== null && pendingSignature !== signature) {
+        // Navigation to another intent must not receive the old intent's result.
+        return pending.catch(() => undefined).then(() => client.request(opts));
+      }
       if (pending === null) {
-        const normalized = { ...opts, regenerate: opts.regenerate === true };
-        const signature = JSON.stringify(normalized);
+        pendingSignature = signature;
         const idempotencyKey =
           retryIdentity?.signature === signature
             ? retryIdentity.key
@@ -95,9 +103,11 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
         retryIdentity = { signature, key: idempotencyKey };
         pending = issue(normalized, idempotencyKey).finally(() => {
           pending = null;
+          pendingSignature = null;
         });
       }
       return pending;
     },
   };
+  return client;
 }

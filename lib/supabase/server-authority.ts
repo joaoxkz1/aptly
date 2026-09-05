@@ -18,8 +18,8 @@ import type { CommandTerm, LevelRelevance } from "@/lib/types";
 const ATTEMPT_COLUMNS =
   "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material, diagram_evidence";
 const PRACTICE_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus";
-const TRUSTED_PRACTICE_COLUMNS = `${PRACTICE_COLUMNS}, question_origin, bank_question_id, question_bank_version, grading_blueprint, grading_blueprint_version, level_relevance, command_term, target_skills, angle_tags, request_fingerprint`;
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus, focus_context";
+const TRUSTED_PRACTICE_COLUMNS = `${PRACTICE_COLUMNS}, question_origin, bank_question_id, question_bank_version, grading_blueprint, grading_blueprint_version, level_relevance, command_term, target_skills, angle_tags, request_fingerprint, generation_provenance`;
 
 export interface SavedAttemptInput {
   subject: Subject;
@@ -164,6 +164,8 @@ export async function saveGradeAttempt(
 }
 
 export interface SavedPracticeInput {
+  focus?: PracticeQuestion["focus"];
+  generationProvenance?: { modelId: string; reasoningEffort: string; schemaHash: string };
   question: string;
   sourceMaterial: string | null;
   framework: string;
@@ -242,6 +244,8 @@ export async function savePracticeQuestion(
       target_skills: input.targetSkills,
       angle_tags: input.angleTags,
       from_current_focus: input.fromCurrentFocus,
+      focus_context: input.focus ?? null,
+      generation_provenance: input.generationProvenance ?? null,
       request_fingerprint: input.requestFingerprint,
     })
     .select(PRACTICE_COLUMNS)
@@ -256,6 +260,18 @@ export async function savePracticeQuestion(
     throw error;
   }
   return rowToPracticeQuestion(data as unknown as PracticeQuestionRow);
+}
+
+/** Private compatibility metadata stays on the server, never in the public DTO. */
+export async function fetchLatestTrustedPracticeQuestion(userId: string) {
+  const { data, error } = await getAdminClient().from("practice_questions")
+    .select(`${PRACTICE_COLUMNS}, target_skills, level_relevance`)
+    .eq("user_id", userId).eq("authority_version", 1)
+    .order("created_at", { ascending: false }).limit(1).maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  const row = data as unknown as PracticeQuestionRow & { target_skills: string[] | null; level_relevance: LevelRelevance | null };
+  return { question: rowToPracticeQuestion(row), targetSkills: row.target_skills ?? [], levelRelevance: row.level_relevance };
 }
 
 export interface PracticeBankHistoryRow {

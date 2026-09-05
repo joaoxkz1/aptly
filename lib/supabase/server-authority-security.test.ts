@@ -20,6 +20,14 @@ const ROUTES = ["grade", "practice", "extract", "diagram"].map((name) =>
 );
 
 describe("service-role trust boundary", () => {
+  it("adds only an owner-readable focus snapshot, retaining private guidance and browser write denial", () => {
+    const sql = readFileSync(join("supabase", "migrations", "0012_verified_practice_focus.sql"), "utf8");
+    expect(sql).toContain("grant select (focus_context)");
+    expect(sql).not.toMatch(/grant (?:insert|update|all)/i);
+    expect(sql).toContain("skill = any(target_skills)");
+    expect(sql).toContain(") is true");
+    expect(sql).toContain("focus_context is null");
+  });
   it("keeps the key server-only and out of every browser-prefixed variable", () => {
     expect(ADMIN).toContain('import "server-only"');
     expect(ADMIN).toContain("process.env.SUPABASE_SERVICE_ROLE_KEY");

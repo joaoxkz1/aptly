@@ -35,6 +35,19 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 describe("createPracticeGenerationClient — one in-flight request per tab", () => {
+  it("a different focus waits for its own response instead of adopting stale context", async () => {
+    let finish!: (response: Response) => void;
+    const fetchImpl = vi.fn().mockImplementationOnce(() => new Promise<Response>(resolve => { finish = resolve; }))
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: { ...QUESTION, id: "application", skill: "application", markTotal: 15 } }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    const first = client.request(REQUEST);
+    const second = client.request({ marks: 15, topicCode: "2.8", context: "current_focus" });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    finish(jsonResponse({ practiceQuestion: QUESTION }));
+    expect((await first).practiceQuestion?.id).toBe("pq-1");
+    expect((await second).practiceQuestion?.id).toBe("application");
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
   it("concurrent duplicate calls share ONE fetch and resolve identically", async () => {
     let release!: (r: Response) => void;
     const gate = new Promise<Response>((resolve) => {

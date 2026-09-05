@@ -221,6 +221,8 @@ export interface Attempt {
  * grading always retrieves it server-side — never from the client.
  */
 export interface PracticeQuestion {
+  /** Immutable, server-verified focus; absent on general and historical rows. */
+  focus?: import("./assessment/focused-practice").PracticeFocus | null;
   id: string;
   createdAt: string;
   question: string;

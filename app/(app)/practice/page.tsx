@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -40,6 +40,7 @@ import { createPracticeGenerationClient } from "@/lib/ai/practice-request";
 import { createClient } from "@/lib/supabase/client";
 import type { PracticeQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { focusMatchesSettings, focusPolicy, focusSummary, savedPracticeFocus, type PracticeFocus } from "@/lib/assessment/focused-practice";
 
 const generationClient = createPracticeGenerationClient();
 const CURRENT_TOPICS = SYLLABUS_TOPICS.filter((topic) => topic !== "unknown");
@@ -72,16 +73,21 @@ function unitLabel(topicCode: string): string {
 export default function PracticePage() {
   return (
     <Suspense fallback={null}>
-      <PracticeGenerator />
+      <PracticeRoute />
     </Suspense>
   );
+}
+function PracticeRoute() {
+  const params = useSearchParams();
+  return <PracticeGenerator key={params.toString()} />;
 }
 
 function PracticeGenerator() {
   const params = useSearchParams();
   const requestedTopic = validTopic(params.get("topic"));
   const requestedMark = validMark(params.get("marks"));
-  const fromCurrentFocus = params.get("focus") === "1";
+  const requestedSource = params.get("source") ?? (params.get("focus") === "1" ? "current_focus" : null);
+  const sourceAttemptId = params.get("attempt");
 
   const [courseLevel, setCourseLevel] = useState<EconomicsCourseLevel | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -92,23 +98,52 @@ function PracticeGenerator() {
   const [generating, setGenerating] = useState(false);
   const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [focus, setFocus] = useState<PracticeFocus | null>(null);
+  const [focusBlocked, setFocusBlocked] = useState(false);
+  const [exitedFocus, setExitedFocus] = useState(params.get("mode") === "general");
+  const selectionVersion = useRef(0);
+  const canGenerateFocus = !focusBlocked && (!focus || focusPolicy(focus.targetSkill) !== null);
 
   useEffect(() => {
     const supabase = createClient();
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!active) return;
       if (requestedMark === null) {
         const remembered = validMark(window.sessionStorage.getItem(LAST_MARKS_KEY));
         if (remembered !== null) setMarks(remembered);
       }
       setCourseLevel(readEconomicsCourseLevel(data.session?.user.user_metadata));
+      if (requestedSource) {
+        try {
+          const query = new URLSearchParams({ source: requestedSource });
+          if (sourceAttemptId) query.set("attempt", sourceAttemptId);
+          const res = await fetch(`/api/practice/focus?${query}`, { cache: "no-store" });
+          const body = await res.json();
+          if (!active) return;
+          if (!res.ok || !body.focus?.serverVerified) {
+            setFocusBlocked(true);
+            setError(clientMessageForPracticeFailure(res.status, body.error));
+          } else {
+            const verified = body.focus as PracticeFocus;
+            setFocus(verified);
+            setTopicCode(verified.topicCode);
+            if (verified.recommendedMarks !== null) setMarks(verified.recommendedMarks);
+          }
+        } catch {
+          if (!active) return;
+          setFocusBlocked(true);
+          setError("Couldn't load this focus. Reload to try again, or choose general practice.");
+        }
+      }
+      if (!active) return;
       setProfileLoading(false);
     });
     return () => {
       active = false;
+      selectionVersion.current += 1;
     };
-  }, [requestedMark]);
+  }, [requestedMark, requestedSource, sourceAttemptId]);
 
   const eligibleTopics = useMemo(
     () =>
@@ -135,7 +170,8 @@ function PracticeGenerator() {
 
   const generate = useCallback(
     async (regenerate = false) => {
-      if (courseLevel === null || generating) return;
+      if (courseLevel === null || generating || profileLoading || !canGenerateFocus) return;
+      const version = selectionVersion.current;
       setGenerating(true);
       setError(null);
       if (regenerate) setQuestion(null);
@@ -143,9 +179,11 @@ function PracticeGenerator() {
         const outcome = await generationClient.request({
           marks,
           topicCode: selectedTopicCode,
-          context: fromCurrentFocus ? "current_focus" : "general",
+          context: focus?.source ?? "general",
+          sourceAttemptId: focus?.sourceAttemptId,
           regenerate,
         });
+        if (version !== selectionVersion.current) return;
         if (outcome.status === 200 && outcome.practiceQuestion !== null) {
           setQuestion(outcome.practiceQuestion);
         } else {
@@ -158,15 +196,17 @@ function PracticeGenerator() {
           );
         }
       } catch {
-        setError(clientMessageForPracticeFailure(502, "practice_generation_failed"));
+        if (version === selectionVersion.current) setError(clientMessageForPracticeFailure(502, focus ? "focused_generation_failed" : "practice_generation_failed"));
       } finally {
         setGenerating(false);
       }
     },
-    [courseLevel, fromCurrentFocus, generating, marks, selectedTopicCode]
+    [courseLevel, focus, generating, marks, selectedTopicCode, profileLoading, canGenerateFocus]
   );
 
   function chooseMarks(value: PracticeMarkTotal) {
+    selectionVersion.current += 1;
+    if (focus && !focusMatchesSettings(focus, selectedTopicCode, value)) exitFocus(selectedTopicCode, value);
     setMarks(value);
     setQuestion(null);
     setError(null);
@@ -174,9 +214,22 @@ function PracticeGenerator() {
   }
 
   function chooseTopic(value: string) {
+    selectionVersion.current += 1;
+    if (focus && !focusMatchesSettings(focus, value, marks)) exitFocus(value, marks);
     setTopicCode(value);
     setQuestion(null);
     setError(null);
+  }
+  function exitFocus(nextTopic = selectedTopicCode, nextMarks = marks) {
+    selectionVersion.current += 1;
+    setFocus(null);
+    setFocusBlocked(false);
+    setExitedFocus(true);
+    setQuestion(null);
+    setError(null);
+    // Refresh/back/copied URLs must describe the same general configuration.
+    const query = new URLSearchParams({ topic: nextTopic, marks: String(nextMarks), mode: "general" });
+    window.history.replaceState(null, "", `/practice?${query}`);
   }
 
   return (
@@ -226,6 +279,7 @@ function PracticeGenerator() {
               key={courseLevel ?? "unset"}
               initialLevel={courseLevel}
               onSaved={(level) => {
+                exitFocus();
                 setCourseLevel(level);
                 setEditingCourse(false);
               }}
@@ -234,12 +288,15 @@ function PracticeGenerator() {
         </Card>
       ) : (
         <>
-          {fromCurrentFocus && (
-            <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-accent/55 px-4 py-3 text-sm text-accent-foreground">
-              <Sparkles className="h-4 w-4 shrink-0" />
-              Your recommended focus is selected. You can change it before generating.
+          {focus && (
+            <div className="rounded-xl border border-primary/20 bg-accent/55 px-4 py-3 text-sm text-accent-foreground">
+              <p className="font-semibold">{focusSummary(focus)}</p>
+              <p className="mt-1 text-xs">{focus.source === "answer_feedback" ? "From this answer’s feedback." : "From your current focus."} {focusPolicy(focus.targetSkill)?.reasoning}</p>
+              {!canGenerateFocus && <p className="mt-1">This exact focused-practice type isn’t available yet.</p>}
             </div>
           )}
+          {exitedFocus && <p className="text-sm text-muted-foreground" role="status">General practice — choose a topic and question length.</p>}
+          {!canGenerateFocus && <Button variant="outline" onClick={() => exitFocus()}>Practise this topic instead</Button>}
 
           <Card className="overflow-hidden">
             <CardContent className="flex flex-col gap-6 p-6 md:p-7">
@@ -348,13 +405,13 @@ function PracticeGenerator() {
                 type="button"
                 size="lg"
                 className="w-full sm:w-auto sm:self-start"
-                disabled={generating}
+                disabled={generating || !canGenerateFocus}
                 onClick={() => void generate(false)}
               >
                 {generating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Finding your question…
+                    Preparing your question…
                   </>
                 ) : (
                   <>
@@ -363,6 +420,7 @@ function PracticeGenerator() {
                   </>
                 )}
               </Button>
+              {generating && <p className="text-xs text-muted-foreground" role="status">Finding a matching question or creating a fresh one. This may take a moment.</p>}
             </CardContent>
           </Card>
         </>
@@ -376,7 +434,7 @@ function PracticeGenerator() {
               {error}
             </p>
             <div>
-              <Button variant="outline" size="sm" onClick={() => void generate(false)}>
+              <Button variant="outline" size="sm" disabled={!canGenerateFocus} onClick={() => void generate(false)}>
                 <RefreshCw className="h-3.5 w-3.5" />
                 Try again
               </Button>
@@ -396,6 +454,7 @@ function PracticeGenerator() {
                 </span>
               </div>
               <p className="text-base font-medium leading-relaxed">{question.question}</p>
+              {savedPracticeFocus(question) && <p className="text-sm font-semibold">{focusSummary(savedPracticeFocus(question)!)}</p>}
               <div className="flex flex-wrap gap-2">
                 <Badge>{question.topicLabel}</Badge>
                 <Badge>{ASSESSMENT_SKILL_LABELS[question.skill]}</Badge>

@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
+import { focusSummary, savedPracticeFocus } from "@/lib/assessment/focused-practice";
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
 import { SampleWalkthrough } from "@/components/submit/sample-walkthrough";
 import { ScanAttachment } from "@/components/submit/scan-attachment";
@@ -30,7 +31,7 @@ import {
 } from "@/lib/assessment/preflight";
 import { resolveSubmitAction, type GradeDecision } from "@/lib/assessment/submit-flow";
 import { presentedFeedback } from "@/lib/assessment/status";
-import { buildLearningInsights, recurringMistakeSummary } from "@/lib/assessment/readiness";
+import { recurringMistakeSummary } from "@/lib/assessment/readiness";
 import { revisionContextFor, type RevisionContext } from "@/lib/assessment/revisions";
 import {
   APTLY_PRACTICE_LABEL,
@@ -197,8 +198,6 @@ function SubmitPageInner({
     [fixedQuestion, typedQuestion]
   );
 
-  // Meaningful next focus → a quiet "Practice this focus" action on feedback.
-  const nextFocus = useMemo(() => buildLearningInsights(attempts).nextFocus, [attempts]);
 
   // Guards against concurrent grading calls and duplicate saves.
   const inFlight = useRef(false);
@@ -594,7 +593,6 @@ function SubmitPageInner({
           saveState={saveState}
           recurring={recurringMistakeSummary(attempts)}
           parentAttempt={parent}
-          nextFocus={nextFocus}
           diagramReviewFailed={diagramReviewFailed}
           onRevise={
             saveState === "saved" && savedIdRef.current !== null
@@ -617,6 +615,7 @@ function SubmitPageInner({
     );
   }
 
+  const practiceFocus = practiceQuestion ? savedPracticeFocus(practiceQuestion) : null;
   const heading = isRevision
     ? "Revise this answer"
     : isPractice
@@ -625,8 +624,10 @@ function SubmitPageInner({
   const subheading = isRevision
     ? "Write a fresh answer to the same question. Aptly grades it like any attempt and links it to the original."
     : isPractice
-      ? practiceQuestion?.fromCurrentFocus === true
+      ? practiceFocus?.source === "current_focus"
         ? "This question was generated from your next focus. Write your answer below."
+        : practiceFocus?.source === "answer_feedback"
+          ? "This question follows the feedback on your saved answer. Write your answer below."
         : "Write your answer to this Aptly practice question below."
       : "Add your Economics question, then write or upload your answer.";
 
@@ -739,8 +740,7 @@ function SubmitPageInner({
             {APTLY_PRACTICE_LABEL}
           </p>
           <p className="text-sm text-muted-foreground">
-            {practiceProvenanceLabel(practiceQuestion.fromCurrentFocus === true)}:{" "}
-            {practiceQuestion.topicLabel} · {practiceQuestion.markTotal} marks.
+            {practiceFocus ? focusSummary(practiceFocus) : `${practiceProvenanceLabel(false)}: ${practiceQuestion.topicLabel} · ${practiceQuestion.markTotal} marks.`}
           </p>
         </div>
       )}

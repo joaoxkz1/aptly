@@ -5,12 +5,13 @@ import { isUuid, verifiedUserId } from "@/lib/auth/verified-user";
 import { readEconomicsCourseLevel } from "@/lib/assessment/course-level";
 import { getOpenAI } from "@/lib/ai/openai";
 import { fetchAttempts } from "@/lib/supabase/attempts";
-import { fetchLatestPracticeQuestion } from "@/lib/supabase/practice-questions";
+import { sameFocus } from "@/lib/assessment/focused-practice";
 import { reusablePracticeQuestion } from "@/lib/assessment/practice-reuse";
 import {
   isCurrentGeneratorTopic,
   isGeneratorMarkTotal,
   resolveQuestionGeneratorTarget,
+  PracticeFocusError,
 } from "@/lib/assessment/question-generator";
 import { ECONOMICS_QUESTION_BANK } from "@/lib/assessment/question-bank/economics-v1";
 import {
@@ -51,11 +52,12 @@ import {
   fetchPracticeBankHistory,
   findPracticeByIdempotency,
   savePracticeQuestion,
+  fetchLatestTrustedPracticeQuestion,
 } from "@/lib/supabase/server-authority";
 
 export const runtime = "nodejs";
 
-const REQUEST_CONTEXTS = ["general", "current_focus"] as const;
+const REQUEST_CONTEXTS = ["general", "current_focus", "answer_feedback"] as const;
 type RequestContext = (typeof REQUEST_CONTEXTS)[number];
 
 function fail(status: number, error: string) {
@@ -79,14 +81,15 @@ export async function POST(request: Request) {
   if (
     Object.keys(raw).some(
       (key) =>
-        !["marks", "topicCode", "context", "regenerate", "idempotencyKey"].includes(key)
+        !["marks", "topicCode", "context", "sourceAttemptId", "regenerate", "idempotencyKey"].includes(key)
     ) ||
     !isGeneratorMarkTotal(raw.marks) ||
     !isCurrentGeneratorTopic(raw.topicCode) ||
     typeof raw.context !== "string" ||
     !(REQUEST_CONTEXTS as readonly string[]).includes(raw.context) ||
     typeof raw.regenerate !== "boolean" ||
-    !isUuid(raw.idempotencyKey)
+    !isUuid(raw.idempotencyKey) ||
+    (raw.context === "answer_feedback" ? !isUuid(raw.sourceAttemptId) : raw.sourceAttemptId != null)
   ) {
     return fail(400, "invalid_request");
   }
@@ -96,6 +99,7 @@ export async function POST(request: Request) {
   const context = raw.context as RequestContext;
   const regenerate = raw.regenerate;
   const idempotencyKey = raw.idempotencyKey;
+  const sourceAttemptId = typeof raw.sourceAttemptId === "string" ? raw.sourceAttemptId : null;
   const courseLevel = readEconomicsCourseLevel(claims?.user_metadata);
   if (courseLevel === null) return fail(409, PRACTICE_LEVEL_REQUIRED_CODE);
 
@@ -105,6 +109,9 @@ export async function POST(request: Request) {
     context,
     regenerate,
     courseLevel,
+    // Keep general-request fingerprints stable. Old focused requests used a
+    // weaker contract, so do not replay them as newly verified personalization.
+    ...(context === "general" ? {} : { sourceAttemptId, focusContract: 1 }),
   });
   const requestId = crypto.randomUUID();
   let stage: PracticeStage = "reuse_lookup";
@@ -114,7 +121,7 @@ export async function POST(request: Request) {
   function failClosed(status: number, err: unknown) {
     console.error(JSON.stringify(buildPracticeFailureLog(stage, requestId, err, status)));
     return NextResponse.json(
-      { error: PRACTICE_ERROR_CODE, reference: supportReference(requestId) },
+      { error: context === "general" ? PRACTICE_ERROR_CODE : "focused_generation_failed", reference: supportReference(requestId) },
       { status }
     );
   }
@@ -136,7 +143,7 @@ export async function POST(request: Request) {
   try {
     const [savedAttempts, latest] = await Promise.all([
       fetchAttempts(supabase),
-      fetchLatestPracticeQuestion(supabase),
+      fetchLatestTrustedPracticeQuestion(userId),
     ]);
     attempts = savedAttempts;
     target = resolveQuestionGeneratorTarget({
@@ -145,17 +152,25 @@ export async function POST(request: Request) {
       courseLevel,
       attempts,
       requestCurrentFocus: context === "current_focus",
+      source: context === "general" ? undefined : context,
+      sourceAttemptId,
     });
-    const reusable = reusablePracticeQuestion(latest, attempts);
+    const reusable = reusablePracticeQuestion(latest?.question ?? null, attempts);
     const sameRequestedFrame =
       reusable !== null &&
       reusable.markTotal === marks &&
       reusable.topicCode === topicCode &&
-      (context !== "current_focus" || reusable.fromCurrentFocus === true);
+      reusable.framework === target.framework &&
+      (latest?.levelRelevance === "shared_sl_hl" || latest?.levelRelevance === "hl_only") &&
+      (courseLevel === "hl" || latest?.levelRelevance === "shared_sl_hl") &&
+      latest?.targetSkills.includes(target.targetSkill) &&
+      sameFocus(reusable.focus, target.focus) &&
+      (target.focus !== null || reusable.fromCurrentFocus !== true);
     if (sameRequestedFrame && !regenerate) {
       return NextResponse.json({ practiceQuestion: reusable, reused: true });
     }
   } catch (error) {
+    if (error instanceof PracticeFocusError) return fail(409, error.code);
     if (error instanceof Error && error.message === "topic is HL-only") {
       return fail(403, "topic_not_available_for_level");
     }
@@ -172,6 +187,9 @@ export async function POST(request: Request) {
         topicCode,
         courseLevel,
         targetSkill: target.targetSkill,
+        framework: target.framework,
+        requireSkill: target.focus !== null,
+        evidenceQuestion: target.evidenceQuestion,
       },
       history,
       `${userId}:${idempotencyKey}`
@@ -184,7 +202,7 @@ export async function POST(request: Request) {
         markTotal: selected.marks,
         topicCode: selected.topicCode,
         topicLabel: target.topicLabel,
-        skill: selected.targetSkills[0] ?? target.targetSkill,
+        skill: target.focus ? target.targetSkill : selected.targetSkills[0] ?? target.targetSkill,
         why: target.why,
         questionOrigin: "curated_bank",
         bankQuestionId: selected.id,
@@ -196,6 +214,7 @@ export async function POST(request: Request) {
         targetSkills: selected.targetSkills,
         angleTags: selected.angleTags,
         fromCurrentFocus: target.fromCurrentFocus,
+        focus: target.focus,
         requestFingerprint: fingerprint,
       });
       return NextResponse.json({ practiceQuestion: saved, reused: false });
@@ -207,8 +226,8 @@ export async function POST(request: Request) {
     return failClosed(502, error);
   }
 
-  // True curated-bank exhaustion is the only path that reserves and calls the
-  // existing GPT-5.4 Practice generator.
+  // Exhaustion of COMPATIBLE questions (including zero matches) uses the same
+  // GPT-5.4 operation/reservation. Unrelated bank questions never block fallback.
   stage = "rate_limit";
   try {
     const reservation = await reserveAIUsage({
@@ -246,8 +265,9 @@ export async function POST(request: Request) {
   const timer = setTimeout(() => controller.abort(), PRACTICE_REQUEST_TIMEOUT_MS);
   try {
     let generated: ReturnType<typeof validateGeneratedPractice> | null = null;
-    let lastValidationError: unknown = null;
+    let lastGenerationError: unknown = null;
     for (let attemptNumber = 0; attemptNumber < 2 && generated === null; attemptNumber += 1) {
+      try {
       stage = "openai";
       providerDispatched = true;
       const response = await getOpenAI().responses.create(
@@ -269,7 +289,7 @@ export async function POST(request: Request) {
             },
           },
         },
-        { signal: controller.signal }
+        { signal: controller.signal, maxRetries: 0 }
       );
       stage = "structured_output";
       if (response.status !== "completed") throw new Error(`model status ${response.status}`);
@@ -277,13 +297,13 @@ export async function POST(request: Request) {
         throw new Error("empty model output");
       }
       stage = "schema_validation";
-      try {
         generated = validateGeneratedPractice(JSON.parse(response.output_text), target);
       } catch (error) {
-        lastValidationError = error;
+        lastGenerationError = error;
+        if (controller.signal.aborted) throw error;
       }
     }
-    if (generated === null) throw lastValidationError ?? new Error("invalid generated practice");
+    if (generated === null) throw lastGenerationError ?? new Error("invalid generated practice");
 
     stage = "persistence";
     const saved = await savePracticeQuestion(userId, idempotencyKey, {
@@ -293,9 +313,10 @@ export async function POST(request: Request) {
       markTotal: target.markTotal,
       topicCode: target.topicCode,
       topicLabel: target.topicLabel,
-      skill: generated.targetSkills[0] ?? target.targetSkill,
+      skill: target.focus ? target.targetSkill : generated.targetSkills[0] ?? target.targetSkill,
       why: target.why,
       questionOrigin: "adaptive_generated",
+      generationProvenance: { modelId: PRACTICE_MODEL, reasoningEffort: PRACTICE_REASONING_EFFORT, schemaHash: requestFingerprint(PRACTICE_JSON_SCHEMA) },
       bankQuestionId: null,
       questionBankVersion: null,
       gradingBlueprint: generated.gradingBlueprint,
@@ -305,6 +326,7 @@ export async function POST(request: Request) {
       targetSkills: generated.targetSkills,
       angleTags: generated.angleTags,
       fromCurrentFocus: target.fromCurrentFocus,
+      focus: target.focus,
       requestFingerprint: fingerprint,
     });
     await markReservationSucceeded(reservationId, userId, { practiceId: saved.id });

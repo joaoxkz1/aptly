@@ -14,6 +14,8 @@ function target(
   overrides: Partial<AdaptivePracticeTarget> = {}
 ): AdaptivePracticeTarget {
   return {
+    taxonomyVersion: "economics-2022-v1",
+    courseLevel: "sl",
     topicCode: "3.5",
     topicLabel: "Demand management — monetary policy",
     markTotal: 15,
@@ -42,6 +44,9 @@ function blueprintFields(overrides: Record<string, unknown> = {}) {
 
 function generated(overrides: Record<string, unknown> = {}) {
   return {
+    topicCode: "3.5", taxonomyVersion: "economics-2022-v1", marks: 15,
+    framework: "paper1b_15_mark", paper: "paper_1", questionPart: "b",
+    levelRelevance: "shared_sl_hl", requiresSource: false, diagramDependent: false, origin: "adaptive_generated",
     question:
       "Using real-world examples, evaluate the effectiveness of monetary policy when inflation is caused by supply shocks. [15 marks]",
     commandTerm: "evaluate",
@@ -104,6 +109,7 @@ describe("validateGeneratedPractice — strict adaptive fallback", () => {
   it("accepts the distinct short-definition blueprint shape for 2 marks", () => {
     const result = validateGeneratedPractice(
       generated({
+        marks: 2, framework: "paper2_short_analytic", paper: "paper_2", questionPart: "a",
         question: "Define monetary policy. [2 marks]",
         commandTerm: "define",
         targetSkills: ["definition"],
@@ -129,6 +135,28 @@ describe("validateGeneratedPractice — strict adaptive fallback", () => {
     expect(
       (result.gradingBlueprint as EconomicsGradingBlueprint & { kind: "short" }).kind
     ).toBe("short");
+  });
+});
+describe("focused output identity and task validation", () => {
+  it.each([
+    { topicCode: "2.8" }, { taxonomyVersion: "economics-legacy-v3" },
+    { marks: 10 }, { framework: "paper2g_15_mark" }, { paper: "paper_3" }, { questionPart: "a" },
+    { levelRelevance: "hl_only" }, { requiresSource: true }, { diagramDependent: true },
+    { origin: "curated_bank" }, { targetSkills: ["economic_analysis"] },
+    { targetSkills: ["evaluation", "calculation"] },
+    { gradingBlueprint: blueprintFields({ analysisPaths: [] }) },
+    { question: "Calculate the inflation rate and evaluate monetary policy. [15 marks]" },
+    { question: "Using the extract, evaluate monetary policy. [15 marks]" },
+  ])("rejects incompatible generated metadata/task: %j", (invalid) => {
+    expect(() => validateGeneratedPractice(generated(invalid), target())).toThrow();
+  });
+  it("requires an actual application task, not only a skill tag", () => {
+    expect(() => validateGeneratedPractice(generated({ question: "Evaluate monetary policy effectiveness. [15 marks]" }), target({ targetSkill: "application" }))).toThrow("application");
+    expect(validateGeneratedPractice(generated(), target({ targetSkill: "application" })).targetSkills).toContain("application");
+  });
+  it("rejects unsupported trusted targets rather than squeezing them into essays", () => {
+    expect(() => validateGeneratedPractice(generated(), target({ targetSkill: "data_interpretation" }))).toThrow("unsupported target");
+    expect(() => validateGeneratedPractice(generated(), target({ framework: "paper1a_10_mark" }))).toThrow("unsupported target");
   });
 });
 describe("adaptive generation prompt", () => {

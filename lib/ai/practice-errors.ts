@@ -64,6 +64,10 @@ export function clientMessageForPracticeFailure(
     return "Choose IB Economics SL or HL before generating a question.";
   }
   if (code === PRACTICE_NO_FOCUS_CODE) return clientPracticeNoFocusMessage();
+  if (code === "unsupported_focus") return "This exact focused-practice type isn’t available yet. You can practise this topic instead.";
+  if (code === "focus_attempt_unavailable") return "This saved answer is no longer available. Choose a question to practise instead.";
+  if (code === "focus_changed") return "Your saved focus has changed. Reload to see the current recommendation, or choose general practice.";
+  if (code === "focused_generation_failed") return "Aptly couldn’t create a suitable focused question this time. Try again.";
   return clientPracticeErrorMessage(reference);
 }
 

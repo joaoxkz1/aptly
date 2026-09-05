@@ -125,6 +125,10 @@ const currentBankPractice = {
   target_skills: ["economic_analysis"],
   angle_tags: ["subsidy", "market_outcomes"],
   from_current_focus: true,
+  focus_context: {
+    source: "current_focus", sourceAttemptId: null, topicCode: "2.7", taxonomyVersion: "economics-2022-v1",
+    targetSkill: "economic_analysis", recommendedMarks: 10, courseLevel: "sl", explanation: "Develop causal analysis.", serverVerified: true,
+  },
   request_fingerprint: "c".repeat(64),
 };
 
@@ -775,6 +779,8 @@ try {
         .select("id,grading_blueprint,bank_question_id")
         .eq("id", trustedPracticeId);
       assert(hiddenRead.error, "authenticated browser read hidden trusted fields");
+      const generationRead = await userA.client.from("practice_questions").select("generation_provenance").eq("id", trustedPracticeId);
+      assert(generationRead.error, "authenticated browser read private generation provenance");
 
       const hiddenUpdate = await userA.client
         .from("practice_questions")
@@ -806,6 +812,19 @@ try {
       if (browserRead.error) throw browserRead.error;
       assert(browserRead.data !== null, "legacy practice was not readable by its owner");
       return "pre-0010 style all-NULL provenance remained valid and owner-readable";
+    });
+    await run(26, "verified focus is owner-readable and cannot be forged", async () => {
+      const own = await userA.client.from("practice_questions").select("id,focus_context").eq("id", trustedPracticeId).single();
+      if (own.error) throw own.error;
+      assert(own.data.focus_context?.targetSkill === "economic_analysis", "focus did not round-trip");
+      const other = await userB.client.from("practice_questions").select("id,focus_context").eq("id", trustedPracticeId).maybeSingle();
+      if (other.error) throw other.error;
+      assert(other.data === null, "another account could read focus context");
+      const forged = await userA.client.from("practice_questions").update({ focus_context: { ...currentBankPractice.focus_context, targetSkill: "application" } }).eq("id", trustedPracticeId);
+      assert(forged.error, "browser could forge focus context");
+      const inconsistent = await admin.from("practice_questions").insert({ ...currentBankPractice, user_id: userA.id, idempotency_key: randomUUID(), focus_context: { ...currentBankPractice.focus_context, targetSkill: "application" } });
+      assert(inconsistent.error, "database accepted focus absent from trusted target skills");
+      return "owner read passed; other-account read, browser update and inconsistent server bundle were rejected";
     });
   }
 } finally {

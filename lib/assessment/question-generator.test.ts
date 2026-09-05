@@ -68,14 +68,14 @@ describe("question-generator trusted target", () => {
   });
 
   it("does not claim Current Focus without matching saved evidence", () => {
-    expect(
+    expect(() =>
       resolveQuestionGeneratorTarget({
         marks: 15,
         topicCode: "3.5",
         courseLevel: "hl",
         attempts: [],
         requestCurrentFocus: true,
-      }).fromCurrentFocus
-    ).toBe(false);
+      })
+    ).toThrow("no_focus_available");
   });
 });
