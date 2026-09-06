@@ -1,5 +1,8 @@
 import { PRACTICE_REQUEST_TIMEOUT_MS } from "./config";
 import type { PracticeQuestion } from "@/lib/types";
+import { isUuid } from "@/lib/auth/verified-user";
+import { classifyOperationOutcome, type OperationOutcome } from "./operation-outcome";
+import type { EconomicsCourseLevel } from "@/lib/assessment/course-level";
 
 /**
  * Practice Loop hardening — the ONE client-side path to `/api/practice`.
@@ -24,6 +27,8 @@ export interface PracticeGenerationOutcome {
 }
 
 export interface PracticeGenerationRequest {
+  /** Local identity only; the route always derives the trusted level from claims. */
+  courseLevel?: EconomicsCourseLevel;
   marks: 2 | 10 | 15;
   topicCode: string;
   context: "general" | "current_focus" | "answer_feedback";
@@ -34,7 +39,7 @@ export interface PracticeGenerationRequest {
 export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) {
   let pending: Promise<PracticeGenerationOutcome> | null = null;
   let pendingSignature: string | null = null;
-  let retryIdentity: { signature: string; key: string } | null = null;
+  let retryIdentity: { signature: string; key: string; outcome: OperationOutcome } | null = null;
 
   async function issue(
     input: PracticeGenerationRequest,
@@ -60,21 +65,29 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
       });
       let body: Record<string, unknown> = {};
       try {
-        body = (await res.json()) as Record<string, unknown>;
+        const parsed: unknown = await res.json();
+        if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+          body = parsed as Record<string, unknown>;
+        }
       } catch {
         // ignore parse failure; fall back to the generic code
       }
+      const savedQuestion = body.practiceQuestion;
+      const hasSavedQuestion = typeof savedQuestion === "object" && savedQuestion !== null &&
+        !Array.isArray(savedQuestion) && isUuid((savedQuestion as Record<string, unknown>).id);
       const outcome = {
         status: res.status,
         code: typeof body.error === "string" ? body.error : "practice_generation_failed",
         reference: typeof body.reference === "string" ? body.reference : null,
         practiceQuestion:
-          res.ok && body.practiceQuestion != null
-            ? (body.practiceQuestion as PracticeQuestion)
+          res.ok && hasSavedQuestion
+            ? (savedQuestion as PracticeQuestion)
             : null,
         reused: body.reused === true,
       };
-      if (outcome.code !== "request_in_progress") retryIdentity = null;
+      const operationOutcome = classifyOperationOutcome(res.status, outcome.code, outcome.practiceQuestion !== null);
+      if (operationOutcome === "completed") retryIdentity = null;
+      else if (retryIdentity?.key === idempotencyKey) retryIdentity.outcome = operationOutcome;
       return outcome;
     } finally {
       clearTimeout(timer);
@@ -97,10 +110,12 @@ export function createPracticeGenerationClient(fetchImpl: typeof fetch = fetch) 
       if (pending === null) {
         pendingSignature = signature;
         const idempotencyKey =
-          retryIdentity?.signature === signature
+          retryIdentity?.signature === signature && retryIdentity.outcome !== "terminal_failed"
             ? retryIdentity.key
             : crypto.randomUUID();
-        retryIdentity = { signature, key: idempotencyKey };
+        // request() is called by explicit user action. A terminal response
+        // only marks the old identity; this next action may start a fresh one.
+        retryIdentity = { signature, key: idempotencyKey, outcome: "uncertain" };
         pending = issue(normalized, idempotencyKey).finally(() => {
           pending = null;
           pendingSignature = null;

@@ -9,7 +9,7 @@ import { createPracticeGenerationClient } from "./practice-request";
  */
 
 const QUESTION = {
-  id: "pq-1",
+  id: "44444444-4444-4444-8444-444444444444",
   createdAt: "2026-07-02T10:00:00.000Z",
   question: "Explain the effect of a subsidy on market price. [10 marks]",
   sourceMaterial: null,
@@ -35,17 +35,93 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 describe("createPracticeGenerationClient — one in-flight request per tab", () => {
+  function requestKeys(fetchImpl: ReturnType<typeof vi.fn>): string[] {
+    return fetchImpl.mock.calls.map((call) =>
+      (JSON.parse((call[1] as RequestInit).body as string) as { idempotencyKey: string }).idempotencyKey
+    );
+  }
+
+  it.each([
+    [502, { error: "practice_generation_failed" }],
+    [503, { error: "request_failed" }],
+    [409, { error: "request_in_progress" }],
+    [200, {}],
+    [200, { practiceQuestion: { id: "" } }],
+  ])("keeps the operation identity after an uncertain or processing response (%i)", async (status, body) => {
+    const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse(body, status))
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: QUESTION }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request({ ...REQUEST, regenerate: true });
+    await client.request({ ...REQUEST, regenerate: true });
+    expect(requestKeys(fetchImpl)[1]).toBe(requestKeys(fetchImpl)[0]);
+  });
+
+  it("preserves identity through malformed HTTP responses and repeated reconciliation", async () => {
+    const fetchImpl = vi.fn().mockResolvedValueOnce(new Response("gateway failure", { status: 502 }))
+      .mockResolvedValueOnce(jsonResponse({ error: "request_in_progress" }, 409))
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: QUESTION }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request(REQUEST);
+    await client.request(REQUEST);
+    await client.request(REQUEST);
+    expect(new Set(requestKeys(fetchImpl)).size).toBe(1);
+  });
+
+  it("waits for an explicit action after terminal reconciliation, then uses one fresh key for double clicks", async () => {
+    let finish!: (response: Response) => void;
+    const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse({ error: "request_failed" }, 409))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { finish = resolve; }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request(REQUEST);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const retry = client.request(REQUEST);
+    const duplicate = client.request(REQUEST);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(requestKeys(fetchImpl)[1]).not.toBe(requestKeys(fetchImpl)[0]);
+    finish(jsonResponse({ practiceQuestion: QUESTION }));
+    expect(await retry).toEqual(await duplicate);
+  });
+
+  it("allows an explicitly changed intent to receive a fresh identity after uncertainty", async () => {
+    const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse({ error: "practice_generation_failed" }, 502))
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: QUESTION }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request(REQUEST);
+    await client.request({ ...REQUEST, topicCode: "3.5" });
+    expect(requestKeys(fetchImpl)[1]).not.toBe(requestKeys(fetchImpl)[0]);
+  });
+
+  it("treats an explicit course change as new intent without sending trusted course metadata", async () => {
+    const fetchImpl = vi.fn().mockResolvedValueOnce(jsonResponse({ error: "practice_generation_failed" }, 502))
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: QUESTION }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request({ ...REQUEST, courseLevel: "sl" });
+    await client.request({ ...REQUEST, courseLevel: "hl" });
+    expect(requestKeys(fetchImpl)[1]).not.toBe(requestKeys(fetchImpl)[0]);
+    for (const call of fetchImpl.mock.calls) {
+      expect(JSON.parse((call[1] as RequestInit).body as string)).not.toHaveProperty("courseLevel");
+    }
+  });
+
+  it("completes a confirmed result so the next explicit request for another question uses a fresh key", async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({ practiceQuestion: QUESTION }));
+    const client = createPracticeGenerationClient(fetchImpl);
+    await client.request({ ...REQUEST, regenerate: true });
+    await client.request({ ...REQUEST, regenerate: true });
+    expect(requestKeys(fetchImpl)[1]).not.toBe(requestKeys(fetchImpl)[0]);
+  });
+
   it("a different focus waits for its own response instead of adopting stale context", async () => {
     let finish!: (response: Response) => void;
     const fetchImpl = vi.fn().mockImplementationOnce(() => new Promise<Response>(resolve => { finish = resolve; }))
-      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: { ...QUESTION, id: "application", skill: "application", markTotal: 15 } }));
+      .mockResolvedValueOnce(jsonResponse({ practiceQuestion: { ...QUESTION, id: "55555555-5555-4555-8555-555555555555", skill: "application", markTotal: 15 } }));
     const client = createPracticeGenerationClient(fetchImpl);
     const first = client.request(REQUEST);
     const second = client.request({ marks: 15, topicCode: "2.8", context: "current_focus" });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     finish(jsonResponse({ practiceQuestion: QUESTION }));
-    expect((await first).practiceQuestion?.id).toBe("pq-1");
-    expect((await second).practiceQuestion?.id).toBe("application");
+    expect((await first).practiceQuestion?.id).toBe(QUESTION.id);
+    expect((await second).practiceQuestion?.id).toBe("55555555-5555-4555-8555-555555555555");
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
   it("concurrent duplicate calls share ONE fetch and resolve identically", async () => {
@@ -63,8 +139,8 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
 
     release(jsonResponse({ practiceQuestion: QUESTION, reused: true }));
     const [a, b] = await Promise.all([first, second]);
-    expect(a.practiceQuestion?.id).toBe("pq-1");
-    expect(b.practiceQuestion?.id).toBe("pq-1");
+    expect(a.practiceQuestion?.id).toBe(QUESTION.id);
+    expect(b.practiceQuestion?.id).toBe(QUESTION.id);
     expect(a.reused).toBe(true);
   });
 
@@ -108,8 +184,9 @@ describe("createPracticeGenerationClient — one in-flight request per tab", () 
 
     await expect(client.request(REQUEST)).rejects.toBeTruthy();
     const retry = await client.request(REQUEST);
-    expect(retry.practiceQuestion?.id).toBe("pq-1");
+    expect(retry.practiceQuestion?.id).toBe(QUESTION.id);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(requestKeys(fetchImpl)[1]).toBe(requestKeys(fetchImpl)[0]);
   });
 
   it("maps failure payloads to a safe outcome (no throw on HTTP errors)", async () => {

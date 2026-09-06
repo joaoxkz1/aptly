@@ -5,7 +5,7 @@ export const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
 export const DRAFT_PREFIX = "aptly:draft:v1:";
 export type DraftTask = "manual" | `practice:${string}` | `revision:${string}`;
 export interface DraftText { question: string; answer: string; source: string }
-export interface DraftRetry { fingerprint: string; idempotencyKey: string }
+export interface DraftRetry { fingerprint: string; idempotencyKey: string; terminal?: true }
 export interface DraftRecord {
   version: 1;
   accountId: string;
@@ -47,8 +47,9 @@ export function parseDraft(raw: string, now: number): DraftRecord | null {
       d.createdAt > now || d.updatedAt > now || d.updatedAt < d.createdAt ||
       now - d.createdAt >= DRAFT_TTL_MS || !isUuid(d.revision) ||
       !safeText(d.text?.question) || !safeText(d.text?.answer) || !safeText(d.text?.source)) return null;
-    const retry = /^[a-f0-9]{64}$/.test(d.retry?.fingerprint) && isUuid(d.retry?.idempotencyKey)
-      ? { fingerprint: d.retry.fingerprint, idempotencyKey: d.retry.idempotencyKey } : null;
+    const retry: DraftRetry | null = /^[a-f0-9]{64}$/.test(d.retry?.fingerprint) && isUuid(d.retry?.idempotencyKey)
+      ? { fingerprint: d.retry.fingerprint, idempotencyKey: d.retry.idempotencyKey,
+        ...(d.retry.terminal === true ? { terminal: true as const } : {}) } : null;
     return { version: 1, accountId: d.accountId, task: d.task, createdAt: d.createdAt,
       updatedAt: d.updatedAt, text: textOnly(d.text, d.task), retry, revision: d.revision };
   } catch { return null; }
@@ -126,7 +127,7 @@ export function clearBrowserDrafts() { setDraftAccount(null); }
 export function isDraftAccount(accountId: string) { return activeDraftAccount === accountId; }
 
 export interface SubmissionDraftTicket { revision: string; idempotencyKey: string }
-interface DraftSnapshot { text: DraftText; restored: boolean; available: boolean }
+interface DraftSnapshot { text: DraftText; restored: boolean; available: boolean; terminalFailed: boolean }
 
 /** Synchronous edits protect even an immediate reload; no debounce/unload race. */
 export class DraftSession {
@@ -146,13 +147,14 @@ export class DraftSession {
     private accountCurrent: () => boolean = () => true) {
     this.text = { ...initial };
     this.record = this.freshRecord();
-    this.snapshot = this.initialSnapshot = { text: this.text, restored: false, available: true };
+    this.snapshot = this.initialSnapshot = { text: this.text, restored: false, available: true, terminalFailed: false };
   }
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   getSnapshot = () => this.snapshot;
   getServerSnapshot = () => this.initialSnapshot;
   refresh = () => {
-    this.snapshot = { text: this.text, restored: this.restored, available: this.available };
+    this.snapshot = { text: this.text, restored: this.restored, available: this.available,
+      terminalFailed: this.record.retry?.terminal === true };
     this.listeners.forEach(listener => listener());
   };
   private freshRecord(): DraftRecord {
@@ -201,7 +203,10 @@ export class DraftSession {
     const revision = this.record.revision;
     const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(signature));
     const fingerprint = Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, "0")).join("");
-    const idempotencyKey = this.record.retry?.fingerprint === fingerprint ? this.record.retry.idempotencyKey : this.uuid();
+    // Called only by an explicit submission. A terminal response itself and
+    // restoring a draft never manufacture or dispatch another operation.
+    const idempotencyKey = this.record.retry?.fingerprint === fingerprint && !this.record.retry.terminal
+      ? this.record.retry.idempotencyKey : this.uuid();
     // An edit/auth change while hashing must not attach an older retry to new text.
     if (this.isCurrent() && this.record.revision === revision) {
       this.record.retry = { fingerprint, idempotencyKey };
@@ -211,6 +216,17 @@ export class DraftSession {
     return { revision, idempotencyKey };
   }
   matches(ticket: SubmissionDraftTicket) { return this.isCurrent() && ticket.revision === this.record.revision; }
+  /** Only an authoritative terminal response may retire this exact operation. */
+  markTerminalFailure(ticket: SubmissionDraftTicket): boolean {
+    const retry = this.record.retry;
+    if (!this.matches(ticket) || retry?.idempotencyKey !== ticket.idempotencyKey) return false;
+    const stored = this.store.read(this.accountId, this.task).draft;
+    if (stored && (stored.revision !== ticket.revision || stored.retry?.idempotencyKey !== ticket.idempotencyKey)) return false;
+    this.record.retry = { ...retry, terminal: true };
+    this.persist();
+    this.refresh();
+    return true;
+  }
   /** Confirmed persistence only. Failures/unknown completion never call this. */
   saved(ticket: SubmissionDraftTicket): boolean {
     if (!this.matches(ticket)) return false;

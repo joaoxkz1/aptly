@@ -57,6 +57,16 @@ describe("grade error mapping — no stage or secret ever reaches the client", (
       "Reference: REF12345"
     );
   });
+  it("distinguishes a reconciled terminal failure from uncertain completion", () => {
+    const terminal = clientMessageForGradeFailure(409, "request_failed", "REF12345");
+    expect(terminal).toContain("failed without saving");
+    expect(terminal).toContain("fresh attempt");
+    expect(terminal).toContain("Reference: REF12345");
+    expect(terminal).not.toContain("may already be saved");
+    for (const [status, code] of [[502, "grading_failed"], [502, "request_failed"], [409, "request_in_progress"]] as const) {
+      expect(clientMessageForGradeFailure(status, code)).toBe(clientGradeErrorMessage());
+    }
+  });
 });
 
 describe("supportReference — short, derived, non-secret", () => {

@@ -160,6 +160,65 @@ describe("temporary typed drafts", () => {
     expect(a.text.answer).toBe(""); expect(a.saved(ticket)).toBe(false);
     expect(store.read(A, "manual").draft).toBeNull();
   });
+  it("records terminal failure without changing text or rotating until an explicit submission", async () => {
+    const a = filled();
+    const text = { ...a.text };
+    const ticket = await a.beginSubmission("unchanged request");
+    expect(a.markTerminalFailure(ticket)).toBe(true);
+    expect(a.text).toEqual(text);
+    expect(a.getSnapshot().terminalFailed).toBe(true);
+    expect(store.read(A, "manual").draft?.retry).toMatchObject({ idempotencyKey: ticket.idempotencyKey, terminal: true });
+    const next = await a.beginSubmission("unchanged request");
+    expect(next.idempotencyKey).not.toBe(ticket.idempotencyKey);
+    expect(a.getSnapshot().terminalFailed).toBe(false);
+    expect(a.text).toEqual(text);
+    expect((await a.beginSubmission("unchanged request")).idempotencyKey).toBe(next.idempotencyKey);
+  });
+  it("restores terminal retry metadata without manufacturing a new operation on reload", async () => {
+    const a = filled();
+    const ticket = await a.beginSubmission("unchanged request");
+    a.markTerminalFailure(ticket); a.close();
+    const back = session(); back.open();
+    expect(back.text).toEqual(a.text);
+    expect(back.getSnapshot().terminalFailed).toBe(true);
+    expect(store.read(A, "manual").draft?.retry?.idempotencyKey).toBe(ticket.idempotencyKey);
+    const retry = await back.beginSubmission("unchanged request");
+    expect(retry.idempotencyKey).not.toBe(ticket.idempotencyKey);
+    expect(store.read(A, "manual").draft?.retry).not.toHaveProperty("terminal");
+  });
+  it("does not let a terminal response retire newer edits or a newer operation on unchanged text", async () => {
+    const a = filled();
+    const ticket = await a.beginSubmission("first request");
+    a.edit({ answer: "Newer writing" });
+    expect(a.markTerminalFailure(ticket)).toBe(false);
+    expect(a.getSnapshot().terminalFailed).toBe(false);
+    const newer = await a.beginSubmission("newer request");
+    const latest = await a.beginSubmission("different marking decision");
+    expect(a.markTerminalFailure(newer)).toBe(false);
+    expect(store.read(A, "manual").draft?.retry?.idempotencyKey).toBe(latest.idempotencyKey);
+    expect(a.text.answer).toBe("Newer writing");
+  });
+  it("does not mark failure after discard, navigation, or account change", async () => {
+    const a = filled(); const ticket = await a.beginSubmission("request");
+    a.discard(); expect(a.markTerminalFailure(ticket)).toBe(false);
+    const b = filled(); const pending = await b.beginSubmission("request");
+    b.close(); expect(b.markTerminalFailure(pending)).toBe(false);
+    let current = true;
+    const c = session("manual", A, () => current); c.open();
+    const oldAccount = await c.beginSubmission("request");
+    current = false;
+    expect(c.markTerminalFailure(oldAccount)).toBe(false);
+  });
+  it("coalesces explicit terminal retries onto the one fresh key and preserves it with unavailable storage", async () => {
+    store = new SessionDraftStore(() => { throw new Error("blocked"); }, () => now);
+    const a = filled(); const ticket = await a.beginSubmission("request");
+    a.markTerminalFailure(ticket);
+    const [first, second] = await Promise.all([a.beginSubmission("request"), a.beginSubmission("request")]);
+    expect(first.idempotencyKey).not.toBe(ticket.idempotencyKey);
+    expect(second.idempotencyKey).toBe(first.idempotencyKey);
+    expect(a.getSnapshot().terminalFailed).toBe(false);
+    expect(a.text.answer).not.toBe("");
+  });
   it("allowlists text and opaque replay metadata; no images, secrets or private guidance", async () => {
     const a = filled(`practice:${Q}`); await a.beginSubmission("question and answer only used transiently for hashing");
     const d = store.read(A, `practice:${Q}`).draft!;

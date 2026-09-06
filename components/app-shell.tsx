@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -36,31 +36,52 @@ function Logo() {
   );
 }
 
-function SignOutButton() {
+export function SignOutButton() {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const pending = useRef(false);
 
   async function signOut() {
-    if (busy) return;
+    if (pending.current) return;
+    pending.current = true;
     setBusy(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch {
+      pending.current = false;
+      setBusy(false);
+      setError("Couldn't sign out. Please try again.");
+      return;
+    }
+    // Keep the authenticated editor's draft boundary intact until sign-out
+    // succeeds. A failed request must not disable later draft persistence.
     clearBrowserDrafts();
-    await supabase.auth.signOut();
     router.replace("/login");
     router.refresh();
   }
 
   return (
-    <button
-      type="button"
-      aria-label="Sign out"
-      title="Sign out"
-      onClick={signOut}
-      disabled={busy}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-    >
-      <LogOut className="h-4 w-4" />
-    </button>
+    <div className="relative shrink-0">
+      <button
+        type="button"
+        aria-label="Sign out"
+        title="Sign out"
+        onClick={signOut}
+        disabled={busy}
+        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
+      >
+        <LogOut className="h-4 w-4" />
+      </button>
+      {error && (
+        <span role="alert" className="absolute right-0 top-full z-30 mt-2 w-52 rounded-lg border border-border bg-card p-2 text-xs text-foreground shadow-md md:bottom-full md:top-auto md:mb-2 md:mt-0 md:w-48">
+          {error}
+        </span>
+      )}
+    </div>
   );
 }
 

@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   attempts: [] as Attempt[],
   status: "ready" as AttemptsLoadStatus,
   draftText: null as DraftText | null,
+  terminalFailed: false,
   retry: vi.fn(),
   notice: vi.fn(),
   draft: vi.fn(),
@@ -38,6 +39,7 @@ vi.mock("@/lib/drafts/use-submit-draft", () => ({
       text: mocks.draftText ?? initial,
       restored: false,
       available: true,
+      terminalFailed: mocks.terminalFailed,
       session: {},
       edit: vi.fn(),
       discard: vi.fn(),
@@ -64,6 +66,7 @@ beforeEach(() => {
   mocks.attempts = [];
   mocks.status = "ready";
   mocks.draftText = null;
+  mocks.terminalFailed = false;
 });
 
 const parentId = "55555555-5555-4555-8555-555555555555";
@@ -84,6 +87,20 @@ function expectEditorBlocked(html: string) {
 // SSR does not run effects or browser clicks: retry fetching, stale responses,
 // account switches and storage restoration are exercised in the browser check.
 describe("Submit linked-question recovery presentation", () => {
+  it("offers an explicit fresh attempt when a restored draft has a reconciled terminal failure", () => {
+    mocks.terminalFailed = true;
+    mocks.draftText = { question: "Explain a subsidy. [4 marks]", answer: "My unchanged answer", source: "My source" };
+    const html = render();
+    expect(html).toContain("failed without saving");
+    expect(html).toContain("Try again as a fresh attempt");
+    expect(html).toContain(mocks.draftText.answer);
+    expect(html).not.toContain("Check History");
+  });
+  it("keeps the ordinary Grade action for drafts without confirmed terminal failure", () => {
+    const html = render();
+    expect(html).toContain("Grade my answer");
+    expect(html).not.toContain("Try again as a fresh attempt");
+  });
   it("waits for the account before inspecting private task or draft context", () => {
     mocks.accountId = null;
     mocks.params.set("revise", parentId);

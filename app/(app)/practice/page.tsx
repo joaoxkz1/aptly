@@ -106,6 +106,7 @@ function PracticeGenerator() {
   const [focusBlocked, setFocusBlocked] = useState(false);
   const [exitedFocus, setExitedFocus] = useState(params.get("mode") === "general");
   const selectionVersion = useRef(0);
+  const retryIntent = useRef<{ signature: string; regenerate: boolean } | null>(null);
   const canGenerateFocus = !focusBlocked && (!focus || focusPolicy(focus.targetSkill) !== null);
 
   useEffect(() => {
@@ -188,19 +189,27 @@ function PracticeGenerator() {
     async (regenerate = false) => {
       if (courseLevel === null || generating || profileLoading || !canGenerateFocus) return;
       const version = selectionVersion.current;
+      const signature = JSON.stringify([courseLevel, marks, selectedTopicCode, focus?.source, focus?.sourceAttemptId]);
+      // Both retry buttons must retain an uncertain "Another question" intent.
+      // Changing selectors starts a different intent; a successful result ends it.
+      const regenerateRequest = regenerate ||
+        (retryIntent.current?.signature === signature && retryIntent.current.regenerate);
+      retryIntent.current = { signature, regenerate: regenerateRequest };
       setGenerating(true);
       setError(null);
-      if (regenerate) setQuestion(null);
+      if (regenerateRequest) setQuestion(null);
       try {
         const outcome = await generationClient.request({
+          courseLevel,
           marks,
           topicCode: selectedTopicCode,
           context: focus?.source ?? "general",
           sourceAttemptId: focus?.sourceAttemptId,
-          regenerate,
+          regenerate: regenerateRequest,
         });
         if (version !== selectionVersion.current) return;
         if (outcome.status === 200 && outcome.practiceQuestion !== null) {
+          retryIntent.current = null;
           setQuestion(outcome.practiceQuestion);
         } else {
           setError(
@@ -452,7 +461,7 @@ function PracticeGenerator() {
               {error}
             </p>
             <div>
-              <Button variant="outline" size="sm" disabled={!canGenerateFocus} onClick={() => void generate(false)}>
+              <Button variant="outline" size="sm" disabled={generating || !canGenerateFocus} onClick={() => void generate(false)}>
                 <RefreshCw className="h-3.5 w-3.5" />
                 Try again
               </Button>

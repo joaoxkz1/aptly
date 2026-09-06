@@ -1,4 +1,5 @@
 import { safeErrorClass, supportReference } from "./grade-errors";
+import { classifyOperationOutcome } from "./operation-outcome";
 
 /**
  * Structured practice-generation error observability (Practice Loop).
@@ -38,7 +39,7 @@ export const PRACTICE_LEVEL_REQUIRED_CODE = "economics_level_required";
 /** User-facing generation-failure message. No stage, no internals. */
 export function clientPracticeErrorMessage(reference?: string | null): string {
   const base =
-    "We couldn't create this practice question. Nothing was saved. Please try again. If processing had already started, this try may count toward today's limit.";
+    "We couldn't confirm whether your practice question was saved. Try again to check the same request and recover it if it was saved. If processing had already started, this try may count toward today's limit.";
   return reference ? `${base} Reference: ${reference}` : base;
 }
 
@@ -58,6 +59,13 @@ export function clientMessageForPracticeFailure(
   code: string,
   reference?: string | null
 ): string {
+  const outcome = classifyOperationOutcome(status, code);
+  if (outcome === "terminal_failed") {
+    return "The previous request failed and no practice question was saved. Try again to start a new request. Your selections are unchanged; the new request may count toward today's limit.";
+  }
+  if (outcome === "processing") {
+    return "Your practice question is still being prepared. Try again to check the same request.";
+  }
   if (status === 401) return "Your session expired. Please sign in again.";
   if (status === 429 || code === PRACTICE_LIMIT_ERROR_CODE) return clientPracticeLimitMessage();
   if (code === PRACTICE_LEVEL_REQUIRED_CODE) {
@@ -67,7 +75,7 @@ export function clientMessageForPracticeFailure(
   if (code === "unsupported_focus") return "This exact focused-practice type isn’t available yet. You can practise this topic instead.";
   if (code === "focus_attempt_unavailable") return "This saved answer is no longer available. Choose a question to practise instead.";
   if (code === "focus_changed") return "Your saved focus has changed. Reload to see the current recommendation, or choose general practice.";
-  if (code === "focused_generation_failed") return "Aptly couldn’t create a suitable focused question this time. Try again.";
+  if (code === "focused_generation_failed") return clientPracticeErrorMessage(reference);
   return clientPracticeErrorMessage(reference);
 }
 

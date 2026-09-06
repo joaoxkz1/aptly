@@ -1,3 +1,5 @@
+import { classifyOperationOutcome } from "./operation-outcome";
+
 /**
  * Structured grading-error observability (IB Marking Fidelity + Pilot Trust).
  *
@@ -46,6 +48,11 @@ export function clientGradeErrorMessage(reference?: string | null): string {
   return reference ? `${base} Reference: ${reference}` : base;
 }
 
+export function clientTerminalGradeFailureMessage(reference?: string | null): string {
+  const base = "This mark estimate failed without saving. Your answer is still here. You can try again as a fresh attempt, which may count toward today's limit.";
+  return reference ? `${base} Reference: ${reference}` : base;
+}
+
 /** User-facing message for the daily pilot grading limit (no internals). */
 export function clientDailyLimitMessage(): string {
   return "You’ve reached today’s Aptly pilot grading limit. Try again tomorrow.";
@@ -57,6 +64,7 @@ export function clientMessageForGradeFailure(
   code: string,
   reference?: string | null
 ): string {
+  if (classifyOperationOutcome(status, code) === "terminal_failed") return clientTerminalGradeFailureMessage(reference);
   if (status === 401) return "Your session expired. Please sign in again.";
   if (code === "too_long")
     return "Your question or answer is too long. Please shorten it and try again.";

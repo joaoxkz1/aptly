@@ -39,7 +39,8 @@ import {
   REVISION_ATTEMPT_LABEL,
   practiceProvenanceLabel,
 } from "@/lib/assessment/display";
-import { clientGradeErrorMessage, clientMessageForGradeFailure } from "@/lib/ai/grade-errors";
+import { clientGradeErrorMessage, clientMessageForGradeFailure, clientTerminalGradeFailureMessage } from "@/lib/ai/grade-errors";
+import { classifyOperationOutcome } from "@/lib/ai/operation-outcome";
 import {
   SAMPLE_ANSWER,
   SAMPLE_QUESTION,
@@ -52,6 +53,7 @@ import { cn } from "@/lib/utils";
 import { useDraftAccount } from "@/components/draft-account-boundary";
 import { useSubmitDraft } from "@/lib/drafts/use-submit-draft";
 import { draftTask } from "@/lib/drafts/session-draft";
+import { isUuid } from "@/lib/auth/verified-user";
 
 // useSearchParams needs a Suspense boundary; the inner page is keyed on the
 // params so entering/leaving revision or practice mode fully resets its state.
@@ -502,7 +504,10 @@ function SubmitPageInner({
         } catch {
           // ignore parse failure; use default code
         }
-        // Keep the draft and retry identity, including uncertain completion.
+        // Ambiguous completion retains its identity for replay. A reconciled
+        // failure only marks this key terminal; the next explicit submission
+        // creates a fresh operation, with the student's text unchanged.
+        if (classifyOperationOutcome(res.status, code) === "terminal_failed" && !draft.session.markTerminalFailure(ticket)) return;
         setError(clientMessageForGradeFailure(res.status, code, reference));
         return;
       }
@@ -511,7 +516,9 @@ function SubmitPageInner({
       if (!draft.session.isCurrent()) return;
       // Grade persistence is complete at this point. Show and broadcast it
       // immediately; the feedback-only diagram review may finish later.
-      if (!savedAttempt?.id) throw new Error("Missing saved attempt");
+      if (typeof savedAttempt !== "object" || savedAttempt === null || Array.isArray(savedAttempt) || !isUuid(savedAttempt.id)) {
+        throw new Error("Missing saved attempt");
+      }
       const unchanged = draft.session.saved(ticket);
       draft.refresh();
       if (!unchanged) {
@@ -987,10 +994,10 @@ function SubmitPageInner({
               </div>
             )}
 
-            {error !== null && (
+            {(error !== null || draft.terminalFailed) && (
               <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive">
                 <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{error} <Link href="/attempts" className="underline">Check History</Link></span>
+                <span>{error ?? clientTerminalGradeFailureMessage()} {!draft.terminalFailed && <Link href="/attempts" className="underline">Check History</Link>}</span>
               </div>
             )}
 
@@ -1025,7 +1032,7 @@ function SubmitPageInner({
                         Checking your answer…
                       </>
                     ) : (
-                      "Grade my answer"
+                      draft.terminalFailed ? "Try again as a fresh attempt" : "Grade my answer"
                     )}
                   </Button>
                   {/* Quiet secondary affordance — not another instruction block. */}
