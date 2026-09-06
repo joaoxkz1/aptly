@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronDown, CircleAlert, History, Info, Loader2, PenLine, Sparkles, Wand2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
 import { Button } from "@/components/ui/button";
 import { Label, Textarea } from "@/components/ui/field";
 import { FeedbackResult, type SaveState } from "@/components/feedback-result";
@@ -96,9 +97,7 @@ function SubmitPageInner({
   startWithSample?: boolean;
 }) {
   const router = useRouter();
-  const { attempts, status: attemptsStatus } = useAttempts();
-  const ready =
-    attemptsStatus === "ready" || (attemptsStatus === "error" && attempts.length > 0);
+  const { attempts, status: attemptsStatus, retry: retryAttempts } = useAttempts();
 
   // The ?sample=1 entry pre-fills the pristine sample text, so every existing
   // sample guard (never graded, never saved, upload controls unmounted)
@@ -158,14 +157,28 @@ function SubmitPageInner({
     () => (parent !== null ? revisionContextFor(parent) : null),
     [parent]
   );
-  const revisionMissing = reviseId !== null && ready && parent === null;
+  const revisionMissing = reviseId !== null && attemptsStatus === "ready" && parent === null;
 
   // --- Practice mode --------------------------------------------------------
   // The Aptly-generated question being answered (RLS-scoped fetch), either
   // directly (?practice=) or because the revised original answered one.
   const practiceQuestionId = practiceId ?? revisionCtx?.practiceQuestionId ?? null;
-  const [practiceQuestion, setPracticeQuestion] = useState<PracticeQuestion | null>(null);
-  const [practiceMissing, setPracticeMissing] = useState(false);
+  const [practiceRetry, setPracticeRetry] = useState(0);
+  const [practiceLoad, setPracticeLoad] = useState<{
+    accountId: string;
+    questionId: string;
+    retry: number;
+    status: "ready" | "missing" | "error";
+    question: PracticeQuestion | null;
+  } | null>(null);
+  // A retry or changed linked task is loading immediately, before its effect
+  // runs. Never expose a prior request's question as the new task's context.
+  const currentPracticeLoad = practiceLoad?.accountId === accountId &&
+    practiceLoad.questionId === practiceQuestionId && practiceLoad.retry === practiceRetry
+    ? practiceLoad : null;
+  const practiceQuestion = currentPracticeLoad?.question ?? null;
+  const practiceMissing = currentPracticeLoad?.status === "missing";
+  const practiceError = currentPracticeLoad?.status === "error";
   useEffect(() => {
     if (practiceQuestionId === null) return;
     let active = true;
@@ -173,16 +186,17 @@ function SubmitPageInner({
     fetchPracticeQuestion(supabase, practiceQuestionId)
       .then((pq) => {
         if (!active) return;
-        if (pq === null) setPracticeMissing(true);
-        else setPracticeQuestion(pq);
+        setPracticeLoad({ accountId, questionId: practiceQuestionId, retry: practiceRetry,
+          status: pq === null ? "missing" : "ready", question: pq });
       })
       .catch(() => {
-        if (active) setPracticeMissing(true);
+        if (active) setPracticeLoad({ accountId, questionId: practiceQuestionId,
+          retry: practiceRetry, status: "error", question: null });
       });
     return () => {
       active = false;
     };
-  }, [practiceQuestionId]);
+  }, [accountId, practiceQuestionId, practiceRetry]);
 
   const draftReady = (reviseId === null || parent !== null) &&
     (practiceQuestionId === null || practiceQuestion !== null);
@@ -596,8 +610,19 @@ function SubmitPageInner({
   }
 
   if (!draftReady) {
+    if (reviseId !== null && parent === null && attemptsStatus !== "ready") {
+      return <AttemptsLoadNotice status={attemptsStatus} hasData={false} onRetry={retryAttempts} />;
+    }
+    if (practiceError) {
+      return <div className="space-y-3 text-sm text-muted-foreground">
+        <p role="alert">We couldn’t load this question. Your draft has not been replaced. Try again to continue the same answer.</p>
+        <Button type="button" variant="outline" size="sm" onClick={() => setPracticeRetry(value => value + 1)}>
+          Try again
+        </Button>
+      </div>;
+    }
     return <div className="space-y-3 text-sm text-muted-foreground">
-      <p>{revisionMissing || practiceMissing ? "This question could not be loaded. Your draft has not been replaced." : "Loading your question…"}</p>
+      <p role="status">{revisionMissing || practiceMissing ? "This question could not be found. Your draft has not been replaced." : "Loading your question…"}</p>
       {(revisionMissing || practiceMissing) && <Link href="/practice" className="text-primary hover:underline">Choose a practice question</Link>}
     </div>;
   }
@@ -675,7 +700,7 @@ function SubmitPageInner({
 
   // Revision/practice context still loading (attempts or practice fetch).
   const contextLoading =
-    (reviseId !== null && !ready) ||
+    (reviseId !== null && parent === null) ||
     (practiceQuestionId !== null && practiceQuestion === null && !practiceMissing);
 
   return (
