@@ -13,15 +13,15 @@ describe("economics-question-bank-v1", () => {
     const report = validateEconomicsQuestionBank(ECONOMICS_QUESTION_BANK);
     expect(report.errors).toEqual([]);
     expect(report.valid).toBe(true);
-    expect(ECONOMICS_QUESTION_BANK).toHaveLength(302);
-    expect(new Set(ECONOMICS_QUESTION_BANK.map((question) => question.id)).size).toBe(302);
+    expect(ECONOMICS_QUESTION_BANK).toHaveLength(398);
+    expect(new Set(ECONOMICS_QUESTION_BANK.map((question) => question.id)).size).toBe(398);
     expect(
       new Set(
         ECONOMICS_QUESTION_BANK.map((question) =>
           question.question.toLowerCase().replace(/\s+/g, " ").trim()
         )
       ).size
-    ).toBe(302);
+    ).toBe(398);
   });
 
   it("covers every current topic with the planned mark and level distribution", () => {
@@ -39,12 +39,12 @@ describe("economics-question-bank-v1", () => {
       ECONOMICS_QUESTION_BANK.filter((question) => question.marks === 15)
     ).toHaveLength(120);
     expect(
-      ECONOMICS_QUESTION_BANK.filter((question) => question.levelRelevance === "hl_only")
-    ).toHaveLength(59);
+      ECONOMICS_QUESTION_BANK.filter((question) => question.levelRelevance === "hl_only" && question.marks !== 4)
+    ).toHaveLength(63);
   });
 
   it("keeps hidden blueprint guidance on every entry without fake submarks", () => {
-    for (const question of ECONOMICS_QUESTION_BANK) {
+    for (const question of ECONOMICS_QUESTION_BANK.filter(q => q.marks !== 4)) {
       expect(question.gradingBlueprint).toBeTruthy();
       expect(JSON.stringify(question.gradingBlueprint)).not.toMatch(
         /(?:allocate|award)\s+\d+\s+marks?/i

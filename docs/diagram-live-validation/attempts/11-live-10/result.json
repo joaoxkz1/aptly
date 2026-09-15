@@ -1,0 +1,584 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 28278,
+  "response": {
+    "attempt": {
+      "id": "4dca3c90-1764-4ccb-a4cd-72cfb34e4e57",
+      "createdAt": "2026-09-15T18:59:59.158052+00:00",
+      "subject": "Economics",
+      "topic": "2.3",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "The written explanation gives a complete causal chain: drought reduces harvests, supply decreases at every price, a shortage occurs at P1, and price rises to a new equilibrium.",
+          "The diagram visibly shows unchanged demand and a leftward shift of supply, with the new intersection indicating higher price and lower quantity.",
+          "Terminology and notation are used accurately and consistently, including S1/S2, P1/P2 and Q1/Q2."
+        ],
+        "studyNext": "Practise explaining other competitive-equilibrium shifts, especially demand increases/decreases and simultaneous shifts in demand and supply.",
+        "improvements": [],
+        "examinerComment": "Estimated practice mark: 4/4. Your explanation and visible diagram are fully consistent with the scenario. You correctly show that the drought shifts wheat supply left while demand is unchanged, leading to a higher equilibrium price and lower equilibrium quantity."
+      },
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 4,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The answer accurately explains reduced harvests as a fall in supply at each price, a shortage at the initial equilibrium price, upward pressure on price, and a lower equilibrium quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation applies the drought, reduced wheat harvest and unchanged wheat demand directly to the market outcome.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The visible diagram shows a downward-sloping demand curve, two supply curves with the new supply position to the left, and two demand-supply intersections showing higher price and lower quantity after the shift. The intended labels and equilibrium projections are also visible, although some are blurred.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "partially_readable",
+          "summary": "The student’s diagram region is clear and shows an unchanged downward-sloping demand curve intersecting two upward-sloping supply curves, with the leftward supply position giving a higher projected price and lower projected quantity than the rightward one. Exact curve subscripts and some axis/intersection labels are blurred, but the essential equilibrium relationship is readable.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "d30fca3c-30ad-481e-844b-45d62ee29b04",
+          "observations": [
+            {
+              "region": "left side",
+              "uncertain": true,
+              "observation": "A vertical axis with an arrow is drawn; a single-letter label near the top appears to be \"P\".",
+              "interpretation": "The student appears to use price on the vertical axis."
+            },
+            {
+              "region": "bottom side",
+              "uncertain": true,
+              "observation": "A horizontal axis with an arrow is drawn; a single-letter label near the right end appears to be \"Q\".",
+              "interpretation": "The student appears to use quantity on the horizontal axis."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "One downward-sloping line runs from upper left toward lower right.",
+              "interpretation": "This is consistent with a demand curve."
+            },
+            {
+              "region": "centre-left to upper-middle",
+              "uncertain": false,
+              "observation": "One upward-sloping line is drawn to the left of another upward-sloping line.",
+              "interpretation": "This is consistent with two supply curves, with one supply position shifted left relative to the other."
+            },
+            {
+              "region": "upper-middle",
+              "uncertain": false,
+              "observation": "The left upward-sloping line and the downward-sloping line intersect at a marked point.",
+              "interpretation": "This indicates one equilibrium, at a higher price and lower quantity than the other marked intersection."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "The right upward-sloping line and the downward-sloping line intersect at a second marked point.",
+              "interpretation": "This indicates the other equilibrium."
+            },
+            {
+              "region": "middle-left and lower-centre",
+              "uncertain": true,
+              "observation": "From the upper intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P2 and Q2, though blurred.",
+              "interpretation": "The student is projecting the upper intersection to price and quantity values."
+            },
+            {
+              "region": "centre-left and lower-middle",
+              "uncertain": true,
+              "observation": "From the lower/right intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P1 and Q1, though blurred.",
+              "interpretation": "The student is projecting the lower/right intersection to price and quantity values."
+            },
+            {
+              "region": "upper-middle near the left supply curve",
+              "uncertain": true,
+              "observation": "A label beside the left upward-sloping curve looks like a supply label, but the exact subscript is hard to read.",
+              "interpretation": "The left curve is intended to be one of the two supply curves."
+            },
+            {
+              "region": "upper-right near the right supply curve",
+              "uncertain": true,
+              "observation": "A label beside the right upward-sloping curve also looks like a supply label, but the exact subscript is hard to read.",
+              "interpretation": "The right curve is intended to be the other supply curve."
+            },
+            {
+              "region": "lower-right end of the downward-sloping line",
+              "uncertain": true,
+              "observation": "A label at the end of the downward-sloping line appears to be \"D\".",
+              "interpretation": "The demand curve is likely identified explicitly."
+            },
+            {
+              "region": "overall diagram",
+              "uncertain": false,
+              "observation": "The photographed image is noticeably blurred, so several labels/subscripts are not fully legible even though the curve geometry and the two intersections are visible.",
+              "interpretation": "The diagram can still be assessed for the main market movement, but some label-reading is uncertain."
+            }
+          ],
+          "attachmentHashes": [
+            "205bb5b70f6e007a937273d65909eec70a7f5ae6815c614dc30a8b8809feb381"
+          ],
+          "componentDecision": {
+            "total": 4,
+            "diagram": 2,
+            "reasons": {
+              "diagram": "A creditworthy, correctly oriented wheat-market diagram is visible: demand is unchanged and the supply curve shifts left, producing a higher-price, lower-quantity equilibrium.",
+              "explanation": "The written response provides the complete mechanism from drought-reduced harvests to reduced supply, shortage at P1, a rise in price and a fall in quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 4,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "8b9742cf-9853-4b47-b235-4c7e3bc0bd94",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "4dca3c90-1764-4ccb-a4cd-72cfb34e4e57",
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 4,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The answer accurately explains reduced harvests as a fall in supply at each price, a shortage at the initial equilibrium price, upward pressure on price, and a lower equilibrium quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation applies the drought, reduced wheat harvest and unchanged wheat demand directly to the market outcome.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The visible diagram shows a downward-sloping demand curve, two supply curves with the new supply position to the left, and two demand-supply intersections showing higher price and lower quantity after the shift. The intended labels and equilibrium projections are also visible, although some are blurred.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "partially_readable",
+          "summary": "The student’s diagram region is clear and shows an unchanged downward-sloping demand curve intersecting two upward-sloping supply curves, with the leftward supply position giving a higher projected price and lower projected quantity than the rightward one. Exact curve subscripts and some axis/intersection labels are blurred, but the essential equilibrium relationship is readable.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "d30fca3c-30ad-481e-844b-45d62ee29b04",
+          "observations": [
+            {
+              "region": "left side",
+              "uncertain": true,
+              "observation": "A vertical axis with an arrow is drawn; a single-letter label near the top appears to be \"P\".",
+              "interpretation": "The student appears to use price on the vertical axis."
+            },
+            {
+              "region": "bottom side",
+              "uncertain": true,
+              "observation": "A horizontal axis with an arrow is drawn; a single-letter label near the right end appears to be \"Q\".",
+              "interpretation": "The student appears to use quantity on the horizontal axis."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "One downward-sloping line runs from upper left toward lower right.",
+              "interpretation": "This is consistent with a demand curve."
+            },
+            {
+              "region": "centre-left to upper-middle",
+              "uncertain": false,
+              "observation": "One upward-sloping line is drawn to the left of another upward-sloping line.",
+              "interpretation": "This is consistent with two supply curves, with one supply position shifted left relative to the other."
+            },
+            {
+              "region": "upper-middle",
+              "uncertain": false,
+              "observation": "The left upward-sloping line and the downward-sloping line intersect at a marked point.",
+              "interpretation": "This indicates one equilibrium, at a higher price and lower quantity than the other marked intersection."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "The right upward-sloping line and the downward-sloping line intersect at a second marked point.",
+              "interpretation": "This indicates the other equilibrium."
+            },
+            {
+              "region": "middle-left and lower-centre",
+              "uncertain": true,
+              "observation": "From the upper intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P2 and Q2, though blurred.",
+              "interpretation": "The student is projecting the upper intersection to price and quantity values."
+            },
+            {
+              "region": "centre-left and lower-middle",
+              "uncertain": true,
+              "observation": "From the lower/right intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P1 and Q1, though blurred.",
+              "interpretation": "The student is projecting the lower/right intersection to price and quantity values."
+            },
+            {
+              "region": "upper-middle near the left supply curve",
+              "uncertain": true,
+              "observation": "A label beside the left upward-sloping curve looks like a supply label, but the exact subscript is hard to read.",
+              "interpretation": "The left curve is intended to be one of the two supply curves."
+            },
+            {
+              "region": "upper-right near the right supply curve",
+              "uncertain": true,
+              "observation": "A label beside the right upward-sloping curve also looks like a supply label, but the exact subscript is hard to read.",
+              "interpretation": "The right curve is intended to be the other supply curve."
+            },
+            {
+              "region": "lower-right end of the downward-sloping line",
+              "uncertain": true,
+              "observation": "A label at the end of the downward-sloping line appears to be \"D\".",
+              "interpretation": "The demand curve is likely identified explicitly."
+            },
+            {
+              "region": "overall diagram",
+              "uncertain": false,
+              "observation": "The photographed image is noticeably blurred, so several labels/subscripts are not fully legible even though the curve geometry and the two intersections are visible.",
+              "interpretation": "The diagram can still be assessed for the main market movement, but some label-reading is uncertain."
+            }
+          ],
+          "attachmentHashes": [
+            "205bb5b70f6e007a937273d65909eec70a7f5ae6815c614dc30a8b8809feb381"
+          ],
+          "componentDecision": {
+            "total": 4,
+            "diagram": 2,
+            "reasons": {
+              "diagram": "A creditworthy, correctly oriented wheat-market diagram is visible: demand is unchanged and the supply curve shifts left, producing a higher-price, lower-quantity equilibrium.",
+              "explanation": "The written response provides the complete mechanism from drought-reduced harvests to reduced supply, shortage at P1, a rise in price and a fall in quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 4,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "The written explanation gives a complete causal chain: drought reduces harvests, supply decreases at every price, a shortage occurs at P1, and price rises to a new equilibrium.",
+          "The diagram visibly shows unchanged demand and a leftward shift of supply, with the new intersection indicating higher price and lower quantity.",
+          "Terminology and notation are used accurately and consistently, including S1/S2, P1/P2 and Q1/Q2."
+        ],
+        "studyNext": "Practise explaining other competitive-equilibrium shifts, especially demand increases/decreases and simultaneous shifts in demand and supply.",
+        "improvements": [],
+        "examinerComment": "Estimated practice mark: 4/4. Your explanation and visible diagram are fully consistent with the scenario. You correctly show that the drought shifts wheat supply left while demand is unchanged, leading to a higher equilibrium price and lower equilibrium quantity."
+      },
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]"
+    },
+    "snapshot": {
+      "id": "d30fca3c-30ad-481e-844b-45d62ee29b04",
+      "userId": "5de6c649-60f0-4c9e-a603-feec77db52b0",
+      "version": 1,
+      "contract": {
+        "mode": "four_mark_diagram",
+        "part": null,
+        "level": "shared_sl_hl",
+        "paper": null,
+        "scope": "same_question_part",
+        "topic": "2.3",
+        "total": 4,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2",
+            "question_label_ceiling_3"
+          ],
+          "family": "demand_supply",
+          "labels": [
+            "Price of wheat",
+            "Quantity of wheat",
+            "D",
+            "S1",
+            "S2",
+            "P1/P2",
+            "Q1/Q2"
+          ],
+          "diagram": {
+            "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+            "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity.",
+            "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship."
+          },
+          "outcomes": [
+            "Equilibrium price rises and equilibrium quantity falls."
+          ],
+          "explanation": {
+            "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+            "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached.",
+            "zero": "No relevant link from the drought to wheat supply or equilibrium."
+          },
+          "relationships": [
+            "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+          ],
+          "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency.",
+          "permittedMechanisms": [
+            "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+          ],
+          "acceptableAlternatives": [
+            "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper2_four_mark_diagram_explain",
+        "provenance": "aptly_authored",
+        "diagramRole": "required_explicitly",
+        "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [],
+        "blueprintVersion": "economics-four-mark-blueprint-v1"
+      },
+      "answerHash": "86e71a472ed34afe917bf1a8d721e5083b9da7111c7ce337b1351a1d22aedc63",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "d30fca3c-30ad-481e-844b-45d62ee29b04:image:1",
+          "retained": false,
+          "contentHash": "205bb5b70f6e007a937273d65909eec70a7f5ae6815c614dc30a8b8809feb381"
+        }
+      ],
+      "contextHash": "1ea311746f3430d544baf5f38cb39e8f7017fa9c3b5fc68c48139946ae47c87c",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "cf34606b46ebdea36b927993ebc4fd25b78541f7cbea9446229c232b59cbf1c7",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "partially_readable",
+        "summary": "The student’s diagram region is clear and shows an unchanged downward-sloping demand curve intersecting two upward-sloping supply curves, with the leftward supply position giving a higher projected price and lower projected quantity than the rightward one. Exact curve subscripts and some axis/intersection labels are blurred, but the essential equilibrium relationship is readable.",
+        "observations": [
+          {
+            "region": "left side",
+            "uncertain": true,
+            "observation": "A vertical axis with an arrow is drawn; a single-letter label near the top appears to be \"P\".",
+            "interpretation": "The student appears to use price on the vertical axis."
+          },
+          {
+            "region": "bottom side",
+            "uncertain": true,
+            "observation": "A horizontal axis with an arrow is drawn; a single-letter label near the right end appears to be \"Q\".",
+            "interpretation": "The student appears to use quantity on the horizontal axis."
+          },
+          {
+            "region": "centre",
+            "uncertain": false,
+            "observation": "One downward-sloping line runs from upper left toward lower right.",
+            "interpretation": "This is consistent with a demand curve."
+          },
+          {
+            "region": "centre-left to upper-middle",
+            "uncertain": false,
+            "observation": "One upward-sloping line is drawn to the left of another upward-sloping line.",
+            "interpretation": "This is consistent with two supply curves, with one supply position shifted left relative to the other."
+          },
+          {
+            "region": "upper-middle",
+            "uncertain": false,
+            "observation": "The left upward-sloping line and the downward-sloping line intersect at a marked point.",
+            "interpretation": "This indicates one equilibrium, at a higher price and lower quantity than the other marked intersection."
+          },
+          {
+            "region": "centre-right",
+            "uncertain": false,
+            "observation": "The right upward-sloping line and the downward-sloping line intersect at a second marked point.",
+            "interpretation": "This indicates the other equilibrium."
+          },
+          {
+            "region": "middle-left and lower-centre",
+            "uncertain": true,
+            "observation": "From the upper intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P2 and Q2, though blurred.",
+            "interpretation": "The student is projecting the upper intersection to price and quantity values."
+          },
+          {
+            "region": "centre-left and lower-middle",
+            "uncertain": true,
+            "observation": "From the lower/right intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P1 and Q1, though blurred.",
+            "interpretation": "The student is projecting the lower/right intersection to price and quantity values."
+          },
+          {
+            "region": "upper-middle near the left supply curve",
+            "uncertain": true,
+            "observation": "A label beside the left upward-sloping curve looks like a supply label, but the exact subscript is hard to read.",
+            "interpretation": "The left curve is intended to be one of the two supply curves."
+          },
+          {
+            "region": "upper-right near the right supply curve",
+            "uncertain": true,
+            "observation": "A label beside the right upward-sloping curve also looks like a supply label, but the exact subscript is hard to read.",
+            "interpretation": "The right curve is intended to be the other supply curve."
+          },
+          {
+            "region": "lower-right end of the downward-sloping line",
+            "uncertain": true,
+            "observation": "A label at the end of the downward-sloping line appears to be \"D\".",
+            "interpretation": "The demand curve is likely identified explicitly."
+          },
+          {
+            "region": "overall diagram",
+            "uncertain": false,
+            "observation": "The photographed image is noticeably blurred, so several labels/subscripts are not fully legible even though the curve geometry and the two intersections are visible.",
+            "interpretation": "The diagram can still be assessed for the main market movement, but some label-reading is uncertain."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "8d5a85a43edb0358d22b396898ee0d69433d27676f37fa2f1c910e78af9b32d6",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "d30fca3c-30ad-481e-844b-45d62ee29b04"
+    }
+  }
+}

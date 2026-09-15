@@ -1,0 +1,494 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 23298,
+  "response": {
+    "attempt": {
+      "id": "b6680e56-074b-4ebd-8fe6-fa4f390b1e27",
+      "createdAt": "2026-09-15T19:08:26.988441+00:00",
+      "subject": "Economics",
+      "topic": "2.3",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Missing required diagram"
+        ],
+        "strengths": [
+          "The written explanation gives a complete and accurate causal chain: drought reduces wheat supply, creates a shortage at the original price, then raises equilibrium price and lowers equilibrium quantity.",
+          "Terminology is used accurately, including supply shifting left, unchanged demand, shortage, and movement along the demand curve."
+        ],
+        "studyNext": "Practise matching the diagram type to the market question: for a supply decrease, keep demand unchanged and shift supply left, then identify the new higher price and lower quantity equilibrium.",
+        "improvements": [
+          "Draw the required wheat demand-and-supply diagram rather than a PPC: label axes as price of wheat and quantity of wheat, include unchanged D, and show supply shifting left from S1 to S2.",
+          "Mark both equilibria clearly so that P2 is above P1 and Q2 is below Q1 at the demand–supply intersections."
+        ],
+        "examinerComment": "Estimated practice mark: 2/4. Your written explanation is fully correct and earns the explanation component. However, the submitted image is a PPC for schools and clinics, not a wheat-market demand-and-supply diagram, so it cannot receive diagram credit for this question."
+      },
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "The response accurately uses supply, shortage, equilibrium, and movement along demand.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "It coherently explains the full adjustment from reduced harvests to higher equilibrium price and lower quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation directly applies the drought, reduced wheat harvest, and unchanged wheat demand scenario.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "No creditworthy wheat-market demand-and-supply diagram is visible. The submitted image is a PPC with Schools and Clinics axes, not price and quantity of wheat.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "no_relevant_diagram",
+          "summary": "The student’s diagram is clearly readable and is a PPC labelled with Schools and Clinics, not a wheat demand-and-supply diagram. No relevant demand, supply, or wheat-market equilibrium diagram is shown.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "a611a334-2d7a-4478-a399-072618dbde66",
+          "observations": [
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "A single downward-sloping straight line is drawn and labelled \"PPC\".",
+              "interpretation": "This is a production possibility curve diagram, not a demand-and-supply market diagram."
+            },
+            {
+              "region": "left axis",
+              "uncertain": false,
+              "observation": "The vertical axis is labelled \"Schools\".",
+              "interpretation": "The y-axis is not identified as price of wheat or an equivalent price axis."
+            },
+            {
+              "region": "bottom axis",
+              "uncertain": false,
+              "observation": "The horizontal axis is labelled \"Clinics\".",
+              "interpretation": "The x-axis is not identified as quantity of wheat or an equivalent quantity axis."
+            },
+            {
+              "region": "centre-left and lower-right on the line",
+              "uncertain": false,
+              "observation": "Points \"A\" and \"B\" are marked on the PPC with dashed guide lines to the axes.",
+              "interpretation": "These points do not show demand/supply curves or market equilibria for wheat."
+            },
+            {
+              "region": "whole diagram",
+              "uncertain": false,
+              "observation": "No demand curve, no two supply curves, and no price/quantity equilibrium intersections for wheat are visible.",
+              "interpretation": "The image contains no relevant demand-supply diagram evidence for the wheat drought question."
+            }
+          ],
+          "attachmentHashes": [
+            "3f52d417f2e0bfaab7c169b23ed8cb17fa17c2c6fb0978afd3358c3788707ee6"
+          ],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "No creditworthy wheat-market demand-and-supply diagram is visible. The submitted image is a PPC with Schools and Clinics axes, not price and quantity of wheat.",
+              "explanation": "The written response correctly explains that drought reduces supply at each price, causing a shortage at P1, a rise to P2, and a lower equilibrium quantity at Q2."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [
+              {
+                "id": "wrong_diagram_family",
+                "carriedForward": false,
+                "diagramEvidence": "The visible diagram is a PPC labelled PPC, with points A and B, rather than a demand-and-supply diagram for wheat.",
+                "explanationEvidence": "The written explanation independently gives the correct wheat-market supply-contraction mechanism."
+              }
+            ],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "1c93eaa8-b464-4bd0-a3e8-10f47e4f9471",
+      "sourceMaterial": "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium.",
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "b6680e56-074b-4ebd-8fe6-fa4f390b1e27",
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "The response accurately uses supply, shortage, equilibrium, and movement along demand.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "It coherently explains the full adjustment from reduced harvests to higher equilibrium price and lower quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation directly applies the drought, reduced wheat harvest, and unchanged wheat demand scenario.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "No creditworthy wheat-market demand-and-supply diagram is visible. The submitted image is a PPC with Schools and Clinics axes, not price and quantity of wheat.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "no_relevant_diagram",
+          "summary": "The student’s diagram is clearly readable and is a PPC labelled with Schools and Clinics, not a wheat demand-and-supply diagram. No relevant demand, supply, or wheat-market equilibrium diagram is shown.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "a611a334-2d7a-4478-a399-072618dbde66",
+          "observations": [
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "A single downward-sloping straight line is drawn and labelled \"PPC\".",
+              "interpretation": "This is a production possibility curve diagram, not a demand-and-supply market diagram."
+            },
+            {
+              "region": "left axis",
+              "uncertain": false,
+              "observation": "The vertical axis is labelled \"Schools\".",
+              "interpretation": "The y-axis is not identified as price of wheat or an equivalent price axis."
+            },
+            {
+              "region": "bottom axis",
+              "uncertain": false,
+              "observation": "The horizontal axis is labelled \"Clinics\".",
+              "interpretation": "The x-axis is not identified as quantity of wheat or an equivalent quantity axis."
+            },
+            {
+              "region": "centre-left and lower-right on the line",
+              "uncertain": false,
+              "observation": "Points \"A\" and \"B\" are marked on the PPC with dashed guide lines to the axes.",
+              "interpretation": "These points do not show demand/supply curves or market equilibria for wheat."
+            },
+            {
+              "region": "whole diagram",
+              "uncertain": false,
+              "observation": "No demand curve, no two supply curves, and no price/quantity equilibrium intersections for wheat are visible.",
+              "interpretation": "The image contains no relevant demand-supply diagram evidence for the wheat drought question."
+            }
+          ],
+          "attachmentHashes": [
+            "3f52d417f2e0bfaab7c169b23ed8cb17fa17c2c6fb0978afd3358c3788707ee6"
+          ],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "No creditworthy wheat-market demand-and-supply diagram is visible. The submitted image is a PPC with Schools and Clinics axes, not price and quantity of wheat.",
+              "explanation": "The written response correctly explains that drought reduces supply at each price, causing a shortage at P1, a rise to P2, and a lower equilibrium quantity at Q2."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [
+              {
+                "id": "wrong_diagram_family",
+                "carriedForward": false,
+                "diagramEvidence": "The visible diagram is a PPC labelled PPC, with points A and B, rather than a demand-and-supply diagram for wheat.",
+                "explanationEvidence": "The written explanation independently gives the correct wheat-market supply-contraction mechanism."
+              }
+            ],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Missing required diagram"
+        ],
+        "strengths": [
+          "The written explanation gives a complete and accurate causal chain: drought reduces wheat supply, creates a shortage at the original price, then raises equilibrium price and lowers equilibrium quantity.",
+          "Terminology is used accurately, including supply shifting left, unchanged demand, shortage, and movement along the demand curve."
+        ],
+        "studyNext": "Practise matching the diagram type to the market question: for a supply decrease, keep demand unchanged and shift supply left, then identify the new higher price and lower quantity equilibrium.",
+        "improvements": [
+          "Draw the required wheat demand-and-supply diagram rather than a PPC: label axes as price of wheat and quantity of wheat, include unchanged D, and show supply shifting left from S1 to S2.",
+          "Mark both equilibria clearly so that P2 is above P1 and Q2 is below Q1 at the demand–supply intersections."
+        ],
+        "examinerComment": "Estimated practice mark: 2/4. Your written explanation is fully correct and earns the explanation component. However, the submitted image is a PPC for schools and clinics, not a wheat-market demand-and-supply diagram, so it cannot receive diagram credit for this question."
+      },
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "source_material": "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium.",
+      "practice_question_id": "1c93eaa8-b464-4bd0-a3e8-10f47e4f9471"
+    },
+    "snapshot": {
+      "id": "a611a334-2d7a-4478-a399-072618dbde66",
+      "userId": "5de6c649-60f0-4c9e-a603-feec77db52b0",
+      "version": 1,
+      "contract": {
+        "mode": "four_mark_diagram",
+        "part": null,
+        "level": "shared_sl_hl",
+        "paper": null,
+        "scope": "same_question_part",
+        "topic": "2.3",
+        "total": 4,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2",
+            "question_label_ceiling_3"
+          ],
+          "family": "demand_supply",
+          "labels": [
+            "Price of wheat",
+            "Quantity of wheat",
+            "D",
+            "S1",
+            "S2",
+            "P1/P2",
+            "Q1/Q2"
+          ],
+          "diagram": {
+            "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+            "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity.",
+            "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship."
+          },
+          "outcomes": [
+            "Equilibrium price rises and equilibrium quantity falls."
+          ],
+          "explanation": {
+            "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+            "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached.",
+            "zero": "No relevant link from the drought to wheat supply or equilibrium."
+          },
+          "relationships": [
+            "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+          ],
+          "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency.",
+          "permittedMechanisms": [
+            "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+          ],
+          "acceptableAlternatives": [
+            "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper2_four_mark_diagram_explain",
+        "provenance": "aptly_authored",
+        "diagramRole": "required_explicitly",
+        "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [],
+        "blueprintVersion": "economics-four-mark-blueprint-v1"
+      },
+      "answerHash": "86e71a472ed34afe917bf1a8d721e5083b9da7111c7ce337b1351a1d22aedc63",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "a611a334-2d7a-4478-a399-072618dbde66:image:1",
+          "retained": false,
+          "contentHash": "3f52d417f2e0bfaab7c169b23ed8cb17fa17c2c6fb0978afd3358c3788707ee6"
+        }
+      ],
+      "contextHash": "1ea311746f3430d544baf5f38cb39e8f7017fa9c3b5fc68c48139946ae47c87c",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "cf34606b46ebdea36b927993ebc4fd25b78541f7cbea9446229c232b59cbf1c7",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "no_relevant_diagram",
+        "summary": "The student’s diagram is clearly readable and is a PPC labelled with Schools and Clinics, not a wheat demand-and-supply diagram. No relevant demand, supply, or wheat-market equilibrium diagram is shown.",
+        "observations": [
+          {
+            "region": "centre",
+            "uncertain": false,
+            "observation": "A single downward-sloping straight line is drawn and labelled \"PPC\".",
+            "interpretation": "This is a production possibility curve diagram, not a demand-and-supply market diagram."
+          },
+          {
+            "region": "left axis",
+            "uncertain": false,
+            "observation": "The vertical axis is labelled \"Schools\".",
+            "interpretation": "The y-axis is not identified as price of wheat or an equivalent price axis."
+          },
+          {
+            "region": "bottom axis",
+            "uncertain": false,
+            "observation": "The horizontal axis is labelled \"Clinics\".",
+            "interpretation": "The x-axis is not identified as quantity of wheat or an equivalent quantity axis."
+          },
+          {
+            "region": "centre-left and lower-right on the line",
+            "uncertain": false,
+            "observation": "Points \"A\" and \"B\" are marked on the PPC with dashed guide lines to the axes.",
+            "interpretation": "These points do not show demand/supply curves or market equilibria for wheat."
+          },
+          {
+            "region": "whole diagram",
+            "uncertain": false,
+            "observation": "No demand curve, no two supply curves, and no price/quantity equilibrium intersections for wheat are visible.",
+            "interpretation": "The image contains no relevant demand-supply diagram evidence for the wheat drought question."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "8d5a85a43edb0358d22b396898ee0d69433d27676f37fa2f1c910e78af9b32d6",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "a611a334-2d7a-4478-a399-072618dbde66"
+    }
+  }
+}

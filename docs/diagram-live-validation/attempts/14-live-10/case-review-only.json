@@ -1,0 +1,39 @@
+{
+  "caseId": "live-10",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-blurry.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "The underlying correct drawing is photographed so poorly that essential features are intended to be unreadable.",
+    "economicBehavior": "Correct prose is unchanged, but inaccessible visual evidence must not become a definitive zero for diagram ability.",
+    "expectedEvidenceStates": [
+      "unreadable_ambiguous"
+    ],
+    "expectedCompletion": "incomplete",
+    "engineeringPredictedOverall": null,
+    "expectedComponents": null,
+    "pairedWith": "live-01",
+    "controlledChange": "Image legibility only.",
+    "reviewChecks": [
+      "Inspect the delivered image before dispatch: the blur must actually obscure essential relationships or labels.",
+      "Return replacement/retry or an unmistakably incomplete outcome; exclude from scored analytics.",
+      "If essential geometry remains readable, usable/partially_readable may be justified and is not itself a model error; record the actual visibility rather than enforcing the intended condition.",
+      "Do not send this reviewer expectation or the descriptive filename to the model."
+    ]
+  }
+}

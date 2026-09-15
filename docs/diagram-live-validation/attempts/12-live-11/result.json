@@ -1,0 +1,497 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 23219,
+  "response": {
+    "attempt": {
+      "id": "97d4d38c-f1a3-4b7d-b3f0-f6b80f1923ff",
+      "createdAt": "2026-09-15T19:00:50.126551+00:00",
+      "subject": "Economics",
+      "topic": "3.2",
+      "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+      "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time.",
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "Clear, accurate causal chain from lower confidence to greater saving/postponed consumption, lower aggregate demand, and reduced real output and price level.",
+          "The AD–AS diagram is correctly drawn and labelled: AD shifts left from AD1 to AD2 against unchanged SRAS, with both real GDP and the price level falling.",
+          "Strong explanation of firm behaviour through lower orders and unwanted inventories; the answer also correctly distinguishes a demand contraction from a fall in productive capacity."
+        ],
+        "studyNext": "Practise producing this same complete chain concisely: confidence falls → consumption falls → AD shifts left → firms reduce output in response to weak sales/inventories → real output and the price level fall, shown on AD–AS.",
+        "improvements": [
+          "For maximum efficiency under timed conditions, shorten the final qualification paragraphs once the full AD–AS mechanism has been established; they are accurate but go beyond what is necessary for this explain question."
+        ],
+        "examinerComment": "Estimated practice mark: this is a fully focused and well-developed explanation. It accurately links falling consumer confidence to reduced consumption and aggregate demand, explains the adjustment by firms, and reaches the correct lower-output, lower-price-level equilibrium. The submitted diagram directly supports the written analysis and is clearly labelled. The added qualifications about supply responsiveness and offsetting demand components are sound and do not distract from the main argument."
+      },
+      "assessment": {
+        "paper": "paper_1",
+        "version": 4,
+        "markBand": "9-10",
+        "capReason": null,
+        "framework": "paper1a_10_mark",
+        "topicLabel": "3.2",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": 9,
+        "marksEarned": 10,
+        "marksSource": "explicit_in_question",
+        "bandPosition": "upper",
+        "markBandHigh": 10,
+        "questionPart": "a",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_3",
+        "bandRationale": "A top-band response: accurate and fully developed AD–AS analysis directly answers both real-output and price-level effects. The diagram is relevant, clear and consistent with the explanation, while the qualifications are economically accurate.",
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Uses consumer confidence, consumption, aggregate demand, SRAS, real output and price level accurately.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Develops a coherent mechanism from precautionary saving and postponed purchases through reduced orders, inventories and production to the new short-run equilibrium.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The visible AD–AS diagram clearly shows AD shifting left from AD1 to AD2, unchanged SRAS, and lower price level and real GDP at E2.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Structure and clarity",
+            "reason": "The response is logically sequenced, directly addresses both required outcomes, and maintains consistency between prose and diagram.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "3.2",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 10,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "A clear AD-AS diagram is present. It shows SRAS with aggregate demand shifting left from AD1 to AD2, moving equilibrium from E1 to E2 and indicating lower real output (Y1 to Y2) and a lower price level (PL1 to PL2).",
+          "version": 1,
+          "contract": {
+            "mode": "holistic_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "necessary_for_task",
+            "diagramReason": "The task asks how confidence affects real output and the price level."
+          },
+          "snapshotId": "f8b05be2-7db1-4766-9180-00b4db5278cd",
+          "observations": [
+            {
+              "region": "left side",
+              "uncertain": false,
+              "observation": "The vertical axis is labeled 'Average price level'.",
+              "interpretation": "The diagram uses price level on the y-axis, which is suitable for an AD-AS diagram."
+            },
+            {
+              "region": "bottom right",
+              "uncertain": false,
+              "observation": "The horizontal axis is labeled 'Real GDP'.",
+              "interpretation": "The x-axis represents real output."
+            },
+            {
+              "region": "centre to upper right",
+              "uncertain": false,
+              "observation": "There is one upward-sloping curve labeled 'SRAS'.",
+              "interpretation": "This is the short-run aggregate supply curve."
+            },
+            {
+              "region": "centre/right",
+              "uncertain": false,
+              "observation": "There is a downward-sloping curve labeled 'AD1' crossing SRAS at a point labeled 'E1'.",
+              "interpretation": "This shows an initial aggregate demand position and an initial equilibrium."
+            },
+            {
+              "region": "centre/left-lower",
+              "uncertain": false,
+              "observation": "A second downward-sloping curve labeled 'AD2' lies to the left of AD1 and crosses SRAS at a point labeled 'E2'.",
+              "interpretation": "This indicates aggregate demand has shifted leftward from AD1 to AD2."
+            },
+            {
+              "region": "upper middle-left",
+              "uncertain": false,
+              "observation": "A horizontal arrow points left between the two downward-sloping demand curves.",
+              "interpretation": "The intended movement is a fall in aggregate demand."
+            },
+            {
+              "region": "centre and lower middle",
+              "uncertain": false,
+              "observation": "Dashed guide lines from E1 mark PL1 on the y-axis and Y1 on the x-axis; dashed guide lines from E2 mark PL2 and Y2.",
+              "interpretation": "The new equilibrium is shown at a lower price level and lower real output than the initial equilibrium."
+            },
+            {
+              "region": "overall diagram",
+              "uncertain": false,
+              "observation": "PL2 is drawn below PL1, and Y2 is drawn to the left of Y1.",
+              "interpretation": "The sketched outcome of the shift is a fall in both the average price level and real GDP."
+            }
+          ],
+          "attachmentHashes": [
+            "87e04088a3523bcb52be09fbac74c97abbdb3e8a7df29864ca4a312940f6dea4"
+          ],
+          "componentDecision": null
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 10,
+        "unassessedMarks": 0,
+        "assessmentFormat": "paper_1_a",
+        "assessmentSkills": [
+          "economic_analysis"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": null,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "167fe492-4036-475c-aae1-b01d200969b1",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "97d4d38c-f1a3-4b7d-b3f0-f6b80f1923ff",
+      "assessment": {
+        "paper": "paper_1",
+        "version": 4,
+        "markBand": "9-10",
+        "capReason": null,
+        "framework": "paper1a_10_mark",
+        "topicLabel": "3.2",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": 9,
+        "marksEarned": 10,
+        "marksSource": "explicit_in_question",
+        "bandPosition": "upper",
+        "markBandHigh": 10,
+        "questionPart": "a",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_3",
+        "bandRationale": "A top-band response: accurate and fully developed AD–AS analysis directly answers both real-output and price-level effects. The diagram is relevant, clear and consistent with the explanation, while the qualifications are economically accurate.",
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Uses consumer confidence, consumption, aggregate demand, SRAS, real output and price level accurately.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Develops a coherent mechanism from precautionary saving and postponed purchases through reduced orders, inventories and production to the new short-run equilibrium.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The visible AD–AS diagram clearly shows AD shifting left from AD1 to AD2, unchanged SRAS, and lower price level and real GDP at E2.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Structure and clarity",
+            "reason": "The response is logically sequenced, directly addresses both required outcomes, and maintains consistency between prose and diagram.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "3.2",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 10,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "A clear AD-AS diagram is present. It shows SRAS with aggregate demand shifting left from AD1 to AD2, moving equilibrium from E1 to E2 and indicating lower real output (Y1 to Y2) and a lower price level (PL1 to PL2).",
+          "version": 1,
+          "contract": {
+            "mode": "holistic_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "necessary_for_task",
+            "diagramReason": "The task asks how confidence affects real output and the price level."
+          },
+          "snapshotId": "f8b05be2-7db1-4766-9180-00b4db5278cd",
+          "observations": [
+            {
+              "region": "left side",
+              "uncertain": false,
+              "observation": "The vertical axis is labeled 'Average price level'.",
+              "interpretation": "The diagram uses price level on the y-axis, which is suitable for an AD-AS diagram."
+            },
+            {
+              "region": "bottom right",
+              "uncertain": false,
+              "observation": "The horizontal axis is labeled 'Real GDP'.",
+              "interpretation": "The x-axis represents real output."
+            },
+            {
+              "region": "centre to upper right",
+              "uncertain": false,
+              "observation": "There is one upward-sloping curve labeled 'SRAS'.",
+              "interpretation": "This is the short-run aggregate supply curve."
+            },
+            {
+              "region": "centre/right",
+              "uncertain": false,
+              "observation": "There is a downward-sloping curve labeled 'AD1' crossing SRAS at a point labeled 'E1'.",
+              "interpretation": "This shows an initial aggregate demand position and an initial equilibrium."
+            },
+            {
+              "region": "centre/left-lower",
+              "uncertain": false,
+              "observation": "A second downward-sloping curve labeled 'AD2' lies to the left of AD1 and crosses SRAS at a point labeled 'E2'.",
+              "interpretation": "This indicates aggregate demand has shifted leftward from AD1 to AD2."
+            },
+            {
+              "region": "upper middle-left",
+              "uncertain": false,
+              "observation": "A horizontal arrow points left between the two downward-sloping demand curves.",
+              "interpretation": "The intended movement is a fall in aggregate demand."
+            },
+            {
+              "region": "centre and lower middle",
+              "uncertain": false,
+              "observation": "Dashed guide lines from E1 mark PL1 on the y-axis and Y1 on the x-axis; dashed guide lines from E2 mark PL2 and Y2.",
+              "interpretation": "The new equilibrium is shown at a lower price level and lower real output than the initial equilibrium."
+            },
+            {
+              "region": "overall diagram",
+              "uncertain": false,
+              "observation": "PL2 is drawn below PL1, and Y2 is drawn to the left of Y1.",
+              "interpretation": "The sketched outcome of the shift is a fall in both the average price level and real GDP."
+            }
+          ],
+          "attachmentHashes": [
+            "87e04088a3523bcb52be09fbac74c97abbdb3e8a7df29864ca4a312940f6dea4"
+          ],
+          "componentDecision": null
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 10,
+        "unassessedMarks": 0,
+        "assessmentFormat": "paper_1_a",
+        "assessmentSkills": [
+          "economic_analysis"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": null,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "Clear, accurate causal chain from lower confidence to greater saving/postponed consumption, lower aggregate demand, and reduced real output and price level.",
+          "The AD–AS diagram is correctly drawn and labelled: AD shifts left from AD1 to AD2 against unchanged SRAS, with both real GDP and the price level falling.",
+          "Strong explanation of firm behaviour through lower orders and unwanted inventories; the answer also correctly distinguishes a demand contraction from a fall in productive capacity."
+        ],
+        "studyNext": "Practise producing this same complete chain concisely: confidence falls → consumption falls → AD shifts left → firms reduce output in response to weak sales/inventories → real output and the price level fall, shown on AD–AS.",
+        "improvements": [
+          "For maximum efficiency under timed conditions, shorten the final qualification paragraphs once the full AD–AS mechanism has been established; they are accurate but go beyond what is necessary for this explain question."
+        ],
+        "examinerComment": "Estimated practice mark: this is a fully focused and well-developed explanation. It accurately links falling consumer confidence to reduced consumption and aggregate demand, explains the adjustment by firms, and reaches the correct lower-output, lower-price-level equilibrium. The submitted diagram directly supports the written analysis and is clearly labelled. The added qualifications about supply responsiveness and offsetting demand components are sound and do not distract from the main argument."
+      },
+      "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time.",
+      "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]"
+    },
+    "snapshot": {
+      "id": "f8b05be2-7db1-4766-9180-00b4db5278cd",
+      "userId": "c054e3a0-f1c8-423a-976f-763c9768e97e",
+      "version": 1,
+      "contract": {
+        "mode": "holistic_diagram",
+        "part": "a",
+        "level": "shared_sl_hl",
+        "paper": "1",
+        "scope": "same_question_part",
+        "topic": "3.2",
+        "total": 10,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2"
+          ],
+          "family": "ad_as",
+          "labels": [
+            "Use the labels identifying the economic variables and relationships requested in the question; conventional abbreviations are acceptable."
+          ],
+          "diagram": {
+            "one": "A relevant relationship or initial model is correct, but the task's change or outcome is materially incomplete or wrong.",
+            "two": "The relevant model, change and outcome are correct and identifiable for the exact task, allowing equivalent notation.",
+            "zero": "No creditworthy relevant economic relationship is visible."
+          },
+          "outcomes": [
+            "The outcome must follow from the diagram and match the explanation of the selected question part."
+          ],
+          "explanation": {
+            "one": "One relevant causal link is correct but the mechanism or resulting outcome is incomplete.",
+            "two": "A developed, context-compatible causal chain explains the requested outcome; apply same-part error carry forward without repeating its root-error penalty.",
+            "zero": "No correct relevant causal link is explained."
+          },
+          "relationships": [
+            "Judge only the economic relationships requested by this task: Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]"
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Use only context actually supplied. Do not invent missing stimulus."
+          ],
+          "labelingRuleReason": null,
+          "permittedMechanisms": [
+            "Any theoretically valid mechanism that answers this task and fits its supplied context."
+          ],
+          "acceptableAlternatives": [
+            "Accept a coherent theoretically valid alternative mechanism satisfying the task and supplied context."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper1a_10_mark",
+        "provenance": "aptly_authored",
+        "diagramRole": "necessary_for_task",
+        "diagramReason": "The task asks how confidence affects real output and the price level.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [
+          "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+        ],
+        "blueprintVersion": "economics-essay-blueprint-v2"
+      },
+      "answerHash": "64740958bd05f03ce576aadd4c6dec4088cd059e2e6a657f50da2c7221febe58",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "f8b05be2-7db1-4766-9180-00b4db5278cd:image:1",
+          "retained": false,
+          "contentHash": "87e04088a3523bcb52be09fbac74c97abbdb3e8a7df29864ca4a312940f6dea4"
+        }
+      ],
+      "contextHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "571753b5db5de05440f57d390fe21f0e2dd2f1f34a43e8da932285289fa62f17",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "usable",
+        "summary": "A clear AD-AS diagram is present. It shows SRAS with aggregate demand shifting left from AD1 to AD2, moving equilibrium from E1 to E2 and indicating lower real output (Y1 to Y2) and a lower price level (PL1 to PL2).",
+        "observations": [
+          {
+            "region": "left side",
+            "uncertain": false,
+            "observation": "The vertical axis is labeled 'Average price level'.",
+            "interpretation": "The diagram uses price level on the y-axis, which is suitable for an AD-AS diagram."
+          },
+          {
+            "region": "bottom right",
+            "uncertain": false,
+            "observation": "The horizontal axis is labeled 'Real GDP'.",
+            "interpretation": "The x-axis represents real output."
+          },
+          {
+            "region": "centre to upper right",
+            "uncertain": false,
+            "observation": "There is one upward-sloping curve labeled 'SRAS'.",
+            "interpretation": "This is the short-run aggregate supply curve."
+          },
+          {
+            "region": "centre/right",
+            "uncertain": false,
+            "observation": "There is a downward-sloping curve labeled 'AD1' crossing SRAS at a point labeled 'E1'.",
+            "interpretation": "This shows an initial aggregate demand position and an initial equilibrium."
+          },
+          {
+            "region": "centre/left-lower",
+            "uncertain": false,
+            "observation": "A second downward-sloping curve labeled 'AD2' lies to the left of AD1 and crosses SRAS at a point labeled 'E2'.",
+            "interpretation": "This indicates aggregate demand has shifted leftward from AD1 to AD2."
+          },
+          {
+            "region": "upper middle-left",
+            "uncertain": false,
+            "observation": "A horizontal arrow points left between the two downward-sloping demand curves.",
+            "interpretation": "The intended movement is a fall in aggregate demand."
+          },
+          {
+            "region": "centre and lower middle",
+            "uncertain": false,
+            "observation": "Dashed guide lines from E1 mark PL1 on the y-axis and Y1 on the x-axis; dashed guide lines from E2 mark PL2 and Y2.",
+            "interpretation": "The new equilibrium is shown at a lower price level and lower real output than the initial equilibrium."
+          },
+          {
+            "region": "overall diagram",
+            "uncertain": false,
+            "observation": "PL2 is drawn below PL1, and Y2 is drawn to the left of Y1.",
+            "interpretation": "The sketched outcome of the shift is a fall in both the average price level and real GDP."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "4ce1160a833bcd462b4db48c73a8b1da44260687b3803cf9235d56ed779b3a89",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "f8b05be2-7db1-4766-9180-00b4db5278cd"
+    }
+  }
+}

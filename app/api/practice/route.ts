@@ -1,4 +1,9 @@
 import "server-only";
+import { diagramAssessmentEnabled, resolveAssessmentContract } from "@/lib/assessment/trusted-contract";
+import { policyForGeneratedPractice } from "@/lib/assessment/policy";
+import { approvedFourMarkTemplate, FOUR_MARK_VARIANT_SCHEMA, fourMarkVariantInstructions, validateFourMarkVariant } from "@/lib/ai/four-mark-generation";
+import { ESSAY_BLUEPRINT_VERSION, FOUR_MARK_BLUEPRINT_VERSION, type EconomicsBankQuestion } from "@/lib/assessment/question-bank/economics-v1/types";
+import { ESSAY_DIAGRAM_AUDIT } from "@/lib/assessment/question-bank/economics-v1/essay-diagram-audit";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isUuid, verifiedUserId } from "@/lib/auth/verified-user";
@@ -7,6 +12,7 @@ import { getOpenAI } from "@/lib/ai/openai";
 import { fetchAttempts } from "@/lib/supabase/attempts";
 import { sameFocus } from "@/lib/assessment/focused-practice";
 import { reusablePracticeQuestion } from "@/lib/assessment/practice-reuse";
+import { getPracticeAo3Scope } from "@/lib/assessment/practice-generation-scope";
 import {
   isCurrentGeneratorTopic,
   isGeneratorMarkTotal,
@@ -95,6 +101,7 @@ export async function POST(request: Request) {
   }
 
   const marks = raw.marks;
+  if (marks === 4 && !diagramAssessmentEnabled()) return fail(503, "diagram_assessment_disabled");
   const topicCode = raw.topicCode;
   const context = raw.context as RequestContext;
   const regenerate = raw.regenerate;
@@ -156,14 +163,23 @@ export async function POST(request: Request) {
       sourceAttemptId,
     });
     const reusable = reusablePracticeQuestion(latest?.question ?? null, attempts);
+    // A new request must not revive retired content or superseded private criteria.
+    // Exact idempotent replay above still returns its original saved question.
+    const latestBankEntry = latest?.bankQuestionId
+      ? ECONOMICS_QUESTION_BANK.find(entry => entry.id === latest.bankQuestionId) : null;
+    const currentCriteria = [ECONOMICS_GRADING_BLUEPRINT_VERSION, FOUR_MARK_BLUEPRINT_VERSION, ESSAY_BLUEPRINT_VERSION]
+      .includes(latest?.gradingBlueprintVersion as typeof ECONOMICS_GRADING_BLUEPRINT_VERSION);
     const sameRequestedFrame =
       reusable !== null &&
+      currentCriteria &&
+      (!latest?.bankQuestionId || (latestBankEntry != null && latestBankEntry.qualityStatus !== "deprecated"
+        && (courseLevel === "hl" || latestBankEntry.levelRelevance === "shared_sl_hl"))) &&
       reusable.markTotal === marks &&
       reusable.topicCode === topicCode &&
-      reusable.framework === target.framework &&
+      (marks === 4 && target.focus === null || reusable.framework === target.framework) &&
       (latest?.levelRelevance === "shared_sl_hl" || latest?.levelRelevance === "hl_only") &&
       (courseLevel === "hl" || latest?.levelRelevance === "shared_sl_hl") &&
-      latest?.targetSkills.includes(target.targetSkill) &&
+      (marks === 4 && target.focus === null || latest?.targetSkills.includes(target.targetSkill)) &&
       sameFocus(reusable.focus, target.focus) &&
       (target.focus !== null || reusable.fromCurrentFocus !== true);
     if (sameRequestedFrame && !regenerate) {
@@ -186,8 +202,8 @@ export async function POST(request: Request) {
         marks,
         topicCode,
         courseLevel,
-        targetSkill: target.targetSkill,
-        framework: target.framework,
+        targetSkill: marks === 4 && target.focus === null ? null : target.targetSkill,
+        framework: marks === 4 && target.focus === null ? undefined : target.framework,
         requireSkill: target.focus !== null,
         evidenceQuestion: target.evidenceQuestion,
       },
@@ -197,7 +213,7 @@ export async function POST(request: Request) {
     if (selected !== null) {
       const saved = await savePracticeQuestion(userId, idempotencyKey, {
         question: selected.question,
-        sourceMaterial: null,
+        sourceMaterial: selected.sourceMaterial ?? null,
         framework: selected.framework,
         markTotal: selected.marks,
         topicCode: selected.topicCode,
@@ -207,8 +223,13 @@ export async function POST(request: Request) {
         questionOrigin: "curated_bank",
         bankQuestionId: selected.id,
         questionBankVersion: ECONOMICS_QUESTION_BANK_VERSION,
-        gradingBlueprint: selected.gradingBlueprint,
-        gradingBlueprintVersion: selected.gradingBlueprintVersion,
+        gradingBlueprint: diagramAssessmentEnabled() && selected.gradingBlueprint.kind === "extended" ? {
+          ...selected.gradingBlueprint,
+          diagramRequirement: ESSAY_DIAGRAM_AUDIT[selected.id],
+          diagramPolicy: resolveAssessmentContract({ policy: policyForGeneratedPractice({ framework: selected.framework, markTotal: selected.marks, sourceMaterial: selected.sourceMaterial ?? null }),
+            question: selected.question, topic: selected.topicCode, sourceMaterial: selected.sourceMaterial ?? null, blueprint: selected.gradingBlueprint, bankQuestionId: selected.id })!.diagramReason,
+        } : selected.gradingBlueprint,
+        gradingBlueprintVersion: diagramAssessmentEnabled() && selected.gradingBlueprint.kind === "extended" ? ESSAY_BLUEPRINT_VERSION : selected.gradingBlueprintVersion,
         levelRelevance: selected.levelRelevance,
         commandTerm: selected.commandTerm,
         targetSkills: selected.targetSkills,
@@ -228,6 +249,15 @@ export async function POST(request: Request) {
 
   // Exhaustion of COMPATIBLE questions (including zero matches) uses the same
   // GPT-5.4 operation/reservation. Unrelated bank questions never block fallback.
+  // Only adaptive fallback is gated: reviewed curated exceptions and exact
+  // idempotent replays have already returned, before any quota/provider work.
+  if (marks === 15) {
+    const scope = getPracticeAo3Scope(target.topicCode, courseLevel);
+    if (scope === null) return fail(422, target.focus ? "unsupported_focus" : "no_supported_question");
+    target = { ...target, levelRelevance: scope.levelRelevance };
+  }
+  const approvedTemplate = marks === 4 ? approvedFourMarkTemplate(ECONOMICS_QUESTION_BANK, target, target.focus !== null) : null;
+  if (marks === 4 && approvedTemplate == null) return fail(422, target.focus ? "unsupported_focus" : "four_mark_topic_unsupported");
   stage = "rate_limit";
   try {
     const reservation = await reserveAIUsage({
@@ -264,7 +294,7 @@ export async function POST(request: Request) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), PRACTICE_REQUEST_TIMEOUT_MS);
   try {
-    let generated: ReturnType<typeof validateGeneratedPractice> | null = null;
+    let generated: (ReturnType<typeof validateGeneratedPractice> & { sourceMaterial?: string; template?: EconomicsBankQuestion }) | null = null;
     let lastGenerationError: unknown = null;
     for (let attemptNumber = 0; attemptNumber < 2 && generated === null; attemptNumber += 1) {
       try {
@@ -277,15 +307,15 @@ export async function POST(request: Request) {
           max_output_tokens: PRACTICE_MAX_OUTPUT_TOKENS,
           store: false,
           input: [
-            { role: "developer", content: buildPracticeInstructions() },
-            { role: "user", content: buildPracticeUserInput(target) },
+            { role: "developer", content: approvedTemplate ? fourMarkVariantInstructions(approvedTemplate) : buildPracticeInstructions() },
+            { role: "user", content: approvedTemplate ? `Approved template ${approvedTemplate.id}. Return one fictional case name.` : buildPracticeUserInput(target) },
           ],
           text: {
             format: {
               type: "json_schema",
               name: "aptly_practice_question",
               strict: true,
-              schema: PRACTICE_JSON_SCHEMA,
+              schema: approvedTemplate ? FOUR_MARK_VARIANT_SCHEMA : PRACTICE_JSON_SCHEMA,
             },
           },
         },
@@ -297,7 +327,7 @@ export async function POST(request: Request) {
         throw new Error("empty model output");
       }
       stage = "schema_validation";
-        generated = validateGeneratedPractice(JSON.parse(response.output_text), target);
+        generated = approvedTemplate ? validateFourMarkVariant(JSON.parse(response.output_text), approvedTemplate, target) : validateGeneratedPractice(JSON.parse(response.output_text), target);
       } catch (error) {
         lastGenerationError = error;
         if (controller.signal.aborted) throw error;
@@ -308,20 +338,20 @@ export async function POST(request: Request) {
     stage = "persistence";
     const saved = await savePracticeQuestion(userId, idempotencyKey, {
       question: generated.question,
-      sourceMaterial: null,
-      framework: target.framework,
+      sourceMaterial: generated.sourceMaterial ?? null,
+      framework: generated.template?.framework ?? target.framework,
       markTotal: target.markTotal,
       topicCode: target.topicCode,
       topicLabel: target.topicLabel,
       skill: target.focus ? target.targetSkill : generated.targetSkills[0] ?? target.targetSkill,
       why: target.why,
       questionOrigin: "adaptive_generated",
-      generationProvenance: { modelId: PRACTICE_MODEL, reasoningEffort: PRACTICE_REASONING_EFFORT, schemaHash: requestFingerprint(PRACTICE_JSON_SCHEMA) },
+      generationProvenance: { modelId: PRACTICE_MODEL, reasoningEffort: PRACTICE_REASONING_EFFORT, schemaHash: requestFingerprint(approvedTemplate ? FOUR_MARK_VARIANT_SCHEMA : PRACTICE_JSON_SCHEMA) },
       bankQuestionId: null,
       questionBankVersion: null,
       gradingBlueprint: generated.gradingBlueprint,
-      gradingBlueprintVersion: ECONOMICS_GRADING_BLUEPRINT_VERSION,
-      levelRelevance: target.levelRelevance,
+      gradingBlueprintVersion: generated.template?.gradingBlueprintVersion ?? ECONOMICS_GRADING_BLUEPRINT_VERSION,
+      levelRelevance: generated.template?.levelRelevance ?? target.levelRelevance,
       commandTerm: generated.commandTerm,
       targetSkills: generated.targetSkills,
       angleTags: generated.angleTags,

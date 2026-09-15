@@ -1,0 +1,49 @@
+{
+  "caseId": "live-05",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought changes the wheat market. The price is higher."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-correct.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "Strong unchanged diagram with a weak, largely asserted explanation.",
+    "economicBehavior": "Submitted geometry demonstrates the supply contraction, but prose does not develop the harvest-supply-shortage-equilibrium chain.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 2,
+      "max": 3
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 2,
+        "max": 2
+      },
+      "explanation": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Explanation only.",
+    "reviewChecks": [
+      "The diagram earns its own credit.",
+      "Do not copy the visual narrative into the student explanation to create missing causal analysis."
+    ]
+  }
+}

@@ -28,11 +28,13 @@ export function MarkBreakdown({ assessment }: { assessment: Assessment }) {
   // Diagram is not a diagnosed skill until an uploaded diagram can be assessed.
   // Its honest per-attempt status lives in the Assessment components card, not
   // here — so it never renders as "Diagram · Needs development".
-  const items = visibleDiagnosticRows(assessment.markBreakdown);
+  const diagramAssessed = Boolean(assessment.assessedDiagram &&
+    ["usable", "partially_readable", "no_relevant_diagram", "not_provided"].includes(assessment.assessedDiagram.state));
+  const items = visibleDiagnosticRows(assessment.markBreakdown, diagramAssessed);
   if (items.length === 0) return null;
 
   const heading =
-    assessment.recognizedTemplate === "four_mark_diagram_explain"
+    assessment.recognizedTemplate === "four_mark_diagram_explain" && !assessment.assessedDiagram
       ? "Aptly diagnostic feedback on your written explanation"
       : "Aptly diagnostic feedback";
 

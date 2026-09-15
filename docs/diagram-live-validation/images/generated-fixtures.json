@@ -1,0 +1,206 @@
+{
+  "kind": "synthetic engineering evidence; not student work or teacher calibration",
+  "generator": "scripts/diagram-validation-fixtures.mjs",
+  "fixtures": [
+    {
+      "filename": "wheat-correct.png",
+      "source": "wheat-correct.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "2ccc1a7a626f6310366763d2f6fbb39e91c82a6e37f949014c9eecb1b1e9c0df",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "supply2": "P=Q+30",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 40,
+          "p": 70
+        }
+      }
+    },
+    {
+      "filename": "wheat-partial.png",
+      "source": "wheat-partial.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "0ec9b4c9d2495008af4fc893ec34558dd1d77b8137662ce7b5375087cd6c1fa1",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "e1": {
+          "q": 55,
+          "p": 55
+        }
+      }
+    },
+    {
+      "filename": "wheat-incomplete.png",
+      "source": "wheat-incomplete.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "d5eacb2b04295486e62ebacfa4c2085cfd41ff14e85b2d79b043ea4cea86cdbf",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "supply2": "P=Q+30, segment Q=3..30 only",
+        "e1": {
+          "q": 55,
+          "p": 55
+        }
+      }
+    },
+    {
+      "filename": "wheat-wrong-direction.png",
+      "source": "wheat-wrong-direction.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "b643cd1d93410b22e93dca490a89a57eb939062695404685cd9c01f9e4d946e4",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "supply2": "P=Q-25",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 67.5,
+          "p": 42.5
+        }
+      }
+    },
+    {
+      "filename": "wheat-missing-labels.png",
+      "source": "wheat-missing-labels.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "fdd7cc35f8d3de5b9381a9d0889e419cdcc1141ff2ee802f55d01945c90dab97",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "supply2": "P=Q+30",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 40,
+          "p": 70
+        },
+        "absent": "axis titles and P/Q projection labels"
+      }
+    },
+    {
+      "filename": "wheat-demand-increase.png",
+      "source": "wheat-demand-increase.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "9c75193c8afe8ecae830c3d8b1fe5133f900e0cfdc18502953b9feab946ded03",
+      "geometry": {
+        "demand1": "P=110-Q",
+        "demand2": "P=140-Q",
+        "supply": "P=Q",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 70,
+          "p": 70
+        }
+      }
+    },
+    {
+      "filename": "wheat-alternate-notation.png",
+      "source": "wheat-alternate-notation.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "fb646e9ab45e0e23788042114543862bf1fff06b2f195523fc837b009d8d9b87",
+      "geometry": {
+        "demand": "P=110-Q",
+        "supply1": "P=Q",
+        "supply2": "P=Q+30",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 40,
+          "p": 70
+        }
+      }
+    },
+    {
+      "filename": "essay10-ad-contraction.png",
+      "source": "essay10-ad-contraction.svg",
+      "question": "econ-v1-3.2-10-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "87e04088a3523bcb52be09fbac74c97abbdb3e8a7df29864ca4a312940f6dea4",
+      "geometry": {
+        "demand1": "PL=110-Y",
+        "demand2": "PL=85-Y",
+        "sras": "PL=Y",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 42.5,
+          "p": 42.5
+        }
+      }
+    },
+    {
+      "filename": "essay15-sras-contraction.png",
+      "source": "essay15-sras-contraction.svg",
+      "question": "econ-v1-3.2-15-002",
+      "width": 1200,
+      "height": 900,
+      "sha256": "239122ad32e3adfb76a691355c9aa47acc8a6f8f5919d156de2a9079032dcafc",
+      "geometry": {
+        "demand": "PL=110-Y",
+        "sras1": "PL=Y",
+        "sras2": "PL=Y+30",
+        "e1": {
+          "q": 55,
+          "p": 55
+        },
+        "e2": {
+          "q": 40,
+          "p": 70
+        }
+      }
+    },
+    {
+      "filename": "wheat-irrelevant.png",
+      "source": "wheat-irrelevant.svg",
+      "question": "econ-v1-2.3-4-001",
+      "width": 1200,
+      "height": 900,
+      "sha256": "3f52d417f2e0bfaab7c169b23ed8cb17fa17c2c6fb0978afd3358c3788707ee6",
+      "geometry": {
+        "ppc": "Schools=100-Clinics",
+        "a": {
+          "clinics": 25,
+          "schools": 75
+        },
+        "b": {
+          "clinics": 75,
+          "schools": 25
+        }
+      }
+    }
+  ]
+}

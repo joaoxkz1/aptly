@@ -29,15 +29,13 @@ export const MAX_OUTPUT_TOKENS = 4400;
 export const REQUEST_TIMEOUT_MS = 45_000;
 
 // --- Pilot safety ------------------------------------------------------------
-// Per-user daily grading cap: successful SAVED grades since the start of the
-// current UTC day (counted from the attempts table — no new storage).
-// Feedback-only grades count too; they use the same grading capacity.
+// Per-user UTC-day cap enforced by the durable reservation ledger (0008).
+// Provider-dispatched attempts consume capacity even if the response fails.
+// Completed operation replay does not reserve or dispatch again.
 export const DAILY_GRADE_LIMIT = 30;
 
 // --- Targeted practice generation (Practice Loop) ---------------------------
-// Separate, conservative per-user UTC-day cap — each generation is
-// its own paid call, distinct from the grading cap above. Counted from the
-// user's practice_questions rows created today (RLS-scoped, no new storage).
+// Separate durable generation reservations; bank selection consumes none.
 export const DAILY_PRACTICE_GENERATION_LIMIT = 10;
 // A generated question + short source stimulus is far smaller than a grade
 // result, but reasoning tokens share this budget — keep sensible headroom.
@@ -48,10 +46,8 @@ export const PRACTICE_REQUEST_TIMEOUT_MS = 45_000;
 // Extraction has its own model setting and exactly one job: transcribing visible text
 // into candidate editable fields. It never marks, classifies, or persists.
 //
-// Separate durable per-user UTC-day cap: each SUCCESSFUL extraction records
-// one no-content row in scan_extraction_usage (see migration 0005) and the
-// route counts today's rows before the paid vision call. Failed validation,
-// failed model calls, and unreadable images never consume the allowance.
+// Separate durable per-user UTC-day reservations. Preflight validation failure
+// consumes none; a dispatched provider request consumes the allowance.
 export const DAILY_EXTRACTION_LIMIT = 10;
 // Transcription is perception, not judgement — low reasoning effort keeps the
 // call cheap while the output budget leaves room for a full transcribed page
@@ -70,18 +66,14 @@ export const MAX_PROCESSED_IMAGE_BYTES = 4 * 1024 * 1024;
 // Client-side downscale target: longest dimension after processing.
 export const IMAGE_MAX_DIMENSION = 2048;
 
-// --- Diagram Evidence (image → structured study feedback) --------------------
-// Diagram review has its own model setting and exactly one job: cautious, feedback-only
-// observations about one close-up diagram photo. It never marks, never
-// classifies the paper, and never changes an estimate.
-//
-// Separate durable per-user UTC-day cap (diagram_review_usage, migration
-// 0006), fully independent from the Scan extraction cap: each successful
-// review — including an honest "unable to assess" — records one no-content
-// row. Failed validation and failed model calls never consume the allowance.
+// --- Diagram Evidence (image → structured observations) ----------------------
+// Legacy review is feedback-only. Flag-enabled assessed review supplies bounded
+// observations to the existing authoritative grader (assessed-visual-review.ts).
+// Both use this model and the existing diagram reservation cap, separate from
+// Scan. Provider-dispatched failures still consume their reservation.
 export const DAILY_DIAGRAM_REVIEW_LIMIT = 10;
-// Observation, not judgement — low effort keeps the call cheap; the output is
-// a small structured object, so the budget mostly covers reasoning headroom.
+// Legacy-only settings. Assessed review uses medium effort and 4400 tokens,
+// recorded independently in its snapshot; real-photo calibration is pending.
 export const DIAGRAM_REASONING_EFFORT = "low" as const;
 export const DIAGRAM_MAX_OUTPUT_TOKENS = 2600;
 export const DIAGRAM_REQUEST_TIMEOUT_MS = 60_000;

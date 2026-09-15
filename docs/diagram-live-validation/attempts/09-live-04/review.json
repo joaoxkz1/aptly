@@ -1,0 +1,15 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. The observer and grader agree on readable, correct supply-contraction geometry and absent axis labels. The grader's independent Diagram diagnostic is 3/4 and the corrected server preserves it as 3/4.",
+  "origin": null,
+  "findings": [
+    "This is a controlled retest of 04-live-04: the question, source context, answer and resolved task contract are identical, and the image bytes have the same SHA-256 hash. The earlier visual inspection therefore applies to the same submitted diagram.",
+    "The observer accurately identifies unchanged D, S2 left/above S1, actual E1/E2 intersections, E2 above/left of E1, and missing axis/commodity labels. Essential evidence remains readable and the student region certain.",
+    "The raw grader awards diagram 2 plus explanation 2, independently diagnoses Diagram at 3/4, and flags the task-specific labeling deficiency. The server keeps the proposed component sum 4, applies the single authorized maximum-3 ceiling and saves an overall 3/4 without an extra component deduction.",
+    "The saved Diagram diagnostic now matches the raw grader's 3/4 value and reason instead of becoming 4/4. The existing display maps this to Secure, and the diagnostic retains a one-out-of-four gap for skill-priority analytics. Overall marking is unchanged from the original attempt.",
+    "The implementation now preserves a validated provider Diagram diagnostic, uses component-derived feedback only when the provider omitted that row, forces zero for absent or irrelevant diagram evidence, and prevents a full-strength diagnostic when a reconciled question_label_ceiling_3 applies. Its clipping explanation identifies the existing labeling evidence; it does not alter component arithmetic or introduce an extra mark penalty.",
+    "The result is HTTP 200, saved successfully, and publicMatches is true. The snapshot semantically matches the resolved contract and raw observer evidence, and its attachment hash matches the submitted image. Both provider requests use store:false and contain no review-only prediction, case ID or descriptive image filename.",
+    "The confirmed deterministic diagnostic overwrite from 04-live-04 is resolved in this retest. This is synthetic engineering validation, not an independent teacher mark or a claim of general grading calibration. No assessment calls were made during this review."
+  ],
+  "judgement": "expected"
+}

@@ -1,5 +1,7 @@
 # IB Economics diagram alignment — Diagram Evidence V1
 
+> Historical feedback-only V1 scope. Newly assessed diagrams use the versioned contract described in [diagram-aware grading](diagram-aware-grading.md) and the [September assessment basis](diagram-assessment-basis.md). This document continues to describe legacy results; it does not restrict the new contract.
+
 **Research date:** 6 July 2026
 **Scope:** what IB Economics assessment documents actually say about diagrams, and what that
 means for Aptly's feedback-only Diagram Evidence V1. This document is the source of truth for

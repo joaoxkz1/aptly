@@ -44,12 +44,12 @@ import type { PracticeQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { focusMatchesSettings, focusPolicy, focusSummary, savedPracticeFocus, type PracticeFocus } from "@/lib/assessment/focused-practice";
 
-const generationClient = createPracticeGenerationClient();
 const CURRENT_TOPICS = SYLLABUS_TOPICS.filter((topic) => topic !== "unknown");
 const LAST_MARKS_KEY = "aptly:practice:last-marks";
 
 function validMark(value: string | null): PracticeMarkTotal | null {
   const number = Number(value);
+  if (number === 4 && process.env.NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED !== "true") return null;
   return (PRACTICE_MARK_TOTALS as readonly number[]).includes(number)
     ? (number as PracticeMarkTotal)
     : null;
@@ -62,6 +62,7 @@ function validTopic(value: string | null): string | null {
 }
 
 function practiceFormatLabel(question: PracticeQuestion): string {
+  if (question.markTotal === 4) return question.assessmentContract?.mode === "four_mark_written" ? "4-mark written explanation" : "4-mark diagram explanation";
   if (question.framework === "paper2_short_analytic") {
     return `${question.markTotal}-mark short response`;
   }
@@ -85,6 +86,9 @@ function PracticeRoute() {
 }
 
 function PracticeGenerator() {
+  // The account boundary remounts this component on identity changes. A
+  // pending response from another account must never be adopted by this one.
+  const [generationClient] = useState(() => createPracticeGenerationClient());
   const params = useSearchParams();
   const requestedTopic = validTopic(params.get("topic"));
   const requestedMark = validMark(params.get("marks"));
@@ -107,7 +111,8 @@ function PracticeGenerator() {
   const [exitedFocus, setExitedFocus] = useState(params.get("mode") === "general");
   const selectionVersion = useRef(0);
   const retryIntent = useRef<{ signature: string; regenerate: boolean } | null>(null);
-  const canGenerateFocus = !focusBlocked && (!focus || focusPolicy(focus.targetSkill) !== null);
+  const canGenerateFocus = !focusBlocked && (!focus || (focusPolicy(focus.targetSkill) !== null &&
+    (focus.targetSkill !== "diagram_explanation" || process.env.NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED === "true")));
 
   useEffect(() => {
     const supabase = createClient();
@@ -226,7 +231,7 @@ function PracticeGenerator() {
         setGenerating(false);
       }
     },
-    [courseLevel, focus, generating, marks, selectedTopicCode, profileLoading, canGenerateFocus]
+    [courseLevel, focus, generating, marks, selectedTopicCode, profileLoading, canGenerateFocus, generationClient]
   );
 
   function chooseMarks(value: PracticeMarkTotal) {
@@ -330,7 +335,7 @@ function PracticeGenerator() {
               <fieldset>
                 <legend className="text-sm font-semibold">Question length</legend>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {PRACTICE_MARK_TOTALS.map((value) => (
+                  {PRACTICE_MARK_TOTALS.filter(value => value !== 4 || process.env.NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED === "true").map((value) => (
                     <Button
                       key={value}
                       type="button"
@@ -481,6 +486,8 @@ function PracticeGenerator() {
                 </span>
               </div>
               <p className="text-base font-medium leading-relaxed">{question.question}</p>
+              {question.sourceMaterial && <p className="whitespace-pre-wrap text-sm text-muted-foreground">{question.sourceMaterial}</p>}
+              {question.assessmentContract && <p className="text-sm text-muted-foreground">{question.assessmentContract.diagramReason}</p>}
               {savedPracticeFocus(question) && <p className="text-sm font-semibold">{focusSummary(savedPracticeFocus(question)!)}</p>}
               <div className="flex flex-wrap gap-2">
                 <Badge>{question.topicLabel}</Badge>

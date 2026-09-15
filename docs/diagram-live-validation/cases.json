@@ -1,0 +1,812 @@
+{
+  "schemaVersion": 1,
+  "title": "Synthetic diagram-aware assessment live-validation candidates",
+  "artifactProvenance": "synthetic_engineering",
+  "teacherReviewStatus": "not_reviewed",
+  "providerCallsMadeByAuthor": 0,
+  "dispatchControl": {
+    "owner": "root agent only",
+    "absoluteAssessmentAttemptLimit": 20,
+    "proposedFirstPassCaseIds": [
+      "live-01",
+      "live-02",
+      "live-03",
+      "live-04",
+      "live-05",
+      "live-06",
+      "live-07",
+      "live-08",
+      "live-09",
+      "live-10",
+      "live-11",
+      "live-12"
+    ],
+    "optionalCaseIds": [
+      "live-13",
+      "live-14"
+    ],
+    "reservePolicy": "Start with the 12 first-pass cases. The two optional extensions bring the planned total to 14, leaving six of the absolute 20 assessment attempts for paired controls or fix-and-retest. Every dispatch, including technical failures and retries, counts in the root-owned ledger. This manifest does not dispatch or authorize extra calls."
+  },
+  "inputSeparation": {
+    "modelInputKeys": [
+      "bankQuestionId",
+      "question",
+      "answer"
+    ],
+    "providerEvidence": "Resolve the trusted bank question/context/contract server-side. Send only normal student question/answer content and decoded image bytes through the existing assessment pipeline. The local bankQuestionId is a lookup key, not an examiner label.",
+    "neverSend": [
+      "reviewOnly",
+      "caseId",
+      "dispatchTier",
+      "engineeringPredictedOverall",
+      "expectedComponents",
+      "expectedEvidenceStates",
+      "intendedCondition",
+      "imagePath or descriptive filename",
+      "comparison instructions",
+      "teacherReviewStatus"
+    ],
+    "artifacts": "Artifact paths are local harness routing metadata. They are not student-answer text. Images must contain only synthetic student diagram content, never expected scores or scenario-condition annotations."
+  },
+  "pairingRecommendations": [
+    {
+      "anchor": "live-01",
+      "comparisons": [
+        "live-02",
+        "live-04",
+        "live-06",
+        "live-08",
+        "live-10",
+        "live-13",
+        "live-14"
+      ],
+      "purpose": "Keep the developed explanation identical while changing only diagram content, presence, or readability."
+    },
+    {
+      "anchor": "live-01",
+      "comparisons": [
+        "live-05",
+        "live-07"
+      ],
+      "purpose": "Keep the exact correct image while weakening or removing the explanation."
+    },
+    {
+      "anchor": "live-01",
+      "comparisons": [
+        "live-09"
+      ],
+      "purpose": "Equivalent notation should preserve full credit without demanding an arrow or title."
+    },
+    {
+      "anchor": "live-03",
+      "comparisons": [
+        "live-06"
+      ],
+      "purpose": "Distinguish internally coherent own-figure error carry forward from conflicting image/text mechanisms."
+    },
+    {
+      "anchor": "live-11",
+      "comparisons": [],
+      "purpose": "If budget remains, re-assess the same 10-mark answer with confirmed image omission. Compare holistic judgment; do not preassign a numerical diagram deduction."
+    },
+    {
+      "anchor": "live-12",
+      "comparisons": [],
+      "purpose": "If budget remains, re-assess the same 15-mark answer with confirmed image omission. Preserve the same hypothetical-only application limitation."
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "live-01",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-correct.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Complete compatible diagram and developed explanation.",
+        "economicBehavior": "Leftward wheat supply shift; unchanged demand; equilibrium price rises and quantity falls.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 4,
+          "max": 4
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 2,
+            "max": 2
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "reviewChecks": [
+          "All claimed geometry must be visible in the uploaded image.",
+          "No evaluation or surplus areas required.",
+          "Use this same answer and image as the paired baseline."
+        ]
+      }
+    },
+    {
+      "caseId": "live-02",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-incomplete.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Readable partial diagram with strong unchanged explanation; S2 truncates before the new equilibrium.",
+        "economicBehavior": "Correct initial equilibrium and direction of supply contraction are visible; the new equilibrium is not drawn.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 3,
+          "max": 3
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 1,
+            "max": 1
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Image only.",
+        "reviewChecks": [
+          "Do not infer the undrawn new intersection from correct prose.",
+          "Weak but readable drawing is assessable, not an upload failure.",
+          "If the delivered image actually makes both outcomes explicit, inspect before treating a higher award as an error."
+        ]
+      }
+    },
+    {
+      "caseId": "live-03",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought increases the amount of wheat available, so I have shifted supply right from S1 to S2. At the original price producers now offer more wheat than consumers want to buy, creating a surplus. Sellers reduce the price, and consumers buy more as they move down the unchanged demand curve. My new equilibrium therefore has a lower price and a higher quantity of wheat traded."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-wrong-direction.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "One wrong initial economic interpretation is carried through consistently: drought mistakenly increases supply.",
+        "economicBehavior": "Image and prose both show rightward supply, lower price and higher quantity; these consequences are internally coherent but contradict the drought stimulus.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 1,
+          "max": 2
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 0,
+            "max": 0
+          },
+          "explanation": {
+            "min": 1,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Both image and explanation share one root error.",
+        "reviewChecks": [
+          "Identify the wrong supply direction as the root error.",
+          "Do not classify the internally consistent explanation as a separate incompatible mechanism.",
+          "Apply within-part error carry forward to valid own-figure equilibrium reasoning; do not demand double punishment for the same root error.",
+          "Any additional independent explanation error should be distinguished explicitly."
+        ]
+      }
+    },
+    {
+      "caseId": "live-04",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-missing-labels.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Correct contraction geometry and developed explanation, but both price and quantity axis titles are absent.",
+        "economicBehavior": "Curve names and equilibrium geometry remain readable; missing axis variable identification activates the task-specific labeling consideration.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 3,
+          "max": 3
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 1,
+            "max": 2
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Axis identification only.",
+        "reviewChecks": [
+          "A labeling ceiling is at most 3/4, not an automatic awarded mark.",
+          "Do not both reduce the diagram for this omission and subtract another mark from the summed award.",
+          "No numeric coordinates are required; do not confuse omitted axis variable names with missing numbers."
+        ]
+      }
+    },
+    {
+      "caseId": "live-05",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought changes the wheat market. The price is higher."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-correct.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Strong unchanged diagram with a weak, largely asserted explanation.",
+        "economicBehavior": "Submitted geometry demonstrates the supply contraction, but prose does not develop the harvest-supply-shortage-equilibrium chain.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 2,
+          "max": 3
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 2,
+            "max": 2
+          },
+          "explanation": {
+            "min": 0,
+            "max": 1
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Explanation only.",
+        "reviewChecks": [
+          "The diagram earns its own credit.",
+          "Do not copy the visual narrative into the student explanation to create missing causal analysis."
+        ]
+      }
+    },
+    {
+      "caseId": "live-06",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-demand-increase.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Independently coherent demand-expansion diagram paired with drought-driven supply-contraction prose.",
+        "economicBehavior": "Image has D1 to D2 right and unchanged supply, raising both price and quantity; prose has supply left and quantity falling. Demand expansion is not allowed by the wheat stimulus.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 2,
+          "max": 2
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 0,
+            "max": 0
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Image mechanism only.",
+        "reviewChecks": [
+          "Recognize the incompatibility between diagram and explanation.",
+          "The demand-expansion graph is theoretically coherent in isolation but is not full-credit evidence for this unchanged-demand drought contract.",
+          "Overall must not exceed 2; if the raw component total is already 2 a further subtraction is not justified.",
+          "Apply a mechanism-consistency ceiling only under its scoped conditions; no requirement to invent a redundant ceiling."
+        ]
+      }
+    },
+    {
+      "caseId": "live-07",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": ""
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-correct.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Diagram-only submission: genuinely empty written response.",
+        "economicBehavior": "Submitted drawing alone gives the required supply and equilibrium relationships.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 2,
+          "max": 2
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 2,
+            "max": 2
+          },
+          "explanation": {
+            "min": 0,
+            "max": 0
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Remove explanation.",
+        "reviewChecks": [
+          "Empty answer is intentional and should not need filler text.",
+          "Do not infer a developed written explanation from axis and curve labels."
+        ]
+      }
+    },
+    {
+      "caseId": "live-08",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Confirmed omission: no image was provided, with unchanged developed explanation.",
+        "economicBehavior": "Only written evidence exists; no visual credit can come from prose describing a graph.",
+        "expectedEvidenceStates": [
+          "not_provided"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 2,
+          "max": 2
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 0,
+            "max": 0
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Remove attachment.",
+        "requiresExplicitOmissionConfirmation": true,
+        "reviewChecks": [
+          "Set the existing explicit omission intent when dispatching this case.",
+          "Do not create an image or infer that a described diagram was submitted.",
+          "This is missing work, not a technical failure."
+        ]
+      }
+    },
+    {
+      "caseId": "live-09",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The smaller harvest reduces the wheat offered at each price. The supply curve moves from S to S′, while D stays fixed. The initial price p leaves excess demand, so the market price rises to p′. The new intersection has a smaller traded quantity q′ than q because consumers move up their unchanged demand curve. The higher price and lower quantity follow from the same supply contraction."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-alternate-notation.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Complete equivalent notation with prime labels, conventional p/q axes and no movement arrow.",
+        "economicBehavior": "Same supply contraction and equilibrium outcome as baseline; S/S-prime and p/p-prime, q/q-prime replace numbered labels.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 4,
+          "max": 4
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 2,
+            "max": 2
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Equivalent notation; answer references matching prime labels.",
+        "reviewChecks": [
+          "Accept conventional abbreviations and prime notation.",
+          "Absence of a title or movement arrow is not by itself an error when curve positions and explanation establish direction."
+        ]
+      }
+    },
+    {
+      "caseId": "live-10",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-blurry.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "The underlying correct drawing is photographed so poorly that essential features are intended to be unreadable.",
+        "economicBehavior": "Correct prose is unchanged, but inaccessible visual evidence must not become a definitive zero for diagram ability.",
+        "expectedEvidenceStates": [
+          "unreadable_ambiguous"
+        ],
+        "expectedCompletion": "incomplete",
+        "engineeringPredictedOverall": null,
+        "expectedComponents": null,
+        "pairedWith": "live-01",
+        "controlledChange": "Image legibility only.",
+        "reviewChecks": [
+          "Inspect the delivered image before dispatch: the blur must actually obscure essential relationships or labels.",
+          "Return replacement/retry or an unmistakably incomplete outcome; exclude from scored analytics.",
+          "If essential geometry remains readable, usable/partially_readable may be justified and is not itself a model error; record the actual visibility rather than enforcing the intended condition.",
+          "Do not send this reviewer expectation or the descriptive filename to the model."
+        ]
+      }
+    },
+    {
+      "caseId": "live-11",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-3.2-10-001",
+        "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+        "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/essay10-ad-contraction.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 10,
+        "expectedFramework": "paper1a_10_mark",
+        "expectedContractMode": "holistic_diagram",
+        "intendedCondition": "Developed 10-mark causal explanation integrates a correct, task-necessary AD/AS diagram.",
+        "economicBehavior": "Falling confidence lowers consumption and AD; unchanged upward SRAS gives lower output and price level. Productive capacity is not assumed destroyed.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 8,
+          "max": 10,
+          "nonBindingBestFitPrediction": true
+        },
+        "expectedComponents": null,
+        "diagramRequirementAudit": {
+          "role": "necessary_for_task",
+          "family": "ad_as",
+          "reason": "The task asks how confidence affects real output and the price level."
+        },
+        "reviewChecks": [
+          "Use the current audited necessary-for-task holistic contract, not the historical feedback-only policy string in the source bank.",
+          "No fixed diagram bonus or diagram submark is part of this essay.",
+          "Evaluation and an outside real-world example are not required by this 10-mark task.",
+          "The hypothetical example is explicitly fictional and must not be treated as a verified news event.",
+          "A future paired omission run should keep the answer identical; any mark change must follow holistic descriptors, not a universal numeric ceiling."
+        ]
+      }
+    },
+    {
+      "caseId": "live-12",
+      "dispatchTier": "first_pass",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-3.2-15-002",
+        "question": "Discuss the likely effects of a negative supply shock on households, firms and government. [15 marks]",
+        "answer": "A negative aggregate supply shock is an event that makes firms supply less real output at each price level, for example an increase in an economy's imported energy costs. In the diagram SRAS shifts left from SRAS1 to SRAS2 while AD is held constant to isolate the initial shock. Equilibrium moves from real output Y1 to Y2 and from price level P1 to the higher P2. The combination of weaker activity and upward pressure on prices creates a difficult trade-off. The examples below are hypothetical classroom scenarios, not claims about reported events.\n\nHouseholds face a loss of purchasing power if wages or pensions do not rise as quickly as prices. Imagine an energy-importing economy in which a low-income family must spend much of its budget on heating and commuting. More expensive fuel and transport leave less income for other goods, so the family may cut consumption sharply. The fall in output also reduces firms' demand for labor, exposing some households to unemployment or fewer paid hours. These effects are unequal: households with flexible high wages or large savings may adjust more easily than pensioners on fixed nominal incomes. Workers in a domestic energy producer could benefit from increased demand for substitutes to imported energy, so the aggregate diagram does not imply that every household loses equally.\n\nFirms using energy intensively face higher unit costs. Consider a hypothetical bakery whose electricity bill rises. It may raise bread prices, but higher selling prices do not guarantee higher profits because costs have also risen and customers may buy less. Firms unable to pass the shock on because of close substitutes or contracts can experience a squeezed profit margin. Some reduce output or delay investment, worsening employment and potentially future capacity. By contrast, an efficient supplier of insulation or alternative energy could gain orders as users economize on the expensive input. The overall loss is therefore accompanied by changes in the composition of output, which a single SRAS curve cannot fully describe.\n\nGovernment finances are also affected. Lower real output and employment can weaken profit and income-tax receipts, while unemployment-related spending rises. The government may also pay more for energy in hospitals or schools. Higher nominal prices can increase some expenditure-tax receipts, so the effect on total tax revenue is not mechanically a fall; it depends on the tax mix and how strongly quantities contract. A government that guarantees household energy prices may protect real incomes temporarily but must absorb the cost in its budget, reducing funds available for other priorities or increasing borrowing.\n\nPolicy choices depend strongly on duration. If the input shortage is brief, temporary targeted support could protect vulnerable households without permanently changing incentives. Broad untargeted subsidies are more costly and may discourage conservation. Expansionary demand policy could support output but also increase pressure on prices while supply is constrained. Monetary tightening could reduce demand pressure and limit second-round inflation, but at the cost of a deeper short-run output and employment decline. If the shock is persistent, investment in efficiency, alternative inputs and resilient infrastructure can improve supply, although these responses take time and have opportunity costs.\n\nOverall, a negative supply shock is likely to reduce real incomes and output while raising prices, but the burden depends on input dependence, household budgets, firms' ability to substitute or pass on costs, and public finances. A temporary shock with stable expectations may have mainly short-run distributional effects. A persistent shock that feeds into wage and price expectations can produce more lasting inflation and output damage. Policy should therefore be assessed against both the people most exposed and the source and duration of the shock, rather than assuming a single response benefits all stakeholders."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/essay15-sras-contraction.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 15,
+        "expectedFramework": "paper1b_15_mark",
+        "expectedContractMode": "holistic_diagram",
+        "intendedCondition": "Developed 15-mark stakeholder discussion integrates a correct supply-shock diagram and conditional evaluation; illustrations are explicitly hypothetical.",
+        "economicBehavior": "Negative SRAS shock raises the price level and lowers real output. Burdens vary by household income, firms input intensity and government policy; price rises do not guarantee higher profits.",
+        "expectedEvidenceStates": [
+          "usable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 9,
+          "max": 13,
+          "nonBindingBestFitPrediction": true
+        },
+        "expectedComponents": null,
+        "diagramRequirementAudit": {
+          "role": "necessary_for_task",
+          "family": "ad_as",
+          "reason": "The stakeholder evaluation depends on the output and price effects of a negative aggregate supply shock."
+        },
+        "reviewChecks": [
+          "Use holistic best fit; neither an additive diagram bonus nor a universal omission ceiling applies.",
+          "The existing private blueprint expects relevant real-world application. This answer deliberately supplies hypothetical illustrations only; record that limitation honestly rather than fabricating attribution.",
+          "The numerical interval is an engineering forecast, not a rule or teacher label; a defensible out-of-interval mark requires review rather than automatic failure.",
+          "A future paired omission run should retain exactly the same answer to isolate diagram contribution."
+        ]
+      }
+    },
+    {
+      "caseId": "live-13",
+      "dispatchTier": "optional_extension",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-messy-readable.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Untidy hand-drawn or photographed version whose essential labels and relationships remain readable.",
+        "economicBehavior": "Same correct contraction and outcomes as the baseline, despite uneven strokes, skew or handwriting.",
+        "expectedEvidenceStates": [
+          "usable",
+          "partially_readable"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 4,
+          "max": 4
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 2,
+            "max": 2
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Presentation quality only, retaining essential readability.",
+        "reviewChecks": [
+          "Confirm the delivered artifact actually preserves essential evidence before dispatch.",
+          "Do not penalize visual neatness, line straightness or handwriting style.",
+          "If a material label is actually unreadable, record the real evidence limitation instead of forcing the intended full mark."
+        ]
+      }
+    },
+    {
+      "caseId": "live-14",
+      "dispatchTier": "optional_extension",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-irrelevant.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+        "teacherReviewStatus": "not_reviewed",
+        "marksAvailable": 4,
+        "expectedFramework": "paper2_four_mark_diagram_explain",
+        "expectedContractMode": "four_mark_diagram",
+        "intendedCondition": "Readable upload contains a Clinics/Schools PPC rather than a wheat demand-and-supply diagram.",
+        "economicBehavior": "The strong written wheat explanation remains creditworthy, but the unrelated PPC provides no wheat-market demand/supply relationships.",
+        "expectedEvidenceStates": [
+          "no_relevant_diagram"
+        ],
+        "expectedCompletion": "complete",
+        "engineeringPredictedOverall": {
+          "min": 2,
+          "max": 2
+        },
+        "expectedComponents": {
+          "diagram": {
+            "min": 0,
+            "max": 0
+          },
+          "explanation": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        "pairedWith": "live-01",
+        "controlledChange": "Replace graph with a readable irrelevant figure.",
+        "reviewChecks": [
+          "Distinguish a readable irrelevant upload from an unreadable or failed image.",
+          "Do not invent demand/supply curves from prose or from an unrelated shape."
+        ]
+      }
+    },
+    {
+      "caseId": "live-15",
+      "dispatchTier": "targeted_follow_up",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/diagram-live-validation/images/wheat-severe-blur.png",
+          "sendFileNameToProvider": false
+        }
+      ],
+      "reviewOnly": {
+        "economicBehavior": "Correct prose is unchanged, but inaccessible visual evidence must not become a definitive zero for diagram ability.",
+        "intendedCondition": "Severely defocused synthetic photo: essential curve/intersection identity is intended to be unreadable; inspect actual pixels without assuming this intended condition.",
+        "teacherReviewStatus": "not_reviewed",
+        "engineeringExpectations": "If essential geometry is unreadable, return a recoverable unreadable response with no completed mark, not a zero-ability mark. Exact expected marks are deliberately unspecified."
+      }
+    },
+    {
+      "caseId": "live-16",
+      "dispatchTier": "targeted_follow_up",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-3.2-10-001",
+        "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+        "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time."
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "economicBehavior": "Falling confidence lowers consumption and AD; unchanged upward SRAS gives lower output and price level. Productive capacity is not assumed destroyed.",
+        "intendedCondition": "Same developed 10-mark essay as live-11, with diagram explicitly omitted to isolate the holistic contribution of required diagram evidence.",
+        "teacherReviewStatus": "not_reviewed",
+        "engineeringExpectations": "Grade submitted essay holistically, acknowledge missing necessary diagram, award no visual credit and apply no fixed diagram deduction or universal cap. Exact expected mark unspecified."
+      }
+    }
+  ]
+}

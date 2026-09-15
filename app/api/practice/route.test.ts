@@ -17,6 +17,8 @@ const mocks = vi.hoisted(() => ({
       user_metadata: { economics_level: "sl" },
     } as Record<string, unknown> | null,
     latest: null as PracticeQuestion | null,
+    latestVersion: "economics-grading-blueprint-v2",
+    latestBankId: null as string | null,
     history: [] as { bankQuestionId: string | null; createdAt: string }[],
     replay: null as PracticeQuestion | null,
     attempts: [] as Attempt[],
@@ -111,7 +113,8 @@ vi.mock("@/lib/supabase/server-authority", () => {
     savePracticeQuestion: mocks.save,
     findPracticeByIdempotency: mocks.find,
     fetchPracticeBankHistory: async () => mocks.state.history,
-    fetchLatestTrustedPracticeQuestion: async () => mocks.state.latest ? { question: mocks.state.latest, targetSkills: [mocks.state.latest.skill], levelRelevance: "shared_sl_hl" } : null,
+    fetchLatestTrustedPracticeQuestion: async () => mocks.state.latest ? { question: mocks.state.latest, targetSkills: [mocks.state.latest.skill], levelRelevance: "shared_sl_hl",
+      gradingBlueprintVersion: mocks.state.latestVersion, bankQuestionId: mocks.state.latestBankId } : null,
   };
 });
 
@@ -140,6 +143,8 @@ beforeEach(() => {
     user_metadata: { economics_level: "sl" },
   };
   mocks.state.latest = null;
+  mocks.state.latestVersion = "economics-grading-blueprint-v2";
+  mocks.state.latestBankId = null;
   mocks.state.history = [];
   mocks.state.replay = null;
   mocks.state.attempts = [];
@@ -275,6 +280,67 @@ describe("verified focused Practice", () => {
 });
 
 describe("POST /api/practice bank-first authority", () => {
+  it.each([
+    ["1.1", "sl"], ["1.1", "hl"], ["1.2", "sl"], ["1.2", "hl"],
+    ["2.1", "sl"], ["2.1", "hl"], ["2.2", "sl"], ["2.2", "hl"], ["4.6", "sl"],
+  ] as const)("stops unsupported %s %s essay fallback before quota and provider work", async (topicCode, courseLevel) => {
+    mocks.state.claims = { sub: USER_ID, user_metadata: { economics_level: courseLevel } };
+    mocks.state.history = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === topicCode && q.marks === 15)
+      .map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+    const response = await POST(request({ topicCode, marks: 15 }));
+    expect(response.status).toBe(422);
+    expect(await response.json()).toEqual({ error: "no_supported_question" });
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.processing).not.toHaveBeenCalled();
+    expect(mocks.openaiCreate).not.toHaveBeenCalled();
+    expect(mocks.save).not.toHaveBeenCalled();
+  });
+
+  it("preserves an eligible curated cross-topic exception before the fallback gate", async () => {
+    mocks.state.claims = { sub: USER_ID, user_metadata: { economics_level: "hl" } };
+    mocks.state.history = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === "2.1" && q.marks === 15 && q.id !== "econ-v1-2.1-15-004")
+      .map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+    const response = await POST(request({ topicCode: "2.1", marks: 15 }));
+    expect(response.status).toBe(200);
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({ questionOrigin: "curated_bank", bankQuestionId: "econ-v1-2.1-15-004" });
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.openaiCreate).not.toHaveBeenCalled();
+  });
+
+  it("preserves exact saved-request replay before the adaptive scope gate", async () => {
+    mocks.state.replay = { ...QUESTION, topicCode: "1.2", markTotal: 15, framework: "paper1b_15_mark" };
+    const response = await POST(request({ topicCode: "1.2", marks: 15 }));
+    expect(response.status).toBe(200);
+    expect((await response.json()).reused).toBe(true);
+    expect(mocks.save).not.toHaveBeenCalled();
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.openaiCreate).not.toHaveBeenCalled();
+  });
+
+  it("uses the existing focused-unavailable response for unsupported essay fallback", async () => {
+    const evidence = focusAttempt("Evaluation and judgment", "2.1");
+    mocks.state.attempts = [evidence];
+    mocks.state.history = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === "2.1" && q.marks === 15)
+      .map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+    const response = await POST(request({ topicCode: "2.1", marks: 15, context: "answer_feedback", sourceAttemptId: evidence.id }));
+    expect(response.status).toBe(422);
+    expect(await response.json()).toEqual({ error: "unsupported_focus" });
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.openaiCreate).not.toHaveBeenCalled();
+  });
+
+  it("allows the 4.6 HL fallback with HL metadata after bank exhaustion", async () => {
+    mocks.state.claims = { sub: USER_ID, user_metadata: { economics_level: "hl" } };
+    mocks.state.history = ECONOMICS_QUESTION_BANK.filter(q => q.topicCode === "4.6" && q.marks === 15)
+      .map(q => ({ bankQuestionId: q.id, createdAt: "2026-08-18" }));
+    const response = await POST(request({ topicCode: "4.6", marks: 15 }));
+    expect(response.status).toBe(200);
+    expect(mocks.reserve).toHaveBeenCalledOnce();
+    expect(mocks.openaiCreate).toHaveBeenCalledOnce();
+    expect(mocks.validate.mock.calls[0][1]).toMatchObject({ topicCode: "4.6", levelRelevance: "hl_only", markTotal: 15 });
+    expect(mocks.save.mock.calls[0][2]).toMatchObject({ questionOrigin: "adaptive_generated", levelRelevance: "hl_only" });
+  });
+
   it("requires authentication, course level and an exact request shape", async () => {
     mocks.state.claims = null;
     expect((await POST(request())).status).toBe(401);
@@ -285,7 +351,7 @@ describe("POST /api/practice bank-first authority", () => {
       user_metadata: { economics_level: "sl" },
     };
     for (const invalid of [
-      { marks: 4 },
+      { marks: 6 },
       { topicCode: "legacy" },
       { context: "forged" },
       { framework: "paper3b_10_mark" },
@@ -324,6 +390,25 @@ describe("POST /api/practice bank-first authority", () => {
     expect((await response.json()).reused).toBe(true);
     expect(mocks.save).not.toHaveBeenCalled();
     expect(mocks.reserve).not.toHaveBeenCalled();
+  });
+
+  it("does not reopen superseded criteria as a newly requested task", async () => {
+    mocks.state.latest = QUESTION;
+    mocks.state.latestVersion = "economics-grading-blueprint-v1";
+    const response = await POST(request());
+    expect(response.status).toBe(200);
+    expect((await response.json()).reused).toBe(false);
+    expect(mocks.save).toHaveBeenCalledOnce();
+    expect(mocks.reserve).not.toHaveBeenCalled();
+  });
+
+  it("does not reopen a retired bank ID even if its metadata claims a current version", async () => {
+    mocks.state.latest = QUESTION;
+    mocks.state.latestBankId = "econ-v1-2.11-10-003";
+    const response = await POST(request());
+    expect(response.status).toBe(200);
+    expect((await response.json()).reused).toBe(false);
+    expect(mocks.save).toHaveBeenCalledOnce();
   });
 
   it("replays the same idempotent bank result before making another selection", async () => {

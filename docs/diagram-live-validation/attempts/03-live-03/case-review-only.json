@@ -1,0 +1,51 @@
+{
+  "caseId": "live-03",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought increases the amount of wheat available, so I have shifted supply right from S1 to S2. At the original price producers now offer more wheat than consumers want to buy, creating a surplus. Sellers reduce the price, and consumers buy more as they move down the unchanged demand curve. My new equilibrium therefore has a lower price and a higher quantity of wheat traded."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-wrong-direction.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "One wrong initial economic interpretation is carried through consistently: drought mistakenly increases supply.",
+    "economicBehavior": "Image and prose both show rightward supply, lower price and higher quantity; these consequences are internally coherent but contradict the drought stimulus.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 1,
+      "max": 2
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 0,
+        "max": 0
+      },
+      "explanation": {
+        "min": 1,
+        "max": 2
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Both image and explanation share one root error.",
+    "reviewChecks": [
+      "Identify the wrong supply direction as the root error.",
+      "Do not classify the internally consistent explanation as a separate incompatible mechanism.",
+      "Apply within-part error carry forward to valid own-figure equilibrium reasoning; do not demand double punishment for the same root error.",
+      "Any additional independent explanation error should be distinguished explicitly."
+    ]
+  }
+}

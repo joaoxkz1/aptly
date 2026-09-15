@@ -1,0 +1,50 @@
+{
+  "caseId": "live-04",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-missing-labels.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "Correct contraction geometry and developed explanation, but both price and quantity axis titles are absent.",
+    "economicBehavior": "Curve names and equilibrium geometry remain readable; missing axis variable identification activates the task-specific labeling consideration.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 3,
+      "max": 3
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 1,
+        "max": 2
+      },
+      "explanation": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Axis identification only.",
+    "reviewChecks": [
+      "A labeling ceiling is at most 3/4, not an automatic awarded mark.",
+      "Do not both reduce the diagram for this omission and subtract another mark from the summed award.",
+      "No numeric coordinates are required; do not confuse omitted axis variable names with missing numbers."
+    ]
+  }
+}

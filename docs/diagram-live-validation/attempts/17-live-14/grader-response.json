@@ -1,0 +1,530 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 18042,
+  "requestId": "req_28f5ab3da65a4f9dad046a6b904e40ec",
+  "response": {
+    "id": "resp_0218d203a0eccd04016aa99798d54487d28cb1adc39a134450",
+    "object": "response",
+    "created_at": 1789499288,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789499306,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0218d203a0eccd04016aa99799a58887d28783749a0678972a",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZeq9kwIAFY6APGKJbh3ykBH887-kIhCPNqUZUtyMbqKWgxqqm8b88GMHJEWmLD4ELZxRBno8zLHWxNO5rxx4fQYHyWa7H9bC6eEmK9jBz3Jc9h6l2uE61-gpDi_TycOjKDTdmxNSkdQLNaZqRrkqWkNj-wZtrKWe11-qU3GUR7zinQhTqSOL-lHeHcWnXqhcTvjPrIMzZ3678zZRSrV8nVYY9Bo12XiLe6BFLrwWWE5jIhsl71P0GrFM3zCoqj86AwkPC2rPepI3yye0p2koCbq142mLOB3F5QVL9teTxAGS1Txs4HqGlSehhHNedpWjb5qosGYnc_5FayVStZxejYLg8kq6tQtnCxTLdWJl4WtVpfTLZMwy9jn5FlVeTcyayRh_JVTz049YLSvLxn-9CQq1UTZa1_Wt22z5VnmKtaIwBTH5ZH-yxVuwr0E5ccHbVgSZ2VY4fBKX5pgILZrpQmdJ6VZZMSuM7rLrqfhzGaClQtndszDnpVIepX6EHB2NBQO6Mu8FZgeeejJTaTp44qxOpquhR7whK8CqSMt95sIJpfTLO-uClKYVIoej5FtV9BJIUHLSe9jkPYjsF2orKcGZTzHOJfv_lC-gTWATykEuh481ua3jWD6iL-Me52OQULaCiKnB60wa8vlf_pAGu3SxShosEMZrCxqRSKDLghRahCpPovyUnzYxBhiILDAhESyyMKDtWUT4-lIjSXilugSuU9uInm5G5dt1ogRuRFUtOxY8gohA_uTcbrGAxf3nx7qqXvokxScPv5wef63W5Emm6QF9QpJkiCqFB0fhHtRtMmdCAKnSgeIZzKZwk4pz2L3cNk6C29VAUAWZGISMcnFgmY4rS1Ds5GLb51J98OY-S7OH7PZCKXErMK9SgJIwDz5Rv5gb7OVtTW5g-WeHd4LwEk3LVjkUFcpt3WIaRRifV-Ugydfd_hgDRsIgj-5S4EBaTbACNs3Ip91-t0ibLV5udVgMagu6FNzOkXR-CrqT9bHpo8t6HsxT-p2quR8Csnf4ykxYKEEMJwUQJT4hvbmg3SEa585rYw3Uxl8NWikKrps7B3TwuD2m-O0szrwyY13mDKh2NkCPnKphjuLjpMPKPyC119XGAwTfW7z1bc4ipwv5jUKkbCv6mYe3Jzev4hlMxtRCtwnm4N4YTG2Oi7bXq2YtRfMxoHnkg4pOkFUNzTahMidHswjLpXT8xqTYOppP__2ArR9SBPSYreiiYEFtM9GlWT1HF8gmsQmBSQkxwe8MuhAfEo66ONBpsZa96YW58gb6PwHRzfWqoQxm6qV7x7s6byiaHI81ysfE7BdhzrNMviBGs9ecxNlTTIXM3MVt7_RQmEZjGgpZkpM11t3IIqETg0CpQJT8Txc10D_azZkTfDQE5_8msWK_ehpQUURDEcRRK9FfxyC0NqNiSafOox2uDbL0N4mbaD9ipbXiY5RwPOYTym4HlKb0_DqyGqVKpf4faF2OJXbqs1OF06vWwS2RAkxIMOEARQjKVVpsLQvWjpbMl2dx0J4jyWdTJICkyGFIEGYPKRO-CL5OA7fDhIJKVyygnmVfPPGeubQ_5UVHyR48lwxDNDy-AjQ0BBfusa4b_ZdP2pxq0lxKqJ0tg7qgA5Uc_bWohbFRlvByw9D6zG3A6lZi-pyr7dlkbNwA9-4taAshJ7Qqnnt6L0qCG7zebzq9gvaOwMqCvAdrCDTaDP3eBh6nTnj_dVI7yCq59_hT8mQWQfGhsLE8aHjumKe3hHyi6hNNHHyQDSkEvGuMF4BdLlUNcQCCgjq5ZW7kzL3nAKEg5Q7pSRE5WwXx-MMD8WzWAZbg0tzM_QBT3vvgO4OrAXIsAmrMI1nlbpzItA-FC6Wni2ZZpp-Cn4D_6vHH36j3wTbSanFLdwUixz6wi8dmoUEdvFhYmeHGqiqVv0wKtmSHw_UHgjhKoxtcjWqBwHbxAZGmC7GRCnjAyTWtPoUi0A8OkuWIF5bysIwZ3Szegol5rcirza3xfsP1XebsxGzg3OyzhfdJkLvTzBHR2yQv1YrbHQjde2F7pRf81G9-fGTVH8lf9Dgh3758O8uNK_cARrlYZV-jM3u_gbx3utBRNTBWp56wroBxsUacNZdERnfxIdu5oKnDm7P8ZTbZAy-zxlVpdwKbTEIOltl2It_60C0bCUakcauzYV8d8p6ls8TyTc0NEREOT98IojTI54T0aj6o-mSnDN5guXnDy9av3D8hVGXoeaVV_aIr0opf4Hq6PdEcT4Sw-iTRQhydfCenLQ_JMVRds4itDuxXPAfUO4B56jnk_D4x23AsAkkQs_bHYqMUR8el6hOZBrGcZdzON-yz-wmiq81fDZMU5NBe1klgunMfyR9ys3_j2Qe6Bm6QXOs1-YfHG_IWtfYEywDj9r9OoywAlEscpuUcD1EpWVOv9ZCI6NzFoM0Fd0POsFqZpZoyrjJvUhOhJLZhsuFWrk_W3sN4IvdYjIAdYgi8DA9R2QN7TT2yVwFmIm84jYjUR_l2rsEcoZaxko_QyceSJBs7jgWN983RHOA5gtp1gjnYhgi0O0TvwwTLuvS_aoC7VS0HVIkQJt_rheg7UNLSe-ottVCIsyHfMynG1N3M5Z9kDJ8Jl9TjM9G-Nd_ubmflUU9258Ed7Bt3O6Lp2-vCBddZ-mgiI7FTgosmGUjSk0EATIFdGL-hyyw3FRN9ZR1u9smyJEW2YbIv-pMrsgST9fdYxLmfw7HoYA78e6GtlsyRteYJGv20qGE0oVC9_DcDEXYpfRpgUPH7JJWy6RGtZaO05tSnzeOHEN6spCytMbzLSUsysupqekhCyIpG0DcVEE2lRj7z0Zbih0dDiHqPgngR3-nr897YVZ4GQlxn77nt1CbJNMxeO_OXeVJ3wBOVxpjBcewKl_IAmRwfSjdUuI8w4fqxiIU1JR-JTqZSw0J6cJtZBoFkrYcjnCsH1VIIX_VvSUiqrzRL6Xrd-QqsNRSp7-4PJ2KNAQPOyItHzx4hafcjVrT08pqWy22nPAp83PdQpmL0z58tkSkKP85a3o4ygwpTDutgx0X9JGIu3GQpAJZPL_vyA0j_2BZsr-vLDzQ93eGjBb8eitqz6afuW8wU0Jk0tlDnZDyfUpp3B9bPo3eRAhk0cC-TuD1d0N7tqUD_IhpwM3xGnSB69ZCDHtlxp8LrP_UagLLJ37OBwUNp5UF1OH1t1L0lMssr-QqH1oK_LiStF-ho8JZnQ9rYeKGF6EwhLnBscjmV-ZC96dKNswF-bJFWmoQ9NH3aZS5Z1EtK1gyC-UQ4_Of9y4ZGhNIQCHI1AskmI2Y0NxR3FzvpvCHBZYWyzHrBQCcmYtvc-kcZk3yPzdsVVa9mwjsj-8nSCJiylqncPM_HNNvuJtj2sw4TL5a47Wps4h0Javv3ULEjOuSW5U_uP9HfokYFdF2o8poIIGoKzAmxP37oGLHdIJsTV7q_GGYJX5oMlM1kZp4R5sONijZOM6Um8mj7w_-IX6BbUiHKRbuouVRXex1D87LlGG_UHuv3ElPyIPLgm3XtGi9dR7c5oPD6Rp-ZaqCTCOfgCUi98Tb0R_dZyTS0c-v5ORoeu4gGZv9d_vsOs37Cpv84OhF5ncbo_vYOuMzBIgGVE_4WeuqhOOTvDKA8EOHp4PWKKx6ZIcNacYTWfqvexL-m-0zJXs9ffLlPzbeV7ok0a7ve3AlX30uZpUmswfIBb3iK2dhp0xvn1IYvGCZ-tH4LQQ1ov1O0PSmD1pzkPVqSp0zUUKaZUnTBZXJNfdX1YseW6szHkqUVBq_XJFQgc0IHp9sn0M9Jkrzwg3KfHEPLl5LR_uB3jDWNaMXESpt5EQc-T1rP-VNKKbktz-Hl3I0fol5g7MGNGvobmxNwPisk12_bLDegQibTEi8auT8U9hr5-ZNntH2Qdt2H0ZDNsV4DYGJFBxKt3-z6S9OwOb8RgpDojHnmjuTbmRQKCZ3VM0Lodj7sHIgiOHbe-BCmSv8CfJkrQoVyjQ_m5LKqMv7ll1RwT-LTVc39L8K1Jfkedc17oqZHnYN6IqCL2WWcbRxFAar8TT8VTVTkkaFgigbM3MdcSo5ES5jgQbHC1dZ7w5JFw1KxInBU1r-2bg-C2ArenRE-WeBeFuJmS2IbQen9_lJTvnxnplZFT5OfVgXiKCtki-perptp_DDOZqLDWiqnXB_P60s5Ssc0Kj7mV01dfG9kT0=",
+        "summary": []
+      },
+      {
+        "id": "msg_0218d203a0eccd04016aa997a176c087d2906a7a4a48472b9e",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"strengths\":[\"The written explanation gives a complete and accurate causal chain: drought reduces wheat supply, creates a shortage at the original price, then raises equilibrium price and lowers equilibrium quantity.\",\"Terminology is used accurately, including supply shifting left, unchanged demand, shortage, and movement along the demand curve.\"],\"improvements\":[\"Draw the required wheat demand-and-supply diagram rather than a PPC: label axes as price of wheat and quantity of wheat, include unchanged D, and show supply shifting left from S1 to S2.\",\"Mark both equilibria clearly so that P2 is above P1 and Q2 is below Q1 at the demand–supply intersections.\"],\"mistakes\":[\"Missing required diagram\"],\"examinerComment\":\"Estimated practice mark: 2/4. Your written explanation is fully correct and earns the explanation component. However, the submitted image is a PPC for schools and clinics, not a wheat-market demand-and-supply diagram, so it cannot receive diagram credit for this question.\",\"studyNext\":\"Practise matching the diagram type to the market question: for a supply decrease, keep demand unchanged and shift supply left, then identify the new higher price and lower quantity equilibrium.\",\"assessmentFormat\":\"paper_2_c_to_f_diagram_and_explanation\",\"paper\":\"paper_2\",\"questionPart\":\"unknown\",\"levelRelevance\":\"shared_sl_hl\",\"assessmentSkills\":[\"diagram_explanation\",\"economic_analysis\",\"application\"],\"commandTerm\":\"explain\",\"commandTermLabel\":\"Explain\",\"syllabusUnit\":\"unit_2\",\"syllabusTopic\":\"2.3\",\"topicLabel\":\"Competitive market equilibrium\",\"classificationConfidence\":\"high\",\"markingConfidence\":\"high\",\"diagramExpected\":true,\"diagramSubmitted\":true,\"diagramAssessmentStatus\":\"submitted_and_assessed\",\"workingsExpected\":false,\"workingsSubmitted\":false,\"workingsAssessmentStatus\":\"not_relevant\",\"attachmentContent\":\"diagram\",\"assessableEarned\":2,\"markBreakdown\":[{\"label\":\"Knowledge and terminology\",\"awarded\":4,\"available\":4,\"reason\":\"The response accurately uses supply, shortage, equilibrium, and movement along demand.\"},{\"label\":\"Economic analysis\",\"awarded\":4,\"available\":4,\"reason\":\"It coherently explains the full adjustment from reduced harvests to higher equilibrium price and lower quantity traded.\"},{\"label\":\"Application to context\",\"awarded\":4,\"available\":4,\"reason\":\"The explanation directly applies the drought, reduced wheat harvest, and unchanged wheat demand scenario.\"},{\"label\":\"Diagram\",\"awarded\":0,\"available\":4,\"reason\":\"The submitted image is a PPC labelled Schools and Clinics, with no wheat demand curve, supply curves, or market equilibria.\"}],\"bandRationale\":null,\"limitations\":[],\"componentEvaluation\":{\"diagram\":0,\"explanation\":2,\"diagramReason\":\"No creditworthy wheat-market demand-and-supply diagram is visible. The submitted image is a PPC with Schools and Clinics axes, not price and quantity of wheat.\",\"explanationReason\":\"The written response correctly explains that drought reduces supply at each price, causing a shortage at P1, a rise to P2, and a lower equilibrium quantity at Q2.\",\"incompatibleMechanisms\":false,\"mismatchEvidence\":\"The prose describes a leftward wheat supply shift with unchanged demand, whereas the submitted image shows only a PPC and contains no demand-and-supply market mechanism.\",\"labelingDeficiency\":true,\"labelingEvidence\":\"The diagram axes are labelled Schools and Clinics rather than price of wheat and quantity of wheat; demand and two supply curves are absent.\",\"rootErrors\":[{\"id\":\"wrong_diagram_family\",\"diagramEvidence\":\"The visible diagram is a PPC labelled PPC, with points A and B, rather than a demand-and-supply diagram for wheat.\",\"explanationEvidence\":\"The written explanation independently gives the correct wheat-market supply-contraction mechanism.\",\"carriedForward\":false}]}}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_grade_result",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strengths",
+            "improvements",
+            "mistakes",
+            "examinerComment",
+            "studyNext",
+            "assessmentFormat",
+            "paper",
+            "questionPart",
+            "levelRelevance",
+            "assessmentSkills",
+            "commandTerm",
+            "commandTermLabel",
+            "syllabusUnit",
+            "syllabusTopic",
+            "topicLabel",
+            "classificationConfidence",
+            "markingConfidence",
+            "diagramExpected",
+            "diagramSubmitted",
+            "diagramAssessmentStatus",
+            "workingsExpected",
+            "workingsSubmitted",
+            "workingsAssessmentStatus",
+            "attachmentContent",
+            "assessableEarned",
+            "markBreakdown",
+            "bandRationale",
+            "limitations",
+            "componentEvaluation"
+          ],
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mistakes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lack of evaluation",
+                  "Underdeveloped evaluation",
+                  "Weak definitions",
+                  "Weak terminology",
+                  "Inaccurate economic theory",
+                  "Underdeveloped economic analysis",
+                  "No real-world example",
+                  "Irrelevant real-world example",
+                  "Underdeveloped real-world example",
+                  "Missing required diagram",
+                  "Incorrect diagram explanation",
+                  "Insufficient source use",
+                  "Calculation/setup error",
+                  "Unsupported judgement",
+                  "Unclear structure"
+                ]
+              }
+            },
+            "examinerComment": {
+              "type": "string"
+            },
+            "studyNext": {
+              "type": "string"
+            },
+            "assessmentFormat": {
+              "type": "string",
+              "enum": [
+                "paper_1_a",
+                "paper_1_b",
+                "paper_2_a_definition",
+                "paper_2_b_quantitative_or_diagram",
+                "paper_2_c_to_f_diagram_and_explanation",
+                "paper_2_g_extended_response",
+                "paper_3_a_technical_or_quantitative",
+                "paper_3_b_policy_recommendation",
+                "custom_short_response",
+                "custom_extended_response",
+                "uncertain"
+              ]
+            },
+            "paper": {
+              "type": "string",
+              "enum": [
+                "paper_1",
+                "paper_2",
+                "paper_3",
+                "custom",
+                "uncertain"
+              ]
+            },
+            "questionPart": {
+              "type": "string",
+              "enum": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "unknown"
+              ]
+            },
+            "levelRelevance": {
+              "type": "string",
+              "enum": [
+                "shared_sl_hl",
+                "hl_only",
+                "unknown"
+              ]
+            },
+            "assessmentSkills": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "definition",
+                  "calculation",
+                  "diagram_explanation",
+                  "economic_analysis",
+                  "data_interpretation",
+                  "application",
+                  "evaluation",
+                  "policy_recommendation"
+                ]
+              }
+            },
+            "commandTerm": {
+              "type": "string",
+              "enum": [
+                "define",
+                "describe",
+                "distinguish",
+                "draw",
+                "calculate",
+                "explain",
+                "analyse",
+                "discuss",
+                "evaluate",
+                "examine",
+                "justify",
+                "compare",
+                "contrast",
+                "compare_contrast",
+                "to_what_extent",
+                "recommend",
+                "other"
+              ]
+            },
+            "commandTermLabel": {
+              "type": "string"
+            },
+            "syllabusUnit": {
+              "type": "string",
+              "enum": [
+                "unit_1",
+                "unit_2",
+                "unit_3",
+                "unit_4",
+                "unknown"
+              ]
+            },
+            "syllabusTopic": {
+              "type": "string",
+              "enum": [
+                "1.1",
+                "1.2",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+                "3.1",
+                "3.2",
+                "3.3",
+                "3.4",
+                "3.5",
+                "3.6",
+                "3.7",
+                "4.1",
+                "4.2",
+                "4.3",
+                "4.4",
+                "4.5",
+                "4.6",
+                "4.7",
+                "4.8",
+                "4.9",
+                "4.10",
+                "unknown"
+              ]
+            },
+            "topicLabel": {
+              "type": "string"
+            },
+            "classificationConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "markingConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "diagramExpected": {
+              "type": "boolean"
+            },
+            "diagramSubmitted": {
+              "type": "boolean"
+            },
+            "diagramAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "text_description_only",
+                "submitted_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "workingsExpected": {
+              "type": "boolean"
+            },
+            "workingsSubmitted": {
+              "type": "boolean"
+            },
+            "workingsAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "typed_and_assessed",
+                "image_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "attachmentContent": {
+              "type": "string",
+              "enum": [
+                "none",
+                "diagram",
+                "workings",
+                "both",
+                "neither_or_unreadable"
+              ]
+            },
+            "assessableEarned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY."
+            },
+            "markBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "awarded",
+                  "available",
+                  "reason"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "enum": [
+                      "Knowledge and terminology",
+                      "Economic analysis",
+                      "Application to context",
+                      "Evaluation and judgment",
+                      "Data use",
+                      "Diagram",
+                      "Calculation method",
+                      "Final answer",
+                      "Policy recommendation",
+                      "Structure and clarity"
+                    ]
+                  },
+                  "awarded": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "Integer 0..4 on Aptly's fixed diagnostic scale."
+                  },
+                  "available": {
+                    "type": "integer",
+                    "enum": [
+                      4
+                    ],
+                    "description": "Always exactly 4. OMIT any criterion the question does not test."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Non-empty, specific to this answer."
+                  }
+                }
+              }
+            },
+            "bandRationale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames."
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "componentEvaluation": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "diagram",
+                    "explanation",
+                    "diagramReason",
+                    "explanationReason",
+                    "incompatibleMechanisms",
+                    "mismatchEvidence",
+                    "labelingDeficiency",
+                    "labelingEvidence",
+                    "rootErrors"
+                  ],
+                  "properties": {
+                    "diagram": {
+                      "type": "integer"
+                    },
+                    "explanation": {
+                      "type": "integer"
+                    },
+                    "diagramReason": {
+                      "type": "string"
+                    },
+                    "explanationReason": {
+                      "type": "string"
+                    },
+                    "incompatibleMechanisms": {
+                      "type": "boolean"
+                    },
+                    "mismatchEvidence": {
+                      "type": "string"
+                    },
+                    "labelingDeficiency": {
+                      "type": "boolean"
+                    },
+                    "labelingEvidence": {
+                      "type": "string"
+                    },
+                    "rootErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "diagramEvidence",
+                          "explanationEvidence",
+                          "carriedForward"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "diagramEvidence": {
+                            "type": "string"
+                          },
+                          "explanationEvidence": {
+                            "type": "string"
+                          },
+                          "carriedForward": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 5976,
+      "input_tokens_details": {
+        "cache_write_tokens": 3028,
+        "cached_tokens": 2945
+      },
+      "output_tokens": 1196,
+      "output_tokens_details": {
+        "reasoning_tokens": 406
+      },
+      "total_tokens": 7172
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

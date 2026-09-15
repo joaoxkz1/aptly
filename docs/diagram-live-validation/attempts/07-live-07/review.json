@@ -1,0 +1,34 @@
+{
+  "status": "reviewed_synthetic",
+  "judgement": "expected",
+  "teacherReviewStatus": "not_reviewed",
+  "assessmentCallsMadeByReviewer": 0,
+  "observerVersusGraderDisagreement": "None. All eight observer observations agree with the inspected image. The grader awards its correct diagram 2/2 and the genuinely absent explanation 0/2.",
+  "origin": null,
+  "findings": [
+    "Reviewed the matching cases.json entry, case-review-only.json, resolved-task.json private contract, observer and grader requests/responses, result.json and the actual wheat-correct.png image. These are synthetic engineering materials; the intended prediction is not a teacher mark.",
+    "The image visibly has wheat price/quantity axes, unchanged downward D, S2 left/up of S1, a leftward shift arrow, E2 above-left of E1, and correctly connected P2>P1 and Q2<Q1 projections. Its SHA-256 equals the resolved image hash and both saved attachment bindings. The observer-request file redacts its data URL, so exact sent bytes cannot be independently re-hashed from that artifact.",
+    "The observer completes with state usable, essentialEvidenceReadable=true and studentRegionCertain=true. All eight bounded facts are supported; no economic or visual hallucination was found. The full observer result is saved unchanged in the private snapshot.",
+    "The grader's actual user input has an empty student-answer section, hasImageAttachment=true, and the correct drought stimulus. The grader already returns diagram2/explanation0 and Economic analysis0; this run therefore confirms expected behavior rather than exercising correction of a model-awarded positive written score.",
+    "Under the exact authored criterion, the identifiable supply contraction and correct new equilibrium justify diagram2. Axis and curve labels alone do not supply the missing causal prose. Deterministic reconciliation retains total2/4, explanation0, no ceilings and no root-error penalties. The written diagnostic receives the standard absent-explanation reason and the diagram diagnostic is4/4 on its separate diagnostic scale.",
+    "The public contract omits private diagram criteria and writtenCriteria. The server corrects raw Paper2 classification to custom practice with unknown part. Saved assessment and feedback exactly match the returned assessment and feedback; all question, context, answer and contract hashes independently recompute correctly, and snapshot IDs match.",
+    "The raw grader selects the mistake tag Incorrect diagram explanation although the explanation is absent, not economically incorrect. Its prose and zero diagnostic correctly explain the absence. This is a minor grader-feedback taxonomy imprecision, with no scoring effect demonstrated; it is not an observer error or a need to rerun the grader.",
+    "The attempt response has sourceMaterial=null because the then-current grade route deliberately saved no source copy for Practice-linked attempts. The drought context was correctly read from the linked Practice row, supplied to the grader and retained in the private contract/context hash. Revision carries the Practice ID, re-fetches its source, displays it and re-grades against it. No revision grading-context loss was demonstrated.",
+    "At review time, History displayed question and answer without the source context. Root accepted a prospective integration fix: freeze sourceMaterial for new combined Practice attempts and display nonempty attempt context in History. Existing07/08 rows and their original evidence remain unchanged. This historical presentation gap does not alter the expected 2/4 judgment.",
+    "Neither observer nor grader request contains the case ID, intended condition, prediction fields or descriptive image filename. The legacy feedback.score4 is an internal practice-level value, not a conflicting4/4 examination mark; assessment.marksEarned2 is authoritative."
+  ],
+  "minorIssues": [
+    {
+      "origin": "grader_feedback_taxonomy",
+      "field": "feedback.mistakes[0]",
+      "observed": "Incorrect diagram explanation",
+      "impact": "Absent prose is tagged as incorrect explanation; detailed feedback and marks remain accurate.",
+      "retestNeeded": false
+    },
+    {
+      "origin": "legacy_history_context_presentation",
+      "impact": "The saved attempt has no standalone source copy and History omitted linked Practice context. Revision retrieves it correctly.",
+      "resolution": "Root-owned prospective source retention and History context rendering; preserve historical attempt evidence."
+    }
+  ]
+}

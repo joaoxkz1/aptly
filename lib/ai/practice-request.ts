@@ -29,7 +29,7 @@ export interface PracticeGenerationOutcome {
 export interface PracticeGenerationRequest {
   /** Local identity only; the route always derives the trusted level from claims. */
   courseLevel?: EconomicsCourseLevel;
-  marks: 2 | 10 | 15;
+  marks: 2 | 4 | 10 | 15;
   topicCode: string;
   context: "general" | "current_focus" | "answer_feedback";
   sourceAttemptId?: string | null;

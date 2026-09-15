@@ -6,6 +6,7 @@ import { isSourceMaterialMissing } from "./status";
 
 /** The supported task shapes, shared by links, UI and server selection. */
 export const FOCUSED_PRACTICE_POLICY = {
+  diagram_explanation: { label: "Diagram", marks: 4, framework: "paper2_four_mark_diagram_explain", paper: "unknown", questionPart: "unknown", reasoning: "Draw the relevant economic relationship and explain how it produces the outcome in this task." },
   definition: { label: "Knowledge", marks: 2, framework: "paper2_short_analytic", paper: "paper_2", questionPart: "a", reasoning: "Define the relevant economic concept accurately, or distinguish its meaning." },
   economic_analysis: { label: "Analysis", marks: 10, framework: "paper1a_10_mark", paper: "paper_1", questionPart: "a", reasoning: "Explain a meaningful causal chain using economic theory; evaluation is not required." },
   application: { label: "Application", marks: 15, framework: "paper1b_15_mark", paper: "paper_1", questionPart: "b", reasoning: "Integrate relevant real-world examples into analysis and judgment in an extended response." },
@@ -41,7 +42,7 @@ export interface PracticeFocus {
   topicCode: string;
   taxonomyVersion: typeof ECONOMICS_TAXONOMY_VERSION;
   targetSkill: FocusSkill;
-  recommendedMarks: 2 | 10 | 15 | null;
+  recommendedMarks: 2 | 4 | 10 | 15 | null;
   courseLevel: EconomicsCourseLevel | null;
   explanation: string;
   serverVerified: boolean;
@@ -60,6 +61,8 @@ export function currentPracticeFocus(focus: NextFocus | null): PracticeFocus | n
 // Only existing controlled issue labels. A theory error is not evidence that
 // a definition exercise is needed; source/diagram/calculation gaps stay distinct.
 const SKILL_FOR_ISSUE: Partial<Record<MistakeType, FocusSkill>> = {
+  "Missing diagram explanation": "diagram_explanation",
+  "Missing required diagram": "diagram_explanation",
   "Weak definitions": "definition",
   "Weak terminology": "definition",
   "Inaccurate economic theory": "economic_analysis",
@@ -76,6 +79,7 @@ const SKILL_FOR_ISSUE: Partial<Record<MistakeType, FocusSkill>> = {
 };
 
 export const FOCUS_INSTRUCTIONS: Record<SupportedFocusSkill, string> = {
+  diagram_explanation: "Use the diagram feedback to improve the relevant relationship, then explain the same mechanism in your writing.",
   definition: "Check the meaning of the relevant concept and use its terminology accurately.",
   economic_analysis: "Develop the causal chain from the initial change to the outcome the question asks about.",
   application: "Connect relevant example details to your economic reasoning and judgment.",
@@ -86,7 +90,8 @@ function diagnosticAssessed(a: Assessment, label: MarkBreakdownLabel): boolean {
   // Knowledge/clarity have no dedicated assessmentSkills entry for essays.
   // Their saved qualitative rows are the evidence that they were assessed.
   if (label === "Knowledge and terminology" || label === "Structure and clarity") return true;
-  if (label === "Diagram") return false; // Keep Diagram Evidence isolated.
+  if (label === "Diagram") return Boolean(a.assessedDiagram &&
+    ["usable", "partially_readable", "no_relevant_diagram", "not_provided"].includes(a.assessedDiagram.state));
   const skill = SKILL_FOR_DIAGNOSTIC[label];
   if (!a.assessmentSkills.includes(skill as AssessmentSkill)) return false;
   // A stray diagnostic/tag must not impose evaluation on an explanation.

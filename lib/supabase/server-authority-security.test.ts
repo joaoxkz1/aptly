@@ -37,9 +37,22 @@ describe("service-role trust boundary", () => {
 
   it("all AI routes authenticate through getClaims before reserving", () => {
     for (const route of ROUTES) {
-      expect(route.indexOf("const userId = await userIdFromClient")).toBeLessThan(
-        route.indexOf("const reservation = await reserveAIUsage")
-      );
+      const helperAuthentication = route.indexOf("const userId = await userIdFromClient");
+      const authenticated = helperAuthentication >= 0
+        ? helperAuthentication : route.indexOf("const userId = verifiedUserId(claims)");
+      if (helperAuthentication < 0) {
+        const claims = route.indexOf("await supabase.auth.getClaims()");
+        expect(claims).toBeGreaterThanOrEqual(0);
+        expect(claims).toBeLessThan(authenticated);
+      }
+      const unauthorizedGuard = route.indexOf('if (userId === null) return fail(401, "unauthorized")');
+      const reservations = [...route.matchAll(/await (?:reserveAIUsage|reserveCombinedGradeUsage)\(/g)];
+      expect(authenticated).toBeGreaterThanOrEqual(0);
+      expect(unauthorizedGuard).toBeGreaterThan(authenticated);
+      expect(reservations.length).toBeGreaterThan(0);
+      for (const reservation of reservations) {
+        expect(unauthorizedGuard).toBeLessThan(reservation.index!);
+      }
       expect(route).toContain("store: false");
     }
   });

@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 export default function AnalyticsPage() {
   const { attempts, status, retry } = useAttempts();
   const insights = buildLearningInsights(attempts);
+  const hasAssessedDiagrams = attempts.some(attempt => attempt.assessment?.assessedDiagram != null);
 
   // Attempts still loading: a quiet placeholder instead of flashing the
   // empty-state copy ("No data yet", "Grade Economics answers…") at students
@@ -272,9 +273,9 @@ export default function AnalyticsPage() {
             {evidence.diagramRequiredMissing > 0 && (
               <p className="mt-2 border-t border-border pt-2 text-xs leading-relaxed text-muted-foreground">
                 <span className="font-medium text-foreground">
-                  {diagramEvidenceNote(evidence.diagramRequiredMissing).title}.
+                  {diagramEvidenceNote(evidence.diagramRequiredMissing, hasAssessedDiagrams).title}.
                 </span>{" "}
-                {diagramEvidenceNote(evidence.diagramRequiredMissing).body}
+                {diagramEvidenceNote(evidence.diagramRequiredMissing, hasAssessedDiagrams).body}
               </p>
             )}
             {evidence.workingsSubmitted > 0 && (

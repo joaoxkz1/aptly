@@ -1,0 +1,16 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None on the essential evidence or score. The observer now consistently reports a readable irrelevant PPC with no_relevant_diagram and essentialEvidenceReadable=true; the grader awards diagram 0 and explanation 2 without inventing a wheat diagram from prose.",
+  "origin": null,
+  "findings": [
+    "The question, source context, answer, image SHA-256 and trusted contract are identical to failed attempt 16. The current wheat-irrelevant.png hash and persisted attachment hash match the resolved artifact. Its actual pixels clearly show the Schools/Clinics PPC already independently inspected.",
+    "The observer's state and readability boolean are now consistent with both the image and strict schema validation. Readable absence of a relevant wheat diagram is distinguished from inaccessible photographic evidence.",
+    "The full wheat explanation earns 2/2. The unrelated PPC earns diagram 0/2 because it shows none of the required market curves or equilibria; its neatness and generic downward line do not create visual credit.",
+    "The raw grader marks labelingDeficiency=true for the wrong family and axes, although wrong diagram family is the more precise primary issue. This is nonbinding: raw total is already 2, the server applies no label ceiling or second deduction, and the final feedback clearly requests the correct diagram family rather than suggesting that relabeling the PPC alone would suffice.",
+    "The root error wrong_diagram_family is marked carriedForward=false. There is no incompatible-mechanism ceiling: the PPC is not a separately creditworthy mechanism for this wheat task. Correct written reasoning remains intact.",
+    "HTTP 200 delivers and saves 2/4 with custom practice metadata. Persistence reports saved=true/publicMatches=true. This successful repeat addresses attempt 16's observed structured-output failure while preserving that original failed attempt.",
+    "The feedback phrase Q2 is below Q1 is understandable as a smaller quantity, though left of Q1 would be more spatially precise for the horizontal quantity axis. This wording does not alter the correctly identified lower-quantity outcome.",
+    "This is independent synthetic engineering review, not teacher calibration. One successful repeat demonstrates this case after the prompt clarification; it does not guarantee every future observer response is valid."
+  ],
+  "judgement": "expected"
+}

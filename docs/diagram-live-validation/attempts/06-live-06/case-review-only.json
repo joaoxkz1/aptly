@@ -1,0 +1,51 @@
+{
+  "caseId": "live-06",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-demand-increase.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "Independently coherent demand-expansion diagram paired with drought-driven supply-contraction prose.",
+    "economicBehavior": "Image has D1 to D2 right and unchanged supply, raising both price and quantity; prose has supply left and quantity falling. Demand expansion is not allowed by the wheat stimulus.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 2,
+      "max": 2
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 0,
+        "max": 0
+      },
+      "explanation": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Image mechanism only.",
+    "reviewChecks": [
+      "Recognize the incompatibility between diagram and explanation.",
+      "The demand-expansion graph is theoretically coherent in isolation but is not full-credit evidence for this unchanged-demand drought contract.",
+      "Overall must not exceed 2; if the raw component total is already 2 a further subtraction is not justified.",
+      "Apply a mechanism-consistency ceiling only under its scoped conditions; no requirement to invent a redundant ceiling."
+    ]
+  }
+}

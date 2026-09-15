@@ -20,8 +20,21 @@ describe("shared focus contract", () => {
     const params = new URL(href, "http://local").searchParams;
     expect(params.get("topic")).toBe("2.8"); expect(params.get("marks")).toBe(String(marks)); expect(params.get("skill")).toBe(skill);
   });
-  it.each(["data_interpretation", "calculation", "policy_recommendation", "diagram_explanation", "structure"] as const)("does not map %s to an essay", skill => {
+  it.each(["data_interpretation", "calculation", "policy_recommendation", "structure"] as const)("does not map %s to an essay", skill => {
     expect(focusPolicy(skill)).toBeNull();
+  });
+  it("routes a supported assessed diagram weakness to four marks without changing the essay routes", () => {
+    const item = focusAttempt("Diagram");
+    expect(answerPracticeFocus(item)).toBeNull();
+    item.assessment!.assessmentSkills = ["diagram_explanation", "economic_analysis"];
+    item.assessment!.assessedDiagram = {
+      version: 1, state: "usable", contract: { version: "economics-diagram-contract-v1", mode: "four_mark_diagram", diagramRole: "required_explicitly", diagramReason: "The task asks for demand and supply analysis.", provenance: "aptly_authored" },
+      componentDecision: null, observations: [], summary: "The submitted supply relationship needs correction.", attachmentHashes: ["synthetic-fixture"], snapshotId: "synthetic-fixture",
+    };
+    expect(answerPracticeFocus(item)).toMatchObject({ targetSkill: "diagram_explanation", recommendedMarks: 4 });
+    expect(focusPolicy("diagram_explanation")).toMatchObject({ marks: 4, framework: "paper2_four_mark_diagram_explain" });
+    item.assessment!.assessedDiagram.state = "processing_failure";
+    expect(answerPracticeFocus(item)).toBeNull();
   });
   it("keeps answer-specific evidence distinct from global focus", () => {
     const attempts = focusHistory();

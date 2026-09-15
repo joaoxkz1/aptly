@@ -1,0 +1,15 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None on the image. Both stages correctly identify unchanged D, leftward supply and the higher-price/lower-quantity equilibria. The concern is the grader's written partial-credit boundary, not a visual observation disagreement.",
+  "origin": "Grader interpretation of the explanation one-mark descriptor and feedback issue labeling.",
+  "findings": [
+    "Independently inspected wheat-correct.png. Its SHA-256 matches resolved-task.json and the saved attachment hash. The actual pixels support diagram 2/2 without inferred or missing evidence.",
+    "The saved 3/4 is raw diagram 2 plus explanation 1, within the predeclared engineering range of 2–3. Compared with attempt 01, only the explanation changes; the same complete diagram retains full component credit.",
+    "Calibration concern: the ten-word answer merely asserts that the drought changes the market and price is higher. It does not explain a causal adjustment. The private one-mark descriptor says reduced supply must be linked to drought, or one equilibrium adjustment correctly explained. Awarding 1 for the asserted price direction is a lenient interpretation of that wording; this requires calibration rather than a claim that 3/4 is a verified teacher mark.",
+    "The grader acknowledges the absent causal chain instead of copying the observed diagram narrative into the prose. Its improvements correctly request reduced harvest/supply and lower equilibrium quantity.",
+    "Feedback labels the response Incorrect diagram explanation although the stated price result is accurate and the missing development is the problem. The examiner comment and improvements make the incompleteness clear, but the short issue label is less precise.",
+    "No label ceiling, mechanism mismatch, root-error carry-forward or extra deduction was applied. The server correctly preserves custom practice metadata despite the raw grader's Paper 2 classification. Persistence reports saved=true/publicMatches=true.",
+    "This is an independent assistant review of synthetic engineering evidence. The concern is nonblocking calibration evidence, not teacher verification or an established scoring failure."
+  ],
+  "judgement": "concern"
+}

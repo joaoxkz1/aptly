@@ -1,0 +1,16 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "No material disagreement in the revised result. The observer retains partial readability and uncertain subscripts; the grader now explicitly acknowledges unclear exact labels, bases the award on the visible relationships, and returns medium marking confidence rather than verified-notation praise.",
+  "origin": null,
+  "findings": [
+    "This is a repeat of attempt 11 with identical question, source context, answer, image SHA-256 and trusted private contract. Actual wheat-blurry.png pixels and the saved attachment hash still match the resolved artifact. Implementation hashes record the intervening prompt/server changes.",
+    "The visible image retains one descending curve, two ascending curves and both equilibrium intersections. Exact curve and axis subscripts remain uncertain. The observer consistently returns partially_readable with essentialEvidenceReadable=true; this repeat does not establish an unreadable-image fail-closed result.",
+    "The grader no longer praises exact S1/S2, P1/P2 and Q1/Q2 as verified. Its component reason explicitly says some exact handwritten labels are unclear, its examiner comment acknowledges photographic blur, and its markingConfidence is medium.",
+    "The final limitations retain both the grader's specific blur limitation and the server-preserved observer readability summary. This addresses attempt 11's definite feedback/confidence concern without treating uncertain photographic labels as missing student work.",
+    "Saved 4/4 remains diagram 2 plus explanation 2, with no new score cap, label deduction or mismatch. The trusted contract permits the prose to clarify direction when the requisite geometry and intersections are present. A single synthetic repeat supports this behavior but does not establish universal handwriting or readability calibration.",
+    "The advice to keep labels legible is not accompanied by a mark penalty. A clearer photo can be the remedy when the original drawing itself is legible; the result appropriately identifies the submitted image as blurred.",
+    "Custom practice metadata is preserved, and persistence reports saved=true/publicMatches=true. No arithmetic, snapshot-identity or saved-result disagreement was found.",
+    "This is an independent assistant review of synthetic engineering evidence, not a teacher mark or permission for additional provider calls."
+  ],
+  "judgement": "expected"
+}

@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 12735,
+  "requestId": "req_6e58e6e3809c4e42ac52f9e1e8c158d1",
+  "response": {
+    "id": "resp_03a539785a62d8ee016aa991cb4b3887d28aadf8e5eba0c571",
+    "object": "response",
+    "created_at": 1789497803,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789497815,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_03a539785a62d8ee016aa991cc5a2087d2a6fa0e0d25050add",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZHX0UHyDdi88w7E9rcbwOeizcw21AdJYwdhRh-nch2cL0fTw22pMv_tqh5E0TV1B61dnqVPMy4E5DapSfXgofBYQ4k06f6Slnp6PQjg7dNi65rkWHAOpk-u-u_PWvPN_FdrkOPa2Qm9Cay3keqArJfbQmlKfEoyWsqIyN175gPnD98E8pmHWii2MPgrK32BEqSfMOIdw3Ia1mdr5jPlcl6q_OsGELMm37MS1s8UHJxEaUy2ppLVa065JqpzQaR71nJo8m6wv-lTMgZWQ2oqsNxb5f7CUrgyTvs2AmEJk-XzlecH31HkxOOuMsdtCzoUfwU8sqOams9QHxyUQ1CQswdkZV95TMcojyW3bqBElCuB9MtjqOwaHZ7DSwa_-3JJR6GQjwUYmUXoEZ0cxTu4zt7R_LxkJQGiBGOpSCibvMBi4DkGmN-J0dGW7dfV_dAIJsyxvPAH_gl2Urcyb-0B-WqYE4ueVitG7GFGcL6vkyAVcGKSI3n48HiVGqiJo3pbxj3iwPvXCzYtEbMPsbxtR6SI8UVdUJNDImdHuWvw2FH6zSE2WSfxCK8GabNlTXuX6a0MRXmS326F7h8NNQApKausiJ7XuBMMSYf5uYmbH0qIQJX38AdSbq6MfGJT6HeA9zmxpOLTxDT2zJEoJhkQpqM__3onWpuzxvgNhXvLhEoCKLlBxoLoReSxWw7mqEVcLWU481qCychYplgO9SUrpqJxFUj2lBVwSe6vEomDE-s5RQGoz8Rgs4WYX6xMPyuf4tum9lg4sxuffUlwPb1_qlt6jvu9IK-Rgpmdqvh6T3QEjOAdrW16cBb4pqm9Fnk-9SB6SJDprZyePrdIQSih21PQU27oc0VCsCZWIxc7EtAiBhSgeLvOAky-stM1MtEiBFg_2L7I4ljoKq0ULuPomIpsu-mX8AdpoaN_3rRht3l5aSaxVqlNU_P61WCLN4NSz8_jmKz4wnsKkeJ7coiq4Mtu_LBH4-ThcGc5yCx5DMrfs4sJv6Fx4XuSSVkYmdgN12VCaraJt5yn3j826Q9GUDFGLdadTz5BvzscYwD2eqEfUZxI9Gz0chZO0mZ4CdvO8dFoa9Wgo_spU9DHmUF9iqSPmUuaeDQHOSQTtXkIxpD3AJMx6LaPXu14Vwa8cdhW2Ngf6z9w1H7xcnagvBLpTeWUD1fIrVzWZPT6Q1xg5DLzuTupOXQKGyw-eoEcy2hDXkGQkky-K0Dd6tOJE4B0cWNQ0_fpmfW7X2tU-8Dfz2mh7RWRhH43nHtoUFStHtyaab5Q10xjEHrN17LBsCZpp9oOlC1JbEF9ERYEA-sDCq58XwYQm-DDG4FmwDthDkTjkWiQex0bW-53RHS_w3UrbbB25labNt8_3qogajx2SNiG1f6hSDwrix18UBAj-JkzHkEuU55Nh2wTpFPUjhiA1_bx9_Ovfs-1H_bDcGZdKzafcbqJyT2YlWlLz8yXF8q0T-8jtQWrxlO9kNfUDlGgR04zELQoTMv1Qeav-eNTs3QYZV7o11PAxooXrk8XyS-I75z8uiozYJbVSs1MXSaVBfdHz1ngafUjCMmaLWw9uWpPuFkKbUM8SC-Y5sZ_e_QoImm-m6q96StbMTMnN3EmJmMbZPKTR32wvLQTrvgPN4xq9yYRdGO6CAVHGiJR2288hn7KNBbo1R9yUzq7OVPQOifkEt8MteqaqQQXQK5-3Na_iSCEP0m4iVu3x6_EvzVfhIVnPo3KxzpP_TNJsXQooKB1Wy26N5ignI_ZUehr4QesV4cwcRjUo1KWwo8Bh50Zy2OHXpIg-wrKvhrrNyAqdCpmFGzqO5PhG8Prpxej_Vy2IF4YNRUuQrl-lwtUJ3dD25c5V_jvwHWjjf0FxdydcFwNEVEs_Djwcm_e4CJV6wkshwAuyH7dIKCqv3xaekmQ-4BU99IU1_av4xoxnFUWyJPC2i4e-WITweglX1Mv5vvne5RiDYHcKQlkYNb1D8MzS_-xKKz0_eZlByAAAhWTfQKJl1mMpgOh95sBnZTtO69otPd4IchyJmHkVWVcbAlSLd1lrDj1QSD-OX29i74-ct9SoCs6H6SOGQ644opMKwrzoWSxYLAgKnQLM18c218ONAUg5Wml0uA6ALnEe-RpDAFyQYE9mx7eMuysKwzpxeRJdn4Ydpg0k2tIxnI8sPR58BI8-5GmAG3kvVP2Y7GP_VqAivlvv4ubqZB9HGceVyC2w1EQrLd2EwIGfUys1Qh0RR4HGeFP3Pg_wzR1BRkm6aFNZPToZCNMveTDawrmizqa6qbAlYHshZqNLVik-qeYln18lHFD2AovH_dHvXmRXsBn4_rxQ1fxr1-5kU6cOmQYfI32eLJIm8_B9AlTyXW3KniUeOe-yqXEX81z5cAzMa1969NJ7Hk8wmfqxo18D1NDhaLE4FiS-VN61lWRgCaaqjePGixMGGe8j9lr3LQPxOecnbgm91SNEEWED-_uiEHy5P0GrN5fol3kNtqVQt80xq9-Fg0bMHOjb2qrd9AwcshXzUdY8yxlHI4S9UTMC1cWGv6RCBkt70uxJKjLko8vHp1xGl_e_aS32VszUEOLIo7TjuGMIQZQY-AxXs-2TtbfuYrkl6fFEWa9Z9MsrBDtfhWTH4zP_Xv5zt8tXNI-S0kFPSmUKNZwAVoDYTk0HbpPfqg_BqGoy1cSPu9zMsUGp4zH9qLdFgA-NNcA461TIbfe-mQBEehtS08irpvbibQxVgMhm-1MEsUZpm7uued1VrsvD2DLbO2Bs-n3SmwsCwBhDLAON36x61GJM27h0N03rMlgIbavGZ83EDoPuD0U9n3MK69FcPS9UZs7dnafpMzSmmtFuJWT0gUkuEgzJFMdHcfV_VzJqEUCK4XmQdX-EtlWG4kLqUuHWDf9ZmqWeYTudPPS9XStelhfHQyO-VrB373u6JFq5PBxQoYZmbpP4WwmQQt9cot3lEMMxm-KCzslTGqfhYSG5zr3Z-0AXmOOx99g9D9RRjTrEkNbcHlKKwBiL8i4tF2HNX5BRoeYkVyEPGVAtDXoGb4NvfEfKlrB0g7hhIe4du24RxJVAtz_VLsn8mq7VudYZFOplNlJmyWQD3pi4Fve_dv1DZXSW2qmlURLOmP8Do03kQV9DwWdkUCbBXhG12N7IRuWH5h-4RFB4piU0CKiTJJzmWh6MxFVLowTHg74FonOUyeUPw2OrWCPNYOf13OGZ4uOybzKn61QfxN83_4Edb4BdvdjNuhzbbZLIAADqzXACv_LexRgNT_m-51Kmd7VO8CnM4euRRjGMExcFHglUrbFtwRVzmsFip9_tHg6lXQ8ZjbeIBwKAHBHomy--oRBPQBdqFmTWsmBsExFn3RnGNGCI2LBFouDRToF0wpVoQHERaGMGpHqfJed2NIIt4MGke2b_Jv3g0n_hWUiEKcsMKptsOrz6hub2gwJrAxqFyPyAiLrI54TSSGkp4HoLf8KG2eb-nO9zughv4deOeKOwf2Q7MzLZFaXqwmabBKbqQ62mrsrqol354etbw9UNCDiGNCmF7w2hjIv-X3Zk78SMd7BBHKGgzf5zdVx6wED3rc5RgQwBKHUiMH5fZGWu3Em983xBWF4D0zg3DVTpHXwZ8-xHQzfTKw_C85TSClSEVFV0JJdthFnHhj_Bq6ftCKMQjLyV20lncunFfliW0oXX4g2Mqgw-tlYYi1v4GYl7yn0ULqL9yZhkMXoWLC2Y-DiiWevHtKcUB4vsk6-KAPlndg42Ot76FHu7OUUnNlWsuy7A5pKgczRCO6u0seDPCK2r9eJjY6KzvruK2LwODfLqoB8jFfrvHQly0jx7zIb11D5ldFuU2kPmgjs5AcKvmpHBSyG3u1MnsrMrhi029S5uBDKUxDKH6XUKOeUH6W3CL2pab1nwJ_Df3Y9c-DKsHZOoaUemxZQWrYHEMeVaVUbpLhA4_xg8d3MVsTLO-5LlH3ocF9xi_GsrzfRutQ6aOyly-2Rbda8EJOkPG5dFDlFUBl-31ANig3fOb1lNx-RsyyIkyjNVzsiatPMhQrxYAdJSaSYzRRIkheJ9ttPGcYqBCnRL9BfP3kQJaKbN7DTOyHHR7R9obRts3-jafiMlBiePYHY3LmMVMFy1OT-Nzq8a2ediXMdBZbbdSDxM0s8mq74aNvoHz3nXpxh-f6SbrXPvR4YhfPR5JlabKRkIOL3ysP357MmD2DF50gGHp8aVKhXRhksh4aL_QBuPOht4mcE1AKbsmrqFflDeOVBAcn5T5e5X2qjclXNgbvhEsXLhK7c6Pxn540qwJsglIVwZ8uZVzsOAmE1IW9I6HKJSdAUM2ovt7tfRDDCWBwRkRtWUCqU0YpXAr5EvxNj",
+        "summary": []
+      },
+      {
+        "id": "msg_03a539785a62d8ee016aa991d251bc87d28e52f210d4098ab9",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"centre\",\"observation\":\"A downward-sloping curve labeled \\\"D\\\" crosses an upward-sloping curve labeled \\\"S1\\\" at a marked point \\\"E1\\\".\",\"interpretation\":\"The student shows an initial demand curve and an initial supply curve with an initial equilibrium.\",\"uncertain\":false},{\"region\":\"left-centre to centre-left\",\"observation\":\"A second upward-sloping curve labeled \\\"S2\\\" is drawn to the left of S1, and a horizontal arrow points leftward between the supply curves.\",\"interpretation\":\"The student indicates a leftward shift/contraction of supply while demand remains separate from that shift.\",\"uncertain\":false},{\"region\":\"left axis and bottom axis\",\"observation\":\"The vertical axis is labeled \\\"Price of wheat\\\" and the horizontal axis is labeled \\\"Quantity of wheat\\\".\",\"interpretation\":\"The market axes are identified appropriately for a wheat demand-and-supply diagram.\",\"uncertain\":false},{\"region\":\"centre to axes\",\"observation\":\"Dashed guide lines run from E1 to the axes, with the axis labels \\\"P1\\\" on the price axis and \\\"Q1\\\" on the quantity axis.\",\"interpretation\":\"Only the initial equilibrium price and quantity are explicitly projected to the axes.\",\"uncertain\":false},{\"region\":\"centre-left\",\"observation\":\"The S2 curve ends left of the demand curve in the visible diagram, and there is no marked crossing point between S2 and D.\",\"interpretation\":\"A new post-shift equilibrium is not explicitly shown on the diagram.\",\"uncertain\":false},{\"region\":\"axes and equilibrium labels\",\"observation\":\"No second equilibrium point label and no second price/quantity labels such as P2 or Q2 are visible.\",\"interpretation\":\"The resulting higher equilibrium price and lower equilibrium quantity are not fully identified on the diagram itself.\",\"uncertain\":false}],\"summary\":\"The diagram is clear and relevant: it shows a wheat market with labeled price and quantity axes, unchanged demand, and a leftward shift of supply from S1 to S2. The initial equilibrium E1 with P1 and Q1 is shown. However, the shifted supply curve is not shown intersecting demand, so the new equilibrium and the resulting second price/quantity are not explicitly identified.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2288,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 970,
+      "output_tokens_details": {
+        "reasoning_tokens": 480
+      },
+      "total_tokens": 3258
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

@@ -1,5 +1,7 @@
 # Learning-loop implementation — 5 September 2026
 
+> Historical implementation note. [Diagram-aware grading](diagram-aware-grading.md) adds four-mark diagram practice and versioned assessed diagram diagnostics to these paths; legacy attempts retain the behavior described below.
+
 Implemented the three workstreams in the attached implementation brief. This changes the selection and presentation of a next action, preserves unfinished typed work in the current tab, and repairs the low-history route to Practice. It does not establish improved learning outcomes.
 
 ## 1. Confirmed starting state and root causes

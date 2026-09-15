@@ -1,0 +1,513 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 25100,
+  "response": {
+    "attempt": {
+      "id": "3d400f4d-4e29-475e-825d-3b900f6bf6c4",
+      "createdAt": "2026-09-15T19:01:35.787057+00:00",
+      "subject": "Economics",
+      "topic": "3.2",
+      "question": "Discuss the likely effects of a negative supply shock on households, firms and government. [15 marks]",
+      "answer": "A negative aggregate supply shock is an event that makes firms supply less real output at each price level, for example an increase in an economy's imported energy costs. In the diagram SRAS shifts left from SRAS1 to SRAS2 while AD is held constant to isolate the initial shock. Equilibrium moves from real output Y1 to Y2 and from price level P1 to the higher P2. The combination of weaker activity and upward pressure on prices creates a difficult trade-off. The examples below are hypothetical classroom scenarios, not claims about reported events.\n\nHouseholds face a loss of purchasing power if wages or pensions do not rise as quickly as prices. Imagine an energy-importing economy in which a low-income family must spend much of its budget on heating and commuting. More expensive fuel and transport leave less income for other goods, so the family may cut consumption sharply. The fall in output also reduces firms' demand for labor, exposing some households to unemployment or fewer paid hours. These effects are unequal: households with flexible high wages or large savings may adjust more easily than pensioners on fixed nominal incomes. Workers in a domestic energy producer could benefit from increased demand for substitutes to imported energy, so the aggregate diagram does not imply that every household loses equally.\n\nFirms using energy intensively face higher unit costs. Consider a hypothetical bakery whose electricity bill rises. It may raise bread prices, but higher selling prices do not guarantee higher profits because costs have also risen and customers may buy less. Firms unable to pass the shock on because of close substitutes or contracts can experience a squeezed profit margin. Some reduce output or delay investment, worsening employment and potentially future capacity. By contrast, an efficient supplier of insulation or alternative energy could gain orders as users economize on the expensive input. The overall loss is therefore accompanied by changes in the composition of output, which a single SRAS curve cannot fully describe.\n\nGovernment finances are also affected. Lower real output and employment can weaken profit and income-tax receipts, while unemployment-related spending rises. The government may also pay more for energy in hospitals or schools. Higher nominal prices can increase some expenditure-tax receipts, so the effect on total tax revenue is not mechanically a fall; it depends on the tax mix and how strongly quantities contract. A government that guarantees household energy prices may protect real incomes temporarily but must absorb the cost in its budget, reducing funds available for other priorities or increasing borrowing.\n\nPolicy choices depend strongly on duration. If the input shortage is brief, temporary targeted support could protect vulnerable households without permanently changing incentives. Broad untargeted subsidies are more costly and may discourage conservation. Expansionary demand policy could support output but also increase pressure on prices while supply is constrained. Monetary tightening could reduce demand pressure and limit second-round inflation, but at the cost of a deeper short-run output and employment decline. If the shock is persistent, investment in efficiency, alternative inputs and resilient infrastructure can improve supply, although these responses take time and have opportunity costs.\n\nOverall, a negative supply shock is likely to reduce real incomes and output while raising prices, but the burden depends on input dependence, household budgets, firms' ability to substitute or pass on costs, and public finances. A temporary shock with stable expectations may have mainly short-run distributional effects. A persistent shock that feeds into wage and price expectations can produce more lasting inflation and output damage. Policy should therefore be assessed against both the people most exposed and the source and duration of the shock, rather than assuming a single response benefits all stakeholders.",
+      "feedback": {
+        "band": "Strong 6",
+        "score": 6,
+        "mistakes": [
+          "No real-world example"
+        ],
+        "strengths": [
+          "Accurately explains the AD–AS mechanism: a leftward SRAS shift raises the price level and reduces real output.",
+          "Develops stakeholder-specific effects rather than assuming all households or firms are affected identically.",
+          "Offers strong, conditional evaluation through duration, inflation expectations, income groups, sectoral differences and policy trade-offs."
+        ],
+        "studyNext": "Practise embedding one concise real-world supply-shock example into each stakeholder paragraph, then finish with a clearly conditional policy recommendation.",
+        "improvements": [
+          "Replace the hypothetical bakery and household scenarios with one integrated real-world case, such as the 2022 energy-price shock, and use it to substantiate the analysis.",
+          "Make the final judgement more explicitly prioritise which policy response is most appropriate under stated conditions, rather than only setting out alternatives."
+        ],
+        "examinerComment": "Estimated practice mark: this is a highly coherent and economically accurate discussion. The diagram and written analysis consistently show stagflationary effects, and the answer evaluates differences across stakeholders and time horizons particularly well. The main feature preventing the highest band is that the stated examples are deliberately hypothetical, whereas this Paper 1(b) response would be stronger with developed, integrated real-world evidence."
+      },
+      "assessment": {
+        "paper": "paper_1",
+        "version": 4,
+        "markBand": "10-12",
+        "capReason": null,
+        "framework": "paper1b_15_mark",
+        "topicLabel": "3.2",
+        "commandTerm": "discuss",
+        "limitations": [],
+        "markBandLow": 10,
+        "marksEarned": 12,
+        "marksSource": "explicit_in_question",
+        "bandPosition": "upper",
+        "markBandHigh": 12,
+        "questionPart": "b",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_3",
+        "bandRationale": "The response demonstrates accurate, developed AD–AS analysis, a correct and clearly used diagram, and sustained evaluative discussion of how effects differ by group, sector and shock duration. It reaches the 10–12 band securely because its application is developed but explicitly hypothetical; it does not provide the fully developed real-world evidence expected for the top band.",
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Terminology including negative aggregate supply shock, SRAS, real output, cost pressures and second-round inflation is precise and consistently used.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Clearly traces the supply shock through higher costs, higher price levels and lower output into consumption, employment, margins, investment and public finances.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The energy-importing economy, bakery and energy-price guarantee are relevant and well integrated, but they are explicitly hypothetical rather than genuine real-world evidence.",
+            "awarded": 2,
+            "available": 4
+          },
+          {
+            "label": "Evaluation and judgment",
+            "reason": "Effectively weighs distributional effects, sectoral variation, tax composition, persistence, expectations, opportunity costs and demand-management trade-offs, ending with a conditional judgement.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted AD–AS diagram clearly shows an unchanged AD curve, SRAS shifting left, and the resulting higher price level and lower real GDP.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Structure and clarity",
+            "reason": "The response is well organised by stakeholder and then policy/time horizon, with a focused concluding synthesis.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "3.2",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 15,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The diagram is clear and usable. It shows a standard AD–AS setup with an unchanged AD curve and a leftward shift of SRAS from SRAS1 to SRAS2, moving equilibrium from E1 to E2. The visible outcome is higher price level (PL1 to PL2) and lower real GDP (Y1 to Y2), which is consistent with a negative aggregate supply shock.",
+          "version": 1,
+          "contract": {
+            "mode": "holistic_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "necessary_for_task",
+            "diagramReason": "The stakeholder evaluation depends on the output and price effects of a negative aggregate supply shock."
+          },
+          "snapshotId": "ea0315e6-be81-4215-9130-5bbeb3389821",
+          "observations": [
+            {
+              "region": "whole diagram",
+              "uncertain": false,
+              "observation": "Vertical axis is labeled “Average price level” and horizontal axis is labeled “Real GDP”.",
+              "interpretation": "The student is using an AD–AS macroeconomic diagram with price level against output."
+            },
+            {
+              "region": "centre to lower right",
+              "uncertain": false,
+              "observation": "One downward-sloping curve is labeled “AD”.",
+              "interpretation": "Aggregate demand is shown and is held unchanged between the two equilibria."
+            },
+            {
+              "region": "centre and upper right",
+              "uncertain": false,
+              "observation": "Two upward-sloping curves are labeled “SRAS1” and “SRAS2”. SRAS2 is drawn to the left/above SRAS1, and a horizontal arrow points left from the SRAS1 side toward SRAS2.",
+              "interpretation": "This depicts a leftward shift of short-run aggregate supply, i.e. a negative supply shock."
+            },
+            {
+              "region": "centre right",
+              "uncertain": false,
+              "observation": "E1 is marked where AD intersects SRAS1.",
+              "interpretation": "E1 is the initial equilibrium."
+            },
+            {
+              "region": "centre left",
+              "uncertain": false,
+              "observation": "E2 is marked where AD intersects SRAS2.",
+              "interpretation": "E2 is the new equilibrium after the supply shift."
+            },
+            {
+              "region": "left-centre and lower centre",
+              "uncertain": false,
+              "observation": "Dashed guides from E1 and E2 mark PL1 and PL2 on the vertical axis and Y1 and Y2 on the horizontal axis.",
+              "interpretation": "The diagram identifies the before/after price level and real output positions."
+            },
+            {
+              "region": "comparison of E1 and E2",
+              "uncertain": false,
+              "observation": "E2 is above and to the left of E1; PL2 is above PL1 and Y2 is left of Y1.",
+              "interpretation": "The diagram shows a higher average price level and lower real GDP after the shock."
+            }
+          ],
+          "attachmentHashes": [
+            "239122ad32e3adfb76a691355c9aa47acc8a6f8f5919d156de2a9079032dcafc"
+          ],
+          "componentDecision": null
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 15,
+        "unassessedMarks": 0,
+        "assessmentFormat": "paper_1_b",
+        "assessmentSkills": [
+          "economic_analysis",
+          "application",
+          "evaluation"
+        ],
+        "commandTermLabel": "Discuss",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 6,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 6,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": null,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "9979e160-06b9-4839-9181-52f1f0b64ee4",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "3d400f4d-4e29-475e-825d-3b900f6bf6c4",
+      "assessment": {
+        "paper": "paper_1",
+        "version": 4,
+        "markBand": "10-12",
+        "capReason": null,
+        "framework": "paper1b_15_mark",
+        "topicLabel": "3.2",
+        "commandTerm": "discuss",
+        "limitations": [],
+        "markBandLow": 10,
+        "marksEarned": 12,
+        "marksSource": "explicit_in_question",
+        "bandPosition": "upper",
+        "markBandHigh": 12,
+        "questionPart": "b",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_3",
+        "bandRationale": "The response demonstrates accurate, developed AD–AS analysis, a correct and clearly used diagram, and sustained evaluative discussion of how effects differ by group, sector and shock duration. It reaches the 10–12 band securely because its application is developed but explicitly hypothetical; it does not provide the fully developed real-world evidence expected for the top band.",
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Terminology including negative aggregate supply shock, SRAS, real output, cost pressures and second-round inflation is precise and consistently used.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Clearly traces the supply shock through higher costs, higher price levels and lower output into consumption, employment, margins, investment and public finances.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The energy-importing economy, bakery and energy-price guarantee are relevant and well integrated, but they are explicitly hypothetical rather than genuine real-world evidence.",
+            "awarded": 2,
+            "available": 4
+          },
+          {
+            "label": "Evaluation and judgment",
+            "reason": "Effectively weighs distributional effects, sectoral variation, tax composition, persistence, expectations, opportunity costs and demand-management trade-offs, ending with a conditional judgement.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted AD–AS diagram clearly shows an unchanged AD curve, SRAS shifting left, and the resulting higher price level and lower real GDP.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Structure and clarity",
+            "reason": "The response is well organised by stakeholder and then policy/time horizon, with a focused concluding synthesis.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "3.2",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 15,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The diagram is clear and usable. It shows a standard AD–AS setup with an unchanged AD curve and a leftward shift of SRAS from SRAS1 to SRAS2, moving equilibrium from E1 to E2. The visible outcome is higher price level (PL1 to PL2) and lower real GDP (Y1 to Y2), which is consistent with a negative aggregate supply shock.",
+          "version": 1,
+          "contract": {
+            "mode": "holistic_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "necessary_for_task",
+            "diagramReason": "The stakeholder evaluation depends on the output and price effects of a negative aggregate supply shock."
+          },
+          "snapshotId": "ea0315e6-be81-4215-9130-5bbeb3389821",
+          "observations": [
+            {
+              "region": "whole diagram",
+              "uncertain": false,
+              "observation": "Vertical axis is labeled “Average price level” and horizontal axis is labeled “Real GDP”.",
+              "interpretation": "The student is using an AD–AS macroeconomic diagram with price level against output."
+            },
+            {
+              "region": "centre to lower right",
+              "uncertain": false,
+              "observation": "One downward-sloping curve is labeled “AD”.",
+              "interpretation": "Aggregate demand is shown and is held unchanged between the two equilibria."
+            },
+            {
+              "region": "centre and upper right",
+              "uncertain": false,
+              "observation": "Two upward-sloping curves are labeled “SRAS1” and “SRAS2”. SRAS2 is drawn to the left/above SRAS1, and a horizontal arrow points left from the SRAS1 side toward SRAS2.",
+              "interpretation": "This depicts a leftward shift of short-run aggregate supply, i.e. a negative supply shock."
+            },
+            {
+              "region": "centre right",
+              "uncertain": false,
+              "observation": "E1 is marked where AD intersects SRAS1.",
+              "interpretation": "E1 is the initial equilibrium."
+            },
+            {
+              "region": "centre left",
+              "uncertain": false,
+              "observation": "E2 is marked where AD intersects SRAS2.",
+              "interpretation": "E2 is the new equilibrium after the supply shift."
+            },
+            {
+              "region": "left-centre and lower centre",
+              "uncertain": false,
+              "observation": "Dashed guides from E1 and E2 mark PL1 and PL2 on the vertical axis and Y1 and Y2 on the horizontal axis.",
+              "interpretation": "The diagram identifies the before/after price level and real output positions."
+            },
+            {
+              "region": "comparison of E1 and E2",
+              "uncertain": false,
+              "observation": "E2 is above and to the left of E1; PL2 is above PL1 and Y2 is left of Y1.",
+              "interpretation": "The diagram shows a higher average price level and lower real GDP after the shock."
+            }
+          ],
+          "attachmentHashes": [
+            "239122ad32e3adfb76a691355c9aa47acc8a6f8f5919d156de2a9079032dcafc"
+          ],
+          "componentDecision": null
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 15,
+        "unassessedMarks": 0,
+        "assessmentFormat": "paper_1_b",
+        "assessmentSkills": [
+          "economic_analysis",
+          "application",
+          "evaluation"
+        ],
+        "commandTermLabel": "Discuss",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 6,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 6,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": null,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Strong 6",
+        "score": 6,
+        "mistakes": [
+          "No real-world example"
+        ],
+        "strengths": [
+          "Accurately explains the AD–AS mechanism: a leftward SRAS shift raises the price level and reduces real output.",
+          "Develops stakeholder-specific effects rather than assuming all households or firms are affected identically.",
+          "Offers strong, conditional evaluation through duration, inflation expectations, income groups, sectoral differences and policy trade-offs."
+        ],
+        "studyNext": "Practise embedding one concise real-world supply-shock example into each stakeholder paragraph, then finish with a clearly conditional policy recommendation.",
+        "improvements": [
+          "Replace the hypothetical bakery and household scenarios with one integrated real-world case, such as the 2022 energy-price shock, and use it to substantiate the analysis.",
+          "Make the final judgement more explicitly prioritise which policy response is most appropriate under stated conditions, rather than only setting out alternatives."
+        ],
+        "examinerComment": "Estimated practice mark: this is a highly coherent and economically accurate discussion. The diagram and written analysis consistently show stagflationary effects, and the answer evaluates differences across stakeholders and time horizons particularly well. The main feature preventing the highest band is that the stated examples are deliberately hypothetical, whereas this Paper 1(b) response would be stronger with developed, integrated real-world evidence."
+      },
+      "answer": "A negative aggregate supply shock is an event that makes firms supply less real output at each price level, for example an increase in an economy's imported energy costs. In the diagram SRAS shifts left from SRAS1 to SRAS2 while AD is held constant to isolate the initial shock. Equilibrium moves from real output Y1 to Y2 and from price level P1 to the higher P2. The combination of weaker activity and upward pressure on prices creates a difficult trade-off. The examples below are hypothetical classroom scenarios, not claims about reported events.\n\nHouseholds face a loss of purchasing power if wages or pensions do not rise as quickly as prices. Imagine an energy-importing economy in which a low-income family must spend much of its budget on heating and commuting. More expensive fuel and transport leave less income for other goods, so the family may cut consumption sharply. The fall in output also reduces firms' demand for labor, exposing some households to unemployment or fewer paid hours. These effects are unequal: households with flexible high wages or large savings may adjust more easily than pensioners on fixed nominal incomes. Workers in a domestic energy producer could benefit from increased demand for substitutes to imported energy, so the aggregate diagram does not imply that every household loses equally.\n\nFirms using energy intensively face higher unit costs. Consider a hypothetical bakery whose electricity bill rises. It may raise bread prices, but higher selling prices do not guarantee higher profits because costs have also risen and customers may buy less. Firms unable to pass the shock on because of close substitutes or contracts can experience a squeezed profit margin. Some reduce output or delay investment, worsening employment and potentially future capacity. By contrast, an efficient supplier of insulation or alternative energy could gain orders as users economize on the expensive input. The overall loss is therefore accompanied by changes in the composition of output, which a single SRAS curve cannot fully describe.\n\nGovernment finances are also affected. Lower real output and employment can weaken profit and income-tax receipts, while unemployment-related spending rises. The government may also pay more for energy in hospitals or schools. Higher nominal prices can increase some expenditure-tax receipts, so the effect on total tax revenue is not mechanically a fall; it depends on the tax mix and how strongly quantities contract. A government that guarantees household energy prices may protect real incomes temporarily but must absorb the cost in its budget, reducing funds available for other priorities or increasing borrowing.\n\nPolicy choices depend strongly on duration. If the input shortage is brief, temporary targeted support could protect vulnerable households without permanently changing incentives. Broad untargeted subsidies are more costly and may discourage conservation. Expansionary demand policy could support output but also increase pressure on prices while supply is constrained. Monetary tightening could reduce demand pressure and limit second-round inflation, but at the cost of a deeper short-run output and employment decline. If the shock is persistent, investment in efficiency, alternative inputs and resilient infrastructure can improve supply, although these responses take time and have opportunity costs.\n\nOverall, a negative supply shock is likely to reduce real incomes and output while raising prices, but the burden depends on input dependence, household budgets, firms' ability to substitute or pass on costs, and public finances. A temporary shock with stable expectations may have mainly short-run distributional effects. A persistent shock that feeds into wage and price expectations can produce more lasting inflation and output damage. Policy should therefore be assessed against both the people most exposed and the source and duration of the shock, rather than assuming a single response benefits all stakeholders.",
+      "question": "Discuss the likely effects of a negative supply shock on households, firms and government. [15 marks]"
+    },
+    "snapshot": {
+      "id": "ea0315e6-be81-4215-9130-5bbeb3389821",
+      "userId": "5de6c649-60f0-4c9e-a603-feec77db52b0",
+      "version": 1,
+      "contract": {
+        "mode": "holistic_diagram",
+        "part": "b",
+        "level": "shared_sl_hl",
+        "paper": "1",
+        "scope": "same_question_part",
+        "topic": "3.2",
+        "total": 15,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2"
+          ],
+          "family": "ad_as",
+          "labels": [
+            "Use the labels identifying the economic variables and relationships requested in the question; conventional abbreviations are acceptable."
+          ],
+          "diagram": {
+            "one": "A relevant relationship or initial model is correct, but the task's change or outcome is materially incomplete or wrong.",
+            "two": "The relevant model, change and outcome are correct and identifiable for the exact task, allowing equivalent notation.",
+            "zero": "No creditworthy relevant economic relationship is visible."
+          },
+          "outcomes": [
+            "The outcome must follow from the diagram and match the explanation of the selected question part."
+          ],
+          "explanation": {
+            "one": "One relevant causal link is correct but the mechanism or resulting outcome is incomplete.",
+            "two": "A developed, context-compatible causal chain explains the requested outcome; apply same-part error carry forward without repeating its root-error penalty.",
+            "zero": "No correct relevant causal link is explained."
+          },
+          "relationships": [
+            "Judge only the economic relationships requested by this task: Discuss the likely effects of a negative supply shock on households, firms and government. [15 marks]"
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Use only context actually supplied. Do not invent missing stimulus."
+          ],
+          "labelingRuleReason": null,
+          "permittedMechanisms": [
+            "Any theoretically valid mechanism that answers this task and fits its supplied context."
+          ],
+          "acceptableAlternatives": [
+            "Accept a coherent theoretically valid alternative mechanism satisfying the task and supplied context."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper1b_15_mark",
+        "provenance": "aptly_authored",
+        "diagramRole": "necessary_for_task",
+        "diagramReason": "The stakeholder evaluation depends on the output and price effects of a negative aggregate supply shock.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [
+          "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+        ],
+        "blueprintVersion": "economics-essay-blueprint-v2"
+      },
+      "answerHash": "da06f8c85be076e55329b60eb84605a02299e04e03981f86e95c88946d52983d",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "ea0315e6-be81-4215-9130-5bbeb3389821:image:1",
+          "retained": false,
+          "contentHash": "239122ad32e3adfb76a691355c9aa47acc8a6f8f5919d156de2a9079032dcafc"
+        }
+      ],
+      "contextHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "a072be231141bc0d42f9b889362d98edd13a36d9173ee8c1c76d3ddcccca75b3",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "usable",
+        "summary": "The diagram is clear and usable. It shows a standard AD–AS setup with an unchanged AD curve and a leftward shift of SRAS from SRAS1 to SRAS2, moving equilibrium from E1 to E2. The visible outcome is higher price level (PL1 to PL2) and lower real GDP (Y1 to Y2), which is consistent with a negative aggregate supply shock.",
+        "observations": [
+          {
+            "region": "whole diagram",
+            "uncertain": false,
+            "observation": "Vertical axis is labeled “Average price level” and horizontal axis is labeled “Real GDP”.",
+            "interpretation": "The student is using an AD–AS macroeconomic diagram with price level against output."
+          },
+          {
+            "region": "centre to lower right",
+            "uncertain": false,
+            "observation": "One downward-sloping curve is labeled “AD”.",
+            "interpretation": "Aggregate demand is shown and is held unchanged between the two equilibria."
+          },
+          {
+            "region": "centre and upper right",
+            "uncertain": false,
+            "observation": "Two upward-sloping curves are labeled “SRAS1” and “SRAS2”. SRAS2 is drawn to the left/above SRAS1, and a horizontal arrow points left from the SRAS1 side toward SRAS2.",
+            "interpretation": "This depicts a leftward shift of short-run aggregate supply, i.e. a negative supply shock."
+          },
+          {
+            "region": "centre right",
+            "uncertain": false,
+            "observation": "E1 is marked where AD intersects SRAS1.",
+            "interpretation": "E1 is the initial equilibrium."
+          },
+          {
+            "region": "centre left",
+            "uncertain": false,
+            "observation": "E2 is marked where AD intersects SRAS2.",
+            "interpretation": "E2 is the new equilibrium after the supply shift."
+          },
+          {
+            "region": "left-centre and lower centre",
+            "uncertain": false,
+            "observation": "Dashed guides from E1 and E2 mark PL1 and PL2 on the vertical axis and Y1 and Y2 on the horizontal axis.",
+            "interpretation": "The diagram identifies the before/after price level and real output positions."
+          },
+          {
+            "region": "comparison of E1 and E2",
+            "uncertain": false,
+            "observation": "E2 is above and to the left of E1; PL2 is above PL1 and Y2 is left of Y1.",
+            "interpretation": "The diagram shows a higher average price level and lower real GDP after the shock."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "b0bfa1c9370bc9bcf958968ce21fd83aa474ce44d96b17807b1b74c019bf1284",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "ea0315e6-be81-4215-9130-5bbeb3389821"
+    }
+  }
+}

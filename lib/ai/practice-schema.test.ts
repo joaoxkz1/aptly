@@ -65,6 +65,11 @@ describe("validateGeneratedPractice — strict adaptive fallback", () => {
     expect(result.gradingBlueprint.kind).toBe("extended");
   });
 
+  it.each(["Price discrimination", "Cross-price elasticity", "XED"])("rejects retired syllabus content %s in generated guidance", concept => {
+    expect(() => validateGeneratedPractice(generated({ gradingBlueprint: blueprintFields({ theoryAreas: [concept] }) }), target()))
+      .toThrow("content outside current syllabus");
+  });
+
   it("rejects the source question even when casing, punctuation or mark formatting differ", () => {
     const original = generated().question;
     expect(() => validateGeneratedPractice(generated(), target({ evidenceQuestion: original }))).toThrow();
@@ -171,6 +176,30 @@ describe("focused output identity and task validation", () => {
   });
 });
 describe("adaptive generation prompt", () => {
+  it("supplies a bounded evaluative scope and makes cross-topic demands explicit", () => {
+    const monetary = buildPracticeUserInput(target());
+    expect(monetary).toContain("TRUSTED AO3 GENERATION SCOPE (direct)");
+    expect(monetary).toContain("transmission constraints");
+    const pes = buildPracticeUserInput(target({ topicCode: "2.6" }));
+    expect(pes).toContain("TRUSTED AO3 GENERATION SCOPE (cross)");
+    expect(pes).toContain("2.7 policy and stakeholder evaluation");
+    expect(pes).toContain("explicit in the question");
+  });
+
+  it("requires the HL frame for the supported 4.6 essay scope", () => {
+    const hlTarget = target({ topicCode: "4.6", courseLevel: "hl", levelRelevance: "hl_only" });
+    expect(buildPracticeUserInput(hlTarget)).toContain("persistent current-account");
+    expect(buildPracticeUserInput(hlTarget)).toContain("Course relevance: hl_only");
+    expect(() => buildPracticeUserInput({ ...hlTarget, levelRelevance: "shared_sl_hl" })).toThrow("unsupported 15-mark generation scope");
+    expect(() => buildPracticeUserInput(target({ topicCode: "4.6" }))).toThrow("unsupported 15-mark generation scope");
+  });
+
+  it("fails closed for unsupported essay prompts but leaves explanatory formats available", () => {
+    expect(() => buildPracticeUserInput(target({ topicCode: "2.1" }))).toThrow("unsupported 15-mark generation scope");
+    expect(buildPracticeUserInput(target({ topicCode: "2.1", markTotal: 10, framework: "paper1a_10_mark", targetSkill: "economic_analysis" })))
+      .not.toContain("TRUSTED AO3 GENERATION SCOPE");
+  });
+
   it("pins current topic, marks, level and written-only reliability rules", () => {
     const instructions = buildPracticeInstructions();
     const userInput = buildPracticeUserInput(target());

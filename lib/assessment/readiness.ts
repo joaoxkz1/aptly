@@ -589,7 +589,9 @@ function skillPriorityRows(eligible: Attempt[]): SkillPriorityRow[] {
       // A diagram Aptly cannot yet inspect is not a diagnosed skill weakness —
       // exclude it from diagnostic ranking / next-focus until upload support
       // assesses a real submitted diagram.
-      if (b.label === "Diagram" || b.label === "Structure and clarity") continue;
+      if (b.label === "Structure and clarity") continue;
+      if (b.label === "Diagram" && (!a.assessment!.assessedDiagram ||
+        !["usable", "partially_readable", "no_relevant_diagram", "not_provided"].includes(a.assessment!.assessedDiagram.state))) continue;
       const cur = map.get(b.label) ?? { lost: 0, available: 0, responses: 0 };
       cur.lost += Math.max(0, b.available - b.awarded);
       cur.available += b.available;

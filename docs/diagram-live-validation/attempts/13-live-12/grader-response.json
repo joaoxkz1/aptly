@@ -1,0 +1,530 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 14180,
+  "requestId": "req_3edd95e09625456e819eceee24597f90",
+  "response": {
+    "id": "resp_0e1792399b0bdff8016aa99601690087d28f40dd03b9e2cca2",
+    "object": "response",
+    "created_at": 1789498881,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789498895,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0e1792399b0bdff8016aa996023d9c87d28bc88ab97bd54573",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZYPqPYwatvSr69J0vo9HI5Xq7OCtkdcBjJqzP3ZvMeIzbmNkAlWWw6u59kArEYAHtQBHgrvslsOqyukrMEjxJmHgL4159PYVW5lVC_wJNWcFyvkHRX7XqeUnoKIsteEDj7pok87SEVoTf9BW2uZJjv52Tlm-Vk5PzeEMfBQOwsErNdnUmC7Jyp0vrJOpBUb1FPHXbvbN0GYTrvZjCKldZpQAw6ddllXB09BcMNPjdcRcTEuNJuketAXMHi-rzqx2ChZFEIF60qcjVUW-_Xqq1Ld6UDjaZdXfVkcxhBchHiYUZA3jNxtoZhuAzJ6u4H0jBen7NzvR1FBVqbE56FxWWS1BnbhPc9WZgjjcKY6lRVnT_R3i27wPDwVz2KJJPIwdVgsyOjXPV2gBx6__UOb8pMXWxR85A2WBgLJLJSi4szOGwqPVaSAYWBVzetCGmQjDAaauveG7un_9mNALoX5nyVy7dVAx0j8r5w7Cd7aXr-2nJj31QBoeSmQ-AIorqbpMGlfR_NsVm2KYa86d8QUZSGpRRjachNZQ7muN3ZeIuI98JE6_CUvGm0wmmBAl6iNKV4i7kFZaNhBIyXO7IDRgB2b_QQwtYI9ssODCQIB3HxHmEmVtdvg9nlmqAMRLPlPTGB-1DHvKQCqV_uhqGbL4TVlVnw5ZR9NiKHVbgVD6r7Ejr0sYc_PynO2TddzIMEalkVSt2A-MR2PAVsQoyl4bO-k9fdWoNYYGigQLqFtD-P5c4g_75HwjaKkc-MTIQMXAZP21o_RMINgsfiGTlI6GUPOExTWwXXwewYozTzCtwzt0rJys0hoSpX6f09dXFa2ApML6uEB_UPDidqvjsGVmZ86LWdAiFW9U3d7Sm_rRhe9aU4IT6yrWwVt0LrxvuBjNhCRtyJs8prM2irhtbsxXMSsx2ki18cN5Cygiq8pNF4F36IwX68noaqHf8S0o7VNWHu8m6HenKq3owHtfjwpMl97cgpXH6rRcmSzPkMiTjVfFQYy3IgXpXEAX0FUQBEfOQMtpWBbQ7b7xjyAGXwdHdJE1WLSbNV3pbmYkR8CUyRjIsU-eaQvtL6iNjG7dyZKG15QgLsQyobar904mFL_IH8r4B87EvZNZFE5RjBXXiUq65HPfj7QgxOjywG06tyB2uQdskgDFWU0mJ2NIDolxkWzqKuyUK0mdScLgJIp0QXgMIJO703pcHC2D7iO1SPAU24_FbsX9K87X7IAoMa106rZUCI0cTWMYy9ZiTRG4gTOvbDNtU4DP3L9ColSyA-r_hAaIvjWRcgdjPYGZaTu-AVKr5D1RQ1mN0KoktgiSLii2xdnxLm6XgJsL-tMGHMFJu6pRuCW1NjsGNCTzc4tMv9ayL1ZA393yeZBPcuZIxhHsJ2c5oexjVHTSXJ5BeZk7Y51tst5IMMBe6WZAHAjEa-b6EagmvOLjKWeBpN87DCgRV3OApH8asaFJDhv5fznCAngzUkt-KF5hBPJZjSY82JeS3EOxMebnZYZzU5qQLvPv7xdtQ3sOg8iIwvqPajORbpUs_rDrLWAhpuNjIBmFFgGh02tqijZ0igevsOzUNEvIG2V_iZsgp9QsO9hAGiuWAcRSP3Rv5SJ0bSxVTouz5rv8o8i7Obrp8s40AE9c6R8R25X07QPFCMb_T6m1tRRJa-aJRY4C7igjNAwu8F-NmMEuht1J5hGFajNiw9UVd81beK_jb_Mc_5UzVcL1I_oxD5kjQTS8fJ4j2qEPX-jWOlJ9A5vMJoXAuhgab7AJEf5DaMGuEdoEI4RcTsENLLpz5B8TO7A5vjVEJtm7u-xpmYScUG4OxuAWiBTuw4r1P8644m9J0ISiGEHtO0zdIdQM0-AKu1H--VrNOGm8wiz_Qh2_Q7ZFMr5b_YtPwTh621GPLfMABYZ6UMDotCLURmMs_BMZJsp0hmYFZAwnT2Oi5VsX_3ayidRxOpjuwOBsKEPFUJX65yHpjO53_lsfZjoFflW4JValQHuj0WkoZX4Mxq9oEU26V44d3jn1Yp5kaZupjrU20WXbFpNANqIDgHMWu_T8Iq8mgwj4cWUViDpU7sj3AS-t6FBiQs7DxdKxGxkbuVFVuViNt1WWBBFUGkyPHKf6MOdMBVml4qw-uYgr19dVo0PUT17kF7Em3osWHJjRsAN-kdWwYGEArucIavJQZ2X4mXoh8ShZlGlB60VbAJ0J65Df8tQMx1FQ-suW4LisOY=",
+        "summary": []
+      },
+      {
+        "id": "msg_0e1792399b0bdff8016aa99604d3a887d2a85ce0fe9dee7d18",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"strengths\":[\"Accurately explains the AD–AS mechanism: a leftward SRAS shift raises the price level and reduces real output.\",\"Develops stakeholder-specific effects rather than assuming all households or firms are affected identically.\",\"Offers strong, conditional evaluation through duration, inflation expectations, income groups, sectoral differences and policy trade-offs.\"],\"improvements\":[\"Replace the hypothetical bakery and household scenarios with one integrated real-world case, such as the 2022 energy-price shock, and use it to substantiate the analysis.\",\"Make the final judgement more explicitly prioritise which policy response is most appropriate under stated conditions, rather than only setting out alternatives.\"],\"mistakes\":[\"No real-world example\"],\"examinerComment\":\"Estimated practice mark: this is a highly coherent and economically accurate discussion. The diagram and written analysis consistently show stagflationary effects, and the answer evaluates differences across stakeholders and time horizons particularly well. The main feature preventing the highest band is that the stated examples are deliberately hypothetical, whereas this Paper 1(b) response would be stronger with developed, integrated real-world evidence.\",\"studyNext\":\"Practise embedding one concise real-world supply-shock example into each stakeholder paragraph, then finish with a clearly conditional policy recommendation.\",\"assessmentFormat\":\"paper_1_b\",\"paper\":\"paper_1\",\"questionPart\":\"b\",\"levelRelevance\":\"shared_sl_hl\",\"assessmentSkills\":[\"diagram_explanation\",\"economic_analysis\",\"application\",\"evaluation\"],\"commandTerm\":\"discuss\",\"commandTermLabel\":\"Discuss\",\"syllabusUnit\":\"unit_3\",\"syllabusTopic\":\"3.2\",\"topicLabel\":\"AD/AS variations\",\"classificationConfidence\":\"high\",\"markingConfidence\":\"high\",\"diagramExpected\":true,\"diagramSubmitted\":true,\"diagramAssessmentStatus\":\"submitted_and_assessed\",\"workingsExpected\":false,\"workingsSubmitted\":false,\"workingsAssessmentStatus\":\"not_relevant\",\"attachmentContent\":\"diagram\",\"assessableEarned\":12,\"markBreakdown\":[{\"label\":\"Knowledge and terminology\",\"awarded\":4,\"available\":4,\"reason\":\"Terminology including negative aggregate supply shock, SRAS, real output, cost pressures and second-round inflation is precise and consistently used.\"},{\"label\":\"Economic analysis\",\"awarded\":4,\"available\":4,\"reason\":\"Clearly traces the supply shock through higher costs, higher price levels and lower output into consumption, employment, margins, investment and public finances.\"},{\"label\":\"Application to context\",\"awarded\":2,\"available\":4,\"reason\":\"The energy-importing economy, bakery and energy-price guarantee are relevant and well integrated, but they are explicitly hypothetical rather than genuine real-world evidence.\"},{\"label\":\"Evaluation and judgment\",\"awarded\":4,\"available\":4,\"reason\":\"Effectively weighs distributional effects, sectoral variation, tax composition, persistence, expectations, opportunity costs and demand-management trade-offs, ending with a conditional judgement.\"},{\"label\":\"Diagram\",\"awarded\":4,\"available\":4,\"reason\":\"The submitted AD–AS diagram clearly shows an unchanged AD curve, SRAS shifting left, and the resulting higher price level and lower real GDP.\"},{\"label\":\"Structure and clarity\",\"awarded\":4,\"available\":4,\"reason\":\"The response is well organised by stakeholder and then policy/time horizon, with a focused concluding synthesis.\"}],\"bandRationale\":\"The response demonstrates accurate, developed AD–AS analysis, a correct and clearly used diagram, and sustained evaluative discussion of how effects differ by group, sector and shock duration. It reaches the 10–12 band securely because its application is developed but explicitly hypothetical; it does not provide the fully developed real-world evidence expected for the top band.\",\"limitations\":[],\"componentEvaluation\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_grade_result",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strengths",
+            "improvements",
+            "mistakes",
+            "examinerComment",
+            "studyNext",
+            "assessmentFormat",
+            "paper",
+            "questionPart",
+            "levelRelevance",
+            "assessmentSkills",
+            "commandTerm",
+            "commandTermLabel",
+            "syllabusUnit",
+            "syllabusTopic",
+            "topicLabel",
+            "classificationConfidence",
+            "markingConfidence",
+            "diagramExpected",
+            "diagramSubmitted",
+            "diagramAssessmentStatus",
+            "workingsExpected",
+            "workingsSubmitted",
+            "workingsAssessmentStatus",
+            "attachmentContent",
+            "assessableEarned",
+            "markBreakdown",
+            "bandRationale",
+            "limitations",
+            "componentEvaluation"
+          ],
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mistakes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lack of evaluation",
+                  "Underdeveloped evaluation",
+                  "Weak definitions",
+                  "Weak terminology",
+                  "Inaccurate economic theory",
+                  "Underdeveloped economic analysis",
+                  "No real-world example",
+                  "Irrelevant real-world example",
+                  "Underdeveloped real-world example",
+                  "Missing required diagram",
+                  "Incorrect diagram explanation",
+                  "Insufficient source use",
+                  "Calculation/setup error",
+                  "Unsupported judgement",
+                  "Unclear structure"
+                ]
+              }
+            },
+            "examinerComment": {
+              "type": "string"
+            },
+            "studyNext": {
+              "type": "string"
+            },
+            "assessmentFormat": {
+              "type": "string",
+              "enum": [
+                "paper_1_a",
+                "paper_1_b",
+                "paper_2_a_definition",
+                "paper_2_b_quantitative_or_diagram",
+                "paper_2_c_to_f_diagram_and_explanation",
+                "paper_2_g_extended_response",
+                "paper_3_a_technical_or_quantitative",
+                "paper_3_b_policy_recommendation",
+                "custom_short_response",
+                "custom_extended_response",
+                "uncertain"
+              ]
+            },
+            "paper": {
+              "type": "string",
+              "enum": [
+                "paper_1",
+                "paper_2",
+                "paper_3",
+                "custom",
+                "uncertain"
+              ]
+            },
+            "questionPart": {
+              "type": "string",
+              "enum": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "unknown"
+              ]
+            },
+            "levelRelevance": {
+              "type": "string",
+              "enum": [
+                "shared_sl_hl",
+                "hl_only",
+                "unknown"
+              ]
+            },
+            "assessmentSkills": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "definition",
+                  "calculation",
+                  "diagram_explanation",
+                  "economic_analysis",
+                  "data_interpretation",
+                  "application",
+                  "evaluation",
+                  "policy_recommendation"
+                ]
+              }
+            },
+            "commandTerm": {
+              "type": "string",
+              "enum": [
+                "define",
+                "describe",
+                "distinguish",
+                "draw",
+                "calculate",
+                "explain",
+                "analyse",
+                "discuss",
+                "evaluate",
+                "examine",
+                "justify",
+                "compare",
+                "contrast",
+                "compare_contrast",
+                "to_what_extent",
+                "recommend",
+                "other"
+              ]
+            },
+            "commandTermLabel": {
+              "type": "string"
+            },
+            "syllabusUnit": {
+              "type": "string",
+              "enum": [
+                "unit_1",
+                "unit_2",
+                "unit_3",
+                "unit_4",
+                "unknown"
+              ]
+            },
+            "syllabusTopic": {
+              "type": "string",
+              "enum": [
+                "1.1",
+                "1.2",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+                "3.1",
+                "3.2",
+                "3.3",
+                "3.4",
+                "3.5",
+                "3.6",
+                "3.7",
+                "4.1",
+                "4.2",
+                "4.3",
+                "4.4",
+                "4.5",
+                "4.6",
+                "4.7",
+                "4.8",
+                "4.9",
+                "4.10",
+                "unknown"
+              ]
+            },
+            "topicLabel": {
+              "type": "string"
+            },
+            "classificationConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "markingConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "diagramExpected": {
+              "type": "boolean"
+            },
+            "diagramSubmitted": {
+              "type": "boolean"
+            },
+            "diagramAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "text_description_only",
+                "submitted_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "workingsExpected": {
+              "type": "boolean"
+            },
+            "workingsSubmitted": {
+              "type": "boolean"
+            },
+            "workingsAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "typed_and_assessed",
+                "image_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "attachmentContent": {
+              "type": "string",
+              "enum": [
+                "none",
+                "diagram",
+                "workings",
+                "both",
+                "neither_or_unreadable"
+              ]
+            },
+            "assessableEarned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY."
+            },
+            "markBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "awarded",
+                  "available",
+                  "reason"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "enum": [
+                      "Knowledge and terminology",
+                      "Economic analysis",
+                      "Application to context",
+                      "Evaluation and judgment",
+                      "Data use",
+                      "Diagram",
+                      "Calculation method",
+                      "Final answer",
+                      "Policy recommendation",
+                      "Structure and clarity"
+                    ]
+                  },
+                  "awarded": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "Integer 0..4 on Aptly's fixed diagnostic scale."
+                  },
+                  "available": {
+                    "type": "integer",
+                    "enum": [
+                      4
+                    ],
+                    "description": "Always exactly 4. OMIT any criterion the question does not test."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Non-empty, specific to this answer."
+                  }
+                }
+              }
+            },
+            "bandRationale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames."
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "componentEvaluation": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "diagram",
+                    "explanation",
+                    "diagramReason",
+                    "explanationReason",
+                    "incompatibleMechanisms",
+                    "mismatchEvidence",
+                    "labelingDeficiency",
+                    "labelingEvidence",
+                    "rootErrors"
+                  ],
+                  "properties": {
+                    "diagram": {
+                      "type": "integer"
+                    },
+                    "explanation": {
+                      "type": "integer"
+                    },
+                    "diagramReason": {
+                      "type": "string"
+                    },
+                    "explanationReason": {
+                      "type": "string"
+                    },
+                    "incompatibleMechanisms": {
+                      "type": "boolean"
+                    },
+                    "mismatchEvidence": {
+                      "type": "string"
+                    },
+                    "labelingDeficiency": {
+                      "type": "boolean"
+                    },
+                    "labelingEvidence": {
+                      "type": "string"
+                    },
+                    "rootErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "diagramEvidence",
+                          "explanationEvidence",
+                          "carriedForward"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "diagramEvidence": {
+                            "type": "string"
+                          },
+                          "explanationEvidence": {
+                            "type": "string"
+                          },
+                          "carriedForward": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 6111,
+      "input_tokens_details": {
+        "cache_write_tokens": 6108,
+        "cached_tokens": 0
+      },
+      "output_tokens": 930,
+      "output_tokens_details": {
+        "reasoning_tokens": 172
+      },
+      "total_tokens": 7041
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

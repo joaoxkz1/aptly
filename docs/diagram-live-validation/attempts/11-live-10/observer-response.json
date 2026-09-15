@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 15908,
+  "requestId": "req_dd3213398fc34878a7b39a3e41d1d5dc",
+  "response": {
+    "id": "resp_01e47d0da92c7b98016aa99592f77887d280485bec4dd9a76d",
+    "object": "response",
+    "created_at": 1789498771,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789498786,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_01e47d0da92c7b98016aa99593a08487d2b9cae8b34899332b",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZWiGbbuwlCzUBH5Oeljmcsk9VAYrmZUbCuLyEY01aLzX3qMbJ8a9nA2sFy1sQ1HcYVZChcy-0x_tDMhWUmZcv1JuQoZ9-ABEDnuJsX5O_oo4Tl-eM6QbiVJWwSDAYiDiUMvuToCK8pB8UJJfozoFSxyIdZE09vcTKmAiT32MwZNo68zSiGOEHaUHPHN7ymr9BTcgajaU3OjkZCIzQHqTc3SOV1YAi9eDe1SnFmNu063mm2aM2trc7_NA55cJk4hoU_gdO5Dyp5r8lNAziNAA0y-snumKp5k4oq4Wk_bqdxO2e4SawXUYLfD9WHkQhQA0K-NVkbWMgkGU13O5ofCCpvtlwmlUyYkpV3TCzmYmIgCPv9s3Tk2oIqnLOOWqK2DJbzr8OcSSLfLmDpUI_gIfFBSDh39VRaKJuROyzntnbO9rx9-i5dt3Bb-5BvwWVRPfmmWhsKkywjWMizQYgLej96Hqhf-l4a0aaTrAHt3w_9BgrzralAN_juOQGD9wpa8LsIMjm_Yovc1lY8aSGUUkSb9tYiVAhObt7rOQqVLQG7sSWwoA6aSK7i7Tr9n5NswCnfRmJS5YA545mFyoNdQHSBYSoZ_o39EPMaum1DfDEfKyNT2ViMHifyDRZUdUa_J_jkYS-UpJi3SRhuJD4PgGYW51ISbSqWeeb1r6dZaF2xnjUCE7W1KhARrw2GLzP1RJEt2O6i1Ed5Nvn-4X1ls2NIN5XYzkzFX02UzbD3z0YnQaQo3HlyUAzpA4Aqp1-v-52u41px6C0PuHQHrdOtTG6vlZdJbTTFFRfHHZomAMngY0Dw5okxPkiZ0YTuLC5OztJMXk-mvjEZYDArPHz1CNFw8a249sA32WmgFl5GslxrCn93dNkzI4PfFYrZX7gnN2Tw83r1V7qpeA6pWbnmJApv1j8GBy0Ug90MAthLTJAjqOJsOPLfBwoh0_F27hGZfuFhrIWgOpkOodaO2r3IwQuZrpo-r1_42MXSqwhjlwuhIp2cHiiXhywJ8a4IWT52VDYfLc79fHL_0k07ksBXjM6wAAMH4oKq9VR14JSAyc8Q50bGRVYA7Hi27WO07R9Wr9uZ2yBz4i0Z2fbPYdlA-HrZlTccxB5GnZbHmbsh2tVCCuV7vBRQqROnnX80D99XVbY0kxA86ZWaJvBC9pXsgDEzdkwYaQ10owwdBjvmZY2troJuqiIsi1KuYnpR050gtn16gqXvXL25UG1OGsJbRRgES-JSa2yvCNwna5KD-ir6-s0GjVKHRwdsTUkjFppkhXT4aV67yqIz_KfpB4ALecYz7zAGf9Jm77ezPS-_M7WBF5zgLQr2rEdKpTAPSnfZXpjB-pW_hqpMUQjCN4YOHZMtgz0Pak-LZwGh6n-q9V9PB-yziWJTgDKNCcsCKWB0cnOWqPf_sxkpBVnXULSHwqHyj1e_N5zxyhGDevGI8TD3G7BlJHYhR31NOCPW_LExm5tMo_CCe9fg9Xl-_miz9tTvmkmt5DHMZQ5V6c6zPyU0cgnx_JRU3-G_mf4CI1G3DE81Zt457ixS5yxkrRfM4yBphX4uXEzswmwAcJ_E7iRhO3v8RvEUV7Hf61ZxI9iNl8KMdxONSHGd-NP0oseQllrPp81HmUT0thx4aUt7hmV51LoDy0kcmtTywvADq5iBdHI1naSw5PwajOkkwCkGavcgeUi8_NMHNBT4QePygyJigv71zJ6WKnB_lzbhcxAfAlrUWba1fzRqKrUZuY1z4QIvv-tFb9-DN5UWKONa3zpxaUuTeIzIAq5TUV0PHt56oj1FkH8EpOeQ_LJiGftxKjJeWw_uh5j_MZypTPHPxUNlS5_6b4DijONbCcpEfl3BgPOZdc08ysqcgkh3CWjrtL9I9JhRh9ksDgOBpzjUQ-kJyZGv3A2sPWO6VNeZckJyx6uRXQz29IzKRxFJUj0skW5qcRG1Jq-MMS1Ts3SHFaOTcOKwnYqn4N6GyidXG0QpGq4rJuJ6yHksnO4Ocxx1NK8cKUHkTYkgzgP179zkUL7V2bzoLs25yqziTRnCWUSTkLxk9UTf90gmZK7VmBWCTzvMuz5j9p8YpI-ny91KgmC9I18IzTUkhkZ8MTkBLtCImHDVgAVaD3t-E1OvP1ZSBw9kuhakq8-LSmil7J_rSCfYD4TOOWHf8ie_36aNFp09iJ_b3IFlFUBIJLBCdQ1aWgLG5AW0tuytWZbMgWEeSUAMpZT05cDRDRTTXXaFKdPzAzVposJgjSwzZNIGy4r7Q-3RA08oo4ZgpD7AYEC2L8UZFg9GLxmoIcfQWkHRraha5Y1wPr_lErdr3xyBtzeFkEHdg_Xd3wRjI5T9HJlUE9UYzZojib_uuNo8nrvE73MBqtoZWFe1POVdV9HpvInG3wzMI4nIHwDA6nBTzyCSf7JCdP3FuVUVME_GGg7ChVfsNkzW251HBLMxVvdm495x0Ec9yj3fVdeOD7gw6O891R_BSgW_gz11HwWFwPXC3aZaquzXfIU2KP4nLP-94PL9G4DGJ2aHX9KM_H7hR1J2u0mSov6XSb5cEKE134f0wdj57Me6P1Xflre_vAR0WUTVpRtHXFYomNZCZ6DxxrQlgdX9Q9wYjQkCiNoQ91BVzF9bgUKXBvdMiiOiLZDnZ6FIKqemG7758SvPVAWVdFNkcSMxSDXbzfZVs74cSEcRvs6IB9T3tJkHSGOo_A7IHGvy-gDgNJGsMsnQk0M-DjOJ14FTNo2-UV1DbsoIOkb6d_SCB04O7SodUjGXGvQmi1ncM8j2ovrGBpeip77yAQ78ITGzPk7Gg6HMYHGA-RKktPfrv34rWFqGgUjAFA8eRETp35cK7m5mOFHP_2kZQ3MwIYEXX10pktvO_GE2AV7mjYp_IJzTh3ZeqGkouf-OM-iffXmFjHcFlpSWgEOer9AvryFEAPEAtR2ZRvQ_bDOwPxUa7fAwbgtwRSjbYZw60jmT5-X7SMHJ7uvvNuym6DnY1Ny24GCQwfGPtzsSThZWNYdnuhEpG9GepS9mEbPyNxi41_i_QbVBmLSmzUNH7iFM8OHc5GzI7c0fOPc_B8RNBBa5pZ5CAj_-DG-SoBcQ7x7cjIQ04zjLUoYIiEAx-9uPahTsirkkNm9fXszDM6G6cbKsCE7MVQOoLvOEkADoZ6NhBbS_S7Tdq7_QP534LkaaX5GvZr1F6Aoyhmlxr_r5S0szh12OO1J-d_HtYDzQA1tbX4rjtg4CL2Bm5KLnXQhuEVMRzTjcaONznaEaXwXWGIK7bOPKrZfNJ0U-C8_U4oqW8d8XfFksJnmTOMpev1i5Y7TNl3AcoKaLfpqEVA_hS7mjDwKto2Sg-i7uRMollktb0HbRAW3A0EiFlSFXvpxThi46iQNij_rrH2UTYsGP8qbPl-OeN_sDjAaPWmZ_GFVNY5icf5ln0AYnlVPPVi9mqp5i6msFmrPv-dduMJjnV5Z1ABtHw52WN6pL1Kvxt5zouPZl-QDd9K5PP5h832QPHDUIp2I5RUUExBnaGBME81gEWf2L7bRwtizcm_jMckvyHv3ln2CPR4DQ1xK2WIyhBkhHL1tu91k6bK-MnBBVORwr-BYq_G7R7EK2zH0Khx3vY6UJnrTpbJQEIdARbyJDWB5DvaXQqxbmdrU-c4X7p8uQ3DQ8X9FSSu8xrG8VFeRx9RdMf9JYvPf9E-fjO-MhUm35eIrmRIS9CQ2tEA5xoNj8aK3z2qlQreGKFcxntUfojlUll_sty6ETFH8rnrRz0T4cmwUAZh1sjuwe7r8E_dG4OKXNDyejYINSH2szG8mNWsc0H7lOr7faD29HFR__zjXYT5zkEgi2NY-YCNYTauN1S4ZzMb-5suUiRfYwLogjdPvC2gVh_j8OWt0h6C0bEIXkrpsFBudgsG04NlvuVJq0Wa-msxQo4ydWdsPmlETqXq8AsQr8T1ppHW5zeN708fy-G54kRW_faFqAXM4mFUaveMONLCnH9F2FBmVcr80UWVsi8QAy93Owi_tP3mO4oDJkiv21geJVJeBlvwpJ0hGK99uKh-Y-yBksikVJ9ATvFAwbyJn0ww361YnRgO2jb45NES_W8evEjnpBlJ16hzbGVo07HLCpt_8N5qSUJhGuJDBzQPpKJ-alkMZCkcawOfKscg5_8rInJn77YhQvdEcdrpJur-dn2gpfPJpottqzQZW2YMsZRkEIpQ1fWJv7xJZBL_XrlWx7EZikrpWjp32--DhyXjnC6T6z3B6evFjs7sdn-3px-71RX1kc2eoEnbRlUqUbxDPCoGvg7hwsxZnLGXLq7C_PdvUAw4jRVQCrSGyQOrFGKDDZzAAlc0f4Qmh5pcDiRqGEkSrd_ia8fiskK1pozid2vUW4Z6yTD8gQLhvLDd_89RqsSg8Fp3J1okUMe5vYOTEmNDhh9G7elYUi5f3HefFBrDB7k2U7d91A8ZbpKgxlasWn2tD72moh5-wjMZTgUuUFvYAgy0f-yUFtQTizUEanr6Hs0r629_RNZOUd2YZvrNAuzyX97bHI-ndYFCPkI9Yxyr74ckmW2nQNio-DDTGmk_4leb886_XVjWMY8o82v5LFmY1GZZkaGp84WCXhy4bdGKLtU0Fbf8HFZ9Fg-kPSYVTgYhBRLWS8SpJ66r8lE56eLKyG4Wsld4GOV0HDH4oH9Zh9ffMjis_qU1Dp4lTff1tNKiMG1Heri8tSue1NuPYGEWIPJQXumihDcDpjw-3887-3iMfeBXahdJpca5K94-x41xxC_XF4IP140-TKdckrfcvlAehbRR6KvCu5BdpRJTIzkESbef0KJdMRkMP-gACUfp30-gQgzBEgIUzdV5ja0_D3OrUVTLILAE1kesiAW6bxTzAlizocS3WijL-B1ZC89Ti36XXo_iDnwFKl18YF9KWbeCmVjFAUpM-nRGLl9gutaLcaKZdfwcm5tLezue-ntTDJcp-5qdHwHFARSv6JuAi6Lj48Zaw-n-rWz7IkeI1Pfo0UDW2gGneesz2fb7yvOP6AO0TTLAUjylCDoQD7c-mpbboRgMXlpF7SAwVKMStaE9ornoOgukF9DCnHdGpnTlevdqi0QT1kzEZPrupI0JVCXrP_o6wtaJybOsaAXynKxj2vd_dDEWpnqbSgBajNJ4hDTKjpRc2EwJ44xJvqOr9mBqCfz0CnOR7vRAMb3NpwXRFq3qoSmYgmfkU59fMZkbVJHuoec903I-M93Wg-mn-yhGB0iLW1rAEUmyt4ptoLesbarsB7GpLcWUSIy-AnN9USGc1GbVEd_cH73sjAMWIFgpQqugzmNvcWyzplMByIt5y3HvjxK9OOD3QmXGefM6-Tyt1d26uhKNr2eI0wlQxbwhd2spZzLHHmZIRY3ecacdbWLKEi5Q17uLjHeIJNVwKGN8uoax-l8PFnIowXiKCLhszlyWerlF4oclaoW-V5M4J7wWRCmvlfY7cZxySOVbmHwUr1V_i7kVG-Jk1nrVAL3EzWp1yy2up5E8TOzGlU1Pf3KGviFXv1CwsNTg1vWvC4RF8MX4QRSrc_rBpklyfQ8fJ16bpPADmVF2FxCGTQcUmdHYoQgefa5G9qZqs99TDET1xlmr9KeiQ7E0QOGZ9XRmxr_eMfGL8yPfnKJD6rVSySgqrHPaHt_QG1C91_n3G4UuuiCOFONTQtbGfdCf2aImWPxFHKSwDbwlEsqCnuYh4o7rk_5fZEoUeSLwYvV6jUq72OKM9Tt34uT9tO9YRmkTm6xJPd37mFfzqMX96jHx-wZv4wUvsmu74ucD5UJ655bPLiD9_g3hQ6mybwhm352FQej47x2pJw03pXnUNSmucSSxp4Xi3VGQn6gXr0MgnYTqnRIhy4Ql9c6KaDe_i7xgcUj7TY4NDal7B11OmGPGkvfqpvOHUWREcKEeSwa83X5infH_eA9IgyazxIcO-MpGJcTNZbMk_aTYJJgZ9lZQ9D20B5OZ6kwpQAqQ_iGAIq3fC1JLYAiVAN8JgdRV4BPJlxtTC7tpb6Wdbb9e9EX1qLzW5jznyEVs1iC-U9RGxlWrJFaL0FRo0gBGiRLMPTMcxmR-Vgm9aUyc1pgTbybdmG6WFXK9NAw84_DmxPyPhbJzNpNiQ3k2gxXiIDarisaIlewDCZUT1vVNVstSEi-DA0tDJQuGTNTqOUu-Q8VwcQKWF90lvuORdble08dGwaN5iv_QtVnBS5cxfBIRJ65nXc7Is6PbofHvbYs8V_fW4B0oqkIp0dq6xR9l4fbReoXQvXVgXjKh1sRPdhJGNmcKEdKZqLKAOd6aRJuUM7nr1kwo-GtYlA230CObA3MZrltGsOJDsdpDLcup2hmR28O3jA_nIsvZ9i_nQomgbdryVwuL1ORHfSESuakvabiG6FekZRz1HZpNyjxZNU-bweZRVr5-0ZsqkB2SE9lk1jIX3dj6NyGPnptl-dPwHL123fRGbpbO4OhrbggEnyOJ-lQSBO6rtEk3POX",
+        "summary": []
+      },
+      {
+        "id": "msg_01e47d0da92c7b98016aa9959b7d6c87d2b820a75df0d672a9",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"partially_readable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"left side\",\"observation\":\"A vertical axis with an arrow is drawn; a single-letter label near the top appears to be \\\"P\\\".\",\"interpretation\":\"The student appears to use price on the vertical axis.\",\"uncertain\":true},{\"region\":\"bottom side\",\"observation\":\"A horizontal axis with an arrow is drawn; a single-letter label near the right end appears to be \\\"Q\\\".\",\"interpretation\":\"The student appears to use quantity on the horizontal axis.\",\"uncertain\":true},{\"region\":\"centre\",\"observation\":\"One downward-sloping line runs from upper left toward lower right.\",\"interpretation\":\"This is consistent with a demand curve.\",\"uncertain\":false},{\"region\":\"centre-left to upper-middle\",\"observation\":\"One upward-sloping line is drawn to the left of another upward-sloping line.\",\"interpretation\":\"This is consistent with two supply curves, with one supply position shifted left relative to the other.\",\"uncertain\":false},{\"region\":\"upper-middle\",\"observation\":\"The left upward-sloping line and the downward-sloping line intersect at a marked point.\",\"interpretation\":\"This indicates one equilibrium, at a higher price and lower quantity than the other marked intersection.\",\"uncertain\":false},{\"region\":\"centre-right\",\"observation\":\"The right upward-sloping line and the downward-sloping line intersect at a second marked point.\",\"interpretation\":\"This indicates the other equilibrium.\",\"uncertain\":false},{\"region\":\"middle-left and lower-centre\",\"observation\":\"From the upper intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P2 and Q2, though blurred.\",\"interpretation\":\"The student is projecting the upper intersection to price and quantity values.\",\"uncertain\":true},{\"region\":\"centre-left and lower-middle\",\"observation\":\"From the lower/right intersection, a horizontal dashed guide extends to the vertical axis and a vertical dashed guide extends to the horizontal axis; nearby labels appear to be P1 and Q1, though blurred.\",\"interpretation\":\"The student is projecting the lower/right intersection to price and quantity values.\",\"uncertain\":true},{\"region\":\"upper-middle near the left supply curve\",\"observation\":\"A label beside the left upward-sloping curve looks like a supply label, but the exact subscript is hard to read.\",\"interpretation\":\"The left curve is intended to be one of the two supply curves.\",\"uncertain\":true},{\"region\":\"upper-right near the right supply curve\",\"observation\":\"A label beside the right upward-sloping curve also looks like a supply label, but the exact subscript is hard to read.\",\"interpretation\":\"The right curve is intended to be the other supply curve.\",\"uncertain\":true},{\"region\":\"lower-right end of the downward-sloping line\",\"observation\":\"A label at the end of the downward-sloping line appears to be \\\"D\\\".\",\"interpretation\":\"The demand curve is likely identified explicitly.\",\"uncertain\":true},{\"region\":\"overall diagram\",\"observation\":\"The photographed image is noticeably blurred, so several labels/subscripts are not fully legible even though the curve geometry and the two intersections are visible.\",\"interpretation\":\"The diagram can still be assessed for the main market movement, but some label-reading is uncertain.\",\"uncertain\":false}],\"summary\":\"The student’s diagram region is clear and shows an unchanged downward-sloping demand curve intersecting two upward-sloping supply curves, with the leftward supply position giving a higher projected price and lower projected quantity than the rightward one. Exact curve subscripts and some axis/intersection labels are blurred, but the essential equilibrium relationship is readable.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2835,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 1487,
+      "output_tokens_details": {
+        "reasoning_tokens": 713
+      },
+      "total_tokens": 4322
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

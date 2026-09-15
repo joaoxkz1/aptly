@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 10833,
+  "requestId": "req_0e78f02928e14b589f3f2f046278d722",
+  "response": {
+    "id": "resp_0756462228f751fe016aa995f687fc87d2828a42bee5b500a5",
+    "object": "response",
+    "created_at": 1789498870,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789498880,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0756462228f751fe016aa995f755bc87d2b81583ce9f559638",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZYAfIlOpOHJwimwZlA2hiRm10lhb8_gVeeBgOg9P2kAmW1f_J-tjGaRvMSYoTv_GZCHYhDVlEzkHyqwM6pMbNt4Wd4g4MGbNslUm1rKmdqannZ9vbIXvIVyYybD1ggNc_YOH5jpen-8t0ZeEnU3xeJCVe1_UTpAIYaC7gapY9RoZ3GUiYPmky5_4kAm5prhS4ZnG3XI8hS3K_HbYi2zTTmcxNcfU02FIvO7BtTjavF7kf5S_pXXPL71dGDkHDcUJjxBy5aIfVYQjKvsuMJhtxuVzdnomQaYOP4255yd4ns0kv_y-M1TNTJh1IlQy5ataKaM6PqRMRKVCPGBvZchrA1q0AaVoRJk32ohNHu6Z5u5i65mYn7t5627k7MAe3n8_AKFbgxqyva3zVQqM_Dpqz04JYvCg67ae4lCfGbT3tkyKe9smb6Jcez56-cO9HgtYxhm5Lg1WlWp_xw4tlbEwMFTj4hTqrzZt8OPU4VAkuWxOwYpr8ztsoQE9q9qZG97qWtTT6Duj321I8nlgjfXLi_mQFSsS7cMJYD8nmZc3wXd2CH-4NZUCTdbptAxl0XC_ReBfWxlrxNc3IxhCa4uZywLCubxQawvx-kCIOCvAsKc4C-_REjSngAMF1Q7AKW-UPIKo3rcQ2bqOSuio5EI9e1AypHPhZ7nqd2JBjB4qZvgt5ZQbC3wMQLMqy9yZjE4Tn1birsauijZPvXDfjYbMFzfrQWOfWzEQ42RwzJA3lijjxqvA5SeQ_LRpq7kNTZPQ4Zt0d7L-tacZSQBT39fA-0ORfWF_yF3RXJwO9dwlrZYAJyYx7P_84M-fb1DdJIHvHmcORjJa1Jyh8Z81n9Jy-jURXtSD-gSc4lcEu48JHh-aOy9M_e36B8hYWkVkIW7RfrcX7VfMW7ciHxC4VH-Yc0Ifu9nZYzME5TtqmV1I14MFOIHrd-k4eXDoWGQFFzvwxk9Xv2d8yy2IH9Bbq09xAizqqCAIQqh9PvuW61Ud1TQnLDC9mVSSmwVcAuzmFDvsEVIrR1vVGV0r9psoMi74--TCMA2FeYeXXKOTe-6VCwAnKQ3MM1SckuW8wAdjlbRidc14IuscuaGGsp1dHH9lI8LGKvfCy-W5IsxSjyBxwDwfnNYoeB0RBQKTJj6rOk5Pu78J1aJ7nPixQDlOGhX4IenYkxiAvMtmErPQvXyk0FbFb82E-vPv_fazs9acXKNLvvs50p6Z9SI-qv1mfcPUkuXb_wC11NS0Xbp4Tbiz1e1OLTg2w12Cwaosc9v5RNs7tsDXs2pIDEIZSCkrIAd1_y1WYgg--OzBcRyT-SepLOyUyEU4UOqmJku5HTnT2gN1AXu5XQAljEOiNb_WQ7-9VpREq8UFGSvkjYrpLW1gJyEfKXDSWcXtB3iZfTXtcIKL71Ljmh-JsbZ9SRvI1k6vSYSNk4CLbxVFMJ9tGVAn0ZeOwFBZCdG5GM_x4iNMmXC7Kaud-EMvYqJLYrFAPdYMEehfPhIZrFcaK_K4yIPEPUApi8iV2dwO9m8eKps1ngZF4sg_nFsagF2MIGCggi-JytNoT1M2YP-0MILRsyapX4JsDAPPqDPnXiLjWFP1HiFM121L7rX6J2cvBoSr1mQlrwaeDELzBVmNtsem5iREQGarnJqjgKbQvZrLE1pE7Tb58eZa4hanHSSuvmrCNLfX4XlWcjl41UfM-Pn2IavSerhtRonW0qyawC9YPtD3DXEb4GrQk1oO7LB-gH_DOxKPSdCl7pGqURwBDFve2N1EqRwMnXgsZZ2j9a4nDtntt0W0vRVbfuFSqgiXSn280QalpIrznRgE6W0WS95P6QOcr9htjjvE3QHbSAlF9sP4jWqNtUsSsHLOHKty-OUPR81MwtMMvSjNBJ_4H7EA42WgWL9cJsyv-Tqq69tAuD-Sm_WfDvaWtj8DmOwSNRjcQKuw4BcfFnKWa1ASkkXeqe-pO5nX4mJKJNWG4_0GoflddHEBirlzPXifXmKeod4gKi0eo-ZG7H1_XVsr2YNMHIBLcX6y3fJ8A_0AXozJrFEQ5MLuvX_oZqZVTiAracPDrNBMBlw6VHDqqD9l9uBEW-mZNe-rVKR9m_s-0jc4qAbeHTsM4J2YWDc7-Pg9J-En8KB9ExD-K6O8IpvdeMIefyDXozF8sdBR0tL99naufwy75CA8Qo0_jCSF17thhuKiNKeEUckSb8VXXSKPKJP5MYCSAqT7WGAcuWANrNeScK_oGJrKDpwq_WWjbKw2kh9NYRNpCnHQMgdOfTJoagoFcpJV8447p4HWFGgvH2hdRo5KqpHLkvBdwGloXTwSuA0TiFcyCwLMJ1ByxIrIok1pMhyRWkTbdbKjlI5dDS8UlVMUTGneqzw-41Fdt90Wki4hD3c_-H78JPlYAhoCSC4jbsLifFmRztPPzbPYhA_xKlu-D4-477lOQgCZqgE5ILUT1v7IM7wTM_MuKXhIpjjkUn91Pt7lTophEsA5h5U87WCcP0acZqYG1sv3hd2b-aVuDV9Xqd60tI_biONvwd_QfzI-55nZXSnfnyyfYe9ZYz5CI_AIcedDRxPJoHowRjSOh7R5HKWuW0TWaLJYwXHbU_MD0JmkgSeewf_6dBf6SOCJERMR5gTkmg9DRjdOECslHlsksFYE3Kf0x5InU5YaRYbIj4VaPJFjr3ZQmAbesYsNnN_3I3mjU62YhlOQjasFcHiJDkP1AMRV0SMU_yNcdoeXV4AxcpR6qPsaYkTpTGV5QDHFmaDTjkilqkOLZlTal73MyGYh8-scaQoCFUHO9QE-u8SSGrvUwR_t68gsm6Njdr5zYMtD9A1nzdxRZRQc7Vt_z6IqbtM2KGrDTARWWQeTW76kGp6MXb55EShJ92HssNN__7vDJo2PVZM4t-qjovIzxHlBoo3q6v8LJKIxMxhe74J5wfm9CegO6cO5nmo0XaNZS1zsk6H-EJ0FLychid0wuRNeP3K-57CmiYkInKRH-a6KAWnN0FzctSndrsU_wAtsxeCsjTrYvnXakuTaxnDAOwgYL551OF-YttRFD9d3dTkXfmT_ph-m2Uz91sQh5ImKVV6zRQIq5a9rvlSLGOSh4KrGpzQ4ITZfCfAHVrMLeIw5x04vIJ6ij4pZnPXBLH-OA8q67s3SC7HZxT-a0_Qg5uxHYmMqfatj0n_SZNyhvCDV0pyBafwMf9VSbrPAf_OBakszfpiAke3qdyQyad4PMdeC841TmyA-uoWzXozXTmXZ9x-IG0EWIB5_RY0NTI3TFJ11ZeZY1IZsXQJMKzWN5DnZzfh_epgTstm00GxfAc0gvgr-nW4G0Zrllhwv35OL9BMIK3jX7oAnvVhEXx7ywximMV4usQlnMUC-2W4njs3PL4agS-PVUs7zXLku_AwJJuxV6djA6KV4k0BIJnNDzafymNh9ZN6HXzw2EmNyw2eXGnwD1IlIqHM6eAuWGinW8EgoWM3ZY5AWtQKV10rbOVzb_lkNiZLthHggvArDNnyr9WPTaC3-lT7m_BVASFfhxOM0_d8fetAmbhPRHfN0dLUrQ8lReiqRKi4551UKSbjyKfaHaLG2wi6f39ll16U-gi3yY4FF_8MhLa29AgE66_1manxrWnwVEhZxP9zXghfa6ZmGw6CZMLvMS14foPSHX-rJQCVVlaE0xGrWC5OZzFjng==",
+        "summary": []
+      },
+      {
+        "id": "msg_0756462228f751fe016aa995fc050087d2b9fbc90c0bd0c287",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"whole diagram\",\"observation\":\"Vertical axis is labeled “Average price level” and horizontal axis is labeled “Real GDP”.\",\"interpretation\":\"The student is using an AD–AS macroeconomic diagram with price level against output.\",\"uncertain\":false},{\"region\":\"centre to lower right\",\"observation\":\"One downward-sloping curve is labeled “AD”.\",\"interpretation\":\"Aggregate demand is shown and is held unchanged between the two equilibria.\",\"uncertain\":false},{\"region\":\"centre and upper right\",\"observation\":\"Two upward-sloping curves are labeled “SRAS1” and “SRAS2”. SRAS2 is drawn to the left/above SRAS1, and a horizontal arrow points left from the SRAS1 side toward SRAS2.\",\"interpretation\":\"This depicts a leftward shift of short-run aggregate supply, i.e. a negative supply shock.\",\"uncertain\":false},{\"region\":\"centre right\",\"observation\":\"E1 is marked where AD intersects SRAS1.\",\"interpretation\":\"E1 is the initial equilibrium.\",\"uncertain\":false},{\"region\":\"centre left\",\"observation\":\"E2 is marked where AD intersects SRAS2.\",\"interpretation\":\"E2 is the new equilibrium after the supply shift.\",\"uncertain\":false},{\"region\":\"left-centre and lower centre\",\"observation\":\"Dashed guides from E1 and E2 mark PL1 and PL2 on the vertical axis and Y1 and Y2 on the horizontal axis.\",\"interpretation\":\"The diagram identifies the before/after price level and real output positions.\",\"uncertain\":false},{\"region\":\"comparison of E1 and E2\",\"observation\":\"E2 is above and to the left of E1; PL2 is above PL1 and Y2 is left of Y1.\",\"interpretation\":\"The diagram shows a higher average price level and lower real GDP after the shock.\",\"uncertain\":false}],\"summary\":\"The diagram is clear and usable. It shows a standard AD–AS setup with an unchanged AD curve and a leftward shift of SRAS from SRAS1 to SRAS2, moving equilibrium from E1 to E2. The visible outcome is higher price level (PL1 to PL2) and lower real GDP (Y1 to Y2), which is consistent with a negative aggregate supply shock.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2158,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 881,
+      "output_tokens_details": {
+        "reasoning_tokens": 376
+      },
+      "total_tokens": 3039
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

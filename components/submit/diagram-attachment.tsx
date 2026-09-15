@@ -28,7 +28,7 @@ const FILE_ERROR_COPY: Record<ScanFileError, string> = {
 const HELPER_COPY =
   "Attach one clear, close-up photo if your response includes a diagram or graph.";
 
-type DiagramAttachStatus = "idle" | "preparing" | "attached" | "error";
+export type DiagramAttachStatus = "idle" | "preparing" | "attached" | "error";
 
 /**
  * The ONE optional diagram attachment control for the Submit flow (Diagram
@@ -45,15 +45,28 @@ type DiagramAttachStatus = "idle" | "preparing" | "attached" | "error";
 export function DiagramAttachment({
   disabled,
   onAttachedChange,
+  onStatusChange,
+  assessed = false,
+  initialImage = null,
 }: {
   disabled: boolean;
   /** The processed photo to review at grade time, or null when removed. */
   onAttachedChange: (image: Blob | null) => void;
+  onStatusChange?: (status: DiagramAttachStatus) => void;
+  assessed?: boolean;
+  initialImage?: Blob | null;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [attachment, setAttachment] = useState<{ previewUrl: string; blob: Blob } | null>(null);
-  const [status, setStatus] = useState<DiagramAttachStatus>("idle");
+  const [attachment, setAttachment] = useState<{ previewUrl: string; blob: Blob } | null>(() => initialImage ? { previewUrl: URL.createObjectURL(initialImage), blob: initialImage } : null);
+  const [status, setStatus] = useState<DiagramAttachStatus>(initialImage ? "attached" : "idle");
   const [message, setMessage] = useState<string | null>(null);
+  const selection = useRef(0);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; selection.current += 1; };
+  }, []);
+  function updateStatus(next: DiagramAttachStatus) { setStatus(next); onStatusChange?.(next); }
 
   // The preview object URL is local temporary UI state only — revoked when
   // the photo is removed/replaced or the control unmounts.
@@ -67,14 +80,15 @@ export function DiagramAttachment({
   const preparing = status === "preparing";
 
   async function handleSelected(file: File) {
+    const request = ++selection.current;
     const fileError = validateScanFile(file);
     if (fileError !== null) {
-      setStatus(attachment !== null ? "attached" : "error");
+      updateStatus(attachment !== null ? "attached" : "error");
       setMessage(FILE_ERROR_COPY[fileError]);
       return;
     }
 
-    setStatus("preparing");
+    updateStatus("preparing");
     setMessage(null);
     let blob: Blob;
     try {
@@ -82,7 +96,8 @@ export function DiagramAttachment({
       // bitstream carries none of the original EXIF/GPS metadata.
       blob = await processScanImage(file);
     } catch (error) {
-      setStatus(attachment !== null ? "attached" : "error");
+      if (!mounted.current || request !== selection.current) return;
+      updateStatus(attachment !== null ? "attached" : "error");
       setMessage(
         error instanceof ProcessedImageTooLargeError
           ? FILE_ERROR_COPY.processed_too_large
@@ -90,15 +105,17 @@ export function DiagramAttachment({
       );
       return;
     }
+    if (!mounted.current || request !== selection.current) return;
     setAttachment({ previewUrl: URL.createObjectURL(blob), blob });
-    setStatus("attached");
+    updateStatus("attached");
     // Replacing counts as a new photo: the parent drops any memoised review.
     onAttachedChange(blob);
   }
 
   function handleRemove() {
+    selection.current += 1;
     setAttachment(null);
-    setStatus("idle");
+    updateStatus("idle");
     setMessage(null);
     onAttachedChange(null);
   }
@@ -146,7 +163,7 @@ export function DiagramAttachment({
             <p className="font-medium text-foreground">Diagram attached</p>
             {/* Conditional privacy + limitation disclosure: rendered only while
                 this attachment branch exists, so removing the photo hides it. */}
-            <p>{diagramPrivacyDisclosure(attachment !== null)}</p>
+            <p>{assessed ? "When you grade, this photo is sent to OpenAI as assessment evidence. Aptly saves its hash and observations, not the image. Use a close-up of your own work without teacher marks or neighboring answers." : diagramPrivacyDisclosure(attachment !== null)}</p>
           </div>
           <Button
             type="button"
@@ -181,6 +198,7 @@ export function DiagramAttachment({
           {message}
         </p>
       )}
+      {status === "error" && attachment === null && <Button type="button" size="sm" variant="ghost" onClick={handleRemove}>Remove failed attachment</Button>}
     </div>
   );
 }

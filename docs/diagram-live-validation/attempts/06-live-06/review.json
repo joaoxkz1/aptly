@@ -1,0 +1,15 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. The observer accurately identifies a rightward demand shift with unchanged supply and higher price/quantity; the grader uses that evidence to reject diagram credit for the drought stimulus while retaining the independently correct supply-contraction explanation.",
+  "origin": null,
+  "findings": [
+    "Independently inspected wheat-demand-increase.png. Its SHA-256 matches resolved-task.json and the saved attachment hash. It visibly contains D1/D2, one unchanged S and a new equilibrium above and to the right of the initial equilibrium.",
+    "The image is readable and internally coherent economics, but it contradicts this task's unchanged-demand drought stimulus. Diagram 0/2 is consistent with the private criterion; ordinary visual polish and a correct price direction do not establish the required supply contraction or lower-quantity relationship.",
+    "The complete prose correctly explains drought, reduced availability, a shortage at the old price and adjustment to higher price/lower quantity. The grader preserves explanation 2/2 and does not turn the unrelated wrong diagram into a second written deduction.",
+    "The raw grader identifies incompatibleMechanisms=true with exact image-versus-prose evidence and one diagram root error marked carriedForward=false. Saved overall 2/4 equals raw 0+2; no further ceiling deduction is applied.",
+    "This case does not exercise a binding mechanism-consistency ceiling: the diagram is not a separately valid answer to the supplied stimulus, and the raw total is already 2. It demonstrates grounded mismatch recognition and non-duplication of penalties only.",
+    "The empty feedback mistakes array omits a short diagram issue tag, but the explicit diagram-zero diagnostic, examiner comment and improvements accurately identify the wrong curve and quantity direction. No observed scoring consequence follows from that omission.",
+    "The server correctly saves custom practice metadata despite raw Paper 2 classification. Persistence reports saved=true/publicMatches=true. This is an independent synthetic engineering review, not teacher calibration."
+  ],
+  "judgement": "expected"
+}

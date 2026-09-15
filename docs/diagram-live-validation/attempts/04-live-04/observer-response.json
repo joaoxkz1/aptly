@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 8853,
+  "requestId": "req_174c774f77c0464da20f559f30825cb5",
+  "response": {
+    "id": "resp_02a6c1bdb45ed6ce016aa99268e06487d28384e41b54c71aef",
+    "object": "response",
+    "created_at": 1789497960,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789497969,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_02a6c1bdb45ed6ce016aa99269633487d28a188f7bc680c13e",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZJxCo14-9cswBkz---2DW5FuM0ytz4OIB0DoRcO7R1O4Dg9Tt6xFYWuLz1364RJtEYq2S3fzakKVzsN4fJz1NyQdlGYzc7eTC5SmRKnZJnTvC3pY8Pcy_Y2wQWjq5HxwIKN-bpfzMhGkW8jr7sCCCgY06wTlsL60Qvqm3a8G4oSM0udOHFqIV1V9P3M77cK8COakglLcC49WmUYyfyLExYtf36KQeKsFicF4ariUxqy3pfzWpeSlnfp1_ax6mltLlU_hXKEGE6zKxD3YtY22NjVey-_CXSGNO2OnjulRZzQ3DvAQoC4SA_TVko3apeKW1CCm9lVtNzr7kHKcZMdwHws0jSLT0ZBEkqdaUptGx6mZIzlhSD6QFI3yLpMp3N4qqClyKc0bEegmUrmAFnkgX61e2kaBp9GuUgvPy3iZSUWDSMDuHv65WQY3vFOhTmLuLWvANAsAs6S0Por9ITxdCa9jxGw6ZVULnBpFS2JbR5YofVqoj87l7ZUKmj94I7viFWVexkCVdVmwsq0dwrOjizCkaMqcEUbiaCrWkBPVER8MHLcbu58l6YFLsJ3bRl1HGOfXHs7Av2gyO7bZZYRc8yrCi5dhnzqbu-RiWsjJygv_jHZ1IPefp31DbnSu6PQKdbcxjVDCIWrjVPjvfHynHRk2dPmuGVn9YWMBoLvcddj1PCRsv-bdbJazbOjRo2KDXcdwTiwvk_kbumGvErB53GuiCbFb1oJfgM5gtvcBttLiYn7gvLVykfvnaQpMOGoPzbhFWF3_X5iYtFiGERXY2KAafVURK9qmzB65aDSvFGs_OrxTfg-G8TGaa9bwv5NwWeq_3X3pllS1iAYWNwwAKaEmRzDCAq_71lqrO5i-q1MfvmgOUf6u8o6fTVMgxCEB13dB0E-qeEDqaFmuKnp_sB1rYAsmGvBiWJtlsD114zI9sm2O5m_YyAKE3wK1PfE4gKgM8TnLefB5UuwKHN2WgTWNypbl3g9ytwZm69SItfN7Oq3IqJKKMMQd72w_tyPyksWnTNGF8KDRiAgVhF4A6W9DeYczCDLesG07Scs2fk2bIp2EGM9M3jcfwmZb7PEY-M9Gm9_h-LLOjBQ5DRYMCnRU9VbWTTUf4mehta6LYhabk3iKf4i1MH3IKvLzHvV9K5AEPuSG22XMBVOlAoT6_xA7OaTt6DapmkK-8ZSiMwm3axMUeGGm6Q43wxHjIBleXjKzVbZDMW9wq2TXHH5vKpjn6kB580Ni5SrkJvVG6GHDA_ppA3FD0K1m8I-fP5VXx-Ptzja8Hhbc_HjEhpHWq6LjCinLRpzpYKZvKv8y_-mGHAw9iod_dWKZTTI6cMTCTFrpauGnrXS0qCmExjMyiTZAnaU5kPRpgn63TC4hA3uooqmIdS52TqH8toAYwF1UnzSniYaW622IWy3xvVrrwh7ldSoPVV2kePJPZK4fIcyrEI63hhAIxCCovUFrOztfvLNf-WmG1-mdkWl2nRMzHr8HtHcKMHjbSVgisMqXT8zTnxPdhG786aodYdarmaUqNbjLKPPv4XLQEJn2ZAnMFSI52aXe2PD-Wo9ZSDb__FbLTprCRBWIW_8QuVeFe-XczIDdSmmeVu1K-iEgBBjrAg5HSf0bPN4z7xuRm3fp-ZsXtrnj4UJwAge5cQLbj5vs-U3oVkajTziA1W3C5Wcpk9ZKJPeuAPXv1hTyF0GqbOPPdYEk5V_4en_xtlnIcZx9CGuTDFElLYU-fc7FbXmiFwyxPzc8Nke50ZrONASZSOtqCvFOsKSVmH7t-MYrJqHMXACGUj4PLfz8KcDOi-opg74Ngdgc0nP-E8WJcz4JSw1B1CktW-2sd1oNEUs103g4JQXMcUb73D6g5ZEcVTHUozrSjTnEyv3V74hfQ6BYC98RkmY2Idj8KyRCtwBd-oOfeNYb079-6yYD0IszeaHCWMlXqNUputSWkRZZ0KGHZH5HSOuvJZO8pSR7MP5YmflRs6LmtHGdIlab1HbrStCVxxLdtwoHVoaPrBXrUkplz9goMZW2Yn_FJjmKiI5Cnl5k6vfX2pd2W6noBKukQJhk2105Og-lhpblTpTHsw79VRboLyJdLkIVOUp4KFwJA9wB0IqMWSyyIwXfPXSSWtBGYZ6yQCCqSuWkNFohsgCHIABPf1y2HPwS3ly_Yr5KOYQbi6FxO4GDMB48olnw29kQf2J0rLZ5s--gN5GrtQeHVZAnuJZUavlcJaUz8sI8am6dXfCibdR9UhcLppeJ7H6K9tIN7PbXtqZWFIlBggEUqXhz3mYP9q-AqKIz-UsA74Ltd8cPm94up4-CTzT3eF_zYo6VJbP4boDRtFp-QOOEJMe1ItV5eiFI4HBMeYtmdefxpKFekrkfFqNQEfNVZlFsiZfpSB8eEdobm3UPBZeh1vA6WUpzafPMn-3zqlQoNEAHtT5A4hyfus-Y4UkjkEZki_p7DDZ5SB2MneM1a2iWZwZDiS2ZtslpPhkRAAA2kq3EaAf9Q73vm6jhcXu7RZMhfD32h8Nurlr0Dy2hgMW0ioE_XTv6U4i_Lftn4-8bacqQDmeTonMAO3oTHxQRSKND7HeSNrDxKaRljvumjtN1l_Ir2xRUDDtaJDnCAzGUKd1pRkS9aMtJP-ecGS5B566W-1-nFwmOudDUM9_ohZHA7gT9-AO8OMYf09c2xVKXiEvHEFdscBaupSRnUSkKTwS_fvdr_vrYRlD98_Vz-ukJjp1-zlluUkpL3j2b-fIw_tPOG9EBGUPT8blFWXbrnbYsiM6zWvE-XcHvbW8JQQq97JlHZFovdJh19vn9CKOpBEWPYXT59Y4nFltAAdu4thDz16Q5NzI5euZStBEffS0FgWkpbSFi4oDdi9hKisJJX-IpqmQVC1--V7GCb-IxlE81fFdDCQ2R9K9r6ehhHq1d_DfqxbvwGP_tJ2EApkD0cP1uCMtUri6z990CViVSQTcycuC-1LbqiswweGcG_lY7f3zig9pN3eTQEtp3TY-7UGqODo58NxyDY5HIeix7UueB6SKU2bxZ95NXX8VOVaX-LiBE5hzXYiRBNITTDdnjecTBL9CzGquK64nRQtfwESMo70_4QeU4gW3TRoJEQaz4OZkfKF6iWn664rl3PrDuWh22KBsoQOvxdUcwMfOYoWDgrU9ZFi_4rtx_PwH2GVSbiHZfYSYR7lDW9e0dwjYPogYb7ZOYoRKciG_rGhvVEH1j5CcZgHfuabJ94EBJ1BvGlZ53ot4qIZ2QAkrwuDOtk8Zmcg-9LTfucyVy7u1eHpe_wAs1P3rsulQzAo213gaZWSeQAwFzPNQNcDja-fIaxz-qY0X8Af9Snmd90rJ3fShaDWlBJcgaovqBVD1FseXG64SBS9GZF4E6b-CiWqfIxD6n6mVX_RpxutxDyS_qoJvXUhZXi9khg45BbmouUAOOafGzHMUKdM6Pz53twRi8Qpm9ZfyX07FBIaYN-Kgn6gbp-tl72TJk--Z9gNUuGBXpY5qv0CWZpJIU5Hil01xX-nFf48lY1UL3gglvL_GVF6Dn70xBqDHjK4mIs1jmyM_3pQrO7E5sPqBMzpbQTfuHcjXupgEGRCqyusuvoEczarM3qzE_Ebez4KRfT93M5OZIQ233Oo=",
+        "summary": []
+      },
+      {
+        "id": "msg_02a6c1bdb45ed6ce016aa9926cffcc87d29666918863a73936",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"centre\",\"observation\":\"One downward-sloping curve is labelled \\\"D\\\" and two upward-sloping curves are labelled \\\"S1\\\" and \\\"S2\\\".\",\"interpretation\":\"Demand is shown separately from two supply positions.\",\"uncertain\":false},{\"region\":\"centre-right to upper-centre\",\"observation\":\"\\\"S2\\\" is drawn to the left/above \\\"S1\\\" across the diagram, and a horizontal arrow points left from the S1 side toward S2.\",\"interpretation\":\"This depicts a leftward/upward shift of supply, consistent with a contraction in supply.\",\"uncertain\":false},{\"region\":\"centre-right\",\"observation\":\"Point \\\"E1\\\" is placed at the intersection of D and S1.\",\"interpretation\":\"E1 is shown as the initial equilibrium.\",\"uncertain\":false},{\"region\":\"centre-left\",\"observation\":\"Point \\\"E2\\\" is placed at the intersection of D and S2.\",\"interpretation\":\"E2 is shown as the new equilibrium after the supply shift.\",\"uncertain\":false},{\"region\":\"centre to lower-centre\",\"observation\":\"Dashed vertical guide lines from E2 and E1 reach the horizontal axis, with the E2 guide to the left of the E1 guide.\",\"interpretation\":\"The diagram indicates a lower equilibrium quantity at E2 than at E1.\",\"uncertain\":false},{\"region\":\"left-centre to centre\",\"observation\":\"Dashed horizontal guide lines from E2 and E1 reach the vertical axis, with the E2 guide above the E1 guide.\",\"interpretation\":\"The diagram indicates a higher equilibrium price at E2 than at E1.\",\"uncertain\":false},{\"region\":\"left and bottom axes\",\"observation\":\"Both axes are drawn with arrowheads, but there are no visible text labels naming the vertical axis as price or the horizontal axis as quantity, and wheat is not named on the axes.\",\"interpretation\":\"The market variables are not explicitly labelled on the axes, which is a labeling deficiency even though the curve labels are present.\",\"uncertain\":false}],\"summary\":\"Readable demand-supply diagram showing unchanged demand and a leftward shift from S1 to S2, with equilibria E1 and E2 indicating higher price and lower quantity. Main visible defect: the axes are not explicitly labelled as price and quantity of wheat.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2288,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 870,
+      "output_tokens_details": {
+        "reasoning_tokens": 362
+      },
+      "total_tokens": 3158
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

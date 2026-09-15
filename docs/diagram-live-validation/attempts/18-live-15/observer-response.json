@@ -1,0 +1,168 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 11563,
+  "requestId": "req_65727df8e7b44ce5bc1e4c251434897c",
+  "response": {
+    "id": "resp_0449da66136a3282016aa997bcd52c87d2b39d8f1df487362e",
+    "object": "response",
+    "created_at": 1789499324,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789499335,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0449da66136a3282016aa997bd68dc87d2b3b22ac17fdc2313",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZfH1EGA56SpHbcRdDabBkc4_Hwd2AxXcZGCC2fp23NmrxQWHTVCONeMZ44GTewHbbDi-viCfmM0JpfgI-AL6HgRY4Gee6Z_8lb4RzmA7cCX6IfaLPM5DINSWC8FfAB4W2077YywWaCkZL3LlGarlQeQM7lBz0J72ElYsf5ePRxdpiNzmx98fewcF2AL1CbS2DlGaV2C_FRhfxehb0rN9-rQGr83SPZ8EniMTbNZ5Vu95nGuR9oxXpFrxYq3Uxo-BpcwBb1g7zeVpmtdygvqbYas5U-pomvPhkDrQXJiHB85zEfCD3aIecrihKzicfkWPoCSpRYdzy4GZCfXv9z0txnA4pqyQsJ8tSQY-YJEzFd-IZZiaKxQCJP9XFJi9-FU4ASnUrD7iqP8csVxmBR76SCoY2I-hor4rZxTTE7jNBUiZ8TD5oC0OoChwgNnenGh8smwSwZNbKoE_wjyoGjSkKieOKX8J0nsdXCJnjRjwn8VxgQ7sVeiLKetfHQM7_zt1hTieXf955la2R2jh6vONrkdJ-YVBPeCW1oA-T-jdllW7zTuTPoopvQ4_Fvd0L9qoRW_QVdcmNXgRaP5GuoC2sUfBnF8ZTPg3NbZ7HaZQM2crEaFxnwoWHjD7ls9RMLMBcXUk_Aa6FbToHrBuiCJjEoK4KNg7mZCEFEeU4yxUNukQ-6dZS7H8mEqtg8uYYBsZtCnu-0bqcXZj17zJWrbisNKL5SI62ZYAtMHrjkqrdC8ge4pnf20li-M32sa_mqps8F4R98svISRT3rY-RoL7Szp11x6i4GqqAbxcu5l9fvn7lUD1Bk6SLU9kyRIU0pchucXnM2t1sp9ibgJIDmKzeV3rkeNcCQD1HKwDVXBB4UBLOv7Y77vbb0qrwkH0cZwDKNdoLfXBYj2RCgkEcq6WBWTFFq_inmkz0fYPriydz39ObXt6yMyY-9XDkxSou3atNTt5swShe1hz_ynSha7PF9Ft_V3BvkYcxecNZ5WGxfsP4zMcXDR4f_wpHxgPvGFn9XANsKM5yhDs9S-c7to7E1L5qLg5JrS4yLgoTDNQmCvV4wjQFSuAPeUWqlQHC2DmqMZ0cd2KrfPQ3mSBY_h6P7Tx9mPhgbCLGLlRllAkoVo23Ls2dPzVZqn14Vn_dPzxL7GRTuXkl1Bh0ABi-P6XzCBurUuchxVKkBJvSnfLcDxp8_O1CTA7s00tnXkt1ksm_y89ArC3HhqWnlEdfc9vs7JaHX6ByceKNNQRd5zwv_2GgTQ9cC3RvlM2Ox4Pi9maezoADTTXD-cOSFqtryOUUIlJpkOstPPGW7eZWuKnET-rBObX0FRVwTrqWA1zYMK2CVhX6-lTsHk1IYbiVypvyRDcawGJBbNsG9ZfGNVOerLzEQeyKIyR_p39OGQ-hrNWDuEfD6iJg-U7rTIKr-j5Rtqhdh5zfcHE3YWzci5BvSNNiMXnJRwVQ9w0IPubgfX4wF0DadgFfLdNbte6V-bYdMoJmOc2L2RyhDQKwaH0bgCUOyGawPuOkh1M5TMUZ3cEXp0RSSvBgT1bqW3ieB_lAJ8pgwvA7I6qRg2bb-0tOPD1AhrYkJHdo5um5KemnmK2LI7LtahFRuZ6sKlaNeW8fQyk5Lar84SbPix7sUqXAq84f__1UELoQYKfEJ_2MDSvrYpp9SPt94LKybejpKdmZJZu9Usz2ucxmvDflgOr1rIqxt2u8sAk4qL2D6mzT3Ez6aCzDUGjJoxGhGdbjAXEhK6YDATZlTyZe2ZUeWFbqGonFWtnP2qxd627S4fIKNoOg1tofwWVCAo-Vk47QdopoFxtu1_xGjGih_j9gXaUWeF7kutbKUBLNR9wbbqPGjcXdNqdRQ2Otlwjt_N4ejpjkSCwMDEVyiXK-MB497dh00LfYJQ9oCkMPbdFOh4mYiJ_3WAz5UJuqVA9C4MH77zWu6ub9eyYvKvwiwrlh4YSx3OnVt42kgYeERDggdlXBgRZ0GAyJORbfEY0IbQY4J2xWKMC8xwVDfxIwgua5YARtUnO50aT84zuXDd2MnK4cHEKhnNlgTts_MgaodKBN7Hv7CTG1cIBq-3Bq1HlTQtlBYr5-36N_889mf72WXNesMZdBP44Iu0D1XoVVhSzf3avxLxjmP2IFMhilVxIy0W07mFluKLaGeGlmH6GrIrdbFM5sTPjCyzIcaWYPyNpScN8FNN_xpdfuPWALC0grF7JSVp357ZzFQV4AESLYRWCpxwzO-apC8PQbFioq9AmbvyZpc3CdqNHGpehVKIMqW03C1utohSq_akKTI_lAfVeCg3eOvxhyaT_ITxb8KLdGHW6-839aBZ00rUMsUhieJHBWhvbpoSWxM2qLbt8wsLNDtgNQnR8okp0s8cnS1FMUH4UxfbvoLFXsWLk9kprutIb8kD1Qa1nUaJ9gYqEXmZSLByWyKZXnxL3u2TlpqQffBk8v-1GweQc4y3z41KOL9LmXP0CpW5Q0HvKFRuV2TgWifhhmXKXsiQokxCHfAhSiVtRQNmcLh53bdgYvNNrvC0GyFx-sQ8ayeAltRstKFGeTMSXXuVSo0jbbkXxdoSg9s-2yEZCiKM7MFWt43fS25IuFP_0SUvivWIG8j5ZBjSrlv6b_Ahedcyq6O8Gi15g8utBv8zHj1xKiAZBSpSMW_J2p4YUWz9Bes5SqA6KgVm_myvVYVh_fGu8cx7HW70Fq7acAZX_L1E2AjSG86hm0IiTdWiEN0qSxhENb0KeXyglKob_vw9sKIxmMRailkVjdckb6ED-Fu1-eaGVkZyGUGlTfyqUIVAGl2tXPMcyCiGOTaCPXnp_vrA39SjqhL5E_5I6rVKCwhIlibN6r-qxzLys8o3ps_2nKRxpyLJQzwRJmw9El8RMzARC1gAUMVJ0Y17fnx68zTmX_KuVBpKWFohZDdfnDLV03KgcbQQjNj_mOENdl0kED9QKX-jiFJdPboy21ZsrKokvkbtxZJhGT6CQvUF3URPSX3Hf4GPFkpTSlSLWPnDiR2kilLLB8OmwETgV_z0h7jgoiRAQU4_909o2pr4gPxEqfNfXqh4qDIvs81965NNR6wrIxFwvJqw-0SusKGR1HS7pwbGCaR4DDn5y1zBln0sOemPMH7PUx-XPLwdpvfysMFrf_QkJV29YI-yWwNVTocslReQdtwMhdVyV-W2hyFOalQEtUdEZc1jpEOLM7HChBFA0qE7hvyunxyOZLtBt5R-l1pS_vDFY784uBJrPw6Y-N-pOb6LVmbgjU_iot_svqVuXadFBQwwqgyHj5kSRvPWFFunXJBU2ZPa-RhzWkjry_jtO8I10d351MIhqb6fEJogDVfFjrGyN2onFzhlAkzE4BVegVw9ySJsB7Af_yH4B9tOQsKpsnsrN72WAEGKs_ajH3G4ztoj5EGZXuQNSyQG3HjOQIhsjhoRWcgol-UwIUrhFhC8k7-y_a25XtKYhs845ZUm_FdOZLC1cC3GkDikubwLF3UCGZT6X_drC5d2aIwskPre7iwy9DfuiAl0z7ygNp5up--4CpMeA06K3AK704cBes3hs7iKhIr_FhEe9ikE8HEE6kqaaT2K66_0sndOd-5u0Z2suUWtGF1Xb1rifAkjW_ol6c6SRoOZMNE4BVHLcSpzd0R_hO8hiKMR_vcyuC2cSReE5S4Bbwr0wfyFbpmmqvG4fMQi3p4LiQ79uC4xJSkVvDFnTLq5x31J4mZ7t6KOtEBhG1Xf5tfMQ4ehn73E28PA1QkgycEieFjgaHSmyndJvsqCdDE9HnTQNxzFGetueg2zUE5nhckYdLXVmxSlMoPxwvBOmvZFS7LotlttdW64enuVHCtvulijsLoEetzpqkZ1wu0htROg8wG2gs0MPmSacMnKM74eopIxZcLdT7_5xWcyFCG1kSrD2Kr315z8dFV4e0-khPiEUSaAgCTsBFzq5Vy0utG2c2T7UBd2UVShWXo7rsv8pMZyiA9DfARNEXvq5YKZZVX9lq1bjhZNBvBSb-dv5VtkibWXxdtPTEsYeKRG15fkmV4pyjuvwIYLXrInKAfpm0Rg8zi5XO575YzuzOT54ZJQ8DG0zlRgy600PDXUNb8oIewFsSeZ7g0COLKQTWXGTQyaHwSvJ0ntAPowkA0Ena9GiUVSessX1HBrjZo7f6fkzAV9csEv34BKyOppNnW00nzdS5KjUiWcBZnezekGN6XW-z-JKMwW_NzBrvimXW2HXzo8fJdizMPA5bwI3PTcJWni1i07ATgTVvXbpxPV5JulxImvMv4p7_HRIkEsKoi8Pq14vC7b0mkJPfvJFseUUaFDsmFJY3VHLrCevnOxxYJ3ibEW1vul9pVVsF19bTyLPoEtZdZFg3TurCtTAwq_iqSbQWo-oBDDqNhspfCpqS8Kequz3yvRhDE0qsYCIP-OSShwz55U0o1l6wz5Al7QTapW2_FFjRxda3bcMYboPI6idj8rtb6z-Usi3OAqp9jcoUOsgaOgDClr1rAkMm6vrOqWXeWppvD4KZ5GApU-KSiqWihX6ufCj3-9Uq62cuVb0dbe2UKXlHjHb_YRv1dfeRzX08KS32hw8lh-6r_aKFfkrsii4ldjuEHIH1BUv1HcZCuRTKLJSrIiTke8Vx5J6SO2WdI079VH-nUH8R6S_RiYEJEzkaYipExggtu40fqQ4rg7AZos1cDFvYDuEXyMm7PUq30LYbE11TSP8Niwi_Idru-0gaTUK_p-SYDz0N_MJnByllkGLYlNs3EIauDZrd9TrxaWENyWJo8DWcTM3oBKs5q5r9SWIsTGDBjFNZgYNGK1MbCxSdnQJ77eZR6W1IFLeKurYcLBCLZHFHQe03dG5KAPHVLFNiGcVvfBabbb_JWkWD3jlbM37kBtXXMHrV_I7fE_hVaB7pyVdsPiTHg2lXp3ylD_Wa0dE6D1dnqh-d_uuCukf-Ae4iVKT1eF4ksNew==",
+        "summary": []
+      },
+      {
+        "id": "msg_0449da66136a3282016aa997c4280087d2b4cfea835c5b1e69",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"unreadable_ambiguous\",\"essentialEvidenceReadable\":false,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"whole image\",\"observation\":\"The photograph is heavily blurred across the page.\",\"interpretation\":\"Essential diagram details cannot be read reliably from the image.\",\"uncertain\":false},{\"region\":\"lower left to lower right\",\"observation\":\"A horizontal axis is visible, meeting a vertical axis on the left.\",\"interpretation\":\"The student appears to have drawn graph axes.\",\"uncertain\":false},{\"region\":\"centre to right half\",\"observation\":\"One downward-sloping line and at least one upward-sloping line are visible; a second upward-sloping line may also be present.\",\"interpretation\":\"This may be an attempt at a demand-and-supply diagram with a supply shift, but the exact curve identities and positions are uncertain.\",\"uncertain\":true},{\"region\":\"centre area\",\"observation\":\"There appear to be marked intersection points and some vertical/horizontal projection lines.\",\"interpretation\":\"The student may be indicating equilibrium positions, but the relationships cannot be confirmed clearly.\",\"uncertain\":true},{\"region\":\"throughout labels/markings\",\"observation\":\"Axis labels, curve labels, and point labels are illegible.\",\"interpretation\":\"It is not possible to verify whether the axes are identified as wheat price/quantity or whether demand and the two supply curves are distinguished.\",\"uncertain\":false}],\"summary\":\"A student diagram is present and seems to show axes and market curves, but the photo is too blurred to confirm the required labels and exact equilibrium relationships. Because essential task evidence is not readable, the image is unreadable/ambiguous.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean",
+              "description": "Whether the photo is readable enough to judge the submitted evidence, including to establish that no relevant diagram exists. This is readability, not correctness or completeness. Must be true for no_relevant_diagram; false when blur/occlusion prevents the essential judgment."
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2975,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 867,
+      "output_tokens_details": {
+        "reasoning_tokens": 516
+      },
+      "total_tokens": 3842
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

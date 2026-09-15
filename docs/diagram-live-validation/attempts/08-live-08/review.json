@@ -1,0 +1,25 @@
+{
+  "status": "reviewed_synthetic",
+  "judgement": "expected",
+  "teacherReviewStatus": "not_reviewed",
+  "assessmentCallsMadeByReviewer": 0,
+  "observerVersusGraderDisagreement": "Not applicable: no image or observer call exists. The grader correctly uses the supplied written explanation and the explicit not_provided evidence state.",
+  "origin": null,
+  "findings": [
+    "Reviewed the matching cases.json entry, case-review-only.json, resolved-task.json private contract, grader request/response and result.json. No attachment is present to inspect. The manifest specifies confirmed omission, and the harness sets diagramOmitted from absence of the image; the artifact set does not include a separate raw application payload.",
+    "No observer dispatch/response exists for this case. The private snapshot has no attachment, observation, reviewer model or reviewer version. The public result correctly records not_provided, diagramSubmitted=false, diagramAssessable=false and no attachment hashes. This is omitted work, not unreadable evidence or a processing failure.",
+    "The actual grader input contains the unchanged full explanation: drought lowers supply at each price, unchanged demand creates a shortage at the old price, and price rises while quantity demanded falls to the new equilibrium. It also includes the correct original stimulus and hasImageAttachment=false. The diagram described in prose is never treated as a submitted image.",
+    "The raw grader returns diagram0/explanation2,total2. This matches the authored two-component criterion: complete causal prose earns2 and absent visual work earns0. No contradiction, labeling deficiency, root error or ceiling is asserted. Deterministic reconciliation saves2/4 with writtenMarksAwarded2 and no extra omission subtraction.",
+    "Economic analysis4/4 and Application to context4/4 are separately labeled diagnostic judgments of the complete prose; Diagram0/4 identifies missing visual work. These diagnostic numbers do not add to or override the authoritative2/4. The Missing required diagram tag and instruction to add a graph are supported by the explicitly required task.",
+    "Raw Paper2/partc metadata is normalized to custom practice/unknown part. The public contract omits private criteria. Saved assessment and feedback exactly equal the returned values, snapshot IDs match, and the question/context/answer/contract hashes independently recompute correctly. The grader request contains none of the reviewed prediction fields, case IDs or intended omission labels.",
+    "The attempt response has sourceMaterial=null because the then-current grade route deliberately omitted a source copy for Practice-linked attempts. The correct stimulus remains available in the linked Practice row, actual grader input, private contract and context hash. Revision carries that Practice ID and re-fetches/displays/re-grades with its stored source. The harness's restricted persistence-row selection alone would not prove a missing source column; the route, full RPC-return mapping and response establish the intentional null copy.",
+    "History omitted source context at review time. Root accepted prospective combined-attempt source retention and nonempty History context rendering; the original08 row remains historical. This is a presentation/history limitation, not an economic grading failure or a reason to change this expected2/4."
+  ],
+  "minorIssues": [
+    {
+      "origin": "legacy_history_context_presentation",
+      "impact": "History did not display the linked Practice stimulus; grading and Practice-linked revision retained it.",
+      "resolution": "Root-owned prospective source retention and History context rendering; preserve historical attempt evidence."
+    }
+  ]
+}

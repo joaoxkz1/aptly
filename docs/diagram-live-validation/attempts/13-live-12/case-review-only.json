@@ -1,0 +1,46 @@
+{
+  "caseId": "live-12",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-3.2-15-002",
+    "question": "Discuss the likely effects of a negative supply shock on households, firms and government. [15 marks]",
+    "answer": "A negative aggregate supply shock is an event that makes firms supply less real output at each price level, for example an increase in an economy's imported energy costs. In the diagram SRAS shifts left from SRAS1 to SRAS2 while AD is held constant to isolate the initial shock. Equilibrium moves from real output Y1 to Y2 and from price level P1 to the higher P2. The combination of weaker activity and upward pressure on prices creates a difficult trade-off. The examples below are hypothetical classroom scenarios, not claims about reported events.\n\nHouseholds face a loss of purchasing power if wages or pensions do not rise as quickly as prices. Imagine an energy-importing economy in which a low-income family must spend much of its budget on heating and commuting. More expensive fuel and transport leave less income for other goods, so the family may cut consumption sharply. The fall in output also reduces firms' demand for labor, exposing some households to unemployment or fewer paid hours. These effects are unequal: households with flexible high wages or large savings may adjust more easily than pensioners on fixed nominal incomes. Workers in a domestic energy producer could benefit from increased demand for substitutes to imported energy, so the aggregate diagram does not imply that every household loses equally.\n\nFirms using energy intensively face higher unit costs. Consider a hypothetical bakery whose electricity bill rises. It may raise bread prices, but higher selling prices do not guarantee higher profits because costs have also risen and customers may buy less. Firms unable to pass the shock on because of close substitutes or contracts can experience a squeezed profit margin. Some reduce output or delay investment, worsening employment and potentially future capacity. By contrast, an efficient supplier of insulation or alternative energy could gain orders as users economize on the expensive input. The overall loss is therefore accompanied by changes in the composition of output, which a single SRAS curve cannot fully describe.\n\nGovernment finances are also affected. Lower real output and employment can weaken profit and income-tax receipts, while unemployment-related spending rises. The government may also pay more for energy in hospitals or schools. Higher nominal prices can increase some expenditure-tax receipts, so the effect on total tax revenue is not mechanically a fall; it depends on the tax mix and how strongly quantities contract. A government that guarantees household energy prices may protect real incomes temporarily but must absorb the cost in its budget, reducing funds available for other priorities or increasing borrowing.\n\nPolicy choices depend strongly on duration. If the input shortage is brief, temporary targeted support could protect vulnerable households without permanently changing incentives. Broad untargeted subsidies are more costly and may discourage conservation. Expansionary demand policy could support output but also increase pressure on prices while supply is constrained. Monetary tightening could reduce demand pressure and limit second-round inflation, but at the cost of a deeper short-run output and employment decline. If the shock is persistent, investment in efficiency, alternative inputs and resilient infrastructure can improve supply, although these responses take time and have opportunity costs.\n\nOverall, a negative supply shock is likely to reduce real incomes and output while raising prices, but the burden depends on input dependence, household budgets, firms' ability to substitute or pass on costs, and public finances. A temporary shock with stable expectations may have mainly short-run distributional effects. A persistent shock that feeds into wage and price expectations can produce more lasting inflation and output damage. Policy should therefore be assessed against both the people most exposed and the source and duration of the shock, rather than assuming a single response benefits all stakeholders."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/essay15-sras-contraction.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 15,
+    "expectedFramework": "paper1b_15_mark",
+    "expectedContractMode": "holistic_diagram",
+    "intendedCondition": "Developed 15-mark stakeholder discussion integrates a correct supply-shock diagram and conditional evaluation; illustrations are explicitly hypothetical.",
+    "economicBehavior": "Negative SRAS shock raises the price level and lowers real output. Burdens vary by household income, firms input intensity and government policy; price rises do not guarantee higher profits.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 9,
+      "max": 13,
+      "nonBindingBestFitPrediction": true
+    },
+    "expectedComponents": null,
+    "diagramRequirementAudit": {
+      "role": "necessary_for_task",
+      "family": "ad_as",
+      "reason": "The stakeholder evaluation depends on the output and price effects of a negative aggregate supply shock."
+    },
+    "reviewChecks": [
+      "Use holistic best fit; neither an additive diagram bonus nor a universal omission ceiling applies.",
+      "The existing private blueprint expects relevant real-world application. This answer deliberately supplies hypothetical illustrations only; record that limitation honestly rather than fabricating attribution.",
+      "The numerical interval is an engineering forecast, not a rule or teacher label; a defensible out-of-interval mark requires review rather than automatic failure.",
+      "A future paired omission run should retain exactly the same answer to isolate diagram contribution."
+    ]
+  }
+}

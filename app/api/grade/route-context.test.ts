@@ -237,7 +237,7 @@ describe("POST /api/grade trusted relationship context", () => {
     state.practiceRow = {
       question: "Explain the diagram. [4 marks]",
       source_material: null,
-      framework: "paper2_four_mark_diagram_explain",
+      framework: "unrecognized_framework",
       mark_total: 4,
       authority_version: 1,
     };

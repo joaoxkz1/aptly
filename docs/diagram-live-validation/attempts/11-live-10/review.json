@@ -1,0 +1,23 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "The observer records uncertain axis letters, supply subscripts and P/Q subscripts while marking the geometry readable. The grader subsequently praises S1/S2, P1/P2 and Q1/Q2 as accurate and consistent, with high marking confidence and no limitation. That feedback is more certain than the observed label evidence.",
+  "origin": "Earliest definite concern: grader feedback and confidence upgrade uncertain observed labels into an unqualified accuracy claim. Earlier observer essentialEvidenceReadable=true is a readability-threshold concern, but the actual geometry remains visible and does not establish an observer failure by itself.",
+  "findings": [
+    "Independently inspected wheat-blurry.png at original resolution before reading this provider record. Its SHA-256 matches resolved-task.json and the saved attachment hash. The blur is substantial, yet one descending curve, two ascending curves, both intersections and their relative upper-left/lower-right positions remain visible.",
+    "The predeclared intended condition was inaccessible essential evidence, but the manifest explicitly allows partially_readable if essential geometry survives. This fixture therefore does not establish a clean unreadable-image control solely from its filename or intended condition.",
+    "The observer accurately flags several label readings as uncertain, including the exact supply subscripts. Its summary describes the visible relative geometry without claiming an unambiguously readable initial/final subscript sequence. The essential-evidence threshold deserves calibration because chronology is less secure than the geometric relationships.",
+    "The private contract allows diagram and explanation together to establish shift direction without an arrow. Here the complete written supply-contraction explanation corresponds to genuinely drawn intersections and relative positions. Consequently 2+2=4 is defensible under a permissive reading of that contract; this review does not claim a proven scoring failure or assign a substitute teacher mark.",
+    "The grader's claim that S1/S2, P1/P2 and Q1/Q2 are accurately and consistently used exceeds the observer's certainty about those labels. Its component reason also states leftward chronology more confidently than the image observation alone establishes. Clear distinction between visible geometry, uncertain notation and direction supplied by prose would avoid overstating the evidence.",
+    "The final result preserves partially_readable in assessedDiagram, but markingConfidence remains high and limitations is empty. A user sees an unconditional full-mark comment despite unresolved label uncertainty. This is a feedback/confidence concern even if the awarded mark is ultimately accepted.",
+    "The server follows the observer's essentialEvidenceReadable=true state, saves 4/4 with no ceilings, and reports saved=true/publicMatches=true. There is no demonstrated persistence or arithmetic disagreement.",
+    "A further unreadable control would need actually inaccessible curve identity, intersections or other essential task relationships to test replacement/incomplete handling cleanly. This review made no provider call and does not authorize one.",
+    "This is an independent assistant review of synthetic engineering evidence, not teacher calibration or handwriting-accuracy validation."
+  ],
+  "judgement": "concern",
+  "resolution": {
+    "status": "addressed_in_repeat",
+    "reviewedAttempt": "14-live-10",
+    "details": "The original concern remains recorded above. Attempt 14 repeats the identical answer, image, context and trusted contract after the root-owned uncertainty prompt and limitation-preservation changes. Its grader explicitly retains unclear-label qualifications, removes verified-notation praise, uses medium marking confidence and preserves photo limitations while leaving the defensible 4/4 component award intact.",
+    "scope": "The definite feedback/confidence concern is addressed in this synthetic repeat. The partly readable image does not validate an unreadable-evidence fail-closed result or establish teacher calibration."
+  }
+}

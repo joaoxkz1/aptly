@@ -104,9 +104,9 @@ describe("grading stays image-free (current diagram policy unchanged)", () => {
   });
 
   it("the grade request built by the submit page carries no image field", () => {
-    const at = SUBMIT_PAGE.indexOf('fetch("/api/grade"');
+    const at = SUBMIT_PAGE.indexOf('const payload = {');
     expect(at).toBeGreaterThan(-1);
-    const gradeCall = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("signal:", at));
+    const gradeCall = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("};", at));
     expect(gradeCall).not.toMatch(/image/i);
     expect(gradeCall).not.toMatch(/scan/i);
     expect(gradeCall).not.toMatch(/FormData/);
@@ -147,7 +147,7 @@ describe("attachment control exists only in the manual submit flow", () => {
     expect(SUBMIT_PAGE).toContain("initialSource={stagedSource}");
     // The staged source is never sent to the grade route directly: the only
     // sourceMaterial in the grade body comes from the reviewed decision.
-    const at = SUBMIT_PAGE.indexOf('fetch("/api/grade"');
+    const at = SUBMIT_PAGE.indexOf('const payload = {');
     const gradeCall = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("signal:", at));
     expect(gradeCall).toContain("sourceMaterial: decision.sourceMaterial");
     expect(gradeCall).not.toContain("stagedSource");

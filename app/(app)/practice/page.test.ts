@@ -6,6 +6,7 @@ import PracticePage from "./page";
 const mocks = vi.hoisted(() => ({
   params: new URLSearchParams(),
   request: vi.fn(),
+  factory: vi.fn(),
 }));
 let renderer: ReturnType<typeof createHookRenderer>;
 
@@ -22,7 +23,7 @@ vi.mock("react", async importOriginal => {
 });
 vi.mock("next/navigation", () => ({ useSearchParams: () => mocks.params }));
 vi.mock("@/lib/ai/practice-request", () => ({
-  createPracticeGenerationClient: () => ({ request: mocks.request }),
+  createPracticeGenerationClient: () => { mocks.factory(); return { request: mocks.request }; },
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({ auth: { getSession: async () => ({
@@ -112,5 +113,20 @@ describe("Practice recovery keeps the submitted generation intent", () => {
     mocks.request.mockResolvedValueOnce(saved);
     await click("Generate question");
     expect(mocks.request.mock.lastCall![0]).toMatchObject({ courseLevel: "sl", topicCode: "1.2", regenerate: false });
+  });
+  it("creates a fresh generation client after an account-boundary remount and ignores the old pending result", async () => {
+    let finish!: (value: typeof saved) => void;
+    mocks.request.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    button("Generate question").props.onClick!();
+    expect(mocks.factory).toHaveBeenCalledTimes(1);
+    renderer.unmount();
+    renderer = createHookRenderer();
+    render(); renderer.flushEffects(); await settle();
+    expect(mocks.factory).toHaveBeenCalledTimes(2);
+    finish(saved); await settle();
+    expect(textOf(render())).not.toContain(saved.practiceQuestion.question);
+    mocks.request.mockResolvedValueOnce(uncertain);
+    await click("Generate question");
+    expect(mocks.request).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,4 +1,7 @@
 import "server-only";
+import type { AssessmentSnapshot } from "@/lib/assessment/assessment-snapshot";
+import { diagramAssessmentEnabled, resolveAssessmentContract, publicContract } from "@/lib/assessment/trusted-contract";
+import { policyForGeneratedPractice } from "@/lib/assessment/policy";
 import type { Assessment, Attempt, Feedback, PracticeQuestion, Subject } from "@/lib/types";
 import type { DiagramEvidence } from "@/lib/diagram/evidence";
 import { structuredResultHash } from "@/lib/ai/request-integrity";
@@ -18,10 +21,11 @@ import type { CommandTerm, LevelRelevance } from "@/lib/types";
 const ATTEMPT_COLUMNS =
   "id, subject, topic, question, answer, score, max_score, feedback, mistake_type, next_step, created_at, assessment, parent_attempt_id, practice_question_id, source_material, diagram_evidence";
 const PRACTICE_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus, focus_context";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus, focus_context, assessment_contract";
 const TRUSTED_PRACTICE_COLUMNS = `${PRACTICE_COLUMNS}, question_origin, bank_question_id, question_bank_version, grading_blueprint, grading_blueprint_version, level_relevance, command_term, target_skills, angle_tags, request_fingerprint, generation_provenance`;
 
 export interface SavedAttemptInput {
+  snapshot?: AssessmentSnapshot;
   subject: Subject;
   topic: string;
   question: string;
@@ -148,6 +152,18 @@ export async function saveGradeAttempt(
     input.practiceQuestionId
   );
   const admin = getAdminClient();
+  if (input.snapshot) {
+    const { data, error } = await admin.rpc("save_combined_assessment", {
+      p_user_id: userId, p_operation_key: idempotencyKey,
+      p_attempt: attemptInsertRow(userId, idempotencyKey, input), p_snapshot: input.snapshot,
+    });
+    if (error || data == null) {
+      const existing = await findAttemptByIdempotency(userId, idempotencyKey);
+      if (existing) return existing;
+      throw error ?? new Error("combined assessment persistence failed");
+    }
+    return rowToAttempt((Array.isArray(data) ? data[0] : data) as AttemptRow);
+  }
   const { data, error } = await admin
     .from("attempts")
     .insert(attemptInsertRow(userId, idempotencyKey, input))
@@ -219,6 +235,12 @@ export async function savePracticeQuestion(
   idempotencyKey: string,
   input: SavedPracticeInput
 ): Promise<PracticeQuestion> {
+  const contract = diagramAssessmentEnabled() ? resolveAssessmentContract({
+    policy: policyForGeneratedPractice({ framework: input.framework, markTotal: input.markTotal, sourceMaterial: input.sourceMaterial }),
+    question: input.question, sourceMaterial: input.sourceMaterial, topic: input.topicCode,
+    level: input.levelRelevance, blueprint: input.gradingBlueprint, blueprintVersion: input.gradingBlueprintVersion,
+    bankQuestionId: input.bankQuestionId,
+  }) : null;
   const { data, error } = await getAdminClient()
     .from("practice_questions")
     .insert({
@@ -247,6 +269,7 @@ export async function savePracticeQuestion(
       focus_context: input.focus ?? null,
       generation_provenance: input.generationProvenance ?? null,
       request_fingerprint: input.requestFingerprint,
+      assessment_contract: contract ? publicContract(contract) : null,
     })
     .select(PRACTICE_COLUMNS)
     .single();
@@ -265,13 +288,14 @@ export async function savePracticeQuestion(
 /** Private compatibility metadata stays on the server, never in the public DTO. */
 export async function fetchLatestTrustedPracticeQuestion(userId: string) {
   const { data, error } = await getAdminClient().from("practice_questions")
-    .select(`${PRACTICE_COLUMNS}, target_skills, level_relevance`)
+    .select(`${PRACTICE_COLUMNS}, target_skills, level_relevance, bank_question_id, grading_blueprint_version`)
     .eq("user_id", userId).eq("authority_version", 1)
     .order("created_at", { ascending: false }).limit(1).maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  const row = data as unknown as PracticeQuestionRow & { target_skills: string[] | null; level_relevance: LevelRelevance | null };
-  return { question: rowToPracticeQuestion(row), targetSkills: row.target_skills ?? [], levelRelevance: row.level_relevance };
+  const row = data as unknown as PracticeQuestionRow & { target_skills: string[] | null; level_relevance: LevelRelevance | null; bank_question_id: string | null; grading_blueprint_version: string | null };
+  return { question: rowToPracticeQuestion(row), targetSkills: row.target_skills ?? [], levelRelevance: row.level_relevance,
+    bankQuestionId: row.bank_question_id, gradingBlueprintVersion: row.grading_blueprint_version };
 }
 
 export interface PracticeBankHistoryRow {
@@ -295,6 +319,8 @@ export async function fetchPracticeBankHistory(
 }
 
 export interface TrustedPracticeGuidance {
+  bankQuestionId?: string | null;
+  gradingBlueprintVersion?: string | null;
   gradingBlueprint: EconomicsGradingBlueprint | null;
   topicCode: string;
   topicLabel: string;
@@ -310,7 +336,7 @@ export async function fetchTrustedPracticeGuidance(
   const { data, error } = await getAdminClient()
     .from("practice_questions")
     .select(
-      "grading_blueprint, topic_code, topic_label, level_relevance, command_term, target_skills"
+      "grading_blueprint, grading_blueprint_version, bank_question_id, topic_code, topic_label, level_relevance, command_term, target_skills"
     )
     .eq("id", practiceQuestionId)
     .eq("user_id", userId)
@@ -319,6 +345,8 @@ export async function fetchTrustedPracticeGuidance(
   if (error) throw error;
   if (data == null) return null;
   const row = data as unknown as {
+    grading_blueprint_version?: string | null;
+    bank_question_id?: string | null;
     grading_blueprint: EconomicsGradingBlueprint | null;
     topic_code: string;
     topic_label: string;
@@ -327,6 +355,8 @@ export async function fetchTrustedPracticeGuidance(
     target_skills: string[] | null;
   };
   return {
+    bankQuestionId: row.bank_question_id ?? null,
+    gradingBlueprintVersion: row.grading_blueprint_version ?? null,
     gradingBlueprint: row.grading_blueprint,
     topicCode: row.topic_code,
     topicLabel: row.topic_label,

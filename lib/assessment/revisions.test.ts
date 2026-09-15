@@ -16,6 +16,7 @@ import {
   collapseRevisionChains,
   isRevision,
   revisionComparison,
+  revisionComparisonLimitation,
   revisionContextFor,
   revisionIssueFollowUp,
 } from "./revisions";
@@ -124,6 +125,32 @@ function attempt(o: {
 
 const RETAINED_SOURCE =
   "In 2024 Norvia raised fuel taxes by 12%, cutting consumption 5% while revenue rose to $2.1bn.";
+
+describe("revision assessment version compatibility", () => {
+  it("does not claim improvement across source-reviewed contracts with the same assessment shape", () => {
+    const before = attempt({ id: "before", assessment: assessment({ earned: 6 }) });
+    const after = attempt({ id: "after", parentAttemptId: "before", assessment: assessment({ earned: 8 }) });
+    for (const value of [before, after]) {
+      value.assessment!.version = 4;
+      value.assessment!.gradingProvenance = { rubricVersion: "econ-v4", taxonomyVersion: "economics-2022-v1",
+        gradingContractVersion: "ib-econ-2026-v2", modelId: "unchanged-model", reasoningEffort: "medium" };
+    }
+    after.assessment!.gradingProvenance!.gradingContractVersion = "ib-econ-2026-v3";
+    expect(revisionComparison(before, after)).toBeNull();
+    expect(revisionComparisonLimitation(before, after)).toContain("not be a like-for-like comparison");
+    expect([before.assessment!.marksEarned, after.assessment!.marksEarned]).toEqual([6, 8]);
+    before.assessment!.gradingProvenance!.gradingContractVersion = "ib-econ-2026-v3";
+    expect(revisionComparison(before, after)?.deltaMarks).toBe(2);
+  });
+  it("keeps historical marks but does not compare a new assessment version numerically", () => {
+    const before = attempt({ id: "before" });
+    const after = attempt({ id: "after", parentAttemptId: "before" });
+    after.assessment!.version = 4;
+    expect(revisionComparison(before, after)).toBeNull();
+    expect(revisionComparisonLimitation(before, after)).toContain("different assessment versions");
+    expect(before.assessment!.marksEarned).toBe(6);
+  });
+});
 
 describe("collapseRevisionChains — only the latest eligible attempt in a chain counts", () => {
   it("keeps a lone attempt unchanged", () => {

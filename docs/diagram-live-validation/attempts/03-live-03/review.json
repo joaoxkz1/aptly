@@ -1,0 +1,14 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. Both stages identify the visible rightward supply shift, unchanged demand, lower equilibrium price and higher quantity; the grader also correctly identifies that the prose carries the same mistaken drought premise through consistently.",
+  "origin": null,
+  "findings": [
+    "Visual inspection confirms S2 is right/below S1, the arrow points right, E1/E2 are the actual D-supply intersections, P2 is below P1 and Q2 is right of Q1. The observer did not replace these features with the task's required contraction.",
+    "The resolved task is the original wheat drought question: reduced harvests with unchanged demand. Its same-question-part contract explicitly permits within_part_ecf. The zero-diagram descriptor applies because the submitted graph does not show the required contraction or resulting higher-price/lower-quantity relationship.",
+    "The raw grader awards diagram 0 and explanation 2, records drought_supply_direction as one root error with carriedForward true, and explains the valid own-figure surplus-to-lower-price/higher-quantity adjustment. It sets incompatibleMechanisms false, correctly distinguishing a shared mistaken premise from conflicting diagram/text mechanisms.",
+    "The server preserves the 0+2 component decision as 2/4 with no ceiling, and the saved public result matches the persistence readback. The snapshot retains the resolved contract and observer evidence; the submitted image hash matches the saved attachment hash.",
+    "Observer and grader requests use store:false and do not contain the engineering prediction, review-only metadata, case ID or descriptive image filename. The raw grader's Paper 2(c) classification is normalized to custom/unknown in the authoritative saved result, consistent with the authored Practice contract.",
+    "This is an engineering review of a synthetic control, not an independent teacher mark or calibration claim. No assessment calls were made during review."
+  ],
+  "judgement": "expected"
+}

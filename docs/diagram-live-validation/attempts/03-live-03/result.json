@@ -1,0 +1,538 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 38976,
+  "response": {
+    "attempt": {
+      "id": "c8494e9d-3e07-4f6f-a23e-cdd1ee0fd804",
+      "createdAt": "2026-09-15T18:45:44.660796+00:00",
+      "subject": "Economics",
+      "topic": "2.3",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "answer": "The drought increases the amount of wheat available, so I have shifted supply right from S1 to S2. At the original price producers now offer more wheat than consumers want to buy, creating a surplus. Sellers reduce the price, and consumers buy more as they move down the unchanged demand curve. My new equilibrium therefore has a lower price and a higher quantity of wheat traded.",
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Inaccurate economic theory"
+        ],
+        "strengths": [
+          "The diagram is clearly labelled with price and quantity axes, an unchanged demand curve, two supply curves and two equilibria.",
+          "Your written explanation is internally consistent with the rightward supply shift shown: it correctly links a surplus at the original price to a fall in price and a rise in quantity.",
+          "You use relevant market-equilibrium terminology, including surplus, supply, demand and equilibrium."
+        ],
+        "studyNext": "Practise distinguishing changes in supply: adverse weather reduces agricultural supply, shifting supply left and raising equilibrium price while reducing equilibrium quantity.",
+        "improvements": [
+          "Correct the initial causal link: a drought reduces wheat harvests, so supply decreases (shifts left), rather than increases.",
+          "Redraw S2 to the left/up of S1 while keeping demand unchanged; the new equilibrium should show a higher price and lower quantity.",
+          "Before explaining the adjustment, check that the direction of the shift matches the event specified in the question."
+        ],
+        "examinerComment": "Estimated practice mark: 2/4. The diagram and explanation are clear and mutually consistent, but they start from the central error that a drought increases wheat availability. A drought reduces the harvest, causing a leftward shift of supply. Credit is retained for the coherent explanation of the consequences of your own rightward-shift diagram."
+      },
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The surplus-to-lower-price adjustment is logically explained for the student's own rightward supply shift, but the initial claim that drought increases wheat availability is incorrect for the stated context.",
+            "awarded": 2,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The answer refers to the drought and wheat market, but applies the drought with the wrong effect on harvest availability and supply.",
+            "awarded": 1,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted diagram is readable and fully labelled, but S2 is to the right of S1 and the second equilibrium shows lower price and higher quantity. This is a supply increase, not the required drought-induced supply contraction.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The student’s diagram is clear and fully readable. It shows an unchanged demand curve, two supply curves with S2 to the right of S1, and equilibria shifting from E1 to E2 with lower price (P2 below P1) and higher quantity (Q2 right of Q1). So the diagram depicts a supply increase/rightward shift rather than the required supply contraction from a drought.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "8dadf97a-ece5-44a9-a090-6101f0e3e54f",
+          "observations": [
+            {
+              "region": "top centre and axes",
+              "uncertain": false,
+              "observation": "The diagram is titled \"Wheat market\"; the vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat.\"",
+              "interpretation": "The market and both required axes are identified."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "There is one downward-sloping curve labeled \"D.\"",
+              "interpretation": "Demand is shown once and appears unchanged between the two equilibria."
+            },
+            {
+              "region": "centre to right",
+              "uncertain": false,
+              "observation": "There are two upward-sloping curves labeled \"S1\" and \"S2\"; S2 is drawn to the right of S1.",
+              "interpretation": "The supply change shown is a rightward shift/increase in supply, not a leftward shift/contraction."
+            },
+            {
+              "region": "right of centre",
+              "uncertain": false,
+              "observation": "A horizontal arrow is drawn pointing to the right between the two supply curves.",
+              "interpretation": "The indicated movement reinforces that supply is shifting rightward."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "Point E1 is marked at the intersection of D and S1.",
+              "interpretation": "An initial equilibrium is identified."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "Point E2 is marked at the intersection of D and S2.",
+              "interpretation": "A second equilibrium is identified using the demand-supply intersection."
+            },
+            {
+              "region": "left axis and lower centre",
+              "uncertain": false,
+              "observation": "Dashed guides mark P1 from E1 and P2 from E2 on the price axis, with P1 above P2; dashed guides mark Q1 from E1 and Q2 from E2 on the quantity axis, with Q2 to the right of Q1.",
+              "interpretation": "The diagram shows a fall in equilibrium price and a rise in equilibrium quantity from E1 to E2."
+            },
+            {
+              "region": "overall central graph",
+              "uncertain": false,
+              "observation": "The curve positions and equilibrium labels are clear and readable.",
+              "interpretation": "The diagram is internally readable and assessable, but the market outcome shown is inconsistent with a drought reducing wheat harvests under unchanged demand."
+            }
+          ],
+          "attachmentHashes": [
+            "b643cd1d93410b22e93dca490a89a57eb939062695404685cd9c01f9e4d946e4"
+          ],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "The submitted diagram is readable and fully labelled, but S2 is to the right of S1 and the second equilibrium shows lower price and higher quantity. This is a supply increase, not the required drought-induced supply contraction.",
+              "explanation": "Although the starting drought-to-supply link is wrong, the explanation correctly carries through the consequences of the student's own rightward supply shift: surplus at the old price, then lower price and higher quantity at equilibrium."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [
+              {
+                "id": "drought_supply_direction",
+                "carriedForward": true,
+                "diagramEvidence": "S2 is drawn to the right of S1, with P2 below P1 and Q2 to the right of Q1.",
+                "explanationEvidence": "The response states that the drought increases wheat availability and shifts supply right."
+              }
+            ],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "9f2bf93e-99db-4a43-82cb-739b85be9e24",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "c8494e9d-3e07-4f6f-a23e-cdd1ee0fd804",
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The surplus-to-lower-price adjustment is logically explained for the student's own rightward supply shift, but the initial claim that drought increases wheat availability is incorrect for the stated context.",
+            "awarded": 2,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The answer refers to the drought and wheat market, but applies the drought with the wrong effect on harvest availability and supply.",
+            "awarded": 1,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted diagram is readable and fully labelled, but S2 is to the right of S1 and the second equilibrium shows lower price and higher quantity. This is a supply increase, not the required drought-induced supply contraction.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The student’s diagram is clear and fully readable. It shows an unchanged demand curve, two supply curves with S2 to the right of S1, and equilibria shifting from E1 to E2 with lower price (P2 below P1) and higher quantity (Q2 right of Q1). So the diagram depicts a supply increase/rightward shift rather than the required supply contraction from a drought.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "8dadf97a-ece5-44a9-a090-6101f0e3e54f",
+          "observations": [
+            {
+              "region": "top centre and axes",
+              "uncertain": false,
+              "observation": "The diagram is titled \"Wheat market\"; the vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat.\"",
+              "interpretation": "The market and both required axes are identified."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "There is one downward-sloping curve labeled \"D.\"",
+              "interpretation": "Demand is shown once and appears unchanged between the two equilibria."
+            },
+            {
+              "region": "centre to right",
+              "uncertain": false,
+              "observation": "There are two upward-sloping curves labeled \"S1\" and \"S2\"; S2 is drawn to the right of S1.",
+              "interpretation": "The supply change shown is a rightward shift/increase in supply, not a leftward shift/contraction."
+            },
+            {
+              "region": "right of centre",
+              "uncertain": false,
+              "observation": "A horizontal arrow is drawn pointing to the right between the two supply curves.",
+              "interpretation": "The indicated movement reinforces that supply is shifting rightward."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "Point E1 is marked at the intersection of D and S1.",
+              "interpretation": "An initial equilibrium is identified."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "Point E2 is marked at the intersection of D and S2.",
+              "interpretation": "A second equilibrium is identified using the demand-supply intersection."
+            },
+            {
+              "region": "left axis and lower centre",
+              "uncertain": false,
+              "observation": "Dashed guides mark P1 from E1 and P2 from E2 on the price axis, with P1 above P2; dashed guides mark Q1 from E1 and Q2 from E2 on the quantity axis, with Q2 to the right of Q1.",
+              "interpretation": "The diagram shows a fall in equilibrium price and a rise in equilibrium quantity from E1 to E2."
+            },
+            {
+              "region": "overall central graph",
+              "uncertain": false,
+              "observation": "The curve positions and equilibrium labels are clear and readable.",
+              "interpretation": "The diagram is internally readable and assessable, but the market outcome shown is inconsistent with a drought reducing wheat harvests under unchanged demand."
+            }
+          ],
+          "attachmentHashes": [
+            "b643cd1d93410b22e93dca490a89a57eb939062695404685cd9c01f9e4d946e4"
+          ],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "The submitted diagram is readable and fully labelled, but S2 is to the right of S1 and the second equilibrium shows lower price and higher quantity. This is a supply increase, not the required drought-induced supply contraction.",
+              "explanation": "Although the starting drought-to-supply link is wrong, the explanation correctly carries through the consequences of the student's own rightward supply shift: surplus at the old price, then lower price and higher quantity at equilibrium."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [
+              {
+                "id": "drought_supply_direction",
+                "carriedForward": true,
+                "diagramEvidence": "S2 is drawn to the right of S1, with P2 below P1 and Q2 to the right of Q1.",
+                "explanationEvidence": "The response states that the drought increases wheat availability and shifts supply right."
+              }
+            ],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Inaccurate economic theory"
+        ],
+        "strengths": [
+          "The diagram is clearly labelled with price and quantity axes, an unchanged demand curve, two supply curves and two equilibria.",
+          "Your written explanation is internally consistent with the rightward supply shift shown: it correctly links a surplus at the original price to a fall in price and a rise in quantity.",
+          "You use relevant market-equilibrium terminology, including surplus, supply, demand and equilibrium."
+        ],
+        "studyNext": "Practise distinguishing changes in supply: adverse weather reduces agricultural supply, shifting supply left and raising equilibrium price while reducing equilibrium quantity.",
+        "improvements": [
+          "Correct the initial causal link: a drought reduces wheat harvests, so supply decreases (shifts left), rather than increases.",
+          "Redraw S2 to the left/up of S1 while keeping demand unchanged; the new equilibrium should show a higher price and lower quantity.",
+          "Before explaining the adjustment, check that the direction of the shift matches the event specified in the question."
+        ],
+        "examinerComment": "Estimated practice mark: 2/4. The diagram and explanation are clear and mutually consistent, but they start from the central error that a drought increases wheat availability. A drought reduces the harvest, causing a leftward shift of supply. Credit is retained for the coherent explanation of the consequences of your own rightward-shift diagram."
+      },
+      "answer": "The drought increases the amount of wheat available, so I have shifted supply right from S1 to S2. At the original price producers now offer more wheat than consumers want to buy, creating a surplus. Sellers reduce the price, and consumers buy more as they move down the unchanged demand curve. My new equilibrium therefore has a lower price and a higher quantity of wheat traded.",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]"
+    },
+    "snapshot": {
+      "id": "8dadf97a-ece5-44a9-a090-6101f0e3e54f",
+      "userId": "5de6c649-60f0-4c9e-a603-feec77db52b0",
+      "version": 1,
+      "contract": {
+        "mode": "four_mark_diagram",
+        "part": null,
+        "level": "shared_sl_hl",
+        "paper": null,
+        "scope": "same_question_part",
+        "topic": "2.3",
+        "total": 4,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2",
+            "question_label_ceiling_3"
+          ],
+          "family": "demand_supply",
+          "labels": [
+            "Price of wheat",
+            "Quantity of wheat",
+            "D",
+            "S1",
+            "S2",
+            "P1/P2",
+            "Q1/Q2"
+          ],
+          "diagram": {
+            "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+            "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity.",
+            "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship."
+          },
+          "outcomes": [
+            "Equilibrium price rises and equilibrium quantity falls."
+          ],
+          "explanation": {
+            "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+            "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached.",
+            "zero": "No relevant link from the drought to wheat supply or equilibrium."
+          },
+          "relationships": [
+            "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+          ],
+          "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency.",
+          "permittedMechanisms": [
+            "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+          ],
+          "acceptableAlternatives": [
+            "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper2_four_mark_diagram_explain",
+        "provenance": "aptly_authored",
+        "diagramRole": "required_explicitly",
+        "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [],
+        "blueprintVersion": "economics-four-mark-blueprint-v1"
+      },
+      "answerHash": "f71e30ec27b03be77d60a6e7462875766bf8e35edddb2ad7e6a3ff2ead419855",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "8dadf97a-ece5-44a9-a090-6101f0e3e54f:image:1",
+          "retained": false,
+          "contentHash": "b643cd1d93410b22e93dca490a89a57eb939062695404685cd9c01f9e4d946e4"
+        }
+      ],
+      "contextHash": "1ea311746f3430d544baf5f38cb39e8f7017fa9c3b5fc68c48139946ae47c87c",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "cf34606b46ebdea36b927993ebc4fd25b78541f7cbea9446229c232b59cbf1c7",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "usable",
+        "summary": "The student’s diagram is clear and fully readable. It shows an unchanged demand curve, two supply curves with S2 to the right of S1, and equilibria shifting from E1 to E2 with lower price (P2 below P1) and higher quantity (Q2 right of Q1). So the diagram depicts a supply increase/rightward shift rather than the required supply contraction from a drought.",
+        "observations": [
+          {
+            "region": "top centre and axes",
+            "uncertain": false,
+            "observation": "The diagram is titled \"Wheat market\"; the vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat.\"",
+            "interpretation": "The market and both required axes are identified."
+          },
+          {
+            "region": "centre-right",
+            "uncertain": false,
+            "observation": "There is one downward-sloping curve labeled \"D.\"",
+            "interpretation": "Demand is shown once and appears unchanged between the two equilibria."
+          },
+          {
+            "region": "centre to right",
+            "uncertain": false,
+            "observation": "There are two upward-sloping curves labeled \"S1\" and \"S2\"; S2 is drawn to the right of S1.",
+            "interpretation": "The supply change shown is a rightward shift/increase in supply, not a leftward shift/contraction."
+          },
+          {
+            "region": "right of centre",
+            "uncertain": false,
+            "observation": "A horizontal arrow is drawn pointing to the right between the two supply curves.",
+            "interpretation": "The indicated movement reinforces that supply is shifting rightward."
+          },
+          {
+            "region": "centre",
+            "uncertain": false,
+            "observation": "Point E1 is marked at the intersection of D and S1.",
+            "interpretation": "An initial equilibrium is identified."
+          },
+          {
+            "region": "centre-right",
+            "uncertain": false,
+            "observation": "Point E2 is marked at the intersection of D and S2.",
+            "interpretation": "A second equilibrium is identified using the demand-supply intersection."
+          },
+          {
+            "region": "left axis and lower centre",
+            "uncertain": false,
+            "observation": "Dashed guides mark P1 from E1 and P2 from E2 on the price axis, with P1 above P2; dashed guides mark Q1 from E1 and Q2 from E2 on the quantity axis, with Q2 to the right of Q1.",
+            "interpretation": "The diagram shows a fall in equilibrium price and a rise in equilibrium quantity from E1 to E2."
+          },
+          {
+            "region": "overall central graph",
+            "uncertain": false,
+            "observation": "The curve positions and equilibrium labels are clear and readable.",
+            "interpretation": "The diagram is internally readable and assessable, but the market outcome shown is inconsistent with a drought reducing wheat harvests under unchanged demand."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "8d5a85a43edb0358d22b396898ee0d69433d27676f37fa2f1c910e78af9b32d6",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "8dadf97a-ece5-44a9-a090-6101f0e3e54f"
+    }
+  }
+}

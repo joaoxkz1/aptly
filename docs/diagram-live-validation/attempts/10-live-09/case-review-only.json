@@ -1,0 +1,49 @@
+{
+  "caseId": "live-09",
+  "dispatchTier": "first_pass",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The smaller harvest reduces the wheat offered at each price. The supply curve moves from S to S′, while D stays fixed. The initial price p leaves excess demand, so the market price rises to p′. The new intersection has a smaller traded quantity q′ than q because consumers move up their unchanged demand curve. The higher price and lower quantity follow from the same supply contraction."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-alternate-notation.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "Complete equivalent notation with prime labels, conventional p/q axes and no movement arrow.",
+    "economicBehavior": "Same supply contraction and equilibrium outcome as baseline; S/S-prime and p/p-prime, q/q-prime replace numbered labels.",
+    "expectedEvidenceStates": [
+      "usable"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 4,
+      "max": 4
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 2,
+        "max": 2
+      },
+      "explanation": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Equivalent notation; answer references matching prime labels.",
+    "reviewChecks": [
+      "Accept conventional abbreviations and prime notation.",
+      "Absence of a title or movement arrow is not by itself an error when curve positions and explanation establish direction."
+    ]
+  }
+}

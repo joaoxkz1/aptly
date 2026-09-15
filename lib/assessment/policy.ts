@@ -88,6 +88,7 @@ export interface ScoringPolicy {
   selectedQuestionPart: string | null;
   /** Future server-trusted blueprint; never accepted from browser/model input. */
   questionSpecificGuidance?: string | null;
+  assessmentContract?: import("./trusted-contract").TrustedAssessmentContract;
 }
 
 const FEEDBACK_ONLY: ScoringPolicy = {
@@ -288,6 +289,7 @@ export function policyForGeneratedPractice(input: {
   const framework = input.framework as AssessmentFramework;
   const supported: readonly string[] = [
     "paper2_short_analytic",
+    "paper2_four_mark_diagram_explain",
     "paper1a_10_mark",
     "paper1b_15_mark",
     "paper2g_15_mark",
@@ -300,6 +302,8 @@ export function policyForGeneratedPractice(input: {
   if (!isValidMarkTotal(input.markTotal)) {
     throw new Error("invalid generated-practice mark total");
   }
+  const fixedTotal: Partial<Record<AssessmentFramework, number>> = { paper2_four_mark_diagram_explain: 4, paper1a_10_mark: 10, paper1b_15_mark: 15, paper2g_15_mark: 15, paper3b_10_mark: 10 };
+  if (fixedTotal[framework] != null && fixedTotal[framework] !== input.markTotal) throw new Error("generated framework/total mismatch");
   const entry = frameworkPolicy(framework);
   const policy: ScoringPolicy = {
     scoringState: "marked",
@@ -312,7 +316,7 @@ export function policyForGeneratedPractice(input: {
     bestFit: entry.showBestFitBands,
     total: input.markTotal,
     assessable: input.markTotal,
-    cappedDiagramMarks: 0, // generated questions never depend on a diagram
+    cappedDiagramMarks: 0, // new component contracts reconcile evidence explicitly
     recognizedTemplate: null,
     capReason: null,
     sourceMaterialProvided: null,

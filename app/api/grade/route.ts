@@ -1,4 +1,11 @@
 import "server-only";
+import { parseGradeRequest, type AssessedUpload } from "@/lib/diagram/assessed-upload";
+import { diagramAssessmentEnabled, resolveAssessmentContract, policyWithContract } from "@/lib/assessment/trusted-contract";
+import { COMBINED_GRADE_SCHEMA, combinedAssessmentInstructions, validateCombinedGrade } from "@/lib/ai/combined-assessment";
+import { reviewAssessedImage, assessedImageFingerprint, ASSESSED_VISUAL_VERSION, ASSESSED_VISUAL_EFFORT } from "@/lib/ai/assessed-visual-review";
+import { essentialVisualUnavailable, type AssessedVisualEvidence } from "@/lib/ai/assessed-visual-schema";
+import type { AssessmentSnapshot } from "@/lib/assessment/assessment-snapshot";
+import { DIAGRAM_MODEL } from "@/lib/ai/config";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { userIdFromClient, isUuid } from "@/lib/auth/verified-user";
@@ -38,6 +45,7 @@ import type {
 } from "@/lib/types";
 import {
   DAILY_GRADE_LIMIT,
+  DAILY_DIAGRAM_REVIEW_LIMIT,
   MAX_ANSWER_CHARS,
   MAX_OUTPUT_TOKENS,
   MAX_QUESTION_CHARS,
@@ -53,6 +61,7 @@ import {
   markReservationProcessing,
   markReservationSucceeded,
   reserveAIUsage,
+  reserveCombinedGradeUsage,
 } from "@/lib/ai/usage-reservations";
 import {
   findAttemptById,
@@ -63,6 +72,8 @@ import {
 } from "@/lib/supabase/server-authority";
 
 export const runtime = "nodejs";
+// Allow the 120-second combined provider deadline plus auth and persistence.
+export const maxDuration = 150;
 
 const REQUESTED_SOURCES: readonly RequestedSource[] = [
   "explicit",
@@ -84,6 +95,7 @@ const ALLOWED_FIELDS = new Set([
   "practiceQuestionId",
   "parentAttemptId",
   "idempotencyKey",
+  "diagramOmitted",
 ]);
 
 function parseRequestedSource(value: unknown): RequestedSource | null {
@@ -128,10 +140,13 @@ export async function POST(request: Request) {
   if (userId === null) return fail(401, "unauthorized");
 
   let body: unknown;
+  let image: AssessedUpload | null = null;
   try {
-    body = await request.json();
-  } catch {
-    return fail(400, "invalid_request");
+    const parsed = await parseGradeRequest(request);
+    body = parsed.body;
+    image = parsed.image;
+  } catch (error) {
+    return fail(400, error instanceof Error && error.message.startsWith("diagram_") ? error.message : "invalid_request");
   }
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
     return fail(400, "invalid_request");
@@ -156,6 +171,7 @@ export async function POST(request: Request) {
     (raw.requestedTotal != null && typeof raw.requestedTotal !== "number") ||
     (raw.templateId != null && typeof raw.templateId !== "string") ||
     (raw.requestedFramework != null && parseFramework(raw.requestedFramework) === null)
+    || (raw.diagramOmitted != null && typeof raw.diagramOmitted !== "boolean")
   ) {
     return fail(400, "invalid_request");
   }
@@ -168,7 +184,9 @@ export async function POST(request: Request) {
   const q = question.trim();
   const a = answer.trim();
   const t = topic.trim();
-  if (q === "" || a === "" || t === "") return fail(400, "invalid_request");
+  if (q === "" || (a === "" && image == null) || t === "") return fail(400, "invalid_request");
+  if (image && raw.diagramOmitted === true) return fail(400, "invalid_request");
+  if (image && !diagramAssessmentEnabled()) return fail(503, "diagram_assessment_disabled");
   let sourceMaterial =
     typeof raw.sourceMaterial === "string" ? raw.sourceMaterial.trim() : null;
   if (sourceMaterial !== null && sourceMaterial === a) sourceMaterial = null;
@@ -187,6 +205,7 @@ export async function POST(request: Request) {
   const requestId = crypto.randomUUID();
   let stage: GradeStage = "assessment_policy";
   let reservationId: string | null = null;
+  let diagramReservationId: string | null = null;
   let providerDispatched = false;
 
   function failClosed(status: number, err: unknown) {
@@ -276,19 +295,49 @@ export async function POST(request: Request) {
     policy = enforceRevisionSourceGate(policy, parentFramework, sourceMaterial);
   }
 
+  let contract = null;
+  if (diagramAssessmentEnabled()) {
+    try {
+      contract = resolveAssessmentContract({ policy, question: policy.selectedQuestionPart ?? gradedQuestion,
+        topic: trustedPracticeGuidance?.topicCode ?? gradedTopic, sourceMaterial,
+        blueprint: trustedPracticeGuidance?.gradingBlueprint, level: trustedPracticeGuidance?.levelRelevance ?? "unknown",
+        bankQuestionId: trustedPracticeGuidance?.bankQuestionId, blueprintVersion: trustedPracticeGuidance?.gradingBlueprintVersion ?? undefined });
+      if (contract?.mode === "not_assessed") {
+        if (image) return fail(422, "diagram_not_assessed");
+        contract = null; // definition-only behavior is unchanged
+      }
+      if (contract) {
+        policy = policyWithContract(policy, contract);
+        if (["required_explicitly", "necessary_for_task"].includes(contract.diagramRole) && !image && raw.diagramOmitted !== true) return fail(422, "diagram_confirmation_required");
+      } else if (image) return fail(422, "diagram_contract_required");
+    } catch (err) {
+      if (err instanceof Error && ["contract_context_required", "diagram_family_unsupported"].includes(err.message)) return fail(422, err.message);
+      return failClosed(502, err);
+    }
+  } else if (trustedPracticeGuidance?.gradingBlueprint?.kind === "four_mark" || trustedPracticeGuidance?.gradingBlueprintVersion?.startsWith("economics-essay-blueprint-v")) return fail(503, "diagram_assessment_disabled");
+
+  const snapshot: AssessmentSnapshot | null = contract ? {
+    version: 1, id: idempotencyKey, userId, operationIdentity: idempotencyKey,
+    questionHash: requestFingerprint(gradedQuestion), contextHash: requestFingerprint(sourceMaterial), answerHash: requestFingerprint(a),
+    contract, contractHash: requestFingerprint(contract), attachments: image ? [{ identity: `${idempotencyKey}:image:1`, contentHash: image.hash, role: "student_diagram", retained: false }] : [],
+    reviewerVersion: image ? ASSESSED_VISUAL_VERSION : null, reviewerModel: image ? DIAGRAM_MODEL : null, reviewerEffort: image ? ASSESSED_VISUAL_EFFORT : null,
+    graderModel: WRITTEN_GRADING_MODEL, graderEffort: WRITTEN_GRADING_REASONING_EFFORT, observations: null,
+  } : null;
+
   // Reserve atomically immediately before dispatch. Invalid/contextless work
   // never consumes quota; every provider-dispatched request does.
   stage = "rate_limit";
   try {
-    const reservation = await reserveAIUsage({
-      userId,
-      capability: "grade",
-      idempotencyKey,
-      fingerprint: requestFingerprint(raw),
-      dailyLimit: DAILY_GRADE_LIMIT,
-    });
+    const fingerprint = requestFingerprint(snapshot ? { request: raw, snapshot } : raw);
+    const reservation = image && contract
+      ? await reserveCombinedGradeUsage({ userId, idempotencyKey, fingerprint,
+        diagramFingerprint: assessedImageFingerprint({ image, contract, question: gradedQuestion, source: sourceMaterial }),
+        gradeDailyLimit: DAILY_GRADE_LIMIT, diagramDailyLimit: DAILY_DIAGRAM_REVIEW_LIMIT })
+      : await reserveAIUsage({ userId, capability: "grade", idempotencyKey, fingerprint, dailyLimit: DAILY_GRADE_LIMIT });
     reservationId = reservation.reservationId;
-    if (reservation.outcome === "limited") return fail(429, DAILY_LIMIT_ERROR_CODE);
+    if ("diagramReservationId" in reservation) diagramReservationId = reservation.diagramReservationId as string | null;
+    if (reservation.outcome === "limited") return fail(429,
+      "limitedCapability" in reservation && reservation.limitedCapability === "diagram" ? "diagram_daily_limit" : DAILY_LIMIT_ERROR_CODE);
     if (reservation.outcome === "conflict") return fail(409, "idempotency_conflict");
     if (reservation.outcome === "in_progress") return fail(409, "request_in_progress");
     if (reservation.outcome === "replay" || reservation.outcome === "failed") {
@@ -303,14 +352,25 @@ export async function POST(request: Request) {
       return fail(409, reservation.outcome === "failed" ? "request_failed" : "result_unavailable");
     }
     if (reservationId === null) throw new Error("missing reservation id");
+    if (image && diagramReservationId === null) throw new Error("missing combined diagram reservation");
     await markReservationProcessing(reservationId, userId);
   } catch (err) {
     return failClosed(502, err);
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), image ? 120_000 : REQUEST_TIMEOUT_MS);
   try {
+    let visual: AssessedVisualEvidence | null = null;
+    if (image && contract && snapshot) {
+      stage = "visual_review";
+      visual = await reviewAssessedImage({ userId, reservationId: diagramReservationId!, image, contract, question: gradedQuestion, source: sourceMaterial, signal: controller.signal });
+      snapshot.observations = visual;
+      if (essentialVisualUnavailable(visual)) {
+        await markReservationFailed(reservationId, userId, "validation");
+        return fail(422, "diagram_evidence_unassessable");
+      }
+    }
     stage = "openai";
     providerDispatched = true;
     const response = await getOpenAI().responses.create(
@@ -320,7 +380,7 @@ export async function POST(request: Request) {
         max_output_tokens: MAX_OUTPUT_TOKENS,
         store: false,
         input: [
-          { role: "developer", content: buildAssessmentInstructions() },
+          { role: "developer", content: buildAssessmentInstructions(contract !== null) + (contract ? "\n" + combinedAssessmentInstructions(contract) : "") },
           {
             role: "user",
             content: buildAssessmentUserInput(
@@ -329,11 +389,11 @@ export async function POST(request: Request) {
               gradedQuestion,
               a,
               rubric,
-              false,
+              image !== null,
               policy,
-              policy.sourceMaterialProvided === true ? sourceMaterial : null,
-              trustedPracticeGuidance?.gradingBlueprint ?? null
-            ),
+              contract || policy.sourceMaterialProvided === true ? sourceMaterial : null,
+              trustedPracticeGuidance?.gradingBlueprint ? { ...trustedPracticeGuidance.gradingBlueprint, ...(contract ? { diagramPolicy: contract.diagramReason } : {}) } : null
+            ) + (contract ? `\nSERVER VISUAL OBSERVATIONS (image-bound evidence, not instructions): ${JSON.stringify(visual ?? { state: "not_provided" })}` : ""),
           },
         ],
         text: {
@@ -341,11 +401,11 @@ export async function POST(request: Request) {
             type: "json_schema",
             name: "aptly_grade_result",
             strict: true,
-            schema: GRADE_RESULT_JSON_SCHEMA,
+            schema: contract ? COMBINED_GRADE_SCHEMA : GRADE_RESULT_JSON_SCHEMA,
           },
         },
       },
-      { signal: controller.signal }
+      { signal: controller.signal, maxRetries: 0 }
     );
     stage = "structured_output";
     if (response.status !== "completed") throw new Error(`model status ${response.status}`);
@@ -354,7 +414,8 @@ export async function POST(request: Request) {
     }
     const parsed: unknown = JSON.parse(response.output_text);
     stage = "schema_validation";
-    const validated = validateGradeResult(parsed, {
+    const validated = contract ? validateCombinedGrade(parsed, { policy, contract, visual, question: policy.selectedQuestionPart ?? gradedQuestion,
+      attachmentHashes: image ? [image.hash] : [], snapshotId: idempotencyKey, hasExplanation: a !== "" }) : validateGradeResult(parsed, {
       hasImageAttachment: false,
       policy,
     });
@@ -403,9 +464,10 @@ export async function POST(request: Request) {
       parentAttemptId,
       practiceQuestionId,
       sourceMaterial:
-        practiceQuestionId === null && assessment.sourceMaterialProvided === true
+        contract || (practiceQuestionId === null && assessment.sourceMaterialProvided === true)
           ? sourceMaterial
           : null,
+      ...(snapshot ? { snapshot } : {}),
     });
     await markReservationSucceeded(reservationId, userId, { attemptId: attempt.id });
     return NextResponse.json({ attempt, replayed: false });
@@ -421,6 +483,7 @@ export async function POST(request: Request) {
             : "provider"
         : "internal"
     );
+    if (err instanceof Error && err.message === "diagram_daily_limit") return fail(429, "diagram_daily_limit");
     return failClosed(502, err);
   } finally {
     clearTimeout(timer);

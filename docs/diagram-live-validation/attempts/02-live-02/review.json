@@ -1,0 +1,16 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None on economic observation or the component award. Both identify the correct leftward supply segment and the genuinely absent S2-D intersection. The raw grader separately proposed a 3/4 Diagram diagnostic while awarding diagram 1/2; the server normalized that diagnostic to 2/4 without changing the 3/4 overall award.",
+  "origin": null,
+  "findings": [
+    "Independently inspected wheat-incomplete.png. Its SHA-256 matches resolved-task.json and the saved attachment hash. S2 visibly stops before demand; only E1/P1/Q1 is drawn. This is missing economic construction, not merely absent optional projection labels.",
+    "The diagram still visibly shows unchanged D and a correctly directed supply contraction, supporting task-specific diagram 1/2. The unchanged developed explanation supports 2/2, so saved overall 3/4 is defensible under the current blueprint.",
+    "The observer correctly treats the weak but readable drawing as usable. Neither stage fabricates the new equilibrium from the correct prose.",
+    "No labeling ceiling or second penalty was applied for the missing new equilibrium. The case is also correctly free of a mechanism-mismatch or error-carry-forward claim.",
+    "Compared with attempt 01, the answer and trusted contract are identical. Only the image changes; the observed one-mark reduction is therefore consistent with the controlled partial-diagram condition.",
+    "The raw Paper 2 classification and raw Diagram diagnostic discrepancy were corrected by the server in the persisted result. Persistence reports saved=true/publicMatches=true.",
+    "The requested improvement to extend S2 to its demand intersection is directly supported by the pixels. The phrase always draw the new intersection and label both the new equilibrium price and quantity should remain advice for this demand-supply task, not a universal rule for every diagram family.",
+    "This is an independent assistant review of synthetic engineering evidence, not teacher calibration."
+  ],
+  "judgement": "expected"
+}

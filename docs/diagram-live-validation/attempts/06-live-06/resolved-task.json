@@ -1,0 +1,70 @@
+{
+  "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+  "sourceMaterial": "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium.",
+  "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+  "contract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "four_mark_diagram",
+    "diagramRole": "required_explicitly",
+    "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+    "provenance": "aptly_authored",
+    "framework": "paper2_four_mark_diagram_explain",
+    "paper": null,
+    "part": null,
+    "total": 4,
+    "topic": "2.3",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "economics-four-mark-blueprint-v1",
+    "diagram": {
+      "family": "demand_supply",
+      "acceptableAlternatives": [
+        "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+      ],
+      "labels": [
+        "Price of wheat",
+        "Quantity of wheat",
+        "D",
+        "S1",
+        "S2",
+        "P1/P2",
+        "Q1/Q2"
+      ],
+      "relationships": [
+        "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+      ],
+      "outcomes": [
+        "Equilibrium price rises and equilibrium quantity falls."
+      ],
+      "essentialAreas": [],
+      "diagram": {
+        "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship.",
+        "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+        "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity."
+      },
+      "explanation": {
+        "zero": "No relevant link from the drought to wheat supply or equilibrium.",
+        "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+        "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached."
+      },
+      "contextConstraints": [
+        "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+      ],
+      "permittedMechanisms": [
+        "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+      ],
+      "rules": [
+        "within_part_ecf",
+        "mechanism_consistency_2",
+        "question_label_ceiling_3"
+      ],
+      "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency."
+    },
+    "writtenCriteria": [],
+    "sourceRequired": false,
+    "scope": "same_question_part"
+  },
+  "bankQuestionId": "econ-v1-2.3-4-001",
+  "imagePath": "docs/diagram-live-validation/images/wheat-demand-increase.png",
+  "imageHash": "9c75193c8afe8ecae830c3d8b1fe5133f900e0cfdc18502953b9feab946ded03"
+}

@@ -2,7 +2,8 @@
 
 **Controller:** Joao Perracini (individual; non-commercial student project)
 **Contact:** contactaptly@gmail.com
-**Version:** 1.0 — 18 August 2026
+**Version:** 1.1 — 15 September 2026
+**Processing update:** Diagram-aware assessment facts updated from the implementation; controller review of the changed processing and existing policy conclusions is pending.
 
 Internal working document. Not user-facing. Companion to `dpia.md`.
 
@@ -15,14 +16,16 @@ Internal working document. Not user-facing. Companion to `dpia.md`.
 | Email, user ID | `auth.users` (Supabase) | Sole identifier. Never sent to OpenAI. |
 | Nickname, SL/HL level | `auth.users.raw_user_meta_data` | No profile table. |
 | Session, refresh token | Supabase auth cookies + `auth.sessions` | |
-| Question, answer, source material | `attempts` | Student-supplied. |
-| Estimated marks, feedback, mistakes, topic, diagnostics | `attempts.feedback`, `attempts.assessment` + denormalised columns | AI-produced. |
+| Question, answer, source material | `attempts`, with Practice question/context in `practice_questions` | Student work and server-owned Practice context. |
+| Estimated marks, feedback, mistakes, topic, diagnostics | `attempts.feedback`, `attempts.assessment` + denormalised columns | Model-derived decisions; combined assessment totals and applicable ceilings are reconciled by the server. |
 | Grading provenance (model, rubric, taxonomy, contract, effort) | `attempts` × 5 columns | Auditability. All-or-nothing DB constraint. |
-| Diagram findings | `attempts.diagram_evidence` | Feedback only. DB function rejects image data/URLs/EXIF. |
+| Legacy diagram findings | `attempts.diagram_evidence` | Feedback only; historical marks remain unchanged. DB function rejects image data/URLs/EXIF. |
+| Assessed diagram result | `attempts.assessment.assessedDiagram` | Public contract summary, observation/interpretation summaries, image content hashes, snapshot ID and applicable component decisions/ceilings. No image bytes. |
+| Private assessment snapshot | `assessment_snapshots` | Immutable server-owned contract, question/context/answer hashes, ordered image identities/hashes/roles, visual observations and model/reviewer provenance. No image bytes; no browser grants. |
 | Revision links | `attempts.parent_attempt_id` | |
 | Generated practice + hidden grading blueprint | `practice_questions` | Blueprint hidden from browser by column-level GRANT. |
 | Quota / idempotency | `ai_usage_reservations` | No content. Swept after 30 days. |
-| Scan + diagram photos | **Nowhere** | Transient request data. Metadata stripped client-side before upload. |
+| Scan + diagram photo bytes | Browser memory and transient server/provider requests | Metadata stripped client-side before upload. Aptly does not persist bytes in its database or a photo store; diagram bytes can remain in browser memory for an immediate revision, but are not saved in sessionStorage. |
 | Derived profile (weak topics, recurring mistakes, Current Focus, Study Next, estimated level) | **Nowhere** | Recomputed in the browser each render from `attempts`. |
 | Failure logs | Hosting platform stdout | Event, random request ID, stage, error *class*, status, timestamp. No content, email or user ID. |
 | IP address, user agent | Provider infrastructure only | Aptly's own code writes neither. |
@@ -77,7 +80,7 @@ student text. No identifiers. **Passes.**
 | Provider | Role | Receives | Transfer position |
 |---|---|---|---|
 | Supabase | Processor — auth, database, magic-link email | Everything stored | Region **to be confirmed** (§9). Publishes a DPA covering UK data protection law. |
-| OpenAI | Processor — grading, transcription, diagram review, generation | Question, answer, source text, photos. **No name, email or user ID** | US. DPA applies EU SCCs as amended by the UK Addendum (DPA 2018 s119A). |
+| OpenAI | Processor — grading, transcription, diagram assessment/review, generation | Question, answer, source text, photos and visual observations. **No account name, email or user ID supplied by Aptly**; student work may itself contain personal details. | US. DPA applies EU SCCs as amended by the UK Addendum (DPA 2018 s119A). |
 | Hosting provider | Processor — serves the app | Request data in transit, platform logs incl. IP | **To be confirmed** (§9). Code comments and the stock README point to Vercel. |
 
 Supabase subprocessors (AWS, Google Cloud, Fly.io, Cloudflare, Upstash, Vercel)
@@ -88,7 +91,8 @@ service, no advertising network, no payment processor, no CRM, no chat widget.
 Runtime dependencies are exactly: `@supabase/ssr`, `@supabase/supabase-js`,
 `openai`, `next`, `react`, `react-dom`, `next-themes`, `lucide-react`.
 
-**OpenAI controls in use:** `store: false` on all four calls. Not opted into
+**OpenAI controls in use:** `store: false` on every model request, including the
+visual observation and authoritative assessment stages. Not opted into
 training (API default since 1 Mar 2023). Zero Data Retention **not** requested —
 see §9.
 
@@ -99,10 +103,10 @@ see §9.
 | Data | Kept | Trigger |
 |---|---|---|
 | Account (email, nickname, level) | Life of the account | Account deletion |
-| Attempts, feedback, assessments | Life of the account | Account deletion, or per-attempt delete |
+| Attempts, feedback, assessments, diagram observations and private assessment snapshots | Life of the account | Account deletion, or per-attempt delete; snapshots cascade-delete with their attempt or account |
 | Practice questions | Life of the account | Account deletion; also auto-removed when the last attempt referencing them is deleted |
 | Temporary typed drafts | Current tab session; 24-hour absolute cutoff from draft creation, checked on restore/read/write | Confirmed matching save, discard, sign-out/account change, account deletion, or stale-draft sweep |
-| Scan / diagram photos | **Not retained** | n/a — transient request data |
+| Scan / diagram photo bytes | No persistent Aptly server copy; transient requests and browser memory | Server discards bytes after processing. Remove the browser attachment or leave/reload the editor to discard that copy; an immediate revision may explicitly reuse the in-memory diagram. Reopened work needs the photo attached again. Provider retention is separate (§3). |
 | Derived profile | **Not retained** | n/a — recomputed each render |
 | `ai_usage_reservations` | **30 days** | Automatic sweep |
 | Failure logs | Provider default | Hosting platform |
@@ -137,6 +141,16 @@ binding need is short-term reconciliation — investigating "I hit the limit
 early" or "this was charged twice", realistically raised within a month. 30 days
 covers that with margin; nothing identified needs longer.
 
+**Combined assessment quota and retries.** A combined operation with an image
+uses one `grade` reservation and one `diagram` reservation from the existing
+allowances; it does not raise either daily limit. A completed operation replay
+returns its saved attempt without repeating the provider calls or consumption.
+A dispatched visual review remains consumed if it fails or the image proves
+unassessable. A changed answer or revised/replaced image starts a new operation:
+the server binds the new evidence and recalculates the assessment. Without an
+image there is no visual review reservation. Existing reservation status/counting
+rules still apply; failure is not a quota refund.
+
 **Mechanism.** Implemented in SQL inside `reserve_ai_usage` (migration 0011),
 scoped to the same user *and* capability the transaction already holds an
 advisory lock for. No cron, no new infrastructure, no extra round-trip, no new
@@ -160,8 +174,11 @@ Single route: **contactaptly@gmail.com**.
 3. **Respond within one month.** Extendable by two further months for complex
    requests — tell the person inside the first month if extending.
 4. **Fulfil:**
-   - *Access* — export their `attempts` and `practice_questions` rows plus their
-     account fields. Say plainly that marks are Aptly estimates, so the export
+   - *Access* — include their `attempts`, `practice_questions`, account fields and
+     owned `assessment_snapshots` in the internal request inventory. Review the
+     snapshot's observations and other personal data when preparing the response;
+     browser access remains restricted and this is not a new public blueprint
+     export route. Say plainly that marks are Aptly estimates, so the export
      cannot be mistaken for a transcript.
    - *Erasure* — point them at Your data → Delete my account (self-service), or
      do it via the Supabase dashboard.
@@ -220,8 +237,10 @@ misconfiguration disabling RLS → covered by the security verifier.
 
 Evidence for Art 32. All present in the codebase today.
 
-- **Row-level security** on all four active tables; browser roles hold
-  SELECT/DELETE on their own rows only.
+- **Row-level security** on the active data tables, with grants appropriate to
+  their role. Browser access to attempts and Practice is limited to permitted
+  columns/operations on owned rows. `assessment_snapshots` has no grants to
+  `public`, `anon` or `authenticated`; only `service_role` holds SELECT/INSERT/DELETE.
 - **Server authority** — INSERT/UPDATE revoked from `authenticated` (migration
   0007). Every authoritative write runs server-side after authenticating with
   the cookie-scoped client and deriving a verified user ID.
@@ -232,13 +251,19 @@ Evidence for Art 32. All present in the codebase today.
   `import "server-only"`. Never logged.
 - Route protection uses `getClaims()` (verifies the JWT), not `getSession()`.
 - **Content-free logging** — error class and stage only, never the message.
-- **No image persistence**; EXIF/GPS stripped client-side by canvas re-encode.
-- **Database-level payload validation** — `is_valid_diagram_evidence()` rejects
-  base64, data/blob URLs, storage keys, EXIF, GPS and image filenames.
+- **No persistent server photo bytes**; EXIF/GPS stripped client-side by canvas
+  re-encode. Saved observations and image content hashes are distinct from bytes.
+- **Database-level legacy payload validation** — `is_valid_diagram_evidence()`
+  rejects base64, data/blob URLs, storage keys, EXIF, GPS and image filenames.
+- **Combined assessment integrity** — migration 0013 atomically saves the attempt
+  and its private snapshot, validates their owner/operation/contract/artifact
+  bindings and component arithmetic/allowed ceilings, and prevents completed
+  results being rewritten. Deletion of linked parents or Practice may still clear
+  those links. Historical marks are not backfilled or reinterpreted.
 - **Fail-closed AI handling** — strict JSON schema validation server-side.
 - **Account deletion** derives the subject only from the session; the handler
   takes no parameters, so no caller can name another user.
-- **Verifiers** — `npm run test:security:local` (25 checks) against a local
+- **Verifiers** — `npm run test:security:local` against a local
   instance; full unit suite in CI-able form.
 
 ---
@@ -270,3 +295,8 @@ Revisit this document and `dpia.md` on any of: teacher/school access, payments,
 advertising, analytics, sharing or social features, under-13 users,
 official/predictive grading positioning, a different AI provider, or storing
 images. Full reasoning in `dpia.md` §9.
+
+The September 2026 diagram-aware pilot changes the use of visual evidence in
+marks and the retained observation/snapshot data. These implementation facts are
+recorded here; the controller still needs to review the related DPIA update and
+policy conclusions. This entry does not record that review as completed.

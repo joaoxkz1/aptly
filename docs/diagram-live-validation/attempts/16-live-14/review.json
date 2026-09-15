@@ -1,0 +1,21 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "No grader ran. The observer correctly describes a readable Schools/Clinics PPC and returns no_relevant_diagram, but contradicts those observations by setting essentialEvidenceReadable=false. Strict validation rejects that inconsistent structured result before grading.",
+  "origin": "Observer structured-output state/readability contradiction. The boolean was apparently interpreted as whether required economics evidence is present rather than whether the submitted image is readable enough to establish its presence or absence.",
+  "findings": [
+    "Independently inspected wheat-irrelevant.png before dispatch completion. The actual file hash matches resolved-task.json. It clearly contains a Schools/Clinics PPC, labeled A/B output combinations and projections; it has no wheat-market demand/supply diagram.",
+    "Every material observer description is grounded in those visible pixels. The observer does not invent wheat curves from the strong wheat prose and correctly identifies the figure as irrelevant to this task.",
+    "The raw combination no_relevant_diagram, essentialEvidenceReadable=false and studentRegionCertain=true is inconsistent with the schema validator and the observer's own readable-image summary. This is a response-contract failure, not a disputed economic mark or a photograph that is actually unreadable.",
+    "The route returns HTTP 502 grading_failed. There is no grader dispatch or response in the record, and persistence reports saved=false with no row or snapshot. The failed request therefore never converts the wrong figure into a score or silently saves an assessment.",
+    "The user-visible failure is real even though validation correctly fails closed. The intended complete 0+2 assessment was not delivered on this attempt; the record should remain classified as a failed synthetic attempt.",
+    "Root has clarified the observer schema description and prompt to distinguish readability from correctness/completeness while leaving the strict validator intact. A repeat is required to evaluate that prospective correction; this review does not treat tests or a proposed change as a successful live retry.",
+    "This is an independent assistant review of synthetic engineering evidence. No grading-rule change, provider call or teacher mark was made by this reviewer."
+  ],
+  "judgement": "failure",
+  "resolution": {
+    "status": "addressed_in_repeat",
+    "reviewedAttempt": "17-live-14",
+    "details": "The failed raw observation and HTTP 502 remain unchanged. After root clarified the observer schema/prompt meaning of readability, attempt 17 repeats the identical question, context, answer, image and trusted contract. It returns no_relevant_diagram with essentialEvidenceReadable=true, passes the unchanged strict validator, grades 0+2=2 and persists the matching result.",
+    "scope": "This repeat addresses the observed state/readability contradiction for this synthetic case. It does not replace the original failure record or establish universal provider-output reliability."
+  }
+}

@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MarkSummary } from "@/components/assessment/mark-summary";
-import { AssessmentComponents } from "@/components/assessment/assessment-components";
+import { AssessedDiagramSummary, AssessmentComponents } from "@/components/assessment/assessment-components";
 import { MarkBreakdown } from "@/components/assessment/mark-breakdown";
 import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
 import { DIAGRAM_REVIEW_UNAVAILABLE_NOTICE } from "@/lib/diagram/evidence";
@@ -30,6 +30,7 @@ import {
   REVISION_FOLLOWUP_EXPLAINER,
   REVISION_ISSUE_STATUS_LABELS,
   revisionComparison,
+  revisionComparisonLimitation,
   revisionIssueFollowUp,
 } from "@/lib/assessment/revisions";
 import {
@@ -83,6 +84,7 @@ export function FeedbackResult({
   const isRevisionOf = parentAttempt !== null && attempt.parentAttemptId === parentAttempt.id;
   const comparison =
     isRevisionOf && parentAttempt !== null ? revisionComparison(parentAttempt, attempt) : null;
+  const comparisonLimitation = isRevisionOf && parentAttempt ? revisionComparisonLimitation(parentAttempt, attempt) : null;
   // Beta Trust: follow up every issue flagged on the ORIGINAL, so a tag that
   // simply isn't re-flagged never looks like Aptly forgot its own feedback.
   // Presentation-only, controlled-tag identity — never claims an issue is fixed.
@@ -156,6 +158,7 @@ export function FeedbackResult({
                   </p>
                 </div>
               )}
+              {comparisonLimitation && <p className="mt-2 text-xs text-muted-foreground">{comparisonLimitation}</p>}
               <p className="mt-1 text-xs text-muted-foreground">
                 Both versions stay together in your History.
               </p>
@@ -212,7 +215,9 @@ export function FeedbackResult({
           diagram photo was actually reviewed (never a "missing diagram" state)
           — the same shared card the Learning log shows. A failed review gets a
           gentle notice; it never blocks or alters the written feedback above. */}
-      {attempt.diagramEvidence != null ? (
+      {assessment?.assessedDiagram && assessment.assessedDiagram.contract.mode !== "not_assessed" ? (
+        <AssessedDiagramSummary attempt={attempt} />
+      ) : attempt.diagramEvidence != null ? (
         <DiagramEvidenceCard evidence={attempt.diagramEvidence} />
       ) : (
         diagramReviewFailed && (

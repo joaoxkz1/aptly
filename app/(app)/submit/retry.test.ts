@@ -38,7 +38,7 @@ class MemoryStorage implements DraftStorage {
   removeItem(key: string) { this.values.delete(key); }
   key(index: number) { return [...this.values.keys()][index] ?? null; }
 }
-type Node = ReactElement<{ children?: ReactNode; onSubmit?: (event: { preventDefault: () => void }) => void }>;
+type Node = ReactElement<{ children?: ReactNode; onSubmit?: (event: { preventDefault: () => void }) => void; onAttachedChange?: (image: Blob | null) => void; onStatusChange?: (status: string) => void; onClick?: () => void }>;
 function descendants(node: ReactNode): Node[] {
   if (Array.isArray(node)) return node.flatMap(descendants);
   if (!React.isValidElement(node)) return [];
@@ -82,7 +82,7 @@ beforeEach(() => {
   vi.stubGlobal("window", { setTimeout, clearTimeout, scrollTo: vi.fn() });
   vi.stubGlobal("React", React);
 });
-afterEach(() => { renderer.unmount(); session.close(); vi.unstubAllGlobals(); });
+afterEach(() => { renderer.unmount(); session.close(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe("Submit callback retry lifecycle with the real draft session", () => {
   it.each([null, [], { attempt: null }, { attempt: { id: 123 } }, { attempt: { id: "not-a-saved-id" } }])("keeps a malformed successful response uncertain: %j", async body => {
@@ -152,5 +152,67 @@ describe("Submit callback retry lifecycle with the real draft session", () => {
     expect(store.read(accountId, "manual").draft?.text.answer).toBe(session.text.answer);
     submit(); await responseSettled();
     expect(requestKeys()[1]).not.toBe(requestKeys()[0]);
+  });
+});
+
+describe("Combined diagram submission callbacks", () => {
+  function attach(image: Blob | null) {
+    descendants(render()).find(node => node.props.onAttachedChange)?.props.onAttachedChange?.(image);
+  }
+  function payload(index = 0) {
+    const form = fetchMock.mock.calls[index][1].body as FormData;
+    return JSON.parse(String(form.get("payload")));
+  }
+  it("submits an image-only attempt through one authoritative multipart grade request", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
+    session.edit({ question: "Using a demand and supply diagram, explain how a drought affects wheat price and quantity. [4 marks]", answer: "" });
+    attach(new Blob(["synthetic-image"], { type: "image/jpeg" }));
+    fetchMock.mockResolvedValue(json({ error: "grading_failed" }, 502));
+    submit(); await responseSettled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/grade");
+    expect(payload().answer).toBe("");
+    expect((fetchMock.mock.calls[0][1].body as FormData).get("image")).toBeInstanceOf(Blob);
+  });
+  it("requires explicit omission confirmation before sending a required-diagram answer", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
+    session.edit({ question: "Using a demand and supply diagram, explain how a drought affects wheat price and quantity. [4 marks]" });
+    fetchMock.mockResolvedValue(json({ error: "grading_failed" }, 502));
+    submit();
+    expect(fetchMock).not.toHaveBeenCalled();
+    const confirmation = descendants(render()).find(node => node.props.onClick && textOf(node) === "Grade without a diagram");
+    expect(confirmation).toBeTruthy();
+    confirmation!.props.onClick!(); await responseSettled();
+    expect(payload().diagramOmitted).toBe(true);
+    expect((fetchMock.mock.calls[0][1].body as FormData).get("image")).toBeNull();
+  });
+  it("retains retry identity for unchanged evidence and creates a new identity after replacement or removal", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
+    fetchMock.mockImplementation(() => Promise.resolve(json({ error: "grading_failed" }, 502)));
+    attach(new Blob(["one"], { type: "image/jpeg" }));
+    submit(); await responseSettled();
+    submit(); await responseSettled();
+    expect(payload(1).idempotencyKey).toBe(payload().idempotencyKey);
+    attach(new Blob(["two"], { type: "image/jpeg" }));
+    submit(); await responseSettled();
+    expect(payload(2).idempotencyKey).not.toBe(payload(1).idempotencyKey);
+    attach(null);
+    submit(); await responseSettled();
+    expect(payload(3).idempotencyKey).not.toBe(payload(2).idempotencyKey);
+  });
+  it("blocks grading while a selected image is still preparing", () => {
+    vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
+    descendants(render()).find(node => node.props.onStatusChange)?.props.onStatusChange?.("preparing");
+    submit();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it("does not save an apparently complete result for unreadable evidence", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
+    attach(new Blob(["unclear-photo"], { type: "image/jpeg" }));
+    fetchMock.mockResolvedValue(json({ error: "diagram_evidence_unassessable" }, 422));
+    const saved = vi.spyOn(session, "saved");
+    submit(); await responseSettled();
+    expect(saved).not.toHaveBeenCalled();
+    expect(textOf(render())).toContain("No completed mark was saved");
   });
 });

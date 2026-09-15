@@ -1,0 +1,15 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. Both stages identify unchanged upward-sloping SRAS, AD shifting left from AD1 to AD2, and the new equilibrium at lower real output and a lower price level. The grader uses those observations within the essay's holistic judgment.",
+  "origin": null,
+  "findings": [
+    "The inspected diagram has correctly named macroeconomic axes, two downward-sloping AD curves, unchanged SRAS, actual E1/E2 intersections and consistent PL1/PL2 and Y1/Y2 projections. The answer's P1/P2 notation and the image's PL1/PL2 notation identify the same price-level comparison and are harmless alternatives.",
+    "The resolved audited contract is paper1a_10_mark, holistic_diagram, necessary_for_task, ad_as. The raw grader returns componentEvaluation null; the saved result retains componentDecision null, writtenMarksAwarded null and capReason null. There is no 2+2 split, fixed diagram bonus or numerical diagram ceiling.",
+    "The answer develops the confidence-consumption-AD-inventory-output adjustment and distinguishes lower demand from destroyed productive capacity. The observer's geometric claims are visible in the image, and the written explanation explicitly uses the diagram to establish both requested outcomes.",
+    "The 10/10 award is a defensible top-band best-fit judgment for this synthetic answer. The grader gives an integrated rationale, preserves independent diagnostics and does not derive the headline from them. It treats the optional hypothetical illustration as an illustration, does not present it as a real event, and does not impose a real-world-example or evaluation requirement on this explain task.",
+    "Feedback acknowledges the correct mechanism and offers concision as a timed-practice suggestion, without using that optional refinement to withhold full credit. All preserved diagnostic rows are consistent with the stated strengths.",
+    "The HTTP 200 result is saved and publicMatches is true. The private snapshot semantically matches the resolved contract and raw observer evidence; the image content hash matches the saved attachment. Both provider requests use store:false and contain no engineering prediction, review-only metadata, case ID or descriptive image filename.",
+    "This review checks one synthetic engineering control. It is not an independent teacher mark, proof of universal essay accuracy, or evidence for a fixed diagram contribution. No assessment calls were made during review."
+  ],
+  "judgement": "expected"
+}

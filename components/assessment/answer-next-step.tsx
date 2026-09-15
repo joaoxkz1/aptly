@@ -35,22 +35,26 @@ export function AnswerNextStep({ attempt, saved, onRevise, onTryAnother, tryAnot
   const skill = focus?.targetSkill;
   const cue = skill === "economic_analysis" || skill === "evaluation" ? METHOD_CUES[skill] : null;
   const studyNext = presentedFeedback(attempt).studyNext;
+  const components = attempt.assessment?.assessedDiagram?.componentDecision;
+  const limitedByComponents = Boolean(components && (components.diagram === 0 || components.explanation === 0 ||
+    components.ceilings.some(ceiling => ceiling.maximum < components.rawTotal)));
+  const immediateAdvice = saved && limitedByComponents && studyNext ? studyNext : null;
 
   return (
     <Card className="border-primary/25 bg-accent/40">
       <CardContent className="flex flex-col gap-2.5 p-4 md:p-5">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-wider text-accent-foreground">Next step</h2>
-          <p className="mt-1 text-sm font-semibold">{focus ? focusLabel(focus) : saved ? "Choose your next practice" : "Try your own answer"}</p>
+          <p className="mt-1 text-sm font-semibold">{immediateAdvice ? "Revise the limiting part" : focus ? focusLabel(focus) : saved ? "Choose your next practice" : "Try your own answer"}</p>
           <p className="mt-1 text-sm leading-relaxed">
-            {focus ? focus.explanation : selected
+            {immediateAdvice ?? (focus ? focus.explanation : selected
               ? "This focused-practice format is not available yet. Review the feedback or choose general practice."
               : saved
                 ? "This answer does not establish one clear supported priority. Choose a topic you want to practise."
-                : "Use the feedback below to guide your next answer."}
+                : "Use the feedback below to guide your next answer.")}
           </p>
         </div>
-        {cue && (
+        {cue && !immediateAdvice && (
           <details key={skill} className="text-sm">
             <summary className="cursor-pointer font-medium text-primary">Show me a method</summary>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted-foreground">
@@ -59,7 +63,7 @@ export function AnswerNextStep({ attempt, saved, onRevise, onTryAnother, tryAnot
             <p className="mt-2 text-xs text-muted-foreground">A practice strategy, not an official IB marking checklist.</p>
           </details>
         )}
-        {studyNext && (
+        {studyNext && !immediateAdvice && (
           <details className="text-sm">
             <summary className="cursor-pointer text-muted-foreground">{saved ? "Saved study advice" : "Study advice"}</summary>
             <p className="mt-2 leading-relaxed">{studyNext}</p>

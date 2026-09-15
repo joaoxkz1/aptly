@@ -78,9 +78,10 @@ export const DIAGNOSTIC_BAR_EXPLANATION =
  * as "Diagram · Needs development". Its honest status lives in the components card.
  */
 export function visibleDiagnosticRows(
-  items: AssessmentMarkBreakdownItem[]
+  items: AssessmentMarkBreakdownItem[],
+  diagramAssessed = false,
 ): AssessmentMarkBreakdownItem[] {
-  return items.filter((i) => i.label !== "Diagram");
+  return items.filter((i) => i.available > 0 && (i.label !== "Diagram" || diagramAssessed));
 }
 
 // --- Framework-sourced labels (never the model's assessmentFormat) ----------
@@ -161,7 +162,11 @@ export function frameworkFormatKey(a: Assessment): string {
  * outside marks and Coverage metrics — this note never claims review is
  * unavailable or that no diagram has ever been looked at.
  */
-export function diagramEvidenceNote(count: number): { title: string; body: string } {
+export function diagramEvidenceNote(count: number, hasAssessedDiagrams = false): { title: string; body: string } {
+  if (hasAssessedDiagrams) return {
+    title: "Diagram evidence",
+    body: `${count} answer${count === 1 ? " was" : "s were"} assessed without a diagram where one was expected. New diagram assessments contribute under each question's contract. Earlier feedback-only reviews retain their original meaning.`,
+  };
   return {
     title: "Diagram evidence kept separate",
     body: `Aptly assessed the related written explanation in ${count} answer${count === 1 ? "" : "s"}. Diagram photo review is available when you attach a diagram to an answer, and its feedback stays separate from marks and Coverage metrics in this version of Aptly.`,

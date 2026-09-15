@@ -4,6 +4,28 @@ import type { Attempt } from "@/lib/types";
 import { deriveScoringState } from "@/lib/assessment/status";
 import { DIAGRAM_COMPONENT_REVIEWED_NOTE } from "@/lib/diagram/evidence";
 
+export function AssessedDiagramSummary({ attempt }: { attempt: Attempt }) {
+  const evidence = attempt.assessment?.assessedDiagram;
+  if (!evidence || evidence.contract.mode === "not_assessed" || evidence.contract.mode === "four_mark_written") return null;
+  return <Card>
+    <CardHeader><CardTitle>Diagram assessment</CardTitle></CardHeader>
+    <CardContent className="space-y-2 text-sm">
+      <p>{evidence.summary}</p>
+      <p className="text-xs text-muted-foreground">{evidence.contract.diagramReason}</p>
+      {evidence.contract.mode === "holistic_diagram" && <p className="text-xs text-muted-foreground">Relevant diagram evidence contributes to the overall judgment. It is not an added diagram bonus.</p>}
+      {evidence.state === "not_provided" && <p className="text-xs text-muted-foreground">This estimate assesses the work submitted without a diagram.</p>}
+      {evidence.state === "partially_readable" && <p className="text-xs text-muted-foreground">Some details could not be read. The assessment uses only the evidence that could be established.</p>}
+      {evidence.observations.length > 0 && <details>
+        <summary className="cursor-pointer text-xs font-medium text-primary">What Aptly could see</summary>
+        <ul className="mt-2 space-y-2 text-xs text-muted-foreground">{evidence.observations.map((item, index) => <li key={`${item.region}-${index}`}>
+          <span className="font-medium">{item.region}{item.uncertain ? " · uncertain" : ""}: </span>{item.observation}
+          {item.interpretation && <span className="block">Interpretation: {item.interpretation}</span>}
+        </li>)}</ul>
+      </details>}
+    </CardContent>
+  </Card>;
+}
+
 /**
  * The recognised template's component structure (IB Marking Fidelity). Shown
  * whenever the recognised 4-mark diagram-explain structure applied — via the
@@ -15,6 +37,20 @@ import { DIAGRAM_COMPONENT_REVIEWED_NOTE } from "@/lib/diagram/evidence";
  */
 export function AssessmentComponents({ attempt }: { attempt: Attempt }) {
   const a = attempt.assessment;
+  const decision = a?.assessedDiagram?.componentDecision;
+  if (decision) return (
+    <Card>
+      <CardHeader><CardTitle>Assessment components</CardTitle></CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        <div className="flex justify-between"><span>{decision.ceilings.length ? "Diagram credit before ceiling" : "Diagram"}</span><span>{decision.diagram} / 2</span></div>
+        <p className="text-xs text-muted-foreground">{decision.reasons.diagram}</p>
+        <div className="flex justify-between"><span>{decision.ceilings.length ? "Explanation credit before ceiling" : "Written explanation"}</span><span>{decision.explanation} / 2</span></div>
+        <p className="text-xs text-muted-foreground">{decision.reasons.explanation}</p>
+        {decision.ceilings.map(ceiling => <p key={ceiling.rule} className="rounded-lg bg-muted p-3 text-xs">Overall ceiling: {ceiling.maximum} / 4. {ceiling.reason} The component credit totals {decision.rawTotal}; {ceiling.maximum < decision.rawTotal ? "the ceiling limits the overall mark." : "this ceiling causes no further reduction."}</p>)}
+        <div className="flex justify-between border-t border-border pt-3 font-semibold"><span>Estimated total</span><span>{decision.total} / 4</span></div>
+      </CardContent>
+    </Card>
+  );
   if (a == null || a.recognizedTemplate !== "four_mark_diagram_explain") return null;
   if (a.marksEarned == null || a.marksAssessable == null || a.marksAvailable == null) return null;
 

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Notice"
-      lastUpdated="5 September 2026"
+      lastUpdated="15 September 2026"
       intro="What Aptly saves, why it saves it, and what you can do about it. Written to be read, not skimmed past."
     >
       <section className="rounded-2xl border border-border bg-card p-5">
@@ -79,6 +79,9 @@ export default function PrivacyPage() {
           <strong>Feedback and marks.</strong> The estimated mark for each answer, the written
           feedback, strengths and improvements, the mistakes identified, the syllabus topic, and the
           per-criterion diagnostic breakdown.
+          For diagram-aware assessments, this includes image content hashes, visible observations,
+          component decisions where applicable, and the assessment and model versions used.
+          The private assessment snapshot is deleted with its answer.
         </p>
         <p>
           <strong>Technical records.</strong> When things happened, your sign-in session, and small
@@ -115,12 +118,13 @@ export default function PrivacyPage() {
 
       <LegalSection title="AI, and what OpenAI receives">
         <p>
-          Aptly uses OpenAI&apos;s models to mark written answers, read handwriting from photos,
-          comment on diagrams, and occasionally write a new practice question.
+          Aptly uses OpenAI&apos;s models to assess answers and diagrams, read handwriting from photos,
+          and occasionally write a new practice question.
         </p>
         <p>
           When you grade an answer, Aptly sends OpenAI the question, your answer, and any source
-          text you pasted. When you attach a photo, it sends the photo. It does{" "}
+          text you pasted. Scan sends its photo when you choose Read; an assessed diagram photo is
+          sent when you choose Grade. Legacy diagram review sends its photo when you request review. It does{" "}
           <strong>not</strong> send your name, your email address or your account ID — OpenAI
           receives the work, not who wrote it.
         </p>
@@ -149,14 +153,17 @@ export default function PrivacyPage() {
           text you can then check and edit. Aptly does not save the photo.
         </p>
         <p>
-          <strong>Diagram feedback.</strong> The same happens for a diagram photo. It is sent to
-          OpenAI, which returns written observations about your diagram. Aptly saves those written
-          observations with your answer, but not the image. Diagram feedback never changes your
-          estimated mark.
+          <strong>Diagram assessment and feedback.</strong> A diagram photo is sent to OpenAI,
+          which returns observations about the visible student work. In diagram-aware assessments,
+          those observations contribute to the estimated overall mark according to the question.
+          Aptly saves the observations, a content hash and the assessment decision, but not the image.
+          Historical feedback-only diagram reviews retain their original marks and notices.
         </p>
         <p>
-          Photos exist only for as long as the request takes. There is no photo library, no storage
-          bucket, and nothing to delete later.
+          The server discards photos after the request. Your current browser page can retain a
+          photo in memory so you can choose to reuse it in a revision; reloading or switching accounts
+          removes that copy. Photos are never put in draft session storage. There is no server photo
+          library or storage bucket. After reopening an answer, attach the photo again to assess it.
         </p>
       </LegalSection>
 
@@ -233,7 +240,9 @@ export default function PrivacyPage() {
           feedback and practice history attached to it.
         </p>
         <p>
-          <strong>Photos</strong> are never stored, so there is nothing to keep or delete.
+          <strong>Photo bytes</strong> are not saved on Aptly&apos;s server. An attached diagram can
+          stay temporarily in your browser&apos;s memory for a revision. Its saved hash, observations
+          and assessment snapshot are deleted with the associated attempt or account.
         </p>
         <p>
           <strong>Usage-limit and duplicate-request records</strong> hold no schoolwork and are
@@ -342,7 +351,7 @@ export default function PrivacyPage() {
       <LegalSection title="Keeping your information safe">
         <p>
           Aptly&apos;s database enforces at the database level that you can only ever read your own
-          rows. Connections to Aptly and its providers are encrypted. Photos are never stored.
+          rows. Connections to Aptly and its providers are encrypted. Photo bytes are not saved on Aptly&apos;s server.
           Anything that writes to your record runs on Aptly&apos;s server after checking your
           sign-in, never in your browser. Error logs are written so they cannot contain your work.
         </p>

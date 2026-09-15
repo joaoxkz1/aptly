@@ -1,0 +1,31 @@
+{
+  "completedOn": "2026-09-15",
+  "tests": { "command": "npm test -- --reporter=dot", "passed": 1107, "files": 77 },
+  "lint": { "command": "npm run lint", "passed": true },
+  "typeCheck": { "command": "npx tsc --noEmit --incremental false", "passed": true, "alsoPassedInFinalBuild": true },
+  "productionBuild": { "command": "node scripts/diagram-browser-local.mjs build", "passed": true, "generatedPages": 22, "localPilotEnabled": true, "providerCalls": 0 },
+  "browser": {
+    "environment": "actual local Next application and Supabase; real saved model results",
+    "attemptFolder": "14-live-10",
+    "attemptId": "17c88e1b-fd00-4527-b07f-a50703a837e1",
+    "observed": [
+      "Expanded History displays the complete question and trusted drought stimulus under Question context.",
+      "Saved feedback explicitly qualifies the blurred image while retaining the supported 4/4 result.",
+      "Diagram assessment summary displays uncertain exact labels and the partial-readability notice.",
+      "Component presentation shows diagram2/2, explanation2/2 and final4/4.",
+      "Screenshot inspection confirms readable context and feedback layout.",
+      "Earlier real attempt04 History correctly displayed raw components4 and the binding ceiling3.",
+      "Sign out returned to the sign-in page; the temporary browser tab was closed."
+    ],
+    "assessmentCallsFromBrowser": 0
+  },
+  "cleanup": {
+    "disposableLocalAccountsDeleted": 2,
+    "temporaryLocalCredentialsRemoved": true,
+    "temporaryAppAndProxyStopped": true,
+    "closedBudgetStartsRetained": 19,
+    "attemptFoldersRetained": 19,
+    "existingSupabaseInfrastructureRetained": true,
+    "productionDataMutations": false
+  }
+}

@@ -21,6 +21,7 @@ import { nextFocusPresentation } from "./display";
  */
 
 export const GENERATED_PRACTICE_FRAMEWORKS = [
+  "paper2_four_mark_diagram_explain",
   "paper2_short_analytic",
   "paper1a_10_mark",
   "paper1b_15_mark",
@@ -78,6 +79,8 @@ interface FormatChoice {
  */
 function chooseFormat(focusSkillLabel: MarkBreakdownLabel, attempts: Attempt[]): FormatChoice {
   switch (focusSkillLabel) {
+    case "Diagram":
+      return { skill: "diagram_explanation", framework: "paper2_four_mark_diagram_explain", markTotal: 4 };
     case "Knowledge and terminology":
       return { skill: "definition", framework: "paper2_short_analytic", markTotal: 2 };
     case "Calculation method":
@@ -97,7 +100,6 @@ function chooseFormat(focusSkillLabel: MarkBreakdownLabel, attempts: Attempt[]):
         : { skill: "application", framework: "generic_practice", markTotal: 10 };
     case "Economic analysis":
     case "Structure and clarity":
-    case "Diagram": // defensively excluded upstream; never a diagram task
     default:
       return hasFrameworkEvidence(attempts, "paper1a_10_mark")
         ? { skill: "economic_analysis", framework: "paper1a_10_mark", markTotal: 10 }

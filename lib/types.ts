@@ -107,6 +107,8 @@ export interface AssessmentMarkBreakdownItem {
 }
 
 export interface Assessment {
+  /** Present only for immutable combined assessments; legacy reviews remain separate. */
+  assessedDiagram?: import("./assessment/diagram-contract").AssessedDiagramResult;
   version: number; // ASSESSMENT_VERSION
   assessmentFormat: AssessmentFormat; // label only; does NOT imply a diagram is required
   paper: Paper;
@@ -221,6 +223,7 @@ export interface Attempt {
  * grading always retrieves it server-side — never from the client.
  */
 export interface PracticeQuestion {
+  assessmentContract?: import("./assessment/diagram-contract").PublicAssessmentContract | null;
   /** Immutable, server-verified focus; absent on general and historical rows. */
   focus?: import("./assessment/focused-practice").PracticeFocus | null;
   id: string;

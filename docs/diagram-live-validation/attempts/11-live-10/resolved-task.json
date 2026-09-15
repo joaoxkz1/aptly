@@ -1,0 +1,76 @@
+{
+  "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+  "sourceMaterial": "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium.",
+  "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+  "contract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "four_mark_diagram",
+    "diagramRole": "required_explicitly",
+    "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+    "provenance": "aptly_authored",
+    "framework": "paper2_four_mark_diagram_explain",
+    "paper": null,
+    "part": null,
+    "total": 4,
+    "topic": "2.3",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "economics-four-mark-blueprint-v1",
+    "diagram": {
+      "family": "demand_supply",
+      "acceptableAlternatives": [
+        "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+      ],
+      "labels": [
+        "Price of wheat",
+        "Quantity of wheat",
+        "D",
+        "S1",
+        "S2",
+        "P1/P2",
+        "Q1/Q2"
+      ],
+      "relationships": [
+        "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+      ],
+      "outcomes": [
+        "Equilibrium price rises and equilibrium quantity falls."
+      ],
+      "essentialAreas": [],
+      "diagram": {
+        "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship.",
+        "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+        "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity."
+      },
+      "explanation": {
+        "zero": "No relevant link from the drought to wheat supply or equilibrium.",
+        "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+        "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached."
+      },
+      "contextConstraints": [
+        "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+      ],
+      "permittedMechanisms": [
+        "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+      ],
+      "rules": [
+        "within_part_ecf",
+        "mechanism_consistency_2",
+        "question_label_ceiling_3"
+      ],
+      "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency."
+    },
+    "writtenCriteria": [],
+    "sourceRequired": false,
+    "scope": "same_question_part"
+  },
+  "bankQuestionId": "econ-v1-2.3-4-001",
+  "imagePath": "docs/diagram-live-validation/images/wheat-blurry.png",
+  "imageHash": "205bb5b70f6e007a937273d65909eec70a7f5ae6815c614dc30a8b8809feb381",
+  "implementationHashes": {
+    "lib/ai/combined-assessment.ts": "2e687e65041351ee0036ec9b2233fb9a37f9c9bf4d4a22cba561f943a31ae526",
+    "lib/ai/assessed-visual-review.ts": "144ab0310204eae97be70879c04b3aa4221f855d2e9bef91f6f5feb8caca47bd",
+    "lib/assessment/component-scoring.ts": "94bf44825a6000ee8339c68eacf4ab6a56eeac6969020963ca807d68ca9525d7",
+    "app/api/grade/route.ts": "10a353f218f79e6c5ec176915bfb7aa63d6720b398cc6cce8bd3b2d42f99fb51"
+  }
+}

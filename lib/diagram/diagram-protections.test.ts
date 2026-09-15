@@ -121,21 +121,20 @@ describe("diagram route — transient image, no persistence beyond the usage row
   });
 });
 
-describe("grading stays text-only and diagram-blind", () => {
-  it("the grade route still declares no image attachment and never reads evidence", () => {
+describe("legacy diagram review remains isolated from authoritative combined grading", () => {
+  it("preserves the text-only validator fallback and never accepts legacy review payloads as marks", () => {
     expect(GRADE_ROUTE).toContain("hasImageAttachment: false");
-    expect(GRADE_ROUTE).not.toContain("diagram_evidence");
     expect(GRADE_ROUTE).not.toContain("diagramEvidence");
     expect(GRADE_ROUTE).not.toContain("/api/diagram");
+    expect(GRADE_ROUTE).toContain("validateCombinedGrade");
   });
 
-  it("the grade request built by the submit page carries no diagram evidence or photo", () => {
+  it("the combined request carries the photo only through the enabled authoritative path", () => {
     const at = SUBMIT_PAGE.indexOf('fetch("/api/grade"');
     expect(at).toBeGreaterThan(-1);
     const gradeCall = SUBMIT_PAGE.slice(at, SUBMIT_PAGE.indexOf("signal:", at));
-    expect(gradeCall).not.toMatch(/diagram/i);
-    expect(gradeCall).not.toMatch(/image/i);
-    expect(gradeCall).not.toMatch(/FormData/);
+    expect(gradeCall).toContain("assessedDiagramsEnabled ? form : JSON.stringify(payload)");
+    expect(SUBMIT_PAGE).toContain("!assessedDiagramsEnabled && diagramImage !== null");
   });
 
   it("the review request posts ONLY to the diagram route", () => {

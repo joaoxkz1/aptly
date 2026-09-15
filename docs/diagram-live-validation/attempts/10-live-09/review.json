@@ -1,0 +1,14 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. The observer correctly reads S/S-prime, P/P-prime and Q/Q-prime, unchanged D and both equilibria. The grader accepts the same visible relationships and matching written references without imposing numbered labels or a movement arrow.",
+  "origin": null,
+  "findings": [
+    "Independently inspected wheat-alternate-notation.png before reading the completed provider record. The actual pixels clearly show wheat price and quantity axes, unchanged D, S-prime left/up of S, and higher-price/lower-quantity equilibrium projections. Its SHA-256 matches resolved-task.json and the saved attachment hash.",
+    "The exact private contract explicitly permits S/S-prime and P/P-prime notation and says movement arrows are unnecessary when intersections and text establish direction. The absent movement arrow creates no missing economic relationship in this image.",
+    "The matching prose fully explains reduced harvest, lower supply at each price, excess demand at the initial price and the higher-price/lower-quantity adjustment. The lowercase p/q references are equivalent to the uppercase graphical labels.",
+    "Saved 4/4 equals diagram 2 plus explanation 2, with no invented label deficiency, root error or mechanism mismatch. This is consistent with the full-correct baseline under the same trusted contract.",
+    "The raw Paper 2 classification is normalized to original custom practice in persistence. Diagnostic rows remain separate from the 2+2 total, and persistence reports saved=true/publicMatches=true.",
+    "This is an independent assistant review of synthetic engineering evidence, not teacher calibration."
+  ],
+  "judgement": "expected"
+}

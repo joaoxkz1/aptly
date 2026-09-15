@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MarkPill } from "@/components/assessment/mark-pill";
 import { DiagramEvidenceCard } from "@/components/assessment/diagram-evidence-card";
+import { AssessedDiagramSummary, AssessmentComponents } from "@/components/assessment/assessment-components";
 import { useAttempts } from "@/lib/storage";
 import { AttemptsLoadNotice } from "@/components/attempts-load-notice";
 import {
@@ -118,6 +119,16 @@ export default function AttemptsPage() {
                         Question
                       </p>
                       <p className="mt-1.5 text-sm leading-relaxed">{a.question}</p>
+                      {a.sourceMaterial?.trim() && (
+                        <>
+                          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            Question context
+                          </p>
+                          <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                            {a.sourceMaterial}
+                          </p>
+                        </>
+                      )}
                       <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Your answer
                       </p>
@@ -210,7 +221,12 @@ export default function AttemptsPage() {
                   {/* Diagram Evidence V1: the SAME shared card the feedback
                       screen shows — rendered only when this attempt actually
                       carries a reviewed diagram (old attempts show nothing). */}
-                  {a.diagramEvidence != null && (
+                  {a.assessment?.assessedDiagram ? (
+                    <div className="mt-5 grid gap-3 md:grid-cols-2">
+                      <AssessedDiagramSummary attempt={a} />
+                      <AssessmentComponents attempt={a} />
+                    </div>
+                  ) : a.diagramEvidence != null && (
                     <div className="mt-5">
                       <DiagramEvidenceCard evidence={a.diagramEvidence} />
                     </div>

@@ -35,6 +35,7 @@ export function eligibleBankQuestions(
 ): EconomicsBankQuestion[] {
   return bank.filter(
     (question) =>
+      question.qualityStatus !== "deprecated" &&
       question.marks === target.marks &&
       question.taxonomyVersion === ECONOMICS_TAXONOMY_VERSION &&
       question.topicCode === target.topicCode &&

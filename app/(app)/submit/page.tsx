@@ -13,7 +13,7 @@ import { focusSummary, savedPracticeFocus } from "@/lib/assessment/focused-pract
 import { PreflightChoice, type PreflightDecision } from "@/components/submit/preflight-choice";
 import { SampleWalkthrough } from "@/components/submit/sample-walkthrough";
 import { ScanAttachment } from "@/components/submit/scan-attachment";
-import { DiagramAttachment } from "@/components/submit/diagram-attachment";
+import { DiagramAttachment, type DiagramAttachStatus } from "@/components/submit/diagram-attachment";
 import type { ExtractionFill } from "@/lib/scan/apply-extraction";
 import type { DiagramEvidence } from "@/lib/diagram/evidence";
 import { requestDiagramReview, type DiagramReviewResult } from "@/lib/diagram/review-request";
@@ -68,6 +68,7 @@ export default function SubmitPage() {
 function SubmitPageFromParams() {
   const params = useSearchParams();
   const accountId = useDraftAccount();
+  const [revisionImage, setRevisionImage] = useState<{ accountId: string; attemptId: string; image: Blob } | null>(null);
   const reviseId = params.get("revise");
   const practiceId = params.get("practice");
   // Cold-start deep link (?sample=1): open straight into the free sample
@@ -83,6 +84,8 @@ function SubmitPageFromParams() {
       reviseId={reviseId}
       practiceId={practiceId}
       startWithSample={startWithSample}
+      availableRevisionImage={revisionImage?.accountId === accountId && revisionImage.attemptId === reviseId ? revisionImage.image : null}
+      rememberRevisionImage={(attemptId, image) => setRevisionImage(image ? { accountId, attemptId, image } : null)}
     />
   );
 }
@@ -92,11 +95,15 @@ function SubmitPageInner({
   reviseId,
   practiceId,
   startWithSample = false,
+  availableRevisionImage = null,
+  rememberRevisionImage,
 }: {
   accountId: string;
   reviseId: string | null;
   practiceId: string | null;
   startWithSample?: boolean;
+  availableRevisionImage?: Blob | null;
+  rememberRevisionImage: (attemptId: string, image: Blob | null) => void;
 }) {
   const router = useRouter();
   const { attempts, status: attemptsStatus, retry: retryAttempts } = useAttempts();
@@ -110,6 +117,10 @@ function SubmitPageInner({
   const [error, setError] = useState<string | null>(null);
   const [savedEarlier, setSavedEarlier] = useState(false);
   const [attachmentVersion, setAttachmentVersion] = useState(0);
+  const assessedDiagramsEnabled = process.env.NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED === "true";
+  const [diagramStatus, setDiagramStatus] = useState<DiagramAttachStatus>("idle");
+  const [retainedImage, setRetainedImage] = useState<Blob | null>(null);
+  const [diagramConfirmation, setDiagramConfirmation] = useState<PreflightDecision | GradeDecision | null>(null);
   // Non-null when a compact preflight choice is needed before grading.
   const [preflight, setPreflight] = useState<PreflightResult | null>(null);
   // True while the Paper 2(g)/3(b) source-material step is active — the bottom
@@ -223,6 +234,10 @@ function SubmitPageInner({
       ? practiceQuestion?.question ?? ""
       : null;
   const question = fixedQuestion ?? typedQuestion;
+  const diagramContract = practiceQuestion?.assessmentContract ?? parent?.assessment?.assessedDiagram?.contract;
+  const requiredDiagram = assessedDiagramsEnabled && (
+    diagramContract?.diagramRole === "required_explicitly" || diagramContract?.diagramRole === "necessary_for_task" ||
+    (!diagramContract && runPreflight(question).templateId === "four_mark_diagram_explain"));
 
   // Live, deterministic detection so the student SEES the total Aptly found
   // (and where) before grading — normal mode only (revision preserves the
@@ -255,10 +270,16 @@ function SubmitPageInner({
   // invalidates any memoised review — exactly one photo is ever active.
   const handleDiagramChange = useCallback((image: Blob | null) => {
     diagramImageRef.current = image;
+    setRetainedImage(null);
+    setDiagramStatus(image ? "attached" : "idle");
     diagramReviewRef.current = null;
     diagramRequestRef.current = null;
     setDiagramReviewFailed(false);
-  }, []);
+    setDiagramConfirmation(null);
+    setError(null);
+    // Attachments are transient, but every change retires a submission ticket.
+    draft.session.edit({});
+  }, [draft.session]);
 
   // One review per photo: reuse the memoised result when the same processed
   // photo is graded again (e.g. retry after a grading failure); only a
@@ -290,7 +311,9 @@ function SubmitPageInner({
       diagramIdempotencyKey,
       operationKey
     );
-    if (result.evidence !== null && result.reservationId !== null) {
+    if (draft.session.isCurrent() && diagramImageRef.current === image &&
+        diagramRequestRef.current?.idempotencyKey === diagramIdempotencyKey &&
+        result.evidence !== null && result.reservationId !== null) {
       diagramReviewRef.current = {
         image,
         operationKey,
@@ -378,11 +401,11 @@ function SubmitPageInner({
     if (isSample) return;
     // A scan is still being read: grading waits so the student always reviews
     // the extracted text before the grade call.
-    if (scanReading) return;
+    if (scanReading || diagramStatus === "preparing") return;
 
     const q = question.trim();
     const a = answer.trim();
-    if (q === "" || a === "") return;
+    if (q === "" || (a === "" && (!assessedDiagramsEnabled || diagramImageRef.current === null))) return;
     if (q.length > MAX_QUESTION_CHARS || a.length > MAX_ANSWER_CHARS) {
       setError("Your question or answer is too long. Please shorten it and try again.");
       return;
@@ -418,7 +441,7 @@ function SubmitPageInner({
   // policy — this decision is an input, never the final authority. For generated
   // practice the server swaps in ITS stored question/source before grading and
   // ignores every preflight field (requestedSource stays null).
-  async function grade(decision: PreflightDecision | GradeDecision) {
+  async function grade(decision: PreflightDecision | GradeDecision, diagramOmitted = false) {
     if (inFlight.current || grading || !draftReady || !draft.session.isCurrent()) return;
     // Defense in depth (mirrors handleSubmit): pristine sample content can
     // never reach the paid grade call or the diagram review, whatever path
@@ -427,7 +450,16 @@ function SubmitPageInner({
 
     const q = question.trim();
     const a = answer.trim();
-    if (q === "" || a === "") return;
+    if (q === "" || diagramStatus === "preparing" || (a === "" && (!assessedDiagramsEnabled || diagramImageRef.current === null))) return;
+    if (assessedDiagramsEnabled && diagramStatus === "error") {
+      setError("Replace the failed photo, or remove it before submitting without a diagram.");
+      return;
+    }
+    if (requiredDiagram && diagramImageRef.current === null && !diagramOmitted) {
+      setDiagramConfirmation(decision);
+      return;
+    }
+    setDiagramConfirmation(null);
 
     setPreflight(null);
     setSourceStep(false);
@@ -437,13 +469,30 @@ function SubmitPageInner({
     inFlight.current = true;
 
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS + 5000);
+    const timer = window.setTimeout(() => controller.abort(), assessedDiagramsEnabled && diagramImageRef.current ? 125_000 : REQUEST_TIMEOUT_MS + 5000);
+    const diagramImage = diagramImageRef.current;
+    let imageHash: string | null = null;
+    try {
+      if (assessedDiagramsEnabled && diagramImage) {
+        const bytes = await diagramImage.arrayBuffer();
+        const hash = await crypto.subtle.digest("SHA-256", bytes);
+        imageHash = Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, "0")).join("");
+      }
+    } catch {
+      setError("Couldn't prepare the diagram. Replace the photo and try again.");
+      window.clearTimeout(timer); inFlight.current = false; setGrading(false); return;
+    }
+    if (!draft.session.isCurrent() || diagramImageRef.current !== diagramImage || (assessedDiagramsEnabled &&
+      (draft.session.text.answer.trim() !== a || (fixedQuestion === null && draft.session.text.question.trim() !== q)))) {
+      window.clearTimeout(timer); inFlight.current = false; setGrading(false); return;
+    }
     const operationSignature = JSON.stringify({
       q,
       a,
       decision,
       practiceQuestionId,
       parentAttemptId: revisionCtx?.parentId ?? null,
+      ...(assessedDiagramsEnabled ? { imageHash, diagramOmitted } : {}),
     });
     let ticket;
     try { ticket = await draft.session.beginSubmission(operationSignature); }
@@ -463,33 +512,30 @@ function SubmitPageInner({
     // Two separate routes — grading stays text-only and never sees the photo;
     // the review (which never throws) is awaited only AFTER grading succeeds,
     // so a slow or failed review can never block or change written feedback.
-    const diagramImage = diagramImageRef.current;
     const diagramReview =
-      diagramImage !== null
+      !assessedDiagramsEnabled && diagramImage !== null
         ? reviewDiagramOnce(diagramImage, q, a, gradeIdempotencyKey)
         : null;
 
     try {
+      const payload = {
+        subject: "Economics", topic: "Economics", question: q, answer: a,
+        requestedSource: decision.requestedSource, requestedTotal: decision.requestedTotal,
+        templateId: decision.templateId, requestedFramework: decision.requestedFramework,
+        sourceMaterial: decision.sourceMaterial, practiceQuestionId,
+        parentAttemptId: revisionCtx?.parentId ?? null, idempotencyKey: gradeIdempotencyKey,
+        ...(assessedDiagramsEnabled ? { diagramOmitted } : {}),
+      };
+      const form = new FormData();
+      if (assessedDiagramsEnabled) {
+        form.append("payload", JSON.stringify(payload));
+        if (diagramImage) form.append("image", diagramImage, "diagram.jpg");
+      }
       const res = await fetch("/api/grade", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        ...(assessedDiagramsEnabled ? {} : { headers: { "Content-Type": "application/json" } }),
         // Economics-only; the question type and topic are detected automatically.
-        body: JSON.stringify({
-          subject: "Economics",
-          topic: "Economics",
-          question: q,
-          answer: a,
-          requestedSource: decision.requestedSource,
-          requestedTotal: decision.requestedTotal,
-          templateId: decision.templateId,
-          requestedFramework: decision.requestedFramework,
-          sourceMaterial: decision.sourceMaterial,
-          practiceQuestionId,
-          // Revisions: lets the server retrieve the parent's privately
-          // retained source itself instead of trusting client source text.
-          parentAttemptId: revisionCtx?.parentId ?? null,
-          idempotencyKey: gradeIdempotencyKey,
-        }),
+        body: assessedDiagramsEnabled ? form : JSON.stringify(payload),
         signal: controller.signal,
       });
 
@@ -508,7 +554,15 @@ function SubmitPageInner({
         // failure only marks this key terminal; the next explicit submission
         // creates a fresh operation, with the student's text unchanged.
         if (classifyOperationOutcome(res.status, code) === "terminal_failed" && !draft.session.markTerminalFailure(ticket)) return;
-        setError(clientMessageForGradeFailure(res.status, code, reference));
+        if (code === "diagram_confirmation_required") {
+          setDiagramConfirmation(decision);
+          setError(null);
+        } else if (code === "diagram_evidence_unassessable") {
+          if (!draft.session.markTerminalFailure(ticket)) return;
+          setError("The diagram could not be assessed reliably. No completed mark was saved. Replace it with a clear photo and retry, or remove it and explicitly submit without a diagram.");
+        } else if (code === "diagram_assessment_disabled") {
+          setError("Diagram-aware assessment is currently paused. This saved question needs that assessment mode. Your draft is unchanged; try again when it is available.");
+        } else setError(clientMessageForGradeFailure(res.status, code, reference));
         return;
       }
 
@@ -520,6 +574,7 @@ function SubmitPageInner({
         throw new Error("Missing saved attempt");
       }
       const unchanged = draft.session.saved(ticket);
+      if (assessedDiagramsEnabled) rememberRevisionImage(savedAttempt.id, diagramImage);
       draft.refresh();
       if (!unchanged) {
         setSavedEarlier(true);
@@ -530,6 +585,7 @@ function SubmitPageInner({
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
       broadcastAttemptsChanged();
+      if (assessedDiagramsEnabled) return;
       const feedback = savedAttempt.feedback;
       const assessment = savedAttempt.assessment ?? null;
       const retainedSource = savedAttempt.sourceMaterial ?? null;
@@ -920,14 +976,29 @@ function SubmitPageInner({
               </div>
               <Textarea
                 id="answer"
-                required
+                required={!assessedDiagramsEnabled}
                 maxLength={MAX_ANSWER_CHARS}
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Write your answer here."
+                placeholder={assessedDiagramsEnabled ? "Write your explanation here. You can submit a diagram-only attempt when the task assesses diagrams." : "Write your answer here."}
                 className="min-h-72 text-[15px] leading-7"
               />
             </div>
+
+            {assessedDiagramsEnabled && (
+              <div className="space-y-2 text-sm text-muted-foreground">
+                {diagramContract && <p>{diagramContract.diagramReason}</p>}
+                {requiredDiagram && <p className="font-medium text-foreground">This task assesses a diagram. Attach a clear photo, or choose to grade without it.</p>}
+                <p className="text-xs">Scan produces editable text. Attach the diagram separately so its actual image can be assessed.</p>
+                {isRevision && parent?.assessment?.assessedDiagram && (
+                  availableRevisionImage ? <div className="flex flex-wrap items-center gap-2">
+                    <Button type="button" size="sm" variant="outline" disabled={grading || diagramStatus === "preparing"}
+                      onClick={() => { handleDiagramChange(availableRevisionImage); setRetainedImage(availableRevisionImage); setDiagramStatus("attached"); setAttachmentVersion(v => v + 1); }}>Retain previous diagram</Button>
+                    <span className="text-xs">Or attach a replacement below. Removing it submits this revision without that diagram.</span>
+                  </div> : <p className="text-xs">The previous photo is no longer available in this tab. Attach it again to retain the diagram, attach a replacement, or submit without it. The saved assessment is unchanged.</p>
+                )}
+              </div>
+            )}
 
             {/* Aptly Scan: one understated attachment control — manual flow
                 only (revision/practice questions are fixed or server-owned,
@@ -955,9 +1026,19 @@ function SubmitPageInner({
                   key={`diagram-${attachmentVersion}`}
                   disabled={grading || preflight !== null}
                   onAttachedChange={handleDiagramChange}
+                  onStatusChange={setDiagramStatus}
+                  assessed={assessedDiagramsEnabled}
+                  initialImage={retainedImage}
                 />
               )}
             </div>
+
+            {diagramConfirmation && !grading && (
+              <div className="space-y-2 rounded-xl border border-amber-300/60 bg-amber-50/40 p-4 text-sm dark:bg-amber-950/15" role="alert">
+                <p>No diagram is attached. Grading without it treats the diagram as omitted work and applies this task&apos;s assessment contract.</p>
+                <Button type="button" variant="outline" size="sm" onClick={() => void grade(diagramConfirmation, true)}>Grade without a diagram</Button>
+              </div>
+            )}
 
 
             {/* Untouched sample: two calm paths — the free fixed walkthrough,
@@ -1025,7 +1106,7 @@ function SubmitPageInner({
             {!sourceStep && !isSample && (
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button type="submit" size="lg" disabled={grading || contextLoading || scanReading}>
+                  <Button type="submit" size="lg" disabled={grading || contextLoading || scanReading || diagramStatus === "preparing"}>
                     {grading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />

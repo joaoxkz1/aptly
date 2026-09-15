@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 7395,
+  "requestId": "req_104aa8926114453a906e408c5e10ed46",
+  "response": {
+    "id": "resp_0ed007085de4bf07016aa99707f83087d2b37de4700ba5c274",
+    "object": "response",
+    "created_at": 1789499144,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789499151,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0ed007085de4bf07016aa997087e4487d2baeaf4ce0841bf49",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZcPKIxk5wuh8MrovsKrVsNOYhLjB3CxS8IE8MQf6dkb17miQBgzE44ACVdz71quuCf1Hu0iiLPHoJAleulwD_NsVuXXKA9EUvS8OQcPHHBsl7S4Rl7LHi0aLbpQd0pFz5fSJrgiTgVKsjEFT1VY7kr6oYuUpEtsnrbNslgIaWstgXNgQMsRagOmrWXLioTuKhp-Pvi3g5EYj3-bKzk9JA4HsPDmAXkS4plZTLau4ki54IYjaHb3HJjWhIFkCHysTIR3ICutnb1YBLQaRyNXqtZCayfYIMpEAYy8hz1GqW9pG72Kx-4tuQXxHNRJkXcAbP_1K63hthXQv1l-0LHk8kyTLIrXnrwTSD3j1OFnZGA6SSPLjh2m4hngNLYcvN3cf_08AwzBceRG4EqEa_6TeWsaFT1yvG6yhKnncQKouENXms1T3AKNyYu6QZH6iW3DPRL7cR9W_XNYeM5132OPv6u0WytGtmB4jT_oXExL2tckQV2HpER_YDJ8GW-USxu2JXx38Gv61hjmfJZZlfK6uTJwwwTBJaj2j433pztlGdkE99JLkz5ABJf9xMWl4Ac6F0visP9FGQ0_vGYFaAZiSIVuwv9dGoB7rLzwVo8D1ogoF8NYEtZmnQY9_nWhC0ITKsn3hpHVUyfZbwL2WLhrVdPcYEOt6yLBfwe40kxwDKAT-WXH8EJxW9zuqxyuqdpZgi_6FYVbU253gHpHFXn-hJagAVr1Ot-4EtbAnA7H1RjhKJN5twge3BUMk5ES4j5cd3mXSThmzqHJFlP5N8pKvTkhpgR8wS7VxH55KSfiRdA6IoLPmLrrWZIM_3CBYkX5vvkDngv4hlrB6JAmoc0_GCdHPF6ybDrYiI5q-B0ietuZNiLWOK9kAi2US1LRN7B7feCmPscqpoiUh6iyYCdXAozEz_U7f9uFFulbBVL2-Pq0My68mxr1VDoEh-uMBQyyaSqJsTXGtGvtwnvB9BMpk0PJ-xPoGLdLdcuc92WBDq2YcEh8K6yzQtnKTGwIBHad1zbMvcyUqjLhl52n7KwT1E2LvI7lc3u_g1RNEXQ8yuxSOKRcII4csqX5qO6oqVbt4vGFJXpjG6NqTuYbDzYR90hoTY7FEgTjjp5IpF0wIoACU74WYcx2RXexsbwPIsCzDOUG990E1FeZTUXN5f54XXDYcUq9kJycvHLrhg_2g7vvcmwnVYIYu9EXqCCywb7UNCkNrrEnTbfcXfSxTxvu2OEJ6HBu1_kHaewDKniF5KSLpeLsnXkhw4wrv2bzux4lJQG3-AMcBiFL-bqJmQDsXRExP4azrAY2UD0hvbebXWTWNr3_GnnxQZ8-8KVLBNjafQmwQ9MuwgwkXdhYTx9QhXjT4DIEtrCLnC6Rdtwa2kxIRiY1_ukzEvwoxaoqALFzKvOxcONh2ji-CXJfw4d0SKWt5WZrPYy5qoIHA3OVTnu3PfPEqlN8UAI-g5iwGr3dwif8lmVywHAMbguAyFdsZU3YTNy3-V7MEnfoBBSjf6089iIhZBpjVjcVNLSkfievF2PBN7Y5Q-1zWTvlpbp8NgjiXPQWvDeEX46Povb5Jj1KZjrdcY1YN6nqxsbQYC7Q90iKErjpe6mQ5MjP_hCCyUWgM8gGYjBWE3JszyBmVPFOy93ygIk5rBgl3rQkek3Zs5CX6gzOpIHO0TjY09Io1iujOwJ5_cmk2PjLQhItc_vnY0V9NQnGZd3Pcgc7GFqdGMuQzJyY6HxEURnbKye1XNmFN-vzRSPYox4A6XWDoPj-qMyuwmZHb7T8dYQOfm3SknB6UVY-W6y4QgxaiBaMDecsaznJE-yeOuQdSgv1eBbv8rROgTDJNHC4xWR7cGYf72UvL_FVPdFjWstM1CeT9Nvm82ZVCKKCF-WcR_sf0j746Wg_qxp3y7SaDxE5oQ6Ah8BzmDpcORpeWFEw2KTZkHb6IjBR9OAJcjfs2Y7qNp3Isbr-5prtrbzDAdw13HeGEA0dRs5pI7Al25HTKYqC1OVCUT_XORlb7pgBjQSmmuseI3g34kLSHXuiTA30mGxVdRELWpZ9bmGU_9PIzJG3iSxfjY1BcDHyLUaDnukqWaXYSJucxSl3wRkYCEkZKNtupsREnGSEbg7GC0id7-5ELkJwYgsz4Nd3w5YNnS_5SOpP-2LlltGXsg7eDbhdVhjA-EhaYRVePct8OqZW2FcxAee_qw5zBZfzOuu5RIOrierGHa42z-Hq1pwqNvCD20UxKh4eNSL9AkuB9tlgv5mCunKp9-mdVg-Mzs_r_5DR9u_WgnBXNHVnT7zAerAYUdjP5uooi0fK6MoDmDfPPDrGLddRZWKK2GJNKorWOG_yZ968yG3fVGKxWQa-RHIXHmJg0rCs3jgxxjrlftEnAzePRqPwF0ZK5ee9xUDOXmP4s2Vq1DV7DLfl14kzFnDGKGRAorXMX9j-X4IXDcLRBTu8Z_ezSFX1TOgxoR0kt7sCfqO61t_fqojO0LvYjjmJCqdvTjoJIWgYdmnbupKK2qp_rORZyJEOSOCNmlNDzxhlAgmP1kRwmOqrCNSD1UJSP7QPgspZLvY5bQgSoCBjsxgjwUtOdj9SK2nq6DpwMvvbYBQMFQeMUgyFtw-C6we-EaWhsBD9Xq6NGIEAqc2uonSrbYSGGS0l6TrROGdPvzTZd3_UzwqDvdVUZRz9lAoek5nzKytXvWCmsvJkPozpWAI7AX-woQ==",
+        "summary": []
+      },
+      {
+        "id": "msg_0ed007085de4bf07016aa9970b00c887d285d132a5792273a9",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"no_relevant_diagram\",\"essentialEvidenceReadable\":false,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"whole diagram\",\"observation\":\"A single two-axis diagram is visible and readable.\",\"interpretation\":\"There is a clear student-drawn economics diagram present, but relevance must be judged from its labels and geometry.\",\"uncertain\":false},{\"region\":\"upper left to lower right\",\"observation\":\"One downward-sloping straight line is labelled \\\"PPC\\\".\",\"interpretation\":\"This is presented as a production possibility curve, not a demand or supply curve.\",\"uncertain\":false},{\"region\":\"left axis\",\"observation\":\"The vertical axis is labelled \\\"Schools\\\".\",\"interpretation\":\"The y-axis is not labelled as price or wheat price.\",\"uncertain\":false},{\"region\":\"bottom axis\",\"observation\":\"The horizontal axis is labelled \\\"Clinics\\\".\",\"interpretation\":\"The x-axis is not labelled as quantity or wheat quantity.\",\"uncertain\":false},{\"region\":\"centre-left and centre-right\",\"observation\":\"Points A and B are marked on the PPC with dashed guide lines to the axes.\",\"interpretation\":\"These appear to show output combinations on a PPC rather than market equilibria from demand-supply intersections.\",\"uncertain\":false},{\"region\":\"whole diagram\",\"observation\":\"No curve labels such as D, S1, or S2 are visible, and no second market curve is drawn.\",\"interpretation\":\"The required wheat-market demand and shifted supply relationships are not shown.\",\"uncertain\":false},{\"region\":\"whole diagram\",\"observation\":\"No demand-supply intersection(s) or equilibrium price/quantity labels are visible.\",\"interpretation\":\"The diagram does not display the required market equilibrium outcome of higher price and lower quantity after a supply contraction.\",\"uncertain\":false}],\"summary\":\"The image is readable and clearly shows a PPC for schools and clinics, not a wheat demand-and-supply diagram. Relevant demand/supply curves, wheat price and quantity axes, and equilibrium changes are not present.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2288,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 628,
+      "output_tokens_details": {
+        "reasoning_tokens": 207
+      },
+      "total_tokens": 2916
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

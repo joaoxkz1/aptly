@@ -41,18 +41,20 @@ const FRAMEWORK_FOR_MARK: Record<
   AdaptivePracticeTarget["framework"]
 > = {
   2: "paper2_short_analytic",
+  4: "paper2_four_mark_diagram_explain",
   10: "paper1a_10_mark",
   15: "paper1b_15_mark",
 };
 
 const DEFAULT_SKILL_FOR_MARK: Record<GeneratorMarkTotal, AssessmentSkill> = {
   2: "definition",
+  4: "diagram_explanation",
   10: "economic_analysis",
   15: "evaluation",
 };
 
 export function isGeneratorMarkTotal(value: unknown): value is GeneratorMarkTotal {
-  return value === 2 || value === 10 || value === 15;
+  return value === 2 || value === 4 || value === 10 || value === 15;
 }
 
 export function isCurrentGeneratorTopic(value: unknown): value is Exclude<

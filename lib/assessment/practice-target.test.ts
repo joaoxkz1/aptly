@@ -294,13 +294,6 @@ describe("policyForGeneratedPractice — grading frame for stored practice rows"
 
   it("throws (fails closed) on unsupported frameworks and invalid totals", () => {
     expect(() =>
-      policyForGeneratedPractice({
-        framework: "paper2_four_mark_diagram_explain",
-        markTotal: 4,
-        sourceMaterial: null,
-      })
-    ).toThrow();
-    expect(() =>
       policyForGeneratedPractice({ framework: "made_up", markTotal: 10, sourceMaterial: null })
     ).toThrow();
     expect(() =>
@@ -315,7 +308,10 @@ describe("policyForGeneratedPractice — grading frame for stored practice rows"
     for (const f of GENERATED_PRACTICE_FRAMEWORKS) {
       expect(isGeneratedPracticeFramework(f)).toBe(true);
     }
-    expect(isGeneratedPracticeFramework("paper2_four_mark_diagram_explain")).toBe(false);
+    expect(isGeneratedPracticeFramework("paper2_four_mark_diagram_explain")).toBe(true);
     expect(isGeneratedPracticeFramework(null)).toBe(false);
+  });
+  it("recognizes stored four-mark diagram practice without inventing a new grader", () => {
+    expect(policyForGeneratedPractice({ framework: "paper2_four_mark_diagram_explain", markTotal: 4, sourceMaterial: null }).framework).toBe("paper2_four_mark_diagram_explain");
   });
 });

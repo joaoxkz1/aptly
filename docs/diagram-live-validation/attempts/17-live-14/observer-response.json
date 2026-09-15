@@ -1,0 +1,168 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 5133,
+  "requestId": "req_49ec9de96405484ea5cd2f37aa2534e2",
+  "response": {
+    "id": "resp_09d61816b50a38cc016aa99793cda487d2817b4fac0ba41e53",
+    "object": "response",
+    "created_at": 1789499283,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789499288,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_09d61816b50a38cc016aa99794564887d29b44b27cb8b7b4ed",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZeYLZXwGw5UHfhfOh2TUgMMEIOXykhX2ES4wls6p8SHhBeUkvrle2k_UxYnlZigfHcl86UtUSXw1QUALreis5CejhiKceq6MH6gLZUbTfiRLxeR8thQO73OVeqzYTFIKBrEJhepnxz19BO7tWy-rwd32AHvnNtS14Djsb5yZLxRHBSpKC8q64iqGvUm7fRngPp_PH-OVXeG_zrmCU6ny7jX0neUgAJwvlNk8eGF0Mkz-vC3H0LYuyE5cZm9pmPAwEjnhO8ZBtcpCwBGxKbadSA1cU9gGab3reZxM0n_LSrIu_nbVuUMVWnt2lSed5JE5BLLpX45DWhmYv53j_EhCEF97SShcz8mOejpSZ55zHED1S-DOANAVbBpe1S7iYu2YjrQEBBDIgyRNM0i5zqdiOanOGPl40Kdx0vOxkyy0H5vOuwTsw2AytQu3fFNt8uqk091vZ14uVbMnNKWeeoHQimqIGMF5SkbQ_eZ-4s5gizDmJGzfq0R-5c58u5wsk4CXIUpG42-u_zPaTy_pVA7mDN4xWmu0-hCOBkW1R8ISiERm_jO3mWsB-OejV5C9GaXPt4-CP6r_hZjWylpxENzjUzfuWOHsnv5PavDtP4-26A-_0DmWepwjrkOTvT1SsFsCBWSY8dmngcVvGZxuqPSXuxEUywNw6x62IPMZZVqRYbVldwVqJtAoUcdFIytzD_2s0KOlGbOf0tPl4y5CfSOZ4YaeR_ytNIFVwQI52Q7Hn9nltAX8ifT_EknXWymC1z8hAhdh8knSdRdEqin-foEbGC40tQ0kDXl2CjxQ9SuI9TowcLCisc14WOnpAIvVQNNiIVFnxkBVK91RkbCfJmnQMZ3ZMo4-TqBMe3115uVo0QyEQ9OzM9vB_cK1uD0W_MKKwmJfCr4dCP7DaAJlvwUEmSt_8b3INbQ058ZpCPA6waIPBE4__SxPA_VOuOmLrIcvfm5StfokLEdNErcCFg4j1aL8QdkYjK9dMzIELjJWA3Lh6rz5jVDQ9eUZoGmxH52QQtwEzeLoxBN9EYCpbrdEKh4EH8dOcEwisRAQE59Y5jkBjy9dAjTHPA66lALGwY-eGJ3YMlojm52GJn8O8_2hSLDdjAExbJtzXRsR2CONCfemuUGxfZz9JXvGsGSVZtfoqnC9KcL7awBUmsYWHfH7OYPwrlu7TIJirK2c4eVXIW-PUKUagLqSp4CU-EVqXh181EA0au7d1MR1EgFx0wV0WHxolXdIPvcU9Vhj5XpHcs4rMIy02HEwXMDGx2ldT3dBuUSJiftga84Jepud7ELJhqanAjIlDBcyyUbsaViR5GEWLjeczNyfsl8lIo89BfglddKAMWqD6TpZRZBrjntFjhFY2o6wtqkeSPZT6Nabkb3owBgXEE5ljefzM3wbQLl0Ntc8ucqY9sK7JbSssxBEm43UYcuPjGODNo4zJfP55wQWLBPDVlmxWibEmrJ96T2dI6wm7GPBJFHyKWXrGY6dueXH_GmNRYS1XIrpVEAuK-cwyk5XWTk-NhmXTpSCiDyERrLizwIaNRJ0D9DDlafx2B3DAWnX_RY3soIkycbI_wnxYg3Y8V62P-ZMDu8lilsJdL5sZphCnDcwmilsED6vB1z5D_knWX-r0udWh5yKRaubHxYJfnbF0AQIRz7DZyVROgiShPYpaOASznAo4KtJ1QE-fKAEVqHCILQ1leLOJH_khnMkxgbrXH8cvjYkJ-uQcq-qnqB599P1Z6BN2RjrD-YWlakbcmvQcaRwtJ5OnMEYjb5hpNot3CmloO8uqFpPDa1NXXx3HpG6IuFyZbRcViDOP0ATFJ68U9EANOVbB4nFwo=",
+        "summary": []
+      },
+      {
+        "id": "msg_09d61816b50a38cc016aa99795624887d28097bf32408bc64c",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"no_relevant_diagram\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"centre\",\"observation\":\"A single downward-sloping straight line is drawn and labelled \\\"PPC\\\".\",\"interpretation\":\"This is a production possibility curve diagram, not a demand-and-supply market diagram.\",\"uncertain\":false},{\"region\":\"left axis\",\"observation\":\"The vertical axis is labelled \\\"Schools\\\".\",\"interpretation\":\"The y-axis is not identified as price of wheat or an equivalent price axis.\",\"uncertain\":false},{\"region\":\"bottom axis\",\"observation\":\"The horizontal axis is labelled \\\"Clinics\\\".\",\"interpretation\":\"The x-axis is not identified as quantity of wheat or an equivalent quantity axis.\",\"uncertain\":false},{\"region\":\"centre-left and lower-right on the line\",\"observation\":\"Points \\\"A\\\" and \\\"B\\\" are marked on the PPC with dashed guide lines to the axes.\",\"interpretation\":\"These points do not show demand/supply curves or market equilibria for wheat.\",\"uncertain\":false},{\"region\":\"whole diagram\",\"observation\":\"No demand curve, no two supply curves, and no price/quantity equilibrium intersections for wheat are visible.\",\"interpretation\":\"The image contains no relevant demand-supply diagram evidence for the wheat drought question.\",\"uncertain\":false}],\"summary\":\"The student’s diagram is clearly readable and is a PPC labelled with Schools and Clinics, not a wheat demand-and-supply diagram. No relevant demand, supply, or wheat-market equilibrium diagram is shown.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean",
+              "description": "Whether the photo is readable enough to judge the submitted evidence, including to establish that no relevant diagram exists. This is readability, not correctness or completeness. Must be true for no_relevant_diagram; false when blur/occlusion prevents the essential judgment."
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2428,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 426,
+      "output_tokens_details": {
+        "reasoning_tokens": 97
+      },
+      "total_tokens": 2854
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

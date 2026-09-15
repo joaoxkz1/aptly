@@ -1,0 +1,49 @@
+{
+  "caseId": "live-14",
+  "dispatchTier": "optional_extension",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-2.3-4-001",
+    "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+    "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+  },
+  "artifacts": [
+    {
+      "role": "student_diagram",
+      "imagePath": "docs/diagram-live-validation/images/wheat-irrelevant.png",
+      "sendFileNameToProvider": false
+    }
+  ],
+  "reviewOnly": {
+    "predictionProvenance": "Aptly synthetic engineering prediction; not an independent teacher mark",
+    "teacherReviewStatus": "not_reviewed",
+    "marksAvailable": 4,
+    "expectedFramework": "paper2_four_mark_diagram_explain",
+    "expectedContractMode": "four_mark_diagram",
+    "intendedCondition": "Readable upload contains a Clinics/Schools PPC rather than a wheat demand-and-supply diagram.",
+    "economicBehavior": "The strong written wheat explanation remains creditworthy, but the unrelated PPC provides no wheat-market demand/supply relationships.",
+    "expectedEvidenceStates": [
+      "no_relevant_diagram"
+    ],
+    "expectedCompletion": "complete",
+    "engineeringPredictedOverall": {
+      "min": 2,
+      "max": 2
+    },
+    "expectedComponents": {
+      "diagram": {
+        "min": 0,
+        "max": 0
+      },
+      "explanation": {
+        "min": 2,
+        "max": 2
+      }
+    },
+    "pairedWith": "live-01",
+    "controlledChange": "Replace graph with a readable irrelevant figure.",
+    "reviewChecks": [
+      "Distinguish a readable irrelevant upload from an unreadable or failed image.",
+      "Do not invent demand/supply curves from prose or from an unrelated shape."
+    ]
+  }
+}

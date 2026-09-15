@@ -1,0 +1,356 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 8474,
+  "response": {
+    "attempt": {
+      "id": "f21a85c5-4143-4709-a81a-2cdbc42ab1fa",
+      "createdAt": "2026-09-15T18:50:55.822889+00:00",
+      "subject": "Economics",
+      "topic": "2.3",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Missing required diagram"
+        ],
+        "strengths": [
+          "Clear causal chain: drought reduces harvests, shifting supply left while demand remains unchanged.",
+          "Accurately explains the shortage at the original equilibrium price and the adjustment to a higher price.",
+          "Correctly concludes that equilibrium price rises and equilibrium quantity traded falls."
+        ],
+        "studyNext": "Submit a diagram showing the relationship and outcome requested, then check that your explanation follows it.",
+        "improvements": [
+          "Include the required demand-and-supply diagram, with unchanged D, supply shifting left from S1 to S2, and both equilibria labelled P1/P2 and Q1/Q2."
+        ],
+        "examinerComment": "Your written explanation is economically accurate and complete: reduced wheat availability shifts supply left, causing a shortage at the old price, a rise in price, and a fall in equilibrium quantity. However, this question explicitly requires a diagram, and no image was submitted, so diagram marks cannot be awarded. Prioritise adding a clearly labelled wheat-market diagram."
+      },
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The prose gives a complete and accurate adjustment process from reduced harvests to lower supply, shortage, higher price and lower equilibrium quantity.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation applies directly to wheat, the drought, unchanged demand and the initial equilibrium stated in the scenario.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "No diagram was submitted.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "not_provided",
+          "summary": "No diagram was submitted.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "5613827e-0dc9-4e27-b73b-6f89e64ac8f4",
+          "observations": [],
+          "attachmentHashes": [],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "No diagram was submitted.",
+              "explanation": "Accurately explains that drought reduces supply at each price, creates a shortage at the old price, raises equilibrium price and lowers quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": false,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "none",
+        "diagramAssessable": false,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "not_submitted",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "5b071315-d90a-46bd-b9ca-94c91007e054",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "f21a85c5-4143-4709-a81a-2cdbc42ab1fa",
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 2,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Economic analysis",
+            "reason": "The prose gives a complete and accurate adjustment process from reduced harvests to lower supply, shortage, higher price and lower equilibrium quantity.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "The explanation applies directly to wheat, the drought, unchanged demand and the initial equilibrium stated in the scenario.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "No diagram was submitted.",
+            "awarded": 0,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "not_provided",
+          "summary": "No diagram was submitted.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "5613827e-0dc9-4e27-b73b-6f89e64ac8f4",
+          "observations": [],
+          "attachmentHashes": [],
+          "componentDecision": {
+            "total": 2,
+            "diagram": 0,
+            "reasons": {
+              "diagram": "No diagram was submitted.",
+              "explanation": "Accurately explains that drought reduces supply at each price, creates a shortage at the old price, raises equilibrium price and lowers quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 2,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": false,
+        "practiceLevelLow": 4,
+        "workingsExpected": false,
+        "attachmentContent": "none",
+        "diagramAssessable": false,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 4,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "not_submitted",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Developing 4",
+        "score": 4,
+        "mistakes": [
+          "Missing required diagram"
+        ],
+        "strengths": [
+          "Clear causal chain: drought reduces harvests, shifting supply left while demand remains unchanged.",
+          "Accurately explains the shortage at the original equilibrium price and the adjustment to a higher price.",
+          "Correctly concludes that equilibrium price rises and equilibrium quantity traded falls."
+        ],
+        "studyNext": "Submit a diagram showing the relationship and outcome requested, then check that your explanation follows it.",
+        "improvements": [
+          "Include the required demand-and-supply diagram, with unchanged D, supply shifting left from S1 to S2, and both equilibria labelled P1/P2 and Q1/Q2."
+        ],
+        "examinerComment": "Your written explanation is economically accurate and complete: reduced wheat availability shifts supply left, causing a shortage at the old price, a rise in price, and a fall in equilibrium quantity. However, this question explicitly requires a diagram, and no image was submitted, so diagram marks cannot be awarded. Prioritise adding a clearly labelled wheat-market diagram."
+      },
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]"
+    },
+    "snapshot": {
+      "id": "5613827e-0dc9-4e27-b73b-6f89e64ac8f4",
+      "userId": "c054e3a0-f1c8-423a-976f-763c9768e97e",
+      "version": 1,
+      "contract": {
+        "mode": "four_mark_diagram",
+        "part": null,
+        "level": "shared_sl_hl",
+        "paper": null,
+        "scope": "same_question_part",
+        "topic": "2.3",
+        "total": 4,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2",
+            "question_label_ceiling_3"
+          ],
+          "family": "demand_supply",
+          "labels": [
+            "Price of wheat",
+            "Quantity of wheat",
+            "D",
+            "S1",
+            "S2",
+            "P1/P2",
+            "Q1/Q2"
+          ],
+          "diagram": {
+            "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+            "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity.",
+            "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship."
+          },
+          "outcomes": [
+            "Equilibrium price rises and equilibrium quantity falls."
+          ],
+          "explanation": {
+            "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+            "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached.",
+            "zero": "No relevant link from the drought to wheat supply or equilibrium."
+          },
+          "relationships": [
+            "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+          ],
+          "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency.",
+          "permittedMechanisms": [
+            "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+          ],
+          "acceptableAlternatives": [
+            "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper2_four_mark_diagram_explain",
+        "provenance": "aptly_authored",
+        "diagramRole": "required_explicitly",
+        "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [],
+        "blueprintVersion": "economics-four-mark-blueprint-v1"
+      },
+      "answerHash": "86e71a472ed34afe917bf1a8d721e5083b9da7111c7ce337b1351a1d22aedc63",
+      "attachments": [],
+      "contextHash": "1ea311746f3430d544baf5f38cb39e8f7017fa9c3b5fc68c48139946ae47c87c",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "cf34606b46ebdea36b927993ebc4fd25b78541f7cbea9446229c232b59cbf1c7",
+      "graderEffort": "medium",
+      "observations": null,
+      "questionHash": "8d5a85a43edb0358d22b396898ee0d69433d27676f37fa2f1c910e78af9b32d6",
+      "reviewerModel": null,
+      "reviewerEffort": null,
+      "reviewerVersion": null,
+      "operationIdentity": "5613827e-0dc9-4e27-b73b-6f89e64ac8f4"
+    }
+  }
+}

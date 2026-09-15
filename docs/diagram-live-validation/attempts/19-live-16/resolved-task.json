@@ -1,0 +1,72 @@
+{
+  "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+  "sourceMaterial": null,
+  "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time.",
+  "contract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "necessary_for_task",
+    "diagramReason": "The task asks how confidence affects real output and the price level.",
+    "provenance": "aptly_authored",
+    "framework": "paper1a_10_mark",
+    "paper": "1",
+    "part": "a",
+    "total": 10,
+    "topic": "3.2",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "economics-essay-blueprint-v2",
+    "diagram": {
+      "family": "ad_as",
+      "acceptableAlternatives": [
+        "Accept a coherent theoretically valid alternative mechanism satisfying the task and supplied context."
+      ],
+      "labels": [
+        "Use the labels identifying the economic variables and relationships requested in the question; conventional abbreviations are acceptable."
+      ],
+      "relationships": [
+        "Judge only the economic relationships requested by this task: Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]"
+      ],
+      "outcomes": [
+        "The outcome must follow from the diagram and match the explanation of the selected question part."
+      ],
+      "essentialAreas": [],
+      "diagram": {
+        "zero": "No creditworthy relevant economic relationship is visible.",
+        "one": "A relevant relationship or initial model is correct, but the task's change or outcome is materially incomplete or wrong.",
+        "two": "The relevant model, change and outcome are correct and identifiable for the exact task, allowing equivalent notation."
+      },
+      "explanation": {
+        "zero": "No correct relevant causal link is explained.",
+        "one": "One relevant causal link is correct but the mechanism or resulting outcome is incomplete.",
+        "two": "A developed, context-compatible causal chain explains the requested outcome; apply same-part error carry forward without repeating its root-error penalty."
+      },
+      "contextConstraints": [
+        "Use only context actually supplied. Do not invent missing stimulus."
+      ],
+      "permittedMechanisms": [
+        "Any theoretically valid mechanism that answers this task and fits its supplied context."
+      ],
+      "rules": [
+        "within_part_ecf",
+        "mechanism_consistency_2"
+      ],
+      "labelingRuleReason": null
+    },
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part"
+  },
+  "bankQuestionId": "econ-v1-3.2-10-001",
+  "imagePath": null,
+  "imageHash": null,
+  "implementationHashes": {
+    "lib/ai/combined-assessment.ts": "b6b35796aa1784b1af9b45778f697059c98489c3fb8b7f6450d318f5c23ce071",
+    "lib/ai/assessed-visual-review.ts": "144ab0310204eae97be70879c04b3aa4221f855d2e9bef91f6f5feb8caca47bd",
+    "lib/ai/assessed-visual-schema.ts": "f82fb8cebe5c802cd2a6445d8a83cd3d306b76f7153793423ad9b9a14db8819c",
+    "lib/assessment/component-scoring.ts": "94bf44825a6000ee8339c68eacf4ab6a56eeac6969020963ca807d68ca9525d7",
+    "app/api/grade/route.ts": "a4b2ff7fe49dd353a22185bdc5e31d4b1cb099a80beddc3f45b65533d6554ee0"
+  }
+}

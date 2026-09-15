@@ -1,0 +1,14 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None. Both correctly identify the handwritten P/Q axes, S2 left of S1, unchanged D, E1/E2 and the higher-price/lower-quantity projections. Full component credit uses readable economic content rather than visual neatness.",
+  "origin": null,
+  "findings": [
+    "Independently inspected wheat-messy-readable.png at original resolution before the provider result was ready. Its SHA-256 matches resolved-task.json and the saved attachment hash. The uneven strokes, camera skew and paper texture do not obscure any task-essential relationship.",
+    "The title Wheat together with conventional P/Q axis labels identifies the market. S1, S2, D, E1, E2, P1, P2, Q1 and Q2 are genuinely legible; exact-label praise is supported here, unlike the earlier blurred fixture.",
+    "The supply curves and demand form both marked intersections; P2 is above P1 and Q2 is left of Q1. A missing movement arrow does not defeat the direction established by labels, positions and the matching prose under this private contract.",
+    "The observer reports usable rather than confusing untidiness with unreadability. No invented label omission, handwriting penalty or unrelated requirement appears in grading.",
+    "Saved 4/4 is diagram 2 plus explanation 2. The complete drought explanation remains creditworthy, no ceiling applies, and diagnostic rows do not change the component total.",
+    "The server preserves original custom practice metadata and persistence reports saved=true/publicMatches=true. This one synthetic hand-drawn-style fixture supports the intended behavior but is not broad handwriting-accuracy validation or teacher calibration."
+  ],
+  "judgement": "expected"
+}

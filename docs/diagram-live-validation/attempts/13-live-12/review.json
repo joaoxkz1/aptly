@@ -1,0 +1,15 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None on diagram evidence. Both stages identify unchanged AD, SRAS shifting left/up from SRAS1 to SRAS2, and higher price level with lower real output. The concern is confined to the grader's next-step wording, which adds a policy-recommendation demand beyond the stakeholder-effects question.",
+  "origin": "grader-response.json: improvements[1] and studyNext feedback scope",
+  "findings": [
+    "Visual inspection confirms correctly named macroeconomic axes, unchanged AD, two SRAS curves, a leftward shift arrow, actual E1/E2 intersections and projections showing PL2 above PL1 and Y2 left of Y1. Observer claims match the submitted image; P versus PL in the prose is harmless equivalent notation.",
+    "The resolved contract is paper1b_15_mark, holistic_diagram, necessary_for_task, ad_as. Raw componentEvaluation and saved componentDecision are null, writtenMarksAwarded is null and capReason is null. The diagram supports the holistic discussion without a fixed bonus, split component award or universal ceiling.",
+    "The 12/15 best-fit judgment is defensible under the existing blueprint: the response develops accurate stakeholder effects and sustained conditional evaluation, but explicitly supplies hypothetical illustrations only. The grader identifies that application limitation honestly, gives Application to context 2/4, and does not invent a real event or pretend the hypothetical cases are verified evidence. The band rationale explains the 10-12 band without adding a mechanical three-mark deduction.",
+    "Diagram, analysis and evaluation diagnostics remain independently at 4/4; the saved values and reasons preserve the raw grader's judgments. The major feedback priority of adding integrated real-world evidence is relevant to this 15-mark blueprint.",
+    "Minor feedback-scope concern: improvements[1] asks which policy response is most appropriate and studyNext asks the student to finish with a conditional policy recommendation. This task asks for discussion of effects on households, firms and government, and the answer already reaches a conditional stakeholder-focused conclusion. Policy responses can support that discussion, but a recommendation is not an additional task requirement. The stated mark limitation is missing real-world application, so this concern does not establish a numerical marking failure; a narrower next step would strengthen evidence supporting the stakeholder judgment.",
+    "The HTTP 200 result is saved and publicMatches is true. The snapshot semantically matches the resolved contract and raw observer evidence, and the image hash matches the saved attachment. Provider requests use store:false and contain no engineering prediction, review-only metadata, case ID or descriptive image filename.",
+    "This is a synthetic engineering review, not an independent teacher mark or general calibration claim. The original outputs are preserved and no assessment calls were made during review."
+  ],
+  "judgement": "concern"
+}

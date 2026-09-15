@@ -1,0 +1,167 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 9715,
+  "requestId": "req_86b8b43dd5e74585ae2ac7d5bc8acbc7",
+  "response": {
+    "id": "resp_048e9cacf11676bb016aa99335ff7887d29ddac296652622ea",
+    "object": "response",
+    "created_at": 1789498166,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789498175,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_048e9cacf11676bb016aa99336a69087d29409d7768e47e282",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqZM_LzIbPidW1YodGtY5ik9cOhJpEe3KovLQc132Ufy9jBxxtqj3dlA4gE_I6ZICpzXwfgDg4f3el4EXygPdT9LYgIyL9WUN7QlS3jLnbV1uKmqclOHTKHQUgYS6HcWVlAPTkUGZ6PLZvzd4-O9mLOM2gbTudE9AIAGNk7M5BE-EQkifmy5krrfP94ALwFpW1mO7D-yzQBuMolrzCPeTSaNCjQYsZ7nK_R8rqHcj7SRncY57Fk3QH922p7spkhlenTftLf5drG9s2V39REpHlOCbzerN_xfdHM9DJ-YGgpDadmoG8lHIPIt9oaVf8oBASWtseiD7Zjj8Gnzig3k1qZ4shDXqmzIP7UvUB8GXL6zafa8J9H0LMj2QvWoFBqiRn-GlMVo7sA0bGwolHwSmV6Lz_-X-F88OHe6ndghxE4A1WM8ELO-_6MMTlyrOrHt1xt1VrIX3_gElopret1hL1Zl4F1FdIw_82uyn-ziaz5N1KrS7wwa4kkKvX5g8bmsHfjtMehRVXEvK24VSFwqp0bD9FI1BUb02WSv-KHvu7EIAnK_1JiSXkWfxbL0rqbZUhMY5mN5nHtYxJBqzLnQ06Gf7qrF225STL0No1j3Qdjjf2zzaGHCCaKb6W92kzKngMh5xN3r_bZ4MmQyvh4RjrMsS7gR68X1_CvmHSdus7kOBjFEAvlV_DOQFphkNRBqLI2wyeh7cdgfNL6WAmb6RyePcMK5r5z3T1GqDSNxSGRJF4xbUHYWeJaPTMXtO3Lptae-SnY9Q7TqFmWHAaWYj3mN0KCt757305Z8QHI_3gQDk78EESPR8PKQg9CDwSDh07R1aRe9w715SMNitPb7iHZ2w9U6AbT_O1yh2Pb6QmJspFicdfjnWq0iozDXkQoe0TeZWFbW9iXVBC5yQT_g9Sb3UlXsESyuCgU657AMKIdeQMr8wNhp5ij0fT2oKbQE13pUvKtVrZA6h9TH3dNNnN6qwSVDOZeUNneFJwjjWLVH-d0-oDFN-JrH4VkYNckXK1nz2rhMGW7NAyJTpM_JCTLNggN7lLElaa4Tz99SSDV3FEnPnPb-yOUmm4cGCwtj75NKpSbMMMrg4IB6TtfFi2Fwb_A01JKww1JPU-bgeNRBJGdE-og0qMOkeqdJHt6tLQ3iqT8PcT64sY2XZhHxqMuB7rpyxzv27H4twFGQVhnuKuNjGAf-eqR5F3QuhbBkiL9nyTAX87cmqCJ7ok9eGzhYC4Rm4jq5_Sox-ERrzkBb413rymKC_YFMoT2KN7pMQhDBlo632b4-ASVbC80qbxbMr4Q8OiS_zRa8_6hVL5XP6yzhQU1UUkHCAJuPUNExZHVVhR_AKUdikD39BbxzCdHZ3vMjVhQk53f58S6618S3WpOq-YIgvvMVQRM0nO2t1LyYAOHVN7Etb-ylIU-GPTDmM2Q3SuIx9_TW7G51RGlBt5mP08DwxUx5lMiHzTLKI2AEfMK9rHx-_NfxXgKal8oXPJUI-jSyKTi_QJ_Q_wi0wFqyerqVduy42QJwRNmnaLY1CFyZuFQlRb9i4hPFTnvDA9GxVgrQL5JRwV6WOQEkpdrtsSbizR-jJCVwgybFtPQ-Yr7satYxRKQiZB-7_A4wjrx9Vzj4ZkPiXnREFUqSqdBk551JGij4LWa1ny552X182oSlQyn5ypYylQ-mHc_vGxFPJRGgXwvVy1XE4tbXnjoZ-S3HLu5jKvt4o59ecgsm2NnSH7uM54NWjZAvJ5IYw-BGmXmP8DRb-JAT59jfBCyR1Kqw26J-ILoFw65XD3UTHFjRnSiJmksexC50UMkb7PQ07LMz6_aYa0LQqJW2AsnZRUlvqf9mGkiAsMsvipt-QBuR4pOwz3d9Y88cz8rHWBfJrEqljktjEvHtPp0Q7lheWNWUdyhGmteVmngumGV9gWOBZEIhQgqqtjv_6bf6ZTZCxY3qKd-CrSpmYcnvYEvsCpXYQBDIIi6JxEcFahFsG5-FWNCBb-klPFXr_ZThIcJFeyJSg-5NHkCkUakJaR-YhxEC__-aaMItw7TOIcT6D8q21QG_QwazrOGkQIPPshlSvRjcgfCPhyzUfOmamU0qiL2Qsx9MPuulnwpqw6Jo7mjfv4k42pGvYuEOuLpCq7gY0-RAoqKIdl8YuBSY-IqqI-B6OUJj65TlSTwwoKnoZmPEl9HRFkPdEx0TFen84PmLUYsGQ10K4uC0jqiWXw1stYiVVg5mQTc_Xi-kFI1t5GHfct9YmFmiredd1-DXklOfhjReusHZDIEYt8l-kJ1_tlBQRzA9HFyaQG2Eeekqt12waxin6RbkGp_MFVlznf7su-1zFOl9uteS2czrSPE7IhuXRAmUXkRvLy96zN0lkJ3hseSftv9HZfDn0hQdxZYb2NLeAswjHVeVHKZuYpSo-Zt_HkodZwZ0qMFZMXWslpLLYRqsKsfdcg0zCCvJnwH5CSTkaNLa9-KkF0rrTht8HaM9zeT2Pb57y-EcTvy-3d-EzrNJi3NhZUezGEiuwoG6prI-eJpBrjS2ObA-B25QjLEKERvqsjRYWgNHCuVXn6DeLbfYhmfBgRYtFs-01KwvFJf4m5FqN6Y6vhXK_unm-sdKo4wuDl_x-pt-NPpJMArGb0vfeBi7VW_kHBh06Wy4pnq6_Xqa6ONC8DoKtdQ8GgJ_yRGB519QpPpCmxH9Rwppq03O6_mdfqLnmK_n7P2E3I5fXPiEa-YOJ8Fh9T9HojeK4faHpfXBy_WgtY_h3AYjncpWZUPXY9cIn8oOw-mAVRY5Bgyhwfz2uCFCrj-GEBQcApZYVVVdRTVdKRrh-bTkkDr65d3iir1cKw70gp0AR6B9uUr7rBVn2jFabt0sfz1ynhkXklM-vG2WzVX0K6SDc2N8S2CorKhmTIqhUjmQNgp8HFY55vml8B5m8VtKdnT3U9Wdiz0djXlBTV-QkTZNlyibRPuMo9ZUKJOgo6hiZtM_FhDOX78PejWifhre86FrYrTvzbLLNuOfnrm35HY7LLGmmOsrtGV6TJmQqVAoxib9B1SivvNPVIsXUIFIyiTVDD304AGxkNjNa-4C7rPBxd_ME1-P8IpdVzFw3k-UfW1OVHb5MNuEpDRJ9lXIdIbXpdMdk_9d6KB4KP3DwYiuVBLhwhdMjGsfCjB0Me_m5sltzDrO1Uz-legzOIYJ_qHviOl2NdMTgBzWFn_-CgDIrfgvK6EiGPIwA2_yA6-PYKgaM7AZ7ZiVrDqr5-vT6wmUvKdqQtJ8pzbnyYRKDJthaGzv5glWsUV8D6hE3Pg6atgRg091hXdchJuby4s1And7kzcqDOMYbT4UJV0yItdXMTs2FlgK0BIe8vLBn-quB_f_2RxQ5AsKiX38aoE1685IlcDwJR7QxuW5hzpqd7-WIcyyMOAemyUwOdJUMtyGXUvMRTK6N_RYjV7-3g67SmkN3t0PTpHKR2SKUL7trBFx8sNZzzm4PLp6L-ruZj8ifYEbHc0nK7sUJ-cZt4yQyJqtx9gpMHOSTMSenfrdk",
+        "summary": []
+      },
+      {
+        "id": "msg_048e9cacf11676bb016aa9933aeb0887d29087a8b8a6fad387",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"left side\",\"observation\":\"The vertical axis is labeled 'Price of wheat' and the horizontal axis is labeled 'Quantity of wheat'.\",\"interpretation\":\"The student identifies the market axes required for a wheat demand-and-supply diagram.\",\"uncertain\":false},{\"region\":\"centre to lower right\",\"observation\":\"There is one downward-sloping curve labeled 'D'.\",\"interpretation\":\"This is the demand curve, and only one demand curve is shown.\",\"uncertain\":false},{\"region\":\"centre and right side\",\"observation\":\"Two upward-sloping curves are shown and labeled 'S1' and 'S2'. 'S2' is positioned to the left/above 'S1'.\",\"interpretation\":\"The diagram depicts a leftward/upward shift of supply from S1 to S2.\",\"uncertain\":false},{\"region\":\"upper centre-right\",\"observation\":\"A horizontal arrow points left between the two supply curves.\",\"interpretation\":\"The student is explicitly indicating a leftward movement/shift of the supply curve.\",\"uncertain\":false},{\"region\":\"centre-right\",\"observation\":\"Point 'E1' is marked where the demand curve intersects S1.\",\"interpretation\":\"The student identifies the initial equilibrium as the intersection of demand and the original supply curve.\",\"uncertain\":false},{\"region\":\"centre-left\",\"observation\":\"Point 'E2' is marked where the demand curve intersects S2.\",\"interpretation\":\"The student identifies the new equilibrium as the intersection of demand and the shifted supply curve.\",\"uncertain\":false},{\"region\":\"left-centre\",\"observation\":\"Dashed horizontal guides mark 'P1' and 'P2', with P2 drawn above P1.\",\"interpretation\":\"The new equilibrium price is shown as higher than the initial price.\",\"uncertain\":false},{\"region\":\"lower centre\",\"observation\":\"Dashed vertical guides mark 'Q1' and 'Q2', with Q2 drawn to the left of Q1.\",\"interpretation\":\"The new equilibrium quantity is shown as lower than the initial quantity.\",\"uncertain\":false}],\"summary\":\"The student’s diagram is clearly readable and relevant. It shows an unchanged demand curve, a supply curve shifting left/up from S1 to S2, and two labeled equilibria with projections indicating a rise from P1 to P2 and a fall from Q1 to Q2.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean"
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2288,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 1792
+      },
+      "output_tokens": 886,
+      "output_tokens_details": {
+        "reasoning_tokens": 374
+      },
+      "total_tokens": 3174
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "No observer-versus-grader disagreement: both identify correct contraction geometry and missing axis labels. The confirmed defect occurs afterward: the server replaces the grader's independent Diagram diagnostic of 3/4 with 4/4, even though the labeling deficiency limits the overall result to 3/4.",
+  "origin": "server: lib/ai/combined-assessment.ts, post-validation Diagram diagnostic normalization",
+  "findings": [
+    "Visual inspection confirms one unchanged D, S2 left/above S1, a leftward arrow, actual E1/E2 intersections and dotted projections showing the second equilibrium above and left of the first. Both axis titles and P/Q projection tags are absent. This is a variable-label omission, not a demand for numeric coordinates.",
+    "The observer accurately reports the geometry and absent axis labels, marks essential evidence readable and the student region certain, and does not invent P1/P2/Q1/Q2 labels in the image.",
+    "The raw grader awards diagram 2 and explanation 2, proposed sum 4, and sets labelingDeficiency true with visible evidence. It does not also reduce a component for the same missing labels, and it sets incompatibleMechanisms false because the prose and graph share the same supply-contraction mechanism.",
+    "The resolved contract explicitly permits question_label_ceiling_3 for task-relevant labeling deficiencies. The server applies min(4,3)=3/4, records rawTotal 4 and the single maximum-3 ceiling, and gives the label correction as the next action. This is one ceiling rather than an additional subtraction or automatic award.",
+    "The raw grader independently supplies Diagram diagnostic 3/4, but the server discards that row and derives 4/4 from the pre-ceiling diagram component of 2/2. This incorrectly displays Strong and removes the Diagram skill's diagnostic gap from analytics. The fixed /4 diagnostic is separate from component credit and must not be upgraded by this conversion.",
+    "The initial engineering review missed the diagnostic overwrite while checking the correct component arithmetic, ceiling and persistence. This amended review records that omission. The original saved attempt and its raw outputs remain unchanged as evidence.",
+    "Resolution: the corrected normalization was retested in ../09-live-04 with identical question, context, answer, contract and image hash. That retest preserves raw Diagram diagnostic 3/4 as saved 3/4, while retaining component credit 2+2, the single labeling ceiling and overall 3/4; persistence publicMatches is true. See ../09-live-04/review.json. This original attempt retains judgement concern because its saved diagnostic was incorrect.",
+    "The saved public result matches the persistence readback; the snapshot retains the resolved contract and observer evidence, and the submitted image hash matches the saved attachment hash. Request artifacts contain no engineering predictions, review-only metadata, case ID or descriptive image filename; both provider requests use store:false.",
+    "This is an engineering review of a synthetic control, not an independent teacher mark or calibration claim. No assessment calls were made during review."
+  ],
+  "judgement": "concern"
+}

@@ -85,6 +85,20 @@ export interface RevisionComparison {
   deltaLabel: string;
 }
 
+/** Changed grading semantics cannot support a numerical improvement claim. */
+export function revisionComparisonLimitation(parent: Attempt, revision: Attempt): string | null {
+  const before = parent.assessment;
+  const after = revision.assessment;
+  if (!before || !after) return null;
+  if (before.version !== after.version ||
+      before.gradingProvenance?.gradingContractVersion !== after.gradingProvenance?.gradingContractVersion ||
+      before.assessedDiagram?.contract.version !== after.assessedDiagram?.contract.version ||
+      before.assessedDiagram?.contract.mode !== after.assessedDiagram?.contract.mode) {
+    return "These attempts use different assessment versions or diagram contracts. Their estimates are shown separately; a mark change would not be a like-for-like comparison.";
+  }
+  return null;
+}
+
 function frameworkOf(attempt: Attempt): AssessmentFramework | null {
   return attempt.assessment?.framework ?? null;
 }
@@ -102,6 +116,7 @@ export function revisionComparison(
   parent: Attempt,
   revision: Attempt
 ): RevisionComparison | null {
+  if (revisionComparisonLimitation(parent, revision)) return null;
   if (deriveScoringState(parent) !== "marked") return null;
   if (deriveScoringState(revision) !== "marked") return null;
 

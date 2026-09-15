@@ -1,0 +1,506 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 20966,
+  "response": {
+    "attempt": {
+      "id": "517ddfe3-1611-469d-bd3c-c90b30d2fbc9",
+      "createdAt": "2026-09-15T18:42:42.396758+00:00",
+      "subject": "Economics",
+      "topic": "2.3",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "Your diagram accurately shows unchanged demand and a leftward shift of wheat supply from S1 to S2, with clearly identified initial and new equilibria.",
+          "The written explanation gives a complete causal chain: drought lowers harvests, supply falls at each price, a shortage occurs at P1, and price rises while quantity traded falls.",
+          "Terminology and labels are precise and consistently match the wheat-market context."
+        ],
+        "studyNext": "Practise distinguishing a shift in supply from a movement along a supply curve, then apply the same diagram logic to demand increases and decreases.",
+        "improvements": [],
+        "examinerComment": "Estimated practice result: 4/4. The diagram and explanation are fully consistent. You clearly connect reduced harvests to a contraction of supply, excess demand at the original equilibrium price, and the resulting higher equilibrium price and lower equilibrium quantity."
+      },
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 4,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Uses accurate terminology including supply shift, shortage, equilibrium price, quantity demanded and quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Explains the full adjustment process from reduced harvests and lower supply to shortage, rising price and lower equilibrium quantity.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "Applies the analysis directly to the drought and wheat market, with unchanged demand.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted diagram correctly shows the wheat price and quantity axes, unchanged D, S2 left/up of S1, and two demand–supply equilibria. Its labels and guide lines establish P2 above P1 and Q2 left of Q1.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The student’s diagram is readable and relevant: it shows unchanged demand, a leftward/upward shift of supply, and two identified equilibria with price rising from P1 to P2 and quantity falling from Q1 to Q2.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "47f8745f-2245-45a7-8a91-864f5c9a4395",
+          "observations": [
+            {
+              "region": "top centre",
+              "uncertain": false,
+              "observation": "Title reads \"Wheat market\".",
+              "interpretation": "The diagram is intended to represent the wheat market in the question context."
+            },
+            {
+              "region": "left side and bottom axis",
+              "uncertain": false,
+              "observation": "The vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat\".",
+              "interpretation": "The axes identify price and quantity for wheat, which are the required market variables."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "One downward-sloping curve is labeled \"D\".",
+              "interpretation": "This is the demand curve, and only one demand curve is shown, so demand is depicted as unchanged."
+            },
+            {
+              "region": "right half",
+              "uncertain": false,
+              "observation": "Two upward-sloping curves are labeled \"S1\" and \"S2\"; the curve labeled \"S2\" lies to the left/above the curve labeled \"S1\".",
+              "interpretation": "Supply is shown shifting left/up from the initial supply position to a lower-supply position."
+            },
+            {
+              "region": "upper-middle near supply curves",
+              "uncertain": false,
+              "observation": "A horizontal arrow points left from the vicinity of S1 toward S2.",
+              "interpretation": "The arrow reinforces that the supply change is a leftward shift."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "The label \"E1\" is placed at the intersection of D and S1, and the label \"E2\" is placed at the intersection of D and S2.",
+              "interpretation": "Both the initial and new equilibria are identified as demand-supply intersections."
+            },
+            {
+              "region": "left-centre and lower-centre",
+              "uncertain": false,
+              "observation": "Dashed guide lines mark P1 and P2 on the price axis and Q1 and Q2 on the quantity axis; P2 is above P1 and Q2 is left of Q1.",
+              "interpretation": "The new equilibrium is shown at a higher price and a lower quantity than the initial equilibrium."
+            }
+          ],
+          "attachmentHashes": [
+            "2ccc1a7a626f6310366763d2f6fbb39e91c82a6e37f949014c9eecb1b1e9c0df"
+          ],
+          "componentDecision": {
+            "total": 4,
+            "diagram": 2,
+            "reasons": {
+              "diagram": "The submitted diagram correctly shows the wheat price and quantity axes, unchanged D, S2 left/up of S1, and two demand–supply equilibria. Its labels and guide lines establish P2 above P1 and Q2 left of Q1.",
+              "explanation": "The explanation accurately links the drought to less wheat supplied at each price, a shortage at P1, price competition, and the new equilibrium with higher price and lower quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 4,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "parentAttemptId": null,
+      "practiceQuestionId": "5171a5f7-096c-4864-ad15-1418e29f03c7",
+      "sourceMaterial": null,
+      "diagramEvidence": null
+    },
+    "replayed": false
+  },
+  "persistence": {
+    "error": null,
+    "saved": true,
+    "publicMatches": true,
+    "row": {
+      "id": "517ddfe3-1611-469d-bd3c-c90b30d2fbc9",
+      "assessment": {
+        "paper": "custom",
+        "version": 4,
+        "markBand": null,
+        "capReason": null,
+        "framework": "paper2_four_mark_diagram_explain",
+        "topicLabel": "2.3",
+        "commandTerm": "explain",
+        "limitations": [],
+        "markBandLow": null,
+        "marksEarned": 4,
+        "marksSource": "explicit_in_question",
+        "bandPosition": null,
+        "markBandHigh": null,
+        "questionPart": "unknown",
+        "scoringState": "marked",
+        "syllabusUnit": "unit_2",
+        "bandRationale": null,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "reason": "Uses accurate terminology including supply shift, shortage, equilibrium price, quantity demanded and quantity traded.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Economic analysis",
+            "reason": "Explains the full adjustment process from reduced harvests and lower supply to shortage, rising price and lower equilibrium quantity.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Application to context",
+            "reason": "Applies the analysis directly to the drought and wheat market, with unchanged demand.",
+            "awarded": 4,
+            "available": 4
+          },
+          {
+            "label": "Diagram",
+            "reason": "The submitted diagram correctly shows the wheat price and quantity axes, unchanged D, S2 left/up of S1, and two demand–supply equilibria. Its labels and guide lines establish P2 above P1 and Q2 left of Q1.",
+            "awarded": 4,
+            "available": 4
+          }
+        ],
+        "syllabusTopic": "2.3",
+        "levelRelevance": "shared_sl_hl",
+        "marksAvailable": 4,
+        "assessedDiagram": {
+          "state": "usable",
+          "summary": "The student’s diagram is readable and relevant: it shows unchanged demand, a leftward/upward shift of supply, and two identified equilibria with price rising from P1 to P2 and quantity falling from Q1 to Q2.",
+          "version": 1,
+          "contract": {
+            "mode": "four_mark_diagram",
+            "version": "economics-diagram-contract-v1",
+            "provenance": "aptly_authored",
+            "diagramRole": "required_explicitly",
+            "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2."
+          },
+          "snapshotId": "47f8745f-2245-45a7-8a91-864f5c9a4395",
+          "observations": [
+            {
+              "region": "top centre",
+              "uncertain": false,
+              "observation": "Title reads \"Wheat market\".",
+              "interpretation": "The diagram is intended to represent the wheat market in the question context."
+            },
+            {
+              "region": "left side and bottom axis",
+              "uncertain": false,
+              "observation": "The vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat\".",
+              "interpretation": "The axes identify price and quantity for wheat, which are the required market variables."
+            },
+            {
+              "region": "centre-right",
+              "uncertain": false,
+              "observation": "One downward-sloping curve is labeled \"D\".",
+              "interpretation": "This is the demand curve, and only one demand curve is shown, so demand is depicted as unchanged."
+            },
+            {
+              "region": "right half",
+              "uncertain": false,
+              "observation": "Two upward-sloping curves are labeled \"S1\" and \"S2\"; the curve labeled \"S2\" lies to the left/above the curve labeled \"S1\".",
+              "interpretation": "Supply is shown shifting left/up from the initial supply position to a lower-supply position."
+            },
+            {
+              "region": "upper-middle near supply curves",
+              "uncertain": false,
+              "observation": "A horizontal arrow points left from the vicinity of S1 toward S2.",
+              "interpretation": "The arrow reinforces that the supply change is a leftward shift."
+            },
+            {
+              "region": "centre",
+              "uncertain": false,
+              "observation": "The label \"E1\" is placed at the intersection of D and S1, and the label \"E2\" is placed at the intersection of D and S2.",
+              "interpretation": "Both the initial and new equilibria are identified as demand-supply intersections."
+            },
+            {
+              "region": "left-centre and lower-centre",
+              "uncertain": false,
+              "observation": "Dashed guide lines mark P1 and P2 on the price axis and Q1 and Q2 on the quantity axis; P2 is above P1 and Q2 is left of Q1.",
+              "interpretation": "The new equilibrium is shown at a higher price and a lower quantity than the initial equilibrium."
+            }
+          ],
+          "attachmentHashes": [
+            "2ccc1a7a626f6310366763d2f6fbb39e91c82a6e37f949014c9eecb1b1e9c0df"
+          ],
+          "componentDecision": {
+            "total": 4,
+            "diagram": 2,
+            "reasons": {
+              "diagram": "The submitted diagram correctly shows the wheat price and quantity axes, unchanged D, S2 left/up of S1, and two demand–supply equilibria. Its labels and guide lines establish P2 above P1 and Q2 left of Q1.",
+              "explanation": "The explanation accurately links the drought to less wheat supplied at each price, a shortage at P1, price competition, and the new equilibrium with higher price and lower quantity traded."
+            },
+            "ceilings": [],
+            "rawTotal": 4,
+            "rootErrors": [],
+            "explanation": 2
+          }
+        },
+        "diagramExpected": true,
+        "frameworkSource": "aptly_practice",
+        "markDisplayMode": "exact_estimate",
+        "markTotalSource": "explicit",
+        "marksAssessable": 4,
+        "unassessedMarks": 0,
+        "assessmentFormat": "custom_short_response",
+        "assessmentSkills": [
+          "diagram_explanation",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTermLabel": "Explain",
+        "diagramSubmitted": true,
+        "practiceLevelLow": 7,
+        "workingsExpected": false,
+        "attachmentContent": "diagram",
+        "diagramAssessable": true,
+        "gradingProvenance": {
+          "modelId": "gpt-5.6-terra",
+          "rubricVersion": "econ-v4",
+          "reasoningEffort": "medium",
+          "taxonomyVersion": "economics-2022-v1",
+          "gradingContractVersion": "ib-econ-2026-v2"
+        },
+        "markingConfidence": "high",
+        "practiceLevelHigh": 7,
+        "workingsSubmitted": false,
+        "recognizedTemplate": null,
+        "unassessedEvidence": null,
+        "evidenceSplitSource": "not_specified",
+        "writtenMarksAwarded": 2,
+        "diagramAssessmentStatus": "submitted_and_assessed",
+        "diagramMarksUnavailable": null,
+        "practiceLevelConfidence": "high",
+        "classificationConfidence": "high",
+        "eligibleForCoreAnalytics": true,
+        "workingsAssessmentStatus": "not_relevant"
+      },
+      "feedback": {
+        "band": "Excellent 7",
+        "score": 7,
+        "mistakes": [],
+        "strengths": [
+          "Your diagram accurately shows unchanged demand and a leftward shift of wheat supply from S1 to S2, with clearly identified initial and new equilibria.",
+          "The written explanation gives a complete causal chain: drought lowers harvests, supply falls at each price, a shortage occurs at P1, and price rises while quantity traded falls.",
+          "Terminology and labels are precise and consistently match the wheat-market context."
+        ],
+        "studyNext": "Practise distinguishing a shift in supply from a movement along a supply curve, then apply the same diagram logic to demand increases and decreases.",
+        "improvements": [],
+        "examinerComment": "Estimated practice result: 4/4. The diagram and explanation are fully consistent. You clearly connect reduced harvests to a contraction of supply, excess demand at the original equilibrium price, and the resulting higher equilibrium price and lower equilibrium quantity."
+      },
+      "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1.",
+      "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]"
+    },
+    "snapshot": {
+      "id": "47f8745f-2245-45a7-8a91-864f5c9a4395",
+      "userId": "5de6c649-60f0-4c9e-a603-feec77db52b0",
+      "version": 1,
+      "contract": {
+        "mode": "four_mark_diagram",
+        "part": null,
+        "level": "shared_sl_hl",
+        "paper": null,
+        "scope": "same_question_part",
+        "topic": "2.3",
+        "total": 4,
+        "diagram": {
+          "rules": [
+            "within_part_ecf",
+            "mechanism_consistency_2",
+            "question_label_ceiling_3"
+          ],
+          "family": "demand_supply",
+          "labels": [
+            "Price of wheat",
+            "Quantity of wheat",
+            "D",
+            "S1",
+            "S2",
+            "P1/P2",
+            "Q1/Q2"
+          ],
+          "diagram": {
+            "one": "Shows a supply contraction against demand but an equilibrium outcome is absent/wrong, or establishes higher price/lower quantity without a fully identifiable shift.",
+            "two": "Shows unchanged D and supply shifting left, with both intersections identifying a higher price and lower quantity.",
+            "zero": "No creditworthy wheat-market supply contraction or correct resulting equilibrium relationship."
+          },
+          "outcomes": [
+            "Equilibrium price rises and equilibrium quantity falls."
+          ],
+          "explanation": {
+            "one": "Links the drought to reduced supply, or correctly explains one equilibrium adjustment without a complete causal chain.",
+            "two": "Explains that a smaller harvest reduces supply at each price, creating shortage at the old price; price rises and quantity traded falls as a new equilibrium is reached.",
+            "zero": "No relevant link from the drought to wheat supply or equilibrium."
+          },
+          "relationships": [
+            "S2 lies left/up of S1; D is unchanged; equilibria are the demand-supply intersections."
+          ],
+          "essentialAreas": [],
+          "contextConstraints": [
+            "Hypothetical scenario: a drought reduces wheat harvests. Demand for wheat is unchanged. The wheat market is initially in competitive equilibrium."
+          ],
+          "labelingRuleReason": "A diagram must identify the wheat price and quantity axes and distinguish demand from the two supply curves; equivalent conventional abbreviations are acceptable. Apply at most an overall 3 ceiling for a relevant labeling deficiency, without a second deduction for that same deficiency.",
+          "permittedMechanisms": [
+            "Drought reduces physical wheat availability, shifting supply left with unchanged demand."
+          ],
+          "acceptableAlternatives": [
+            "S/S′ and P/P′ notation; shortage-based or cost/availability explanation; movement arrows unnecessary if intersections and text establish direction."
+          ]
+        },
+        "version": "economics-diagram-contract-v1",
+        "framework": "paper2_four_mark_diagram_explain",
+        "provenance": "aptly_authored",
+        "diagramRole": "required_explicitly",
+        "diagramReason": "This task asks for a diagram and explanation, assessed as two components out of 2.",
+        "sourceRequired": false,
+        "syllabusVersion": "economics-2022-v1",
+        "writtenCriteria": [],
+        "blueprintVersion": "economics-four-mark-blueprint-v1"
+      },
+      "answerHash": "86e71a472ed34afe917bf1a8d721e5083b9da7111c7ce337b1351a1d22aedc63",
+      "attachments": [
+        {
+          "role": "student_diagram",
+          "identity": "47f8745f-2245-45a7-8a91-864f5c9a4395:image:1",
+          "retained": false,
+          "contentHash": "2ccc1a7a626f6310366763d2f6fbb39e91c82a6e37f949014c9eecb1b1e9c0df"
+        }
+      ],
+      "contextHash": "1ea311746f3430d544baf5f38cb39e8f7017fa9c3b5fc68c48139946ae47c87c",
+      "graderModel": "gpt-5.6-terra",
+      "contractHash": "cf34606b46ebdea36b927993ebc4fd25b78541f7cbea9446229c232b59cbf1c7",
+      "graderEffort": "medium",
+      "observations": {
+        "state": "usable",
+        "summary": "The student’s diagram is readable and relevant: it shows unchanged demand, a leftward/upward shift of supply, and two identified equilibria with price rising from P1 to P2 and quantity falling from Q1 to Q2.",
+        "observations": [
+          {
+            "region": "top centre",
+            "uncertain": false,
+            "observation": "Title reads \"Wheat market\".",
+            "interpretation": "The diagram is intended to represent the wheat market in the question context."
+          },
+          {
+            "region": "left side and bottom axis",
+            "uncertain": false,
+            "observation": "The vertical axis is labeled \"Price of wheat\" and the horizontal axis is labeled \"Quantity of wheat\".",
+            "interpretation": "The axes identify price and quantity for wheat, which are the required market variables."
+          },
+          {
+            "region": "centre-right",
+            "uncertain": false,
+            "observation": "One downward-sloping curve is labeled \"D\".",
+            "interpretation": "This is the demand curve, and only one demand curve is shown, so demand is depicted as unchanged."
+          },
+          {
+            "region": "right half",
+            "uncertain": false,
+            "observation": "Two upward-sloping curves are labeled \"S1\" and \"S2\"; the curve labeled \"S2\" lies to the left/above the curve labeled \"S1\".",
+            "interpretation": "Supply is shown shifting left/up from the initial supply position to a lower-supply position."
+          },
+          {
+            "region": "upper-middle near supply curves",
+            "uncertain": false,
+            "observation": "A horizontal arrow points left from the vicinity of S1 toward S2.",
+            "interpretation": "The arrow reinforces that the supply change is a leftward shift."
+          },
+          {
+            "region": "centre",
+            "uncertain": false,
+            "observation": "The label \"E1\" is placed at the intersection of D and S1, and the label \"E2\" is placed at the intersection of D and S2.",
+            "interpretation": "Both the initial and new equilibria are identified as demand-supply intersections."
+          },
+          {
+            "region": "left-centre and lower-centre",
+            "uncertain": false,
+            "observation": "Dashed guide lines mark P1 and P2 on the price axis and Q1 and Q2 on the quantity axis; P2 is above P1 and Q2 is left of Q1.",
+            "interpretation": "The new equilibrium is shown at a higher price and a lower quantity than the initial equilibrium."
+          }
+        ],
+        "studentRegionCertain": true,
+        "essentialEvidenceReadable": true
+      },
+      "questionHash": "8d5a85a43edb0358d22b396898ee0d69433d27676f37fa2f1c910e78af9b32d6",
+      "reviewerModel": "gpt-5.4",
+      "reviewerEffort": "medium",
+      "reviewerVersion": "diagram-observations-v1",
+      "operationIdentity": "47f8745f-2245-45a7-8a91-864f5c9a4395"
+    }
+  }
+}

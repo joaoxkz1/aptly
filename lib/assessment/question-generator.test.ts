@@ -8,7 +8,7 @@ import {
 describe("question-generator trusted target", () => {
   it("accepts only V1 marks and current non-legacy topics", () => {
     expect([2, 10, 15].every(isGeneratorMarkTotal)).toBe(true);
-    expect(isGeneratorMarkTotal(4)).toBe(false);
+    expect(isGeneratorMarkTotal(4)).toBe(true);
     expect(isCurrentGeneratorTopic("3.5")).toBe(true);
     expect(isCurrentGeneratorTopic("unknown")).toBe(false);
     expect(isCurrentGeneratorTopic("legacy-3.5")).toBe(false);

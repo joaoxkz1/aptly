@@ -13,6 +13,10 @@ import type { Confidence } from "@/lib/types";
 // metadata. Older or unversioned attempts remain legacy and are never
 // reinterpreted or upgraded.
 export const ASSESSMENT_VERSION = 3;
+/** Only the combined pipeline stamps v4; legacy grading keeps v3 on rollback. */
+export const COMBINED_ASSESSMENT_VERSION = 4;
+// Source-reviewed rules changed; the persisted assessment shape remains v4.
+export const COMBINED_GRADING_CONTRACT_VERSION = "ib-econ-2026-v3";
 
 // --- Weighting -------------------------------------------------------------
 // Weight an attempt by the marks Aptly actually judged: a 15-mark answer

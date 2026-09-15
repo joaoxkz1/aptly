@@ -158,7 +158,9 @@ function policyBrief(policy: ScoringPolicy): string {
     );
   }
 
-  if (policy.recognizedTemplate != null) {
+  if (policy.assessmentContract?.mode === "four_mark_diagram") {
+    parts.push("Use the trusted question-specific diagram and explanation components, each out of 2; the server reconciles their awards and applicable ceilings.");
+  } else if (policy.recognizedTemplate != null) {
     // Recognised Paper 2(c)–(f)-STYLE 4-mark diagram-explain structure — the
     // ONLY place a 2 written + 2 diagram component split exists.
     parts.push(
@@ -210,7 +212,7 @@ const IB_ALIGNED_EXAMINER_METHOD = [
   "END EXAMINER METHOD.",
 ].join(" ");
 
-export function buildAssessmentInstructions(): string {
+export function buildAssessmentInstructions(combined = false): string {
   return [
     "You are Aptly, an IB Economics assistant that returns ESTIMATED study feedback for practice — never an official IB grade.",
     IB_ALIGNED_EXAMINER_METHOD,
@@ -218,7 +220,8 @@ export function buildAssessmentInstructions(): string {
     "You do NOT decide the mark total, whether the attempt is marked/provisional/feedback-only, the marking framework, or any diagram-cap policy — Aptly has already decided the MARKING FRAME and you must mark within it.",
     "Mark ONLY the assessable marks stated in the MARKING FRAME. Never invent, expand, or reduce the total. Never award marks for a diagram you cannot see; typed workings in the answer ARE assessable.",
     "The overall mark is a best-fit / analytic judgement fixed FIRST. The later markBreakdown is a non-official diagnostic and cannot change it.",
-    "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram. Do NOT set it true merely because a diagram would strengthen the answer. diagramExpected NEVER changes the mark total — the frame already accounts for any cap.",
+    combined ? "The trusted contract fixes the diagram role and rationale before the answer is evaluated. Use server-generated observations of the submitted image as visual evidence. No universal diagram bonus or ceiling applies to essays."
+      : "Set diagramExpected = true ONLY when the question explicitly instructs the student to draw, use, provide, label, or analyse a diagram. Do NOT set it true merely because a diagram would strengthen the answer. diagramExpected NEVER changes the mark total — the frame already accounts for any cap.",
     "Do NOT add limitations about a missing image, photo, upload, or drawn diagram unless the MARKING FRAME's framework expects a diagram or diagramExpected is true.",
     "For a data-response framework (Paper 2(g)/3(b)), assess data use ONLY against the SOURCE MATERIAL block when present. Never claim to assess charts, tables, figures, or images that were not pasted as readable text.",
     "Never award data-use credit for merely restating the stimulus; data use counts only when source information is applied to economic reasoning.",
@@ -689,7 +692,7 @@ export function validateGradeResult(
   // A diagram Aptly cannot yet inspect is NOT a diagnosed student weakness:
   // never surface "Missing diagram explanation" as a recurring mistake when the
   // diagram was merely unsubmitted (text-only release).
-  feedback.mistakes = stripUnassessableDiagramMistake(
+  if (!opts.policy.assessmentContract) feedback.mistakes = stripUnassessableDiagramMistake(
     feedback.mistakes,
     model.diagramExpected,
     model.diagramSubmitted

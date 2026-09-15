@@ -16,6 +16,7 @@ export const GRADE_STAGES = [
   "practice_context", // fetching the stored Aptly-generated question/source
   "revision_context", // fetching the parent attempt's retained manual source
   "rate_limit",
+  "visual_review",
   "openai",
   "structured_output",
   "schema_validation",

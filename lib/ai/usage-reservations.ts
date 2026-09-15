@@ -75,6 +75,35 @@ export async function reserveAIUsage(input: {
   };
 }
 
+export interface CombinedUsageReservation extends UsageReservation {
+  diagramReservationId: string | null;
+  limitedCapability: "grade" | "diagram" | null;
+}
+
+/** One database transaction, sharing locks with every existing quota writer. */
+export async function reserveCombinedGradeUsage(input: {
+  userId: string; idempotencyKey: string; fingerprint: string; diagramFingerprint: string;
+  gradeDailyLimit: number; diagramDailyLimit: number;
+}): Promise<CombinedUsageReservation> {
+  const { data, error } = await getAdminClient().rpc("reserve_combined_grade", {
+    p_user_id: input.userId, p_idempotency_key: input.idempotencyKey,
+    p_request_fingerprint: input.fingerprint, p_diagram_fingerprint: input.diagramFingerprint,
+    p_grade_daily_limit: input.gradeDailyLimit, p_diagram_daily_limit: input.diagramDailyLimit,
+  });
+  if (error) throw error;
+  const row = (Array.isArray(data) ? data[0] : data) as (ReservationRpcRow & {
+    diagram_reservation_id: string | null; limited_capability: "grade" | "diagram" | null;
+  }) | null;
+  if (!row || !["reserved", "replay", "in_progress", "failed", "limited", "conflict"].includes(row.outcome)
+    || (row.outcome === "reserved" && (!row.reservation_id || !row.diagram_reservation_id))
+    || (row.outcome === "limited" && !["grade", "diagram"].includes(row.limited_capability!))) {
+    throw new Error("invalid combined reservation response");
+  }
+  return { outcome: row.outcome as ReservationOutcome, reservationId: row.reservation_id, status: row.reservation_status,
+    relatedAttemptId: row.related_attempt_id, relatedPracticeId: row.related_practice_id, resultHash: row.result_hash,
+    diagramReservationId: row.diagram_reservation_id, limitedCapability: row.limited_capability };
+}
+
 async function updateReservation(
   admin: SupabaseClient,
   reservationId: string,

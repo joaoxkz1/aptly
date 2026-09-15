@@ -1,0 +1,14 @@
+{
+  "status": "reviewed_synthetic",
+  "observerVersusGraderDisagreement": "None on the submitted economic evidence. The observer reports unchanged D, S2 left/up of S1, both actual demand-supply intersections and P2>P1/Q2<Q1; the grader uses those observations consistently for diagram 2/2 and explanation 2/2.",
+  "origin": null,
+  "findings": [
+    "Independently inspected the actual wheat-correct.png pixels. Its SHA-256 matches resolved-task.json and the saved attachment hash; the curves, E1/E2 and projections visibly establish the required outcome.",
+    "The complete written explanation is compatible with the image and the unchanged-demand drought stimulus. The saved 4/4 equals raw diagram 2 plus explanation 2; no ceiling, root error or extra requirement is invented.",
+    "Observed image details are traceable to visible regions. No unseen equilibrium, teacher annotation or diagram inferred from prose was used.",
+    "The raw grader classified the format as Paper 2, but the server correctly saved paper=custom and assessmentFormat=custom_short_response for this original Aptly practice question. This classification overreach did not escape into the saved contract metadata.",
+    "The saved diagnostic rows are separate from the 2+2 award, omit unrequested evaluation, and persistence reports saved=true/publicMatches=true.",
+    "This is an independent assistant review of synthetic engineering evidence, not a teacher judgment or a claim of handwriting accuracy."
+  ],
+  "judgement": "expected"
+}

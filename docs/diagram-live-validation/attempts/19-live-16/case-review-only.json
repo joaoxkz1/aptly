@@ -1,0 +1,16 @@
+{
+  "caseId": "live-16",
+  "dispatchTier": "targeted_follow_up",
+  "modelInput": {
+    "bankQuestionId": "econ-v1-3.2-10-001",
+    "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+    "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time."
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "economicBehavior": "Falling confidence lowers consumption and AD; unchanged upward SRAS gives lower output and price level. Productive capacity is not assumed destroyed.",
+    "intendedCondition": "Same developed 10-mark essay as live-11, with diagram explicitly omitted to isolate the holistic contribution of required diagram evidence.",
+    "teacherReviewStatus": "not_reviewed",
+    "engineeringExpectations": "Grade submitted essay holistically, acknowledge missing necessary diagram, award no visual credit and apply no fixed diagram deduction or universal cap. Exact expected mark unspecified."
+  }
+}

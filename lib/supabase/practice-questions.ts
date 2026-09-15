@@ -7,7 +7,7 @@ const TABLE = "practice_questions";
 // user_id is never selected or written by the app — it is stamped server-side
 // via `default auth.uid()` and enforced by RLS on every read.
 const SELECT_COLUMNS =
-  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus, focus_context";
+  "id, created_at, question, source_material, framework, mark_total, topic_code, topic_label, taxonomy_version, skill, why, from_current_focus, focus_context, assessment_contract";
 
 export interface PracticeQuestionRow {
   id: string;
@@ -23,6 +23,7 @@ export interface PracticeQuestionRow {
   why: string;
   from_current_focus?: boolean;
   focus_context?: PracticeQuestion["focus"];
+  assessment_contract?: PracticeQuestion["assessmentContract"];
 }
 
 export function rowToPracticeQuestion(row: PracticeQuestionRow): PracticeQuestion {
@@ -40,6 +41,7 @@ export function rowToPracticeQuestion(row: PracticeQuestionRow): PracticeQuestio
     why: row.why,
     fromCurrentFocus: row.from_current_focus === true,
     focus: row.focus_context ?? null,
+    assessmentContract: row.assessment_contract ?? null,
   };
 }
 
