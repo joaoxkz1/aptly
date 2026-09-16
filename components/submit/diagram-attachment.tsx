@@ -1,5 +1,7 @@
 "use client";
 
+import { trackInteraction } from "@/lib/analytics/client";
+
 import { useEffect, useRef, useState } from "react";
 import { CircleAlert, ImagePlus, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,6 +82,7 @@ export function DiagramAttachment({
   const preparing = status === "preparing";
 
   async function handleSelected(file: File) {
+    trackInteraction({ event: "diagram_upload_started" });
     const request = ++selection.current;
     const fileError = validateScanFile(file);
     if (fileError !== null) {
@@ -113,6 +116,7 @@ export function DiagramAttachment({
   }
 
   function handleRemove() {
+    if (attachment !== null) trackInteraction({ event: "diagram_removed_before_submit" });
     selection.current += 1;
     setAttachment(null);
     updateStatus("idle");

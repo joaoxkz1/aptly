@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:security:local": "node scripts/verify-security-local.mjs",
-    "test:db:diagrams": "node scripts/verify-diagram-migrations.mjs"
+    "test:db:diagrams": "node scripts/verify-diagram-migrations.mjs",
+    "test:db:admin": "node scripts/verify-admin-migrations.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

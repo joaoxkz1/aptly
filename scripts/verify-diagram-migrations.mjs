@@ -17,7 +17,8 @@ async function asRole(role, action) {
 }
 try {
   await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
-    create schema auth; create table auth.users(id uuid primary key);
+    create schema auth; create table auth.users(id uuid primary key,created_at timestamptz default now(),email text);
+    create table auth.sessions(id uuid primary key,user_id uuid references auth.users(id),not_after timestamptz);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema public,auth to authenticated,anon,service_role;
     grant execute on function auth.uid() to authenticated,anon,service_role;`);
@@ -152,7 +153,7 @@ try {
   ok((await db.query("select * from public.assessment_snapshots where attempt_id=$1",[saved.id])).rows.length===0,"delete cascades private snapshot");
   await db.query("delete from auth.users where id=$1",[user]);
   ok((await db.query("select * from public.assessment_snapshots where user_id=$1",[user])).rows.length===0,"account deletion cascades private snapshots");
-  console.log(`PASS migration replay 0001–0017, seeded upgrade, 0013/0015/0016/0017 reapply: ${assertions} database assertions. No network or AI calls.`);
+  console.log(`PASS all migrations replay, seeded upgrade, 0013/0015/0016/0017 reapply: ${assertions} database assertions. No network or AI calls.`);
 } catch (error) {
   console.error(`FAIL migration verification: ${error.message}${error.where ? ` (${error.where})` : ""}`);
   process.exitCode = 1;

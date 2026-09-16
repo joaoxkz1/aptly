@@ -19,7 +19,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Notice"
-      lastUpdated="15 September 2026"
+      lastUpdated="16 September 2026"
       intro="What Aptly saves, why it saves it, and what you can do about it. Written to be read, not skimmed past."
     >
       <section className="rounded-2xl border border-border bg-card p-5">
@@ -98,6 +98,22 @@ export default function PrivacyPage() {
       </LegalSection>
 
       <LegalSection title="Why Aptly uses it">
+        <p>
+          <strong>Internal product analytics.</strong> Aptly uses counts from saved work and records
+          a small set of learning interactions, such as opening feedback, starting Practice or a
+          revision, and adding or removing a diagram. These records contain your account ID,
+          relevant attempt or question ID, the interaction type and time, and a limited source label.
+          They do not contain answers, photos, prompts or a recording of your session, and are not
+          sent to a third-party analytics service. They help Aptly understand use and investigate failures.
+        </p>
+        <p>
+          <strong>Optional feedback and original marks.</strong> You can rate Aptly feedback, leave a
+          short private comment, and record a mark received before using Aptly. Original marks are
+          student-reported and unverified. You can edit or remove these entries. Aptly&apos;s authorized
+          internal team can review them to understand feedback quality; other students cannot.
+          These entries and interaction records are retained while your account exists and deleted
+          with your account; records linked to a deleted attempt or Practice question are also deleted.
+        </p>
         <p>
           Most of it is simply what the service is. Aptly needs your email to sign you in, your
           saved work to show a history, and your feedback and topics to tell you what to practise

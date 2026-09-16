@@ -2,8 +2,8 @@
 
 **Controller:** Joao Perracini (individual; non-commercial student project)
 **Contact:** contactaptly@gmail.com
-**Version:** 1.1 — 15 September 2026
-**Processing update:** Diagram-aware assessment facts updated from the implementation; controller review of the changed processing and existing policy conclusions is pending.
+**Version:** 1.2 — 16 September 2026
+**Processing update:** Diagram-aware assessment and internal analytics facts updated from the implementation; controller review of the changed processing and existing policy conclusions is pending. The new analytics purpose and optional reports require the controller to review the purpose/basis assessment; this technical update does not extend the earlier legal conclusions.
 
 Internal working document. Not user-facing. Companion to `dpia.md`.
 
@@ -25,6 +25,10 @@ Internal working document. Not user-facing. Companion to `dpia.md`.
 | Revision links | `attempts.parent_attempt_id` | |
 | Generated practice + hidden grading blueprint | `practice_questions` | Blueprint hidden from browser by column-level GRANT. |
 | Quota / idempotency | `ai_usage_reservations` | No content. Swept after 30 days. |
+| Learning interaction signals | `analytics_events` | Controlled registry, user/owned-work IDs, DB timestamp, source/action enums only; 256-byte properties cap and server rate limits. No raw student content. |
+| Feedback ratings and optional comments | `attempt_feedback` | One editable rating (1–5) per owner/attempt; comment max 500 characters; private owner RLS and authorized internal review. |
+| Original marks | `reported_original_marks` | Optional, editable, student-reported and unverified. Never overwrites the Aptly estimate. |
+| Internal admin membership | `aptly_admins` | Service-owned UUID allowlist; live Auth session also required. No client grants or self-promotion. |
 | Scan + diagram photo bytes | Browser memory and transient server/provider requests | Metadata stripped client-side before upload. Aptly does not persist bytes in its database or a photo store; diagram bytes can remain in browser memory for an immediate revision, but are not saved in sessionStorage. |
 | Derived profile (weak topics, recurring mistakes, Current Focus, Study Next, estimated level) | **Nowhere** | Recomputed in the browser each render from `attempts`. |
 | Failure logs | Hosting platform stdout | Event, random request ID, stage, error *class*, status, timestamp. No content, email or user ID. |
@@ -105,6 +109,8 @@ see §9.
 | Account (email, nickname, level) | Life of the account | Account deletion |
 | Attempts, feedback, assessments, diagram observations and private assessment snapshots | Life of the account | Account deletion, or per-attempt delete; snapshots cascade-delete with their attempt or account |
 | Practice questions | Life of the account | Account deletion; also auto-removed when the last attempt referencing them is deleted |
+| Interaction signals | Life of the account | Account deletion; linked attempt/question deletion also cascades |
+| Ratings, short comments and reported original marks | Life of the account or linked attempt | Owner can remove individually; attempt/account deletion cascades |
 | Temporary typed drafts | Current tab session; 24-hour absolute cutoff from draft creation, checked on restore/read/write | Confirmed matching save, discard, sign-out/account change, account deletion, or stale-draft sweep |
 | Scan / diagram photo bytes | No persistent Aptly server copy; transient requests and browser memory | Server discards bytes after processing. Remove the browser attachment or leave/reload the editor to discard that copy; an immediate revision may explicitly reuse the in-memory diagram. Reopened work needs the photo attached again. Provider retention is separate (§3). |
 | Derived profile | **Not retained** | n/a — recomputed each render |
@@ -174,7 +180,8 @@ Single route: **contactaptly@gmail.com**.
 3. **Respond within one month.** Extendable by two further months for complex
    requests — tell the person inside the first month if extending.
 4. **Fulfil:**
-   - *Access* — include their `attempts`, `practice_questions`, account fields and
+   - *Access* — include their `analytics_events`, `attempt_feedback`,
+     `reported_original_marks`, `attempts`, `practice_questions`, account fields and
      owned `assessment_snapshots` in the internal request inventory. Review the
      snapshot's observations and other personal data when preparing the response;
      browser access remains restricted and this is not a new public blueprint

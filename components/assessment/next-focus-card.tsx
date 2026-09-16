@@ -10,6 +10,7 @@ import { evidenceStrengthLabel, nextFocusPresentation, topicShortLabel } from "@
 import type { LearningInsights } from "@/lib/assessment/readiness";
 import { currentPracticeFocus, focusedPracticeHref } from "@/lib/assessment/focused-practice";
 import { NEXT_TOPIC_PRACTICE_HREF } from "@/lib/assessment/general-practice";
+import { useInteractionView } from "@/lib/analytics/client";
 
 /**
  * The single canonical global recommendation. Rendered identically on the
@@ -28,6 +29,7 @@ export function NextFocusCard({
   ready?: boolean;
 }) {
   const nf = insights.nextFocus;
+  useInteractionView("current_focus_viewed", ready && nf !== null);
   const practiceFocus = currentPracticeFocus(nf);
   // Evidence-aware wording (shared with the practice "Why this question?").
   const focusCopy = nf !== null ? nextFocusPresentation(nf) : null;

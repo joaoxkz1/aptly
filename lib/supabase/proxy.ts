@@ -51,6 +51,15 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isOnboarding = pathname === "/onboarding";
 
+  // Admin handlers perform code + live Auth session + membership checks themselves.
+  // Never redirect these requests to login/onboarding or disclose a configured URL.
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    supabaseResponse.headers.set("Cache-Control", "private, no-store");
+    supabaseResponse.headers.set("Referrer-Policy", "no-referrer");
+    supabaseResponse.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return supabaseResponse;
+  }
+
   // API routes are never redirected to an HTML page. An unauthenticated call
   // gets the same 401 JSON the route handlers themselves return — a redirect
   // would hand fetch() the login page with status 200, so the client's

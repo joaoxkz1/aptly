@@ -7,7 +7,9 @@ let cachedAdmin: SupabaseClient | null = null;
  * Privileged Supabase client for narrowly scoped server persistence.
  *
  * Callers MUST authenticate the request with the cookie-scoped client first,
- * derive a verified user id, and include that id in every admin query. This
+ * derive a verified user id, and include that id in every persistence query.
+ * The internal analytics module additionally verifies a live admin session before
+ * calling its service-only, content-minimized aggregate RPC. This
  * module is server-only and never logs either credential.
  */
 export function getAdminClient(): SupabaseClient {

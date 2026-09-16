@@ -1,5 +1,7 @@
 "use client";
 
+import { trackInteraction } from "@/lib/analytics/client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -58,6 +60,7 @@ export default function OnboardingPage() {
     }
 
     router.replace("/");
+    trackInteraction({ event: "onboarding_completed" });
     router.refresh();
   }
 

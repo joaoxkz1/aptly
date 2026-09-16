@@ -1,5 +1,7 @@
 "use client";
 
+import { trackInteraction } from "@/lib/analytics/client";
+
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -193,6 +195,8 @@ function PracticeGenerator() {
   const generate = useCallback(
     async (regenerate = false) => {
       if (courseLevel === null || generating || profileLoading || !canGenerateFocus) return;
+      trackInteraction({ event: focus ? "targeted_practice_started" : "practice_started",
+        attemptId: focus?.sourceAttemptId ?? undefined, properties: { source: focus?.source ?? "general" } });
       const version = selectionVersion.current;
       const signature = JSON.stringify([courseLevel, marks, selectedTopicCode, focus?.source, focus?.sourceAttemptId]);
       // Both retry buttons must retain an uncertain "Another question" intent.

@@ -1,5 +1,7 @@
 "use client";
 
+import { useInteractionView } from "@/lib/analytics/client";
+
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -171,6 +173,7 @@ function SubmitPageInner({
     [parent]
   );
   const revisionMissing = reviseId !== null && attemptsStatus === "ready" && parent === null;
+  useInteractionView("revision_started", revisionCtx !== null && result === null, parent?.id);
 
   // --- Practice mode --------------------------------------------------------
   // The Aptly-generated question being answered (RLS-scoped fetch), either

@@ -75,8 +75,23 @@ Every category above is needed for something the student actively asked for:
 - History — the Learning log, progress and Current Focus are all built from it.
 - Quota records — Aptly pays per AI call; without a cap one user could exhaust it.
 
-Nothing is collected "just in case". There is no analytics SDK, no advertising, no
-tracking, no geolocation, no device fingerprinting, no contact list, no social graph.
+The internal console added on 16 September 2026 records a bounded registry of learning
+interactions (viewing feedback/focus/history, starting Practice/revisions, onboarding,
+diagram attachment/removal), with authenticated user IDs and optional owned work IDs.
+It also stores optional editable 1–5 feedback ratings, comments up to 500 characters,
+and unverified student-reported original marks. No answer or prompt content is placed
+in events. Records remain in the existing Supabase project; only server-authorized
+admins can see aggregate analytics and deliberate feedback/user drill-downs. Events
+are behaviour signals, not proof of completion. No third-party analytics SDK,
+advertising, geolocation, device fingerprinting, contact list or social graph is added.
+
+This processing change needs the controller's ongoing review of purpose, retention
+and the existing lawful-basis assessment, especially for younger users. No new legal
+compliance conclusion is asserted by this technical update. Retention is the life of
+the account; linked records cascade-delete with their attempt/question. Feedback and
+reported marks can also be individually removed. Admins cannot see private snapshots,
+prompts or diagrams through the console. The numeric route is discovery reduction,
+not an access control. The public notice and operations data map describe the change.
 
 Where minimisation was possible it was taken: photo bytes are not persisted on
 Aptly's server, image metadata is stripped before upload, quota records hold no

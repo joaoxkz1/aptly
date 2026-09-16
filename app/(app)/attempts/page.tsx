@@ -23,10 +23,14 @@ import {
   presentedFeedback,
 } from "@/lib/assessment/status";
 import { cn, formatDateTime } from "@/lib/utils";
+import { useInteractionView, trackInteraction } from "@/lib/analytics/client";
+import { AttemptFeedback } from "@/components/attempt-feedback";
 
 export default function AttemptsPage() {
   const { attempts, status, retry, removeAttempt } = useAttempts();
   const [expanded, setExpanded] = useState<string | null>(null);
+  useInteractionView("history_viewed", status === "ready");
+  useInteractionView("feedback_viewed", expanded !== null, expanded ?? undefined);
   // Per-attempt delete flow: which row is asking for confirmation, which is
   // mid-delete, and which failed (kept visible — never optimistic).
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -233,9 +237,11 @@ export default function AttemptsPage() {
                   )}
 
                   {/* Act on this answer: revise it after feedback (Practice Loop). */}
+                  <div className="mt-5"><AttemptFeedback key={a.id} attemptId={a.id} /></div>
                   <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
                     <Link
                       href={`/submit?revise=${a.id}`}
+                      onClick={() => trackInteraction({ event: "next_step_clicked", attemptId: a.id, properties: { source: "history", action: "revise" } })}
                       className="inline-flex h-8 items-center gap-2 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground hover:bg-muted"
                     >
                       <PenLine className="h-3.5 w-3.5" />

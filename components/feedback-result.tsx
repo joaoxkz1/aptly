@@ -41,6 +41,9 @@ import {
 import type { RecurringMistakeSummary } from "@/lib/assessment/readiness";
 import { AnswerNextStep } from "@/components/assessment/answer-next-step";
 import type { Attempt } from "@/lib/types";
+import { AttemptFeedback } from "@/components/attempt-feedback";
+import { useInteractionView } from "@/lib/analytics/client";
+import { isUuid } from "@/lib/auth/verified-user";
 
 export type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -71,6 +74,8 @@ export function FeedbackResult({
   onTryAnother: () => void;
 }) {
   const assessment = attempt.assessment ?? null;
+  const durable = saveState === "saved" && isUuid(attempt.id);
+  useInteractionView("feedback_viewed", durable, attempt.id);
   // Source-less Paper 2(g)/3(b): data use is UNAVAILABLE, not a weakness. The
   // canonical presentation helper (shared with the Learning log) strips any
   // source-data corrective wording from the model's feedback.
@@ -354,6 +359,8 @@ export function FeedbackResult({
           </CardContent>
         </Card>
       )}
+
+      {durable && <AttemptFeedback key={attempt.id} attemptId={attempt.id} />}
 
       {/* Save status + actions */}
       <div className="flex flex-col gap-3">

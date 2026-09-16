@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { answerPracticeFocus, focusedPracticeHref, focusLabel, focusPolicy } from "@/lib/assessment/focused-practice";
 import { presentedFeedback } from "@/lib/assessment/status";
 import type { Attempt } from "@/lib/types";
+import { trackInteraction } from "@/lib/analytics/client";
 
 export const METHOD_CUES = {
   economic_analysis: [
@@ -74,9 +75,10 @@ export function AnswerNextStep({ attempt, saved, onRevise, onTryAnother, tryAnot
           </details>
         )}
         <div className="flex flex-wrap items-center gap-3">
-          {onRevise && <Button size="sm" variant="outline" onClick={onRevise}>Revise this answer</Button>}
+          {onRevise && <Button size="sm" variant="outline" onClick={() => { trackInteraction({ event: "next_step_clicked", attemptId: attempt.id, properties: { source: "result", action: "revise" } }); onRevise(); }}>Revise this answer</Button>}
           {saved && (
             <Link href={focus ? focusedPracticeHref(focus) : "/practice?mode=general&suggest=uncovered"}
+              onClick={() => trackInteraction({ event: "next_step_clicked", attemptId: attempt.id, properties: { source: "result", action: "practice" } })}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
               {focus ? `Practise ${focusLabel(focus)} on a new question` : "Choose a practice question"}
               <ArrowRight className="h-4 w-4 shrink-0" />
