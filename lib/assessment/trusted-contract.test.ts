@@ -99,9 +99,9 @@ describe("trusted assessment definition before student evidence", () => {
     expect(policyWithContract(p, contract)).toMatchObject({ bestFit: true, assessable: 10, cappedDiagramMarks: 0 });
   });
 
-  it("distinguishes a necessary economic relationship from an optional broad argument", () => {
+  it("distinguishes a necessary economic relationship from an unresolved broad argument", () => {
     expect(manual("Explain how an indirect tax changes equilibrium price and quantity. [10 marks]")?.diagramRole).toBe("necessary_for_task");
-    expect(manual("Evaluate the usefulness of economic models in decision making. [15 marks]")?.diagramRole).toBe("optional_appropriate");
+    expect(manual("Evaluate the usefulness of economic models in decision making. [15 marks]")?.diagramRole).toBe("unresolved");
   });
 
   it("projects only safe pre-submission fields to the browser", () => {

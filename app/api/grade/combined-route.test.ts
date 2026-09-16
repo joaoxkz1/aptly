@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ECONOMICS_QUESTION_BANK } from "@/lib/assessment/question-bank/economics-v1";
 import type { Attempt } from "@/lib/types";
+import { ANSWER as POLLUTION_ANSWER, QUESTION as POLLUTION_QUESTION } from "@/lib/ai/fixtures/pollution-production-answer";
 
 const USER = "11111111-1111-4111-8111-111111111111";
 const KEY = "22222222-2222-4222-8222-222222222222";
@@ -10,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   user: "11111111-1111-4111-8111-111111111111" as string | null,
   row: null as Record<string, unknown> | null,
   create: vi.fn(), reserve: vi.fn(), combined: vi.fn(), processing: vi.fn(), success: vi.fn(), failure: vi.fn(),
-  save: vi.fn(), byId: vi.fn(), byKey: vi.fn(), guidance: vi.fn(), eq: vi.fn(),
+  save: vi.fn(), byId: vi.fn(), byKey: vi.fn(), guidance: vi.fn(), eq: vi.fn(), replay: vi.fn(),
 }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({
   auth: { getClaims: async () => ({ data: { claims: mocks.user ? { sub: mocks.user } : null } }) },
@@ -22,6 +23,7 @@ vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({
 vi.mock("@/lib/ai/openai", () => ({ getOpenAI: () => ({ responses: { create: mocks.create } }) }));
 vi.mock("@/lib/ai/usage-reservations", () => ({ reserveAIUsage: mocks.reserve, reserveCombinedGradeUsage: mocks.combined, markReservationProcessing: mocks.processing, markReservationSucceeded: mocks.success, markReservationFailed: mocks.failure }));
 vi.mock("@/lib/supabase/server-authority", () => ({ saveGradeAttempt: mocks.save, findAttemptById: mocks.byId, findAttemptByIdempotency: mocks.byKey, fetchTrustedPracticeGuidance: mocks.guidance }));
+vi.mock("@/lib/supabase/completed-essay-replay", () => ({ completedEssayReplay: mocks.replay }));
 import { POST } from "./route";
 
 const task = ECONOMICS_QUESTION_BANK.find(question => question.id === "econ-v1-2.3-4-001")!;
@@ -65,6 +67,7 @@ beforeEach(() => {
   vi.clearAllMocks(); vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "true");
   vi.spyOn(console, "error").mockImplementation(() => {});
   mocks.user = USER;
+  mocks.replay.mockResolvedValue({ kind: "none" });
   mocks.row = { question: task.question, source_material: task.sourceMaterial, framework: task.framework, mark_total: 4, topic_code: task.topicCode, topic_label: "Competitive market equilibrium", authority_version: 1 };
   mocks.guidance.mockResolvedValue({ gradingBlueprint: task.gradingBlueprint, gradingBlueprintVersion: task.gradingBlueprintVersion, topicCode: task.topicCode, topicLabel: "Competitive market equilibrium", levelRelevance: task.levelRelevance, commandTerm: "explain", targetSkills: task.targetSkills });
   mocks.reserve.mockImplementation(async ({ capability }) => reservation(capability));
@@ -80,6 +83,50 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
 describe("authoritative combined route with real input and assessment validators", () => {
+  const pollution = { question: POLLUTION_QUESTION, answer: POLLUTION_ANSWER, practiceQuestionId: null, requestedFramework: "paper1a_10_mark" };
+  it("resolves the actual manual pollution task before reserving/provider work", async () => {
+    const response = await POST(request({ image: false, body: { ...pollution, diagramOmitted: false } }));
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: "diagram_confirmation_required" });
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+  it("dispatches a frozen necessary contract and exact prose after confirmed omission", async () => {
+    mocks.create.mockResolvedValueOnce(reply(grade({ componentEvaluation: null, assessableEarned: 9,
+      assessmentFormat: "paper_1_a", paper: "paper_1", questionPart: "a", syllabusTopic: "2.8",
+      bandRationale: "The best-fit judgment considers the explanation and missing relevant diagram." })));
+    const response = await POST(request({ image: false, body: pollution }));
+    expect(response.status).toBe(200);
+    const { attempt } = await response.json();
+    expect(attempt.assessment.assessedDiagram).toMatchObject({ state: "not_provided", componentDecision: null,
+      contract: { diagramRole: "necessary_for_task" } });
+    expect(attempt.assessment.gradingProvenance.gradingContractVersion).toBe("ib-econ-2026-v4");
+    expect(attempt.assessment.marksEarned).toBe(9); // mocked provider mark, not an omission rule
+    expect(mocks.create).toHaveBeenCalledTimes(1);
+    const sent = mocks.create.mock.calls[0][0];
+    expect(sent.input[0].content).toContain('"diagramRole":"necessary_for_task"');
+    expect(sent.input[1].content).toContain(POLLUTION_ANSWER);
+    expect(sent.input[1].content).toContain('"state":"not_provided"');
+    expect(sent.input[1].content).not.toMatch(/calibration target|safest calibration|expected mark/i);
+    expect(mocks.save.mock.calls[0][2].snapshot.contract).toMatchObject({ blueprintVersion: "inferred-essay-contract-v1",
+      essayResolution: { ruleId: "negative-production-externality" } });
+  });
+  it("returns a completed historical essay before applying the new omission gate", async () => {
+    const historical = { id: SAVED, answer: POLLUTION_ANSWER, assessment: { marksEarned: 10,
+      assessedDiagram: { contract: { diagramRole: "optional_appropriate" } } } };
+    mocks.replay.mockResolvedValue({ kind: "replay", attempt: historical });
+    const response = await POST(request({ image: false, body: { ...pollution, diagramOmitted: false } }));
+    expect(await response.json()).toEqual({ attempt: historical, replayed: true });
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    expect(mocks.create).not.toHaveBeenCalled();
+    expect(mocks.save).not.toHaveBeenCalled();
+  });
+  it("rejects a changed historical essay replay and browser-selected diagram roles", async () => {
+    mocks.replay.mockResolvedValue({ kind: "conflict" });
+    expect((await POST(request({ image: false, body: pollution }))).status).toBe(409);
+    expect((await POST(request({ image: false, body: { ...pollution, diagramRole: "optional" } }))).status).toBe(400);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
   it("pauses saved diagram-aware essays during rollback instead of silently grading under legacy rules", async () => {
     vi.stubEnv("NEXT_PUBLIC_DIAGRAM_ASSESSMENT_ENABLED", "false");
     const essay = ECONOMICS_QUESTION_BANK.find(q => q.marks === 10)!;

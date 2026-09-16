@@ -70,6 +70,7 @@ import {
   saveGradeAttempt,
   type TrustedPracticeGuidance,
 } from "@/lib/supabase/server-authority";
+import { completedEssayReplay } from "@/lib/supabase/completed-essay-replay";
 
 export const runtime = "nodejs";
 // Allow the 120-second combined provider deadline plus auth and persistence.
@@ -298,6 +299,13 @@ export async function POST(request: Request) {
   let contract = null;
   if (diagramAssessmentEnabled()) {
     try {
+      // Completed manual essays replay their original frozen contract/result,
+      // even when new task resolution would now ask for omission confirmation.
+      if (practiceQuestionId === null && (policy.total === 10 || policy.total === 15)) {
+        const completed = await completedEssayReplay(userId, idempotencyKey, raw, image?.hash ?? null);
+        if (completed.kind === "conflict") return fail(409, "idempotency_conflict");
+        if (completed.kind === "replay") return NextResponse.json({ attempt: completed.attempt, replayed: true });
+      }
       contract = resolveAssessmentContract({ policy, question: policy.selectedQuestionPart ?? gradedQuestion,
         topic: trustedPracticeGuidance?.topicCode ?? gradedTopic, sourceMaterial,
         blueprint: trustedPracticeGuidance?.gradingBlueprint, level: trustedPracticeGuidance?.levelRelevance ?? "unknown",

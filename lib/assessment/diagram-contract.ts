@@ -2,7 +2,8 @@
 export const DIAGRAM_CONTRACT_VERSION = "economics-diagram-contract-v1" as const;
 export const DIAGRAM_FAMILIES = ["demand_supply", "ppc", "ad_as", "externality", "cost_revenue", "trade", "currency", "lorenz", "money_market", "phillips", "poverty_cycle", "circular_flow"] as const;
 export type DiagramFamily = (typeof DIAGRAM_FAMILIES)[number];
-export type DiagramRole = "required_explicitly" | "necessary_for_task" | "optional_appropriate" | "not_assessed";
+// optional_appropriate is retained for frozen historical/authored contracts.
+export type DiagramRole = "required_explicitly" | "necessary_for_task" | "appropriate_support" | "optional" | "optional_appropriate" | "not_assessed" | "unresolved";
 export type DiagramEvidenceState = "not_provided" | "pending" | "usable" | "partially_readable" | "unreadable_ambiguous" | "no_relevant_diagram" | "processing_failure";
 export type DiagramRuleId = "within_part_ecf" | "mechanism_consistency_2" | "question_label_ceiling_3";
 export interface CreditDescriptor { zero: string; one: string; two: string }

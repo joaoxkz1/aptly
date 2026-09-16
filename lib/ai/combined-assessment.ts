@@ -6,8 +6,9 @@ import { publicContract, type TrustedAssessmentContract } from "@/lib/assessment
 import type { AssessedVisualEvidence } from "./assessed-visual-schema";
 import { essentialVisualUnavailable } from "./assessed-visual-schema";
 import type { ComponentDecision } from "@/lib/assessment/diagram-contract";
-import { COMBINED_ASSESSMENT_VERSION, COMBINED_GRADING_CONTRACT_VERSION } from "@/lib/assessment/config";
+import { COMBINED_ASSESSMENT_VERSION, COMBINED_GRADING_CONTRACT_VERSION, MANUAL_ESSAY_GRADING_CONTRACT_VERSION } from "@/lib/assessment/config";
 import { scopeFeedbackToQuestion } from "@/lib/assessment/feedback-scope";
+import { reconcileEssayDiagramFeedback } from "@/lib/assessment/essay-diagram-feedback";
 
 const errorProperties = { id: { type: "string" }, diagramEvidence: { type: "string" }, explanationEvidence: { type: "string" }, carriedForward: { type: "boolean" } };
 const componentProperties = {
@@ -33,6 +34,12 @@ export function combinedAssessmentInstructions(contract: TrustedAssessmentContra
       ? "Populate componentEvaluation with diagram 0..2 and explanation 0..2 against the task-specific descriptors. No explanation may earn four marks. Identify independently valid but incompatible mechanisms separately from a coherent alternative or harmless notation. Apply same-part error carry forward when explaining the consequences of a diagram's root error: award explanation credit for correct own-figure logic; do not penalize that root error again. Unrelated errors still reduce explanation credit. List concise root-error links, never reasoning chains. Never carry forward between different parts. Missing arrows alone are not decisive when diagram and explanation establish direction. Labeling ceiling is a maximum, not a fixed score and never another subtraction. Set flags with visible evidence; server applies ceilings. assessableEarned is your proposed component sum; server independently computes the final total."
       : "componentEvaluation MUST be null. Keep the existing analytic or holistic best-fit framework. Relevant diagram accuracy, use and necessary omissions are part of holistic judgment, never a fixed diagram bonus or universal missing-diagram numerical cap. Paper 2(g) can attain its highest level without diagrams when the other descriptors are met.",
     "No diagram means diagram credit zero only for the component contract. Empty written explanation means explanation credit zero. A description of an unsubmitted image earns no visual credit. No creditworthy evidence means zero. A weak readable diagram is markable.",
+    ...(contract.mode === "holistic_diagram" ? [
+      "For required_explicitly or necessary_for_task, absent or irrelevant visual evidence is a meaningful unmet task/markband element even if the written economics is excellent. Consider that missing element when selecting the overall best-fit band AND position within it. Do not assert the diagram expectation was satisfied or say no diagram was required. No fixed arithmetic deduction, forced score, or universal upper-band exclusion follows from omission; keep assessableEarned your whole-response best-fit judgment.",
+      "Report a missing necessary diagram as Missing required diagram, a Diagram diagnostic of absent evidence, and an actionable improvement identifying the task's model and relationships. This diagnostic never subtracts marks. Prioritize constructing and explaining that model over an optional policy extension or a fabricated written error.",
+      "For appropriate_support, optional, optional_appropriate or not_assessed, absence alone is not an unmet diagram requirement and excellent prose can reach the top band. Judge submitted relevant diagrams as part of the explanation where assessed. A framework having no separate diagram allocation does not mean its necessary diagrams are optional.",
+      ...(contract.diagramRole === "unresolved" ? ["The diagram role remains UNRESOLVED, not optional. Preserve the provisional manual provenance and explain the uncertainty. Apply the existing where-appropriate best-fit framework to the task without inventing an exemption, mandatory diagram rule or numerical cap. Do not claim that no diagram was required or that its expectation was satisfied."] : []),
+    ] : []),
     "Apply essential labeling requirements for the actual family and task, accepting conventional abbreviations, generic variables and equivalent notation. A microeconomic quantity-demanded horizontal label is acceptable; a microeconomic price-level label changes the concept and is not. A title is not a universal requirement. Distinguish an unreadable label from an established incorrect or absent label. Direction may be established jointly by geometry and explanation; an arrow is essential only when it carries a relationship otherwise missing.",
     "Within-part diagram error carry forward does not make an independently wrong causal argument correct. Distinguish this from numerical own-figure rules in multi-part calculation papers; this contract assesses only the selected part and has no cross-part calculation evidence.",
     ...(contract.framework === "paper2g_15_mark" ? ["Use the amended Paper 2(g) descriptors: incorrect terminology or copied-only stimulus are lowest-band features; relevant but superficial evaluation fits 4–6; 13–15 requires thorough attention to the task with source evidence developing the argument. Apply best fit across features, never a checklist cap."] : []),
@@ -85,7 +92,8 @@ export function validateCombinedGrade(raw: unknown, input: {
   const validated = validateGradeResult(base, { hasImageAttachment: submitted, policy: input.policy });
   const a = validated.assessment;
   a.version = COMBINED_ASSESSMENT_VERSION;
-  a.gradingProvenance = { ...a.gradingProvenance!, gradingContractVersion: COMBINED_GRADING_CONTRACT_VERSION };
+  a.gradingProvenance = { ...a.gradingProvenance!, gradingContractVersion: input.contract.essayResolution
+    ? MANUAL_ESSAY_GRADING_CONTRACT_VERSION : COMBINED_GRADING_CONTRACT_VERSION };
   a.assessedDiagram = { version: 1, state, contract: publicContract(input.contract), componentDecision: decision,
     observations: input.visual?.observations ?? [], summary: input.visual?.summary ?? "No diagram was submitted.",
     attachmentHashes: input.attachmentHashes, snapshotId: input.snapshotId };
@@ -142,6 +150,7 @@ export function validateCombinedGrade(raw: unknown, input: {
     validated.feedback.mistakes = validated.feedback.mistakes.filter(m => m !== "Missing required diagram" && m !== "Incorrect diagram explanation");
   }
   if (input.contract.provenance === "aptly_authored" && input.contract.total === 4) { a.paper = "custom"; a.questionPart = "unknown"; a.assessmentFormat = "custom_short_response"; }
+  validated.feedback = reconcileEssayDiagramFeedback(a, validated.feedback, input.contract, state);
   if (input.question) validated.feedback = scopeFeedbackToQuestion(validated.feedback, a, input.question);
   return validated;
 }

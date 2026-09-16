@@ -53,7 +53,7 @@ try {
     const sql=await readFile(new URL(`../supabase/migrations/${filename}`,import.meta.url),"utf8");
     ok(schemaSnapshot.replace(/\r\n/g,"\n").includes(sql.replace(/\r\n/g,"\n")),`snapshot includes exact ${filename}`);
     await db.exec(sql);
-    if(filename.startsWith("0015")) await db.exec(sql);
+    if(filename.startsWith("0015") || filename.startsWith("0016")) await db.exec(sql);
   }
   const preserved=(await db.query("select to_jsonb(a) as row, s.snapshot from public.attempts a join public.assessment_snapshots s on s.attempt_id=a.id where a.id=$1",[saved.id])).rows[0];
   ok(JSON.stringify(historical)===JSON.stringify(preserved),"source-review upgrade preserves old v2 result and frozen blueprint byte-for-byte");
@@ -61,6 +61,27 @@ try {
   reviewed.attempt.grading_contract_version="ib-econ-2026-v3";
   reviewed.snapshot.contract={...reviewed.snapshot.contract,blueprintVersion:"economics-four-mark-blueprint-v2"};
   ok((await save(reviewed)).rows[0].grading_contract_version==="ib-econ-2026-v3","new source-reviewed contract persists alongside v2");
+  for (const role of ["necessary_for_task", "appropriate_support", "optional", "not_assessed", "unresolved"]) {
+    const essay=bundle({diagram:0,state:"not_provided"});
+    essay.attempt.grading_contract_version="ib-econ-2026-v4";
+    essay.attempt.marks_earned=9; essay.attempt.marks_available=10; essay.attempt.marks_assessable=10;
+    essay.attempt.assessment.marksEarned=9;
+    essay.snapshot.contract={...essay.snapshot.contract,total:10,framework:"paper1a_10_mark",mode:"holistic_diagram",diagramRole:role,
+      provenance:"inferred_practice",blueprintVersion:"inferred-essay-contract-v1",
+      essayResolution:{ruleId:"synthetic-task-rule",confidence:role==="unresolved"?"unresolved":"mechanism_matched",basis:["Synthetic binding test, not an IB mark prediction"]}};
+    essay.attempt.assessment.assessedDiagram.componentDecision=null;
+    essay.attempt.assessment.assessedDiagram.contract={...publicContract,mode:"holistic_diagram",diagramRole:role,provenance:"inferred_practice"};
+    const prior=JSON.stringify(essay);
+    const savedEssay=(await save(essay)).rows[0];
+    ok(savedEssay.marks_earned===9 && savedEssay.grading_contract_version==="ib-econ-2026-v4",`manual essay ${role} saves without component arithmetic`);
+    ok((await save(essay)).rows[0].id===savedEssay.id && JSON.stringify(essay)===prior,`manual essay ${role} replays unchanged`);
+    const missingMetadata=structuredClone(essay); missingMetadata.key=randomUUID();
+    missingMetadata.attempt.idempotency_key=missingMetadata.key;
+    missingMetadata.snapshot.id=missingMetadata.key; missingMetadata.snapshot.operationIdentity=missingMetadata.key;
+    missingMetadata.attempt.assessment.assessedDiagram.snapshotId=missingMetadata.key;
+    delete missingMetadata.snapshot.contract.essayResolution;
+    await rejects(()=>save(missingMetadata),"manual essay version rejects missing private resolution evidence");
+  }
   const unknownVersion=bundle(); unknownVersion.attempt.grading_contract_version="ib-econ-2099-v99";
   await rejects(()=>save(unknownVersion),"unknown contract version still rejected");
   for (const version of ["economics-grading-blueprint-v1","economics-grading-blueprint-v2","economics-four-mark-blueprint-v1","economics-four-mark-blueprint-v2","economics-essay-blueprint-v2","economics-essay-blueprint-v3"]) {
@@ -103,7 +124,7 @@ try {
   ok((await db.query("select * from public.assessment_snapshots where attempt_id=$1",[saved.id])).rows.length===0,"delete cascades private snapshot");
   await db.query("delete from auth.users where id=$1",[user]);
   ok((await db.query("select * from public.assessment_snapshots where user_id=$1",[user])).rows.length===0,"account deletion cascades private snapshots");
-  console.log(`PASS migration replay 0001–0015, seeded upgrade, 0013/0015 reapply: ${assertions} database assertions. No network or AI calls.`);
+  console.log(`PASS migration replay 0001–0016, seeded upgrade, 0013/0015/0016 reapply: ${assertions} database assertions. No network or AI calls.`);
 } catch (error) {
   console.error(`FAIL migration verification: ${error.message}${error.where ? ` (${error.where})` : ""}`);
   process.exitCode = 1;

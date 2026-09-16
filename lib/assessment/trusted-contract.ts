@@ -6,6 +6,7 @@ import { DIAGRAM_CONTRACT_VERSION, type DiagramFamily, type DiagramTaskCriteria,
 import type { ScoringPolicy } from "./policy";
 import { hasUsableSourceMaterial } from "./policy";
 import { ESSAY_DIAGRAM_AUDIT } from "./question-bank/economics-v1/essay-diagram-audit";
+import { MANUAL_ESSAY_BLUEPRINT_VERSION, resolveManualEssayDiagram, type EssayResolutionEvidence } from "./manual-essay-diagrams";
 
 export interface TrustedAssessmentContract extends PublicAssessmentContract {
   framework: AssessmentFramework;
@@ -20,6 +21,7 @@ export interface TrustedAssessmentContract extends PublicAssessmentContract {
   writtenCriteria: string[];
   sourceRequired: boolean;
   scope: "same_question_part";
+  essayResolution?: EssayResolutionEvidence;
 }
 
 export function diagramAssessmentEnabled(): boolean {
@@ -70,17 +72,18 @@ export function resolveAssessmentContract(input: {
   const sourceRequired = policy.framework === "paper2g_15_mark" || policy.framework === "paper3b_10_mark" || /\b(?:text|paragraph|table|extract)\s+(?:[A-Z]|\d+)\b|(?:above|below).*(?:table|data)|according to the (?:text|source)/i.test(question);
   if (sourceRequired && !hasUsableSourceMaterial(input.sourceMaterial)) throw new Error("contract_context_required");
   const audited = blueprint?.kind === "extended" ? blueprint.diagramRequirement ?? (input.bankQuestionId ? ESSAY_DIAGRAM_AUDIT[input.bankQuestionId] : undefined) : undefined;
-  const family = audited ? audited.family : namedDiagramFamily(question);
+  let family = audited ? audited.family : namedDiagramFamily(question);
   const split = policy.total === 4 && (authored ? blueprint.format === "diagram_explanation" : policy.markingMethod === "template_component");
   if (split && !authored && family == null) throw new Error("diagram_family_unsupported");
   const explicit = /\b(?:using|draw|sketch|with the aid of|refer to|use)\b[^.?!]{0,90}\b(?:diagram|graph|curve)\b/i.test(question);
   const holistic = policy.total === 10 || policy.total === 15;
-  // These task demands need a graphical relationship even without the literal word diagram.
-  // Paper 2(g) remains best-fit: there is never a mandatory diagram gate to its top level.
-  const necessary = holistic && policy.framework !== "paper2g_15_mark" && (audited ? audited.role === "necessary_for_task" : family != null &&
-    /\b(?:explain|analyse|analyze|effect|impact|determin|change|equilibrium|welfare|efficien|output|price|quantity)\b/i.test(question));
-  const role = split || explicit ? "required_explicitly" : necessary ? "necessary_for_task" : holistic ? "optional_appropriate" : "not_assessed";
+  const essay = holistic && !audited && ["paper1a_10_mark", "paper1b_15_mark", "generic_practice"].includes(policy.framework) ? resolveManualEssayDiagram({ question, total: policy.total,
+    framework: policy.framework, sourceMaterial: input.sourceMaterial, explicit, namedFamily: family }) : null;
+  if (essay) family = essay.family;
+  const necessary = holistic && policy.framework !== "paper2g_15_mark" && audited?.role === "necessary_for_task";
+  const role = essay?.role ?? (split || explicit ? "required_explicitly" : necessary ? "necessary_for_task" : holistic ? "optional_appropriate" : "not_assessed");
   const reason = split ? "This task asks for a diagram and explanation, assessed as two components out of 2."
+    : essay ? essay.reason
     : explicit ? "The question explicitly requests a diagram; its accuracy and explanatory use are judged within the existing framework."
     : audited && policy.framework !== "paper2g_15_mark" ? audited.reason
     : necessary ? `The task asks for economic changes or relationships represented by ${family!.replaceAll("_", " ")}; the diagram's contribution is judged holistically.`
@@ -93,10 +96,16 @@ export function resolveAssessmentContract(input: {
     framework: policy.framework, paper: authored || policy.framework === "generic_practice" ? null : policy.framework.match(/^paper(\d)/)?.[1] ?? null,
     part: authored ? null : ({ paper1a_10_mark: "a", paper1b_15_mark: "b", paper2g_15_mark: "g", paper3b_10_mark: "b" } as Partial<Record<AssessmentFramework,string>>)[policy.framework] ?? null,
     total: policy.total, topic: input.topic, syllabusVersion: "economics-2022-v1", level: input.level ?? "unknown",
-    blueprintVersion: input.blueprintVersion ?? (authored ? FOUR_MARK_BLUEPRINT_VERSION : audited ? ESSAY_BLUEPRINT_VERSION : "inferred-question-contract-v2"),
-    diagram: split ? authored ? blueprint.diagramCriteria : inferredDiagram(question, family!) : family != null && holistic ? inferredDiagram(question, family) : null,
+    blueprintVersion: essay ? MANUAL_ESSAY_BLUEPRINT_VERSION : input.blueprintVersion ?? (authored ? FOUR_MARK_BLUEPRINT_VERSION : audited ? ESSAY_BLUEPRINT_VERSION : "inferred-question-contract-v2"),
+    diagram: split ? authored ? blueprint.diagramCriteria : inferredDiagram(question, family!) : family != null && holistic ? {
+      ...inferredDiagram(question, family),
+      // Paper 1 has no four-mark component allocation or labeling/consistency ceiling.
+      ...(essay?.expectations ? { relationships: essay.expectations } : {}),
+      rules: [], labelingRuleReason: null,
+    } : null,
     writtenCriteria: authored ? blueprint.writtenCriteria : ["Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."],
     sourceRequired, scope: "same_question_part",
+    ...(essay ? { essayResolution: essay.evidence } : {}),
   };
 }
 
@@ -106,6 +115,6 @@ export function policyWithContract(policy: ScoringPolicy, contract: TrustedAsses
     assessable: policy.total, cappedDiagramMarks: 0, capReason: null,
     markingMethod: contract.mode === "four_mark_diagram" ? "template_component" : contract.mode === "four_mark_written" ? "analytic" : policy.markingMethod,
     // An inferred manual allocation is a practice estimate, even with an explicit total.
-    scoringState: contract.mode === "four_mark_diagram" && contract.provenance === "inferred_practice" ? "provisional" : policy.scoringState,
+    scoringState: contract.diagramRole === "unresolved" || contract.mode === "four_mark_diagram" && contract.provenance === "inferred_practice" ? "provisional" : policy.scoringState,
   };
 }

@@ -191,7 +191,9 @@ function policyBrief(policy: ScoringPolicy): string {
   );
 
   if (policy.scoringState === "provisional") {
-    parts.push("This total is INFERRED, not confirmed — Aptly labels the result provisional.");
+    parts.push(policy.assessmentContract?.diagramRole === "unresolved"
+      ? "The manual task's diagram role is UNRESOLVED. The stated total is unchanged; Aptly labels the assessment provisional because task guidance is uncertain, not because the total is unknown."
+      : "This total is INFERRED, not confirmed — Aptly labels the result provisional.");
   }
   return parts.join(" ");
 }

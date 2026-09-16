@@ -283,9 +283,9 @@ export function withConfirmedTotalsLabel(n: number): string {
   return `${n} marked with a confirmed total`;
 }
 
-/** "1 with an inferred total" — provisional attempts, in student words. */
+/** Includes both inferred totals and unresolved manual task guidance. */
 export function withInferredTotalLabel(n: number): string {
-  return `${n} with an inferred total`;
+  return `${n} with a provisional estimate`;
 }
 
 /** "2 feedback only" — attempts that received feedback but no mark estimate. */

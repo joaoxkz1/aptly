@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
         <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
           {[
             insights.provisionalCount > 0
-              ? `${insights.provisionalCount} answer${insights.provisionalCount === 1 ? "" : "s"} with an inferred total`
+              ? `${insights.provisionalCount} answer${insights.provisionalCount === 1 ? " with a provisional estimate" : "s with provisional estimates"}`
               : null,
             insights.feedbackOnlyCount > 0
               ? `${insights.feedbackOnlyCount} feedback-only answer${insights.feedbackOnlyCount === 1 ? "" : "s"}`

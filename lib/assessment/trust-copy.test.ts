@@ -124,7 +124,7 @@ describe("metric cards state their basis (revision collapsing, weighting)", () =
   });
 
   it("state-breakdown captions use student words, not raw state names", () => {
-    expect(withInferredTotalLabel(1)).toBe("1 with an inferred total");
+    expect(withInferredTotalLabel(1)).toBe("1 with a provisional estimate");
     expect(feedbackOnlyCountLabel(2)).toBe("2 feedback only");
     expect(DASHBOARD).not.toContain("earlier/unscored");
   });

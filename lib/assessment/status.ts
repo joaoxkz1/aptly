@@ -274,9 +274,10 @@ export function markPresentation(attempt: Attempt): MarkPresentation {
       secondaryLabel: "Provisional estimate",
       reason:
         presentedCapReason(attempt, a) ??
+        (a?.assessedDiagram?.contract.diagramRole === "unresolved" ? "The task's diagram expectation is unresolved; the estimate is provisional." :
         (a?.recognizedTemplate
           ? "Inferred from a recognised diagram-explain format."
-          : "Inferred mark total — lower confidence."),
+          : "Inferred mark total — lower confidence.")),
     };
   }
   if (state === "feedback_only") {

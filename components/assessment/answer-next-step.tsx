@@ -38,7 +38,11 @@ export function AnswerNextStep({ attempt, saved, onRevise, onTryAnother, tryAnot
   const components = attempt.assessment?.assessedDiagram?.componentDecision;
   const limitedByComponents = Boolean(components && (components.diagram === 0 || components.explanation === 0 ||
     components.ceilings.some(ceiling => ceiling.maximum < components.rawTotal)));
-  const immediateAdvice = saved && limitedByComponents && studyNext ? studyNext : null;
+  const diagram = attempt.assessment?.assessedDiagram;
+  const missingNecessaryEssayDiagram = skill === "diagram_explanation" && diagram?.contract.mode === "holistic_diagram" &&
+    ["required_explicitly", "necessary_for_task"].includes(diagram.contract.diagramRole) &&
+    ["not_provided", "no_relevant_diagram"].includes(diagram.state);
+  const immediateAdvice = saved && (limitedByComponents || missingNecessaryEssayDiagram) && studyNext ? studyNext : null;
 
   return (
     <Card className="border-primary/25 bg-accent/40">

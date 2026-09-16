@@ -507,7 +507,7 @@ export interface LearningInsights {
   totalAttempts: number; // all saved answers (submitted)
   validCount: number; // marked, core-eligible attempts used for numeric insight
   markedCount: number; // === validCount, named for clarity at call sites
-  provisionalCount: number; // inferred totals, shown separately (never core)
+  provisionalCount: number; // uncertain totals/task guidance, shown separately (never core)
   feedbackOnlyCount: number; // saved + analysed, but no reliable total
   excludedLegacy: number; // legacy/unscored attempts
   level: EconomicsLevel;

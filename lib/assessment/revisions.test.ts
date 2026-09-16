@@ -127,6 +127,18 @@ const RETAINED_SOURCE =
   "In 2024 Norvia raised fuel taxes by 12%, cutting consumption 5% while revenue rose to $2.1bn.";
 
 describe("revision assessment version compatibility", () => {
+  it("does not compare corrected manual essay contracts with prior marks", () => {
+    const before = attempt({ id: "before", assessment: assessment({ earned: 10 }) });
+    const after = attempt({ id: "after", parentAttemptId: "before", assessment: assessment({ earned: 9 }) });
+    for (const [value, version] of [[before, "ib-econ-2026-v3"], [after, "ib-econ-2026-v4"]] as const) {
+      value.assessment!.version = 4;
+      value.assessment!.gradingProvenance = { rubricVersion: "econ-v4", taxonomyVersion: "economics-2022-v1",
+        gradingContractVersion: version, modelId: "unchanged-model", reasoningEffort: "medium" };
+    }
+    expect(revisionComparison(before, after)).toBeNull();
+    expect(revisionComparisonLimitation(before, after)).toContain("not be a like-for-like comparison");
+    expect(before.assessment!.marksEarned).toBe(10);
+  });
   it("does not claim improvement across source-reviewed contracts with the same assessment shape", () => {
     const before = attempt({ id: "before", assessment: assessment({ earned: 6 }) });
     const after = attempt({ id: "after", parentAttemptId: "before", assessment: assessment({ earned: 8 }) });
