@@ -244,5 +244,23 @@ alongside existing domain FK notices. At this release's zero event rows, keep
 these informational; profile linked-work deletion as event volume grows before
 adding those indexes. They do not weaken ownership or cascade guarantees.
 
-Deployment and production access verification are recorded after rollout. The
-actual numeric route is deliberately excluded.
+- Production attempt-fact JSON aggregation was measured after migration:
+  **11.592 ms** for 128 attempts (ordinary scan; no materialized view needed).
+- Implementation commit: `d7a17e5f4c18c80353199cc4a6cd4638954a199b`.
+  Vercel deployment `dpl_5YE1cCRrLginGh9fbTLCjK9BX4Vd` reached **Ready** and
+  promoted to `https://aptlyib.app` through the existing main-branch integration.
+- Production verification: **12 denied checks** with signed-out requests and the
+  identified founder account *before* membership was granted; **32 allowed and
+  regression checks** after granting that exact existing account; **1 revoked
+  session check** after signing out the temporary verifier. All seven HTML tabs,
+  the aggregate endpoint, private headers, absent code/credential/email leakage,
+  wrong-code denial, owner report reads, and the six existing signed-in student
+  routes passed. Retained Auth count was 22. No production test accounts, student
+  work, ratings, events, emails or AI requests were created by verification.
+- Founder membership is assigned to the explicitly selected existing account.
+  The short-lived verification session was revoked; no other user sessions were
+  revoked. To use the console, sign in normally as the founder and enter the
+  privately configured route. Keep the code out of public support channels.
+
+The actual numeric route is deliberately excluded. The following documentation
+commit records this rollout without changing application behavior.
