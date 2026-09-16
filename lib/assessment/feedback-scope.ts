@@ -37,7 +37,8 @@ function diagnosedAction(feedback: Feedback, assessment: Assessment, question: s
 /** Keep corrective advice within the question; never change assessment marks. */
 export function scopeFeedbackToQuestion(feedback: Feedback, assessment: Assessment, question: string): Feedback {
   const recommendationRequired = requestsRecommendation(question);
-  const action = diagnosedAction(feedback, assessment, question);
+  const fullCredit = assessment.marksEarned !== null && assessment.marksEarned === assessment.marksAvailable;
+  const action = fullCredit ? null : diagnosedAction(feedback, assessment, question);
   const improvements = feedback.improvements.flatMap(text => {
     if (!recommendationRequired && seeksRecommendation(text)) return [];
     if (OPTIONAL_START.test(text)) return [OPTIONAL_PREFIX + text.replace(OPTIONAL_START, "")];
@@ -47,6 +48,7 @@ export function scopeFeedbackToQuestion(feedback: Feedback, assessment: Assessme
   const outOfScopeNextStep = !recommendationRequired && seeksRecommendation(feedback.studyNext);
   const fallback = action ?? improvements.find(text => text.trim() && !OPTIONAL_START.test(text))
     ?? "Review the feedback for this question and address any stated limitations.";
-  const studyNext = optionalNextStep || outOfScopeNextStep ? fallback : feedback.studyNext;
+  const studyNext = outOfScopeNextStep || optionalNextStep && action !== null ? fallback
+    : optionalNextStep ? OPTIONAL_PREFIX + feedback.studyNext.replace(OPTIONAL_START, "") : feedback.studyNext;
   return { ...feedback, improvements, studyNext };
 }

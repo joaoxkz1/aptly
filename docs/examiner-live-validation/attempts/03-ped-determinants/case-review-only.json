@@ -1,0 +1,18 @@
+{
+  "caseId": "ped-determinants",
+  "modelInput": {
+    "question": "Explain two determinants of price elasticity of demand. [10 marks]",
+    "answer": "Price elasticity of demand measures the responsiveness of quantity demanded to a change in the good's own price: percentage change in quantity demanded divided by percentage change in price, usually discussed in absolute value. One determinant is the availability and closeness of substitutes. If a brand of breakfast cereal becomes more expensive while close substitutes retain their prices, buyers can switch with little loss of satisfaction. A given price rise then produces a relatively large percentage reduction in quantity demanded, making demand more elastic. For an essential medicine with no effective alternative, the same price rise gives patients little scope to switch, so quantity responds less and demand is more inelastic. The relevant market definition matters: an individual cereal brand has more close substitutes than food as a whole. A second determinant is the time available for adjustment. In the short run a commuter whose car and workplace are fixed may continue buying much the same petrol after a price rise. Over time the commuter can arrange car sharing, relocate, or replace the car with a more fuel-efficient one. These adjustments enlarge the range of substitutes and reduce the petrol quantity demanded more strongly for the given price change. Demand therefore tends to be more elastic in the long run, other things equal. Time does not guarantee elasticity above one; it increases opportunities to respond, while the actual response still depends on the alternatives available.",
+    "framework": "paper1a_10_mark"
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "sources": [
+      "G22:2.5",
+      "E26:P1a"
+    ],
+    "review": "Resolve the familiar pure determinant demand from the reviewed registry. Diagram support is not a required omission. No evaluation or policy demand.",
+    "officialMark": null,
+    "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+  }
+}

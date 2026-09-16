@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Original engineering fixtures; reused synthetic diagram fixtures labelled as such; no authentic student or official marked script",
+  "maximumStartedAttempts": 10,
+  "teacherReviewed": false,
+  "neverSend": [
+    "reviewOnly",
+    "caseId",
+    "artifacts metadata",
+    "expected scores"
+  ],
+  "cases": [
+    {
+      "caseId": "pollution-omitted",
+      "modelInput": {
+        "question": "Explain how pollution from production can cause a market failure. [10 marks]",
+        "answer": "Market failure occurs when the market allocation does not maximize social surplus. Suppose a cement producer releases dust that damages nearby residents' health. The producer pays for labour, energy and materials, but without liability does not pay all the additional health costs it imposes on third parties. These are external costs of production. At each output, marginal social cost equals marginal private cost plus marginal external cost, so MSC exceeds MPC. Assuming no consumption externality, marginal social and private benefit coincide. Profit-seeking firms and buyers respond to the private supply and demand incentives, giving an output Qm where MPC equals MPB. The socially efficient output Qs instead equates MSC and MSB. Because social cost exceeds private cost, Qs is below Qm. The units between Qs and Qm cost society more at the margin than the benefit they create. Their production therefore reduces social surplus, creating a welfare loss equal to the excess of MSC over MSB across those units. Resources are overallocated to cement relative to the social optimum. The failure arises from unpriced third-party harm, not simply because all pollution or all production is undesirable: some output can still be socially worthwhile.",
+        "framework": "paper1a_10_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "E26:P1a",
+          "M23-P1-SL-TZ1:Q1a"
+        ],
+        "review": "Developed causal analysis deserves credit. Missing necessary diagram must enter best fit, comment and next action; no universal ceiling.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "aggregate-integrated",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-3.2-10-001",
+        "question": "Explain how a fall in consumer confidence may affect real output and the price level. [10 marks]",
+        "answer": "Consumer confidence describes households' expectations about their future finances and the wider economy. If households become less confident about future employment or income, they may postpone discretionary purchases and try to save more out of their current income. Consumption is a component of aggregate demand, AD = C + I + G + (X - M), so lower planned consumption reduces spending on domestically produced goods and services at each price level, other things equal.\n\nThe diagram shows AD shifting left from AD1 to AD2 while short-run aggregate supply is unchanged. At the initial price level P1, planned purchases are now below the original level of production Y1. Firms may experience unwanted inventories and fewer orders, so they reduce production and the number of workers or hours they employ. Moving to the new intersection of AD2 and SRAS, real output falls from Y1 to Y2 and the price level falls from P1 to P2. This is a contraction in demand, not a direct destruction of the economy's productive capacity.\n\nFor a hypothetical example, suppose families in a town become concerned about their jobs and defer replacing furniture, although their current incomes have not yet changed. Furniture producers and their suppliers receive fewer orders. Their reduced production and wage payments can then weaken other households' spending, reinforcing the initial demand contraction. The example illustrates the causal chain rather than a reported real event.\n\nThe size of each change depends on aggregate supply conditions. With many suitable idle resources and sticky prices, firms may adjust mainly through output, with a relatively small price-level fall. If supply is less responsive in the relevant range, more adjustment may occur through prices. Other demand components might also offset some of the fall, so the diagram isolates the confidence effect with those components unchanged. A lower price level than otherwise does not by itself establish a sustained rate of deflation: the rate of price change depends on the sequence of changes over time."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/examiner-live-validation/images/essay10-ad-contraction.png"
+        }
+      ],
+      "reviewOnly": {
+        "sources": [
+          "G22:3.2",
+          "SP22:SL-P1-Q2a"
+        ],
+        "review": "Curated saved contract; observer identifies the actual AD contraction; prose integrates output and price effects.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "ped-determinants",
+      "modelInput": {
+        "question": "Explain two determinants of price elasticity of demand. [10 marks]",
+        "answer": "Price elasticity of demand measures the responsiveness of quantity demanded to a change in the good's own price: percentage change in quantity demanded divided by percentage change in price, usually discussed in absolute value. One determinant is the availability and closeness of substitutes. If a brand of breakfast cereal becomes more expensive while close substitutes retain their prices, buyers can switch with little loss of satisfaction. A given price rise then produces a relatively large percentage reduction in quantity demanded, making demand more elastic. For an essential medicine with no effective alternative, the same price rise gives patients little scope to switch, so quantity responds less and demand is more inelastic. The relevant market definition matters: an individual cereal brand has more close substitutes than food as a whole. A second determinant is the time available for adjustment. In the short run a commuter whose car and workplace are fixed may continue buying much the same petrol after a price rise. Over time the commuter can arrange car sharing, relocate, or replace the car with a more fuel-efficient one. These adjustments enlarge the range of substitutes and reduce the petrol quantity demanded more strongly for the given price change. Demand therefore tends to be more elastic in the long run, other things equal. Time does not guarantee elasticity above one; it increases opportunities to respond, while the actual response still depends on the alternatives available.",
+        "framework": "paper1a_10_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "G22:2.5",
+          "E26:P1a"
+        ],
+        "review": "Resolve the familiar pure determinant demand from the reviewed registry. Diagram support is not a required omission. No evaluation or policy demand.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "explicit-incomplete",
+      "modelInput": {
+        "question": "Using an AD/AS diagram, explain how a reduction in interest rates may reduce cyclical unemployment. [10 marks]",
+        "answer": "Lower interest rates make loans cheaper, so consumers buy more and firms invest more. Aggregate demand rises. Therefore unemployment will fall. Interest rates can also affect exchange rates.",
+        "framework": "paper1a_10_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "G22:3.2,3.5",
+          "E26:P1a"
+        ],
+        "review": "Two distinct limitations: required diagram absent and output-to-derived-labour-demand link underdeveloped. Do not call every correct but brief link wrong.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "evaluation-generic",
+      "modelInput": {
+        "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+        "answer": "GDP is the value of final goods and services produced within an economy. Real GDP removes changes in prices and dividing by population makes differently sized countries more comparable. More output per person can make more goods and services available, enabling more consumption and providing a tax base for public services. However, GDP is an average so a rise may go mainly to a small group while most incomes stagnate. Unpaid care is useful but not traded and therefore omitted. Pollution and resource depletion reduce welfare without necessarily reducing measured current production. The composition of spending matters because defensive expenditure can raise measured GDP while responding to harm. It depends on the short run and long run and there are winners and losers. Everything has advantages and disadvantages. On balance GDP is useful but also not useful and governments should think about all the factors.",
+        "framework": "paper1b_15_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "M25-P1-SL-TZ3:Q2b",
+          "E26:P1b"
+        ],
+        "review": "Credit relevant indicator analysis; generic evaluation phrases do not substitute for supported judgment. Real-world application is absent.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "evaluation-integrated",
+      "modelInput": {
+        "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+        "answer": "Real GDP per capita is inflation-adjusted domestic output divided by population. It is useful for the material capacity underlying living standards, but it is an incomplete measure of the welfare people actually obtain. Removing price changes matters because a rise in nominal GDP caused only by inflation does not mean more goods are available; using a per-person figure avoids confusing a larger population with a richer average resident. Higher real output can support consumption, employment incomes and the tax base for health and education. During the UK's 2020 pandemic contraction, the fall in measured output reflected substantial disruption to paid activity and the services available to people. GDP therefore captured a real material deterioration, even though it could not itself measure lost health or social contact.\n\nThe strength of the relationship depends on where income goes. GDP per capita is a mean: extra output accruing mainly to high-income households can coexist with little change in median consumption. Transfers and public provision may convert similar GDP levels into very different access to essentials. Nor does domestic production necessarily correspond to residents' command over resources. Ireland's CSO initially reported 26.3% real GDP growth for 2015 after multinational balance-sheet relocations. Such changes in the location of recorded capital and activity did not imply a comparable improvement in the daily consumption of Irish households. In this kind of economy, national-income measures adjusted for globalisation and household disposable income are more informative complements than simply accepting the GDP growth figure as welfare growth. This is a particularly serious limitation for comparisons of countries with very different multinational sectors; it does not make normal domestic production data worthless.\n\nGDP also excludes unpaid care, does not subtract environmental damage, and does not value leisure directly. Paid reconstruction after a disaster adds output while restoring lost assets, so a recovery in GDP need not restore the previous stock of wealth or well-being. More working hours can increase output but reduce leisure; whether living standards improve depends on whether people value the additional consumption more than the time given up. These are reasons to examine the composition and costs of growth, rather than assume every increase is beneficial.\n\nOverall, real GDP per capita is a useful starting indicator of material productive capacity and changes within a broadly stable economic structure. For cross-country comparisons, purchasing-power adjustments are also needed because exchange rates alone do not reflect local buying power. For actual living standards it should be read alongside median household income, distribution, health and environmental indicators. The Irish case makes the domestic-versus-resident-income distinction decisive; the UK pandemic example shows why even a sound output measure cannot capture all welfare losses. No single index removes all value judgments, so the defensible conclusion is to retain GDP for the production dimension while avoiding an unsupported inference that it is a complete ranking of people's lives.",
+        "framework": "paper1b_15_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "M25-P1-SL-TZ3:Q2b",
+          "E26:P1b",
+          "CSO 2015 national accounts; ONS 2020 GDP"
+        ],
+        "review": "Country evidence is applied to the task and limitations are weighed conditionally. Diagram omission alone should not block the highest band. No policy recommendation is demanded.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "four-mark-mismatch",
+      "modelInput": {
+        "bankQuestionId": "econ-v1-2.3-4-001",
+        "question": "Using a demand and supply diagram, explain the effect of the drought on the equilibrium price and quantity of wheat. [4 marks]",
+        "answer": "The drought reduces the wheat harvest, so producers can supply less wheat at each price. Supply shifts left from S1 to S2 while demand stays unchanged. At the original price P1 there is a shortage. Buyers compete for the reduced supply and the price rises to P2. As price rises, quantity demanded falls along D. The new equilibrium therefore has a higher wheat price and a lower quantity traded, Q2 rather than Q1."
+      },
+      "artifacts": [
+        {
+          "role": "student_diagram",
+          "imagePath": "docs/examiner-live-validation/images/wheat-demand-increase.png"
+        }
+      ],
+      "reviewOnly": {
+        "sources": [
+          "E26:P2c-f",
+          "M25-P2"
+        ],
+        "review": "Demand increase diagram versus supply contraction prose: distinguish incompatibility from a single carried-forward root error; apply only the authorized component rule.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "paper2g-source",
+      "modelInput": {
+        "question": "Using the supplied information and your knowledge of economics, discuss whether economic growth has improved economic development in Country R. [15 marks]",
+        "answer": "Economic growth is an increase in real output; development concerns broader improvements in people's living standards and opportunities. R's 12% rise in real GDP per capita suggests more material resources per person, but the other evidence makes an unconditional development claim doubtful. Higher production can create jobs and tax receipts, and R used the latter for rural school grants. Attendance rising from 72% to 86% indicates improved access to education, increasing capabilities now and potentially human capital and earning opportunities later. This is stronger evidence of development than output growth alone, although attendance does not show educational quality or completion.\n\nDistribution qualifies the gain. Combining the poorest fifth's falling share with output growth, 1.12 times 6/8 equals 0.84. If the income shares and GDP measure correspond and population shares remain comparable, this suggests the group's aggregate share of real income may actually have fallen despite national growth. Since GDP and household disposable income are not identical, this calculation is a warning, not proof of the precise income change. Median disposable income and household survey data are needed. A larger average therefore cannot establish that the poorest have gained.\n\nManufacturing's export share rising from 20% to 35% suggests diversification, potentially reducing vulnerability to one primary commodity and creating more stable employment. Yet shares alone do not establish higher export volumes, domestic value added or good working conditions. Meanwhile the 18% rise in pollution-related admissions signals a cost to health and productivity. Additional output may impose external costs that the GDP figure does not subtract; health spending to treat damage could even add to GDP without improving health relative to the initial position.\n\nThus growth appears to have supported at least one important development gain, rural education, but R's development is uneven. Whether the gains outweigh the losses depends especially on who receives the extra resources and the seriousness and persistence of the health damage. Education can improve future opportunities, whereas worsening poverty and pollution can undermine them. The supplied evidence supports a qualified conclusion of progress in some dimensions, not a general claim that all groups enjoy higher living standards. Household income, education outcomes and health trends would clarify that judgment.",
+        "framework": "paper2g_15_mark",
+        "sourceMaterial": "Original hypothetical stimulus: Between 2021 and 2025, Country R's real GDP per capita rose 12%, while the income share of the poorest fifth fell from 8% to 6%. Rural school attendance rose from 72% to 86%, but urban air-pollution hospital admissions rose 18%. Manufacturing exports now provide 35% of export revenue, compared with 20% in 2021. The government expanded rural school grants using higher tax receipts. No data on median disposable income or life expectancy are supplied."
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "E26:P2g",
+          "M25-P2:Q1g"
+        ],
+        "review": "Use source evidence as part of causal and evaluative reasoning; no P1 real-world-example or necessary-diagram gate. Conditional calculation acknowledges measure mismatch.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    },
+    {
+      "caseId": "ambiguous-task",
+      "modelInput": {
+        "question": "Explain how the mechanism discussed in class changes the outcome. [10 marks]",
+        "answer": "A change in incentives can alter decisions. If borrowing becomes cheaper, spending may rise, although the outcome depends on confidence.",
+        "framework": "paper1a_10_mark"
+      },
+      "artifacts": [],
+      "reviewOnly": {
+        "sources": [
+          "E26:question-specific guidance",
+          "Aptly uncertainty boundary"
+        ],
+        "review": "Neither the mechanism nor outcome is specified. Keep role unresolved and estimate provisional; never authenticate the guessed AD task.",
+        "officialMark": null,
+        "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+      }
+    }
+  ]
+}

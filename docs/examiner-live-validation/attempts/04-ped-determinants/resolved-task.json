@@ -1,0 +1,45 @@
+{
+  "question": "Explain two determinants of price elasticity of demand. [10 marks]",
+  "sourceMaterial": null,
+  "answer": "Price elasticity of demand measures the responsiveness of quantity demanded to a change in the good's own price: percentage change in quantity demanded divided by percentage change in price, usually discussed in absolute value. One determinant is the availability and closeness of substitutes. If a brand of breakfast cereal becomes more expensive while close substitutes retain their prices, buyers can switch with little loss of satisfaction. A given price rise then produces a relatively large percentage reduction in quantity demanded, making demand more elastic. For an essential medicine with no effective alternative, the same price rise gives patients little scope to switch, so quantity responds less and demand is more inelastic. The relevant market definition matters: an individual cereal brand has more close substitutes than food as a whole. A second determinant is the time available for adjustment. In the short run a commuter whose car and workplace are fixed may continue buying much the same petrol after a price rise. Over time the commuter can arrange car sharing, relocate, or replace the car with a more fuel-efficient one. These adjustments enlarge the range of substitutes and reduce the petrol quantity demanded more strongly for the given price change. Demand therefore tends to be more elastic in the long run, other things equal. Time does not guarantee elasticity above one; it increases opportunities to respond, while the actual response still depends on the alternatives available.",
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1a_10_mark",
+    "paper": "1",
+    "part": "a",
+    "total": 10,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "bankQuestionId": null,
+  "imagePath": null,
+  "imageHash": null,
+  "implementationHashes": {
+    "lib/ai/combined-assessment.ts": "98698a7011392f9890913095cfb5e31b3d7963bd6038d0047841c6c3152199dd",
+    "lib/ai/examiner-judgment.ts": "a482dfeeaf3d620b28aa0aeff15ee904064de9ee8d8549be2ce9cb2495dc39c5",
+    "lib/ai/manual-task-resolution.ts": "75f4bd8e2a8f50b65cd72ad02ca6833022e7667ed9ce741f74b208cdccbc9583",
+    "lib/assessment/examiner-task-registry.ts": "725c1b430ad92c48681e0b02e7fc82b334d0267e5d91edd2c0222afaa7c15e64",
+    "lib/ai/assessed-visual-review.ts": "5f9d8064b3e007e9e235cf5dd3938a554b594619504f3afb8aa35eea6f0ebbfb",
+    "lib/assessment/component-scoring.ts": "9fb37e957aa52b7d96f51a1318154caa424590273db888e5d761a5684d8a27ac",
+    "app/api/grade/route.ts": "ea36569a6944b43a8ad56e6e1cdbb927f4ba032ebea7363c7f5dd19b8a8ac452"
+  }
+}

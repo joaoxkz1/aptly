@@ -1,0 +1,185 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 2452,
+  "requestId": "req_f71ec0b60bc34bdcacf858eede55a167",
+  "response": {
+    "id": "resp_0b2fec1897c10823016aaad19f81b087d2a0fd197945788d8b",
+    "object": "response",
+    "created_at": 1789579679,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789579681,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 2600,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "msg_0b2fec1897c10823016aaad1a0708c87d2b42dff5f37b1d1ed",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"confidence\":\"high\",\"coverage\":\"complete\",\"matches\":[{\"ruleId\":\"elasticity-determinants\",\"demandQuote\":\"“Explain two determinants of price elasticity of demand.”\",\"mechanism\":\"Explain two factors that affect how responsive quantity demanded is to a change in price, such as availability of substitutes, necessity versus luxury, proportion of income spent, or time period.\"}],\"uncertainty\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_manual_task_interpretation",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "confidence",
+            "coverage",
+            "matches",
+            "uncertainty"
+          ],
+          "properties": {
+            "confidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "uncertain"
+              ]
+            },
+            "coverage": {
+              "type": "string",
+              "enum": [
+                "complete",
+                "partial",
+                "unresolved"
+              ]
+            },
+            "matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "ruleId",
+                  "demandQuote",
+                  "mechanism"
+                ],
+                "properties": {
+                  "ruleId": {
+                    "type": "string",
+                    "enum": [
+                      "market-adjustment",
+                      "market-intervention",
+                      "elasticity-determinants",
+                      "elasticity-revenue",
+                      "externality-allocation",
+                      "firm-equilibrium",
+                      "aggregate-transmission",
+                      "inflation-redistribution",
+                      "phillips-relationship",
+                      "distribution-representation",
+                      "trade-protection",
+                      "currency-equilibrium",
+                      "current-account-transmission",
+                      "ppc-representation",
+                      "comparative-advantage",
+                      "circular-flow",
+                      "poverty-feedback",
+                      "debt-sustainability",
+                      "institutional-comparison",
+                      "information-remedies",
+                      "indicator-appraisal"
+                    ]
+                  },
+                  "demandQuote": {
+                    "type": "string"
+                  },
+                  "mechanism": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "uncertainty": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2858,
+      "input_tokens_details": {
+        "cache_write_tokens": 2855,
+        "cached_tokens": 0
+      },
+      "output_tokens": 95,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2953
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

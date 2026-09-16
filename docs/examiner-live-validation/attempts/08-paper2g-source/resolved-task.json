@@ -1,0 +1,38 @@
+{
+  "question": "Using the supplied information and your knowledge of economics, discuss whether economic growth has improved economic development in Country R. [15 marks]",
+  "sourceMaterial": "Original hypothetical stimulus: Between 2021 and 2025, Country R's real GDP per capita rose 12%, while the income share of the poorest fifth fell from 8% to 6%. Rural school attendance rose from 72% to 86%, but urban air-pollution hospital admissions rose 18%. Manufacturing exports now provide 35% of export revenue, compared with 20% in 2021. The government expanded rural school grants using higher tax receipts. No data on median disposable income or life expectancy are supplied.",
+  "answer": "Economic growth is an increase in real output; development concerns broader improvements in people's living standards and opportunities. R's 12% rise in real GDP per capita suggests more material resources per person, but the other evidence makes an unconditional development claim doubtful. Higher production can create jobs and tax receipts, and R used the latter for rural school grants. Attendance rising from 72% to 86% indicates improved access to education, increasing capabilities now and potentially human capital and earning opportunities later. This is stronger evidence of development than output growth alone, although attendance does not show educational quality or completion.\n\nDistribution qualifies the gain. Combining the poorest fifth's falling share with output growth, 1.12 times 6/8 equals 0.84. If the income shares and GDP measure correspond and population shares remain comparable, this suggests the group's aggregate share of real income may actually have fallen despite national growth. Since GDP and household disposable income are not identical, this calculation is a warning, not proof of the precise income change. Median disposable income and household survey data are needed. A larger average therefore cannot establish that the poorest have gained.\n\nManufacturing's export share rising from 20% to 35% suggests diversification, potentially reducing vulnerability to one primary commodity and creating more stable employment. Yet shares alone do not establish higher export volumes, domestic value added or good working conditions. Meanwhile the 18% rise in pollution-related admissions signals a cost to health and productivity. Additional output may impose external costs that the GDP figure does not subtract; health spending to treat damage could even add to GDP without improving health relative to the initial position.\n\nThus growth appears to have supported at least one important development gain, rural education, but R's development is uneven. Whether the gains outweigh the losses depends especially on who receives the extra resources and the seriousness and persistence of the health damage. Education can improve future opportunities, whereas worsening poverty and pollution can undermine them. The supplied evidence supports a qualified conclusion of progress in some dimensions, not a general claim that all groups enjoy higher living standards. Household income, education outcomes and health trends would clarify that judgment.",
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "optional_appropriate",
+    "diagramReason": "Diagrams may support this source-based argument. Its highest level can be reached without diagrams when the other descriptors are met.",
+    "provenance": "inferred_practice",
+    "framework": "paper2g_15_mark",
+    "paper": "2",
+    "part": "g",
+    "total": 15,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-question-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": true,
+    "scope": "same_question_part"
+  },
+  "bankQuestionId": null,
+  "imagePath": null,
+  "imageHash": null,
+  "implementationHashes": {
+    "lib/ai/combined-assessment.ts": "98698a7011392f9890913095cfb5e31b3d7963bd6038d0047841c6c3152199dd",
+    "lib/ai/examiner-judgment.ts": "a482dfeeaf3d620b28aa0aeff15ee904064de9ee8d8549be2ce9cb2495dc39c5",
+    "lib/ai/manual-task-resolution.ts": "2df3d6b96e2d4fff33eb8e90d847c9528d7c1a3b40e9273205e9a7f239aad755",
+    "lib/assessment/examiner-task-registry.ts": "725c1b430ad92c48681e0b02e7fc82b334d0267e5d91edd2c0222afaa7c15e64",
+    "lib/ai/assessed-visual-review.ts": "5f9d8064b3e007e9e235cf5dd3938a554b594619504f3afb8aa35eea6f0ebbfb",
+    "lib/assessment/component-scoring.ts": "9fb37e957aa52b7d96f51a1318154caa424590273db888e5d761a5684d8a27ac",
+    "app/api/grade/route.ts": "ea36569a6944b43a8ad56e6e1cdbb927f4ba032ebea7363c7f5dd19b8a8ac452"
+  }
+}

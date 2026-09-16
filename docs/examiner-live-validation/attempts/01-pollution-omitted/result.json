@@ -1,0 +1,15 @@
+{
+  "httpStatus": 502,
+  "latencyMs": 45325,
+  "response": {
+    "error": "grading_failed",
+    "reference": "178298F0"
+  },
+  "persistence": {
+    "error": null,
+    "saved": false,
+    "publicMatches": false,
+    "row": null,
+    "snapshot": null
+  }
+}

@@ -6,7 +6,8 @@ import { publicContract, type TrustedAssessmentContract } from "@/lib/assessment
 import type { AssessedVisualEvidence } from "./assessed-visual-schema";
 import { essentialVisualUnavailable } from "./assessed-visual-schema";
 import type { ComponentDecision } from "@/lib/assessment/diagram-contract";
-import { COMBINED_ASSESSMENT_VERSION, COMBINED_GRADING_CONTRACT_VERSION, MANUAL_ESSAY_GRADING_CONTRACT_VERSION } from "@/lib/assessment/config";
+import { COMBINED_ASSESSMENT_VERSION, COMBINED_GRADING_CONTRACT_VERSION, MANUAL_ESSAY_GRADING_CONTRACT_VERSION, EXAMINER_GRADING_CONTRACT_VERSION } from "@/lib/assessment/config";
+import { EXAMINER_JUDGMENT_SCHEMA, validateExaminerJudgment } from "./examiner-judgment";
 import { scopeFeedbackToQuestion } from "@/lib/assessment/feedback-scope";
 import { reconcileEssayDiagramFeedback } from "@/lib/assessment/essay-diagram-feedback";
 
@@ -18,8 +19,8 @@ const componentProperties = {
   rootErrors: { type: "array", items: { type: "object", additionalProperties: false, required: Object.keys(errorProperties), properties: errorProperties } },
 };
 export const COMBINED_GRADE_SCHEMA = { ...GRADE_RESULT_JSON_SCHEMA,
-  required: [...(GRADE_RESULT_JSON_SCHEMA.required as string[] ?? []), "componentEvaluation"],
-  properties: { ...GRADE_RESULT_JSON_SCHEMA.properties as object, componentEvaluation: { anyOf: [
+  required: [...(GRADE_RESULT_JSON_SCHEMA.required as string[] ?? []), "componentEvaluation", "examinerJudgment"],
+  properties: { ...GRADE_RESULT_JSON_SCHEMA.properties as object, examinerJudgment: EXAMINER_JUDGMENT_SCHEMA, componentEvaluation: { anyOf: [
     { type: "null" }, { type: "object", additionalProperties: false, required: Object.keys(componentProperties), properties: componentProperties },
   ] } },
 };
@@ -65,11 +66,13 @@ function componentOutput(raw: unknown): ComponentEvaluation {
 export function validateCombinedGrade(raw: unknown, input: {
   policy: ScoringPolicy; contract: TrustedAssessmentContract; visual: AssessedVisualEvidence | null;
   attachmentHashes: string[]; snapshotId: string; hasExplanation: boolean; question?: string;
+  /** Production requires v5; omitted only when replaying captured pre-v5 provider artifacts in tests. */
+  requireExaminerJudgment?: boolean;
 }) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid combined grade");
   if (input.visual && (essentialVisualUnavailable(input.visual) || input.attachmentHashes.length === 0)) throw new Error("essential visual evidence unavailable or unbound");
   if (!input.visual && input.attachmentHashes.length > 0) throw new Error("attachment has no visual review");
-  const { componentEvaluation, ...base } = raw as Record<string, unknown>;
+  const { componentEvaluation, examinerJudgment, ...base } = raw as Record<string, unknown>;
   const state = input.visual?.state ?? "not_provided";
   let decision: ComponentDecision | null = null;
   let evaluated: ComponentEvaluation | null = null;
@@ -91,9 +94,11 @@ export function validateCombinedGrade(raw: unknown, input: {
   base.attachmentContent = submitted ? "diagram" : "none";
   const validated = validateGradeResult(base, { hasImageAttachment: submitted, policy: input.policy });
   const a = validated.assessment;
+  const judgment = input.requireExaminerJudgment
+    ? validateExaminerJudgment(examinerJudgment, input.contract, a.marksEarned!, state) : null;
   a.version = COMBINED_ASSESSMENT_VERSION;
-  a.gradingProvenance = { ...a.gradingProvenance!, gradingContractVersion: input.contract.essayResolution
-    ? MANUAL_ESSAY_GRADING_CONTRACT_VERSION : COMBINED_GRADING_CONTRACT_VERSION };
+  a.gradingProvenance = { ...a.gradingProvenance!, gradingContractVersion: input.requireExaminerJudgment
+    ? EXAMINER_GRADING_CONTRACT_VERSION : input.contract.essayResolution ? MANUAL_ESSAY_GRADING_CONTRACT_VERSION : COMBINED_GRADING_CONTRACT_VERSION };
   a.assessedDiagram = { version: 1, state, contract: publicContract(input.contract), componentDecision: decision,
     observations: input.visual?.observations ?? [], summary: input.visual?.summary ?? "No diagram was submitted.",
     attachmentHashes: input.attachmentHashes, snapshotId: input.snapshotId };
@@ -151,6 +156,13 @@ export function validateCombinedGrade(raw: unknown, input: {
   }
   if (input.contract.provenance === "aptly_authored" && input.contract.total === 4) { a.paper = "custom"; a.questionPart = "unknown"; a.assessmentFormat = "custom_short_response"; }
   validated.feedback = reconcileEssayDiagramFeedback(a, validated.feedback, input.contract, state);
+  if (judgment && a.marksEarned === a.marksAvailable && judgment.materialLimitations.length === 0) {
+    // Advice after full credit is enrichment, never a missing requirement.
+    const optional = (text: string) => /^optional(?:\s+extension)?(?:\s*\([^)]*\))?\s*:/i.test(text.trim())
+      ? text : `Optional extension (not needed for credit): ${text}`;
+    validated.feedback.improvements = validated.feedback.improvements.map(optional);
+    validated.feedback.studyNext = optional(validated.feedback.studyNext);
+  }
   if (input.question) validated.feedback = scopeFeedbackToQuestion(validated.feedback, a, input.question);
-  return validated;
+  return { ...validated, examinerJudgment: judgment };
 }

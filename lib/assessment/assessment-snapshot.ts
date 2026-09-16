@@ -20,4 +20,17 @@ export interface AssessmentSnapshot {
   graderModel: string;
   graderEffort: string;
   observations: AssessedVisualEvidence | null;
+  examinerWorkflowVersion?: string;
+  /** Added after reservation, so completed replay can rebuild its exact input fingerprint. */
+  resolutionInputContract?: TrustedAssessmentContract;
+  examinerJudgment?: import("@/lib/ai/examiner-judgment").ExaminerJudgment | null;
+}
+
+export function reservationSnapshot(snapshot: AssessmentSnapshot): AssessmentSnapshot {
+  const { resolutionInputContract, examinerJudgment: _judgment, ...base } = snapshot;
+  void _judgment;
+  if (!resolutionInputContract) return { ...base, observations: null };
+  // Importing hashing here would couple the shape to server crypto. The caller
+  // recomputes contractHash when a resolution input is restored.
+  return { ...base, contract: resolutionInputContract, observations: null };
 }

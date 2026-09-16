@@ -1,0 +1,601 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 14542,
+  "requestId": "req_27eabab8e7714516b58ff38ad1096ea8",
+  "response": {
+    "id": "resp_051bf00d5c81e129016aaad275b92887d2a9749bfd4d1821cc",
+    "object": "response",
+    "created_at": 1789579893,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789579907,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_051bf00d5c81e129016aaad2768cac87d29de8cf02bfe6b68b",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqtKDjxer2D053cS_dukWVdrnx8Siyoslo5oKT_UmmrQI8FKdFcOZfugfBGEiBY667JX8CYV4aINZl26mnRBCAbRglnO60z1A_sS7XHkqP0ESEH2sVIXczor4EsvWQFCC_QpSISxZrYAHoIxDv0l8_alCPo9LIpRkK4pp5_IsLASMX6CBbvRa8G84i0vItVhWZg5_pikBEYuuULkIxkJp3gF9hFpeqUnKXgKKxgjoxKBv33u4I4B77fipxM09B9ld7gDhYv2Lch7dUir-SeaythPI_73iFrf1a6Z6x0Tf6alb0ivqpBxD6liExmqaQaB305mCkq-UwuLJKgKDpowzPBaSvOYkVx6bGUKVjOqqfChTXPvziSzw8nD7Pz4LOJW54AUS06dRmOK5xwGJaHeSRua3R49I7peU3CKWQD24GJRbFmot8IimZk--XLI45aqUvZ97u4G5kXHWDJHnYPxC4jHk0R6phIjtBsj8SvQXoji2kkJNvoyOSCoug3YrmqEYljeIiBQ38ve6v6XHUFpZQHWTn-KNgfv-DQu5iWv7-mHM3ZnouMZBOlW7bpUsJ_lnZVpeFEt-enZN9F8fXhUreBoyEd_6qzn_Mz_RCxoApsDu9bRL6cXgILbaIlCpY9dkghmdTlBi7kR7nxxCviYGd3SioIkeBHucH0ivji9a4Z9JpO3Y_L7E_Vtd5vhDY8uQC4rPm-izAro2pE1dCU0UUD1unvVkxThpb8ClU_-1BVw8SJmQ0jg5AOvVKehHGPV5u7Qi1vWwMyiMtRZOcypFoJGbFsOk4uBreDIqjlO0KoDSWH4vpH2xlu1Eir6iGpH9ULehGZ6uhKYR7JQElhjobOKynwN3ymp1hJjr5K-rXVxnL5d1QDUF6HQBWZAT3iW0nKgQ1QmGmj7P7CzH98vrILZO6ir6uYsz1dPX_dawkfUmAaxGgqpgolVm2orN9m6stdPU6JMhxyxWSYWCpChvT-fi93BgWa_bS20UFvy2o6BBD9upDK4dyYpqD_GMXXrCsxyj04urnSfDsIU81c0GQFHYZSRK5-9Ltd9Ix1hxSpaYIZjn0vo1pMc8sH-Y6Ko9IEMRQy0-Fc3h6P7NPI3sUqIe1JkETWY-2zZQr_h4rcrP8YWsJCeiJktOMbi7Ckhfo4pLFlYnGfrf_MbF9G8h5Tx-TEqW460Plvmbc1hHUoMTPRuAK9_MU8ZxsWObAqC-s5JTOpOdInWwhOONk1o4v_qCtHoScShS_OVlRl-IrMqKy7Y4m-h320ZsLC_xlSX8OVPFD5EwViz7Ot16MwhNZJyAZWfIhioDvBQMUP32r8QBe09XrwDjc0VfQ7Wn15vyPLimmQEx9uBeOevuGjGjvcAp6G6N8W8LZ9nL6gLZiwNq6aIPzoAPG4nwHY4QM3pTJ5o274NULmGrulV5f3uqpyTSGXiM-w8kV5A9PgdRchvAocjPLLZSBl1gzsTfIFaZoHHeV8AgmOkMcGwLwHHRnPqBtMgrbnHtYTDpWrOiEKiL2qh4S90C3WZlKoENKy2L59DOZLslAErpU-Q6Ug3Q18q42cK9DAowGaUnK-GwFuW7xsnW2Mz0mp7kZHe7bZjdrEOUTbHn7UGkHvv0WAPUz4tCzLX-3uZ4EAYwPdatMP2q-J3zaT2darGMFcwsa7gvCtdue4iGBUbxbiL0-lDcFHAcVA==",
+        "summary": []
+      },
+      {
+        "id": "msg_051bf00d5c81e129016aaad27873c487d2a208313eb62d49c4",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"strengths\":[\"Precisely defines real GDP per capita and explains why inflation adjustment and population adjustment improve its usefulness as a material indicator.\",\"Develops a sustained, balanced evaluation: distribution, multinational accounting, unpaid work, environmental costs, leisure and reconstruction are linked clearly to possible divergences between output and living standards.\",\"Integrates well-chosen real-world evidence from Ireland in 2015 and the UK pandemic contraction, then reaches a qualified and supported overall judgement.\"],\"improvements\":[],\"mistakes\":[],\"examinerComment\":\"Estimated practice mark: this is a highly focused and well-developed response. It evaluates both what real GDP per capita captures—average inflation-adjusted productive and consumption capacity—and why it can diverge from lived welfare. The Ireland example is particularly effective because it directly tests whether recorded domestic output represents residents’ income and consumption. The conclusion is appropriately qualified rather than treating GDP as either worthless or complete.\",\"studyNext\":\"Optional extension (not needed for credit): practise producing this same quality of evaluation in a slightly tighter time-controlled structure, preserving the direct link from each limitation to how the indicator may misstate living standards.\",\"assessmentFormat\":\"paper_1_b\",\"paper\":\"paper_1\",\"questionPart\":\"b\",\"levelRelevance\":\"shared_sl_hl\",\"assessmentSkills\":[\"economic_analysis\",\"application\",\"evaluation\"],\"commandTerm\":\"evaluate\",\"commandTermLabel\":\"Evaluate\",\"syllabusUnit\":\"unit_4\",\"syllabusTopic\":\"4.8\",\"topicLabel\":\"Measuring development\",\"classificationConfidence\":\"high\",\"markingConfidence\":\"high\",\"diagramExpected\":false,\"diagramSubmitted\":false,\"diagramAssessmentStatus\":\"not_relevant\",\"workingsExpected\":false,\"workingsSubmitted\":false,\"workingsAssessmentStatus\":\"not_relevant\",\"attachmentContent\":\"none\",\"assessableEarned\":15,\"markBreakdown\":[{\"label\":\"Knowledge and terminology\",\"awarded\":4,\"available\":4,\"reason\":\"Accurate, concise use of real GDP per capita, nominal GDP, purchasing-power adjustments, household disposable income and national-income concepts.\"},{\"label\":\"Economic analysis\",\"awarded\":4,\"available\":4,\"reason\":\"Explains clear causal links from output to material living standards and from distribution, accounting boundaries, external costs and leisure to divergence from welfare.\"},{\"label\":\"Application to context\",\"awarded\":4,\"available\":4,\"reason\":\"The UK 2020 contraction and Ireland's reported 2015 GDP growth are relevant, accurate applications used to advance the argument rather than simply named.\"},{\"label\":\"Evaluation and judgment\",\"awarded\":4,\"available\":4,\"reason\":\"Consistently weighs usefulness against limitations, identifies relevant conditions for reliability, and gives a clear qualified final judgment.\"},{\"label\":\"Structure and clarity\",\"awarded\":4,\"available\":4,\"reason\":\"Logically sequenced paragraphs maintain focus on the precise indicator and directly answer the evaluative demand.\"}],\"bandRationale\":\"The response securely fits the 13–15 band: it offers accurate and fully focused analysis, integrated real-world evidence, sustained balanced evaluation and a supported conclusion. It distinguishes material productive capacity from broader living standards and explains when this distinction matters most.\",\"limitations\":[],\"examinerJudgment\":{\"task\":\"Evaluate the usefulness of real GDP per capita as an indicator of living standards using real-world examples.\",\"demonstrated\":\"Explains the indicator’s value for inflation-adjusted average material capacity, evaluates major conceptual limitations, and applies the analysis effectively to the UK pandemic contraction and Ireland's multinational-accounting distortion.\",\"materialLimitations\":[],\"selectedBand\":\"13-15\",\"withinBand\":\"upper\",\"diagramEffect\":\"not_required\",\"summary\":\"A comprehensive, balanced and well-supported appraisal with a nuanced final judgement; it meets the highest-band characteristics to a great extent.\"},\"componentEvaluation\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_grade_result",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strengths",
+            "improvements",
+            "mistakes",
+            "examinerComment",
+            "studyNext",
+            "assessmentFormat",
+            "paper",
+            "questionPart",
+            "levelRelevance",
+            "assessmentSkills",
+            "commandTerm",
+            "commandTermLabel",
+            "syllabusUnit",
+            "syllabusTopic",
+            "topicLabel",
+            "classificationConfidence",
+            "markingConfidence",
+            "diagramExpected",
+            "diagramSubmitted",
+            "diagramAssessmentStatus",
+            "workingsExpected",
+            "workingsSubmitted",
+            "workingsAssessmentStatus",
+            "attachmentContent",
+            "assessableEarned",
+            "markBreakdown",
+            "bandRationale",
+            "limitations",
+            "componentEvaluation",
+            "examinerJudgment"
+          ],
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mistakes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lack of evaluation",
+                  "Underdeveloped evaluation",
+                  "Weak definitions",
+                  "Weak terminology",
+                  "Inaccurate economic theory",
+                  "Underdeveloped economic analysis",
+                  "No real-world example",
+                  "Irrelevant real-world example",
+                  "Underdeveloped real-world example",
+                  "Missing required diagram",
+                  "Incorrect diagram explanation",
+                  "Insufficient source use",
+                  "Calculation/setup error",
+                  "Unsupported judgement",
+                  "Unclear structure"
+                ]
+              }
+            },
+            "examinerComment": {
+              "type": "string"
+            },
+            "studyNext": {
+              "type": "string"
+            },
+            "assessmentFormat": {
+              "type": "string",
+              "enum": [
+                "paper_1_a",
+                "paper_1_b",
+                "paper_2_a_definition",
+                "paper_2_b_quantitative_or_diagram",
+                "paper_2_c_to_f_diagram_and_explanation",
+                "paper_2_g_extended_response",
+                "paper_3_a_technical_or_quantitative",
+                "paper_3_b_policy_recommendation",
+                "custom_short_response",
+                "custom_extended_response",
+                "uncertain"
+              ]
+            },
+            "paper": {
+              "type": "string",
+              "enum": [
+                "paper_1",
+                "paper_2",
+                "paper_3",
+                "custom",
+                "uncertain"
+              ]
+            },
+            "questionPart": {
+              "type": "string",
+              "enum": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "unknown"
+              ]
+            },
+            "levelRelevance": {
+              "type": "string",
+              "enum": [
+                "shared_sl_hl",
+                "hl_only",
+                "unknown"
+              ]
+            },
+            "assessmentSkills": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "definition",
+                  "calculation",
+                  "diagram_explanation",
+                  "economic_analysis",
+                  "data_interpretation",
+                  "application",
+                  "evaluation",
+                  "policy_recommendation"
+                ]
+              }
+            },
+            "commandTerm": {
+              "type": "string",
+              "enum": [
+                "define",
+                "describe",
+                "distinguish",
+                "draw",
+                "calculate",
+                "explain",
+                "analyse",
+                "discuss",
+                "evaluate",
+                "examine",
+                "justify",
+                "compare",
+                "contrast",
+                "compare_contrast",
+                "to_what_extent",
+                "recommend",
+                "other"
+              ]
+            },
+            "commandTermLabel": {
+              "type": "string"
+            },
+            "syllabusUnit": {
+              "type": "string",
+              "enum": [
+                "unit_1",
+                "unit_2",
+                "unit_3",
+                "unit_4",
+                "unknown"
+              ]
+            },
+            "syllabusTopic": {
+              "type": "string",
+              "enum": [
+                "1.1",
+                "1.2",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+                "3.1",
+                "3.2",
+                "3.3",
+                "3.4",
+                "3.5",
+                "3.6",
+                "3.7",
+                "4.1",
+                "4.2",
+                "4.3",
+                "4.4",
+                "4.5",
+                "4.6",
+                "4.7",
+                "4.8",
+                "4.9",
+                "4.10",
+                "unknown"
+              ]
+            },
+            "topicLabel": {
+              "type": "string"
+            },
+            "classificationConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "markingConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "diagramExpected": {
+              "type": "boolean"
+            },
+            "diagramSubmitted": {
+              "type": "boolean"
+            },
+            "diagramAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "text_description_only",
+                "submitted_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "workingsExpected": {
+              "type": "boolean"
+            },
+            "workingsSubmitted": {
+              "type": "boolean"
+            },
+            "workingsAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "typed_and_assessed",
+                "image_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "attachmentContent": {
+              "type": "string",
+              "enum": [
+                "none",
+                "diagram",
+                "workings",
+                "both",
+                "neither_or_unreadable"
+              ]
+            },
+            "assessableEarned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY."
+            },
+            "markBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "awarded",
+                  "available",
+                  "reason"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "enum": [
+                      "Knowledge and terminology",
+                      "Economic analysis",
+                      "Application to context",
+                      "Evaluation and judgment",
+                      "Data use",
+                      "Diagram",
+                      "Calculation method",
+                      "Final answer",
+                      "Policy recommendation",
+                      "Structure and clarity"
+                    ]
+                  },
+                  "awarded": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "Integer 0..4 on Aptly's fixed diagnostic scale."
+                  },
+                  "available": {
+                    "type": "integer",
+                    "enum": [
+                      4
+                    ],
+                    "description": "Always exactly 4. OMIT any criterion the question does not test."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Non-empty, specific to this answer."
+                  }
+                }
+              }
+            },
+            "bandRationale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames."
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "examinerJudgment": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "task",
+                    "demonstrated",
+                    "materialLimitations",
+                    "selectedBand",
+                    "withinBand",
+                    "diagramEffect",
+                    "summary"
+                  ],
+                  "properties": {
+                    "task": {
+                      "type": "string"
+                    },
+                    "demonstrated": {
+                      "type": "string"
+                    },
+                    "materialLimitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "selectedBand": {
+                      "type": "string"
+                    },
+                    "withinBand": {
+                      "type": "string",
+                      "enum": [
+                        "lower",
+                        "middle",
+                        "upper"
+                      ]
+                    },
+                    "diagramEffect": {
+                      "type": "string",
+                      "enum": [
+                        "integrated",
+                        "limited",
+                        "missing_material",
+                        "not_required",
+                        "unresolved"
+                      ]
+                    },
+                    "summary": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            },
+            "componentEvaluation": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "diagram",
+                    "explanation",
+                    "diagramReason",
+                    "explanationReason",
+                    "explanationIssue",
+                    "incompatibleMechanisms",
+                    "mismatchEvidence",
+                    "labelingDeficiency",
+                    "labelingEvidence",
+                    "rootErrors"
+                  ],
+                  "properties": {
+                    "diagram": {
+                      "type": "integer"
+                    },
+                    "explanation": {
+                      "type": "integer"
+                    },
+                    "diagramReason": {
+                      "type": "string"
+                    },
+                    "explanationReason": {
+                      "type": "string"
+                    },
+                    "explanationIssue": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "missing",
+                        "underdeveloped",
+                        "incorrect"
+                      ],
+                      "description": "Missing = no explanation; underdeveloped = incomplete but not economically false; incorrect = an actual economic contradiction/error. This classifies feedback, never changes marks."
+                    },
+                    "incompatibleMechanisms": {
+                      "type": "boolean"
+                    },
+                    "mismatchEvidence": {
+                      "type": "string"
+                    },
+                    "labelingDeficiency": {
+                      "type": "boolean",
+                      "description": "Only a labeling weakness within a relevant diagram family. False for absent or wrong-family evidence, which is a missing required diagram rather than a label defect."
+                    },
+                    "labelingEvidence": {
+                      "type": "string"
+                    },
+                    "rootErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "diagramEvidence",
+                          "explanationEvidence",
+                          "carriedForward"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "diagramEvidence": {
+                            "type": "string"
+                          },
+                          "explanationEvidence": {
+                            "type": "string"
+                          },
+                          "carriedForward": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 6132,
+      "input_tokens_details": {
+        "cache_write_tokens": 6129,
+        "cached_tokens": 0
+      },
+      "output_tokens": 874,
+      "output_tokens_details": {
+        "reasoning_tokens": 101
+      },
+      "total_tokens": 7006
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

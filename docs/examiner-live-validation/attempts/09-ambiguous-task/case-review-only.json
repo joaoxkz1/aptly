@@ -1,0 +1,18 @@
+{
+  "caseId": "ambiguous-task",
+  "modelInput": {
+    "question": "Explain how the mechanism discussed in class changes the outcome. [10 marks]",
+    "answer": "A change in incentives can alter decisions. If borrowing becomes cheaper, spending may rise, although the outcome depends on confidence.",
+    "framework": "paper1a_10_mark"
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "sources": [
+      "E26:question-specific guidance",
+      "Aptly uncertainty boundary"
+    ],
+    "review": "Neither the mechanism nor outcome is specified. Keep role unresolved and estimate provisional; never authenticate the guessed AD task.",
+    "officialMark": null,
+    "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+  }
+}

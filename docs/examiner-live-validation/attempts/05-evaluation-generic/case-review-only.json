@@ -1,0 +1,18 @@
+{
+  "caseId": "evaluation-generic",
+  "modelInput": {
+    "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+    "answer": "GDP is the value of final goods and services produced within an economy. Real GDP removes changes in prices and dividing by population makes differently sized countries more comparable. More output per person can make more goods and services available, enabling more consumption and providing a tax base for public services. However, GDP is an average so a rise may go mainly to a small group while most incomes stagnate. Unpaid care is useful but not traded and therefore omitted. Pollution and resource depletion reduce welfare without necessarily reducing measured current production. The composition of spending matters because defensive expenditure can raise measured GDP while responding to harm. It depends on the short run and long run and there are winners and losers. Everything has advantages and disadvantages. On balance GDP is useful but also not useful and governments should think about all the factors.",
+    "framework": "paper1b_15_mark"
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "sources": [
+      "M25-P1-SL-TZ3:Q2b",
+      "E26:P1b"
+    ],
+    "review": "Credit relevant indicator analysis; generic evaluation phrases do not substitute for supported judgment. Real-world application is absent.",
+    "officialMark": null,
+    "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+  }
+}

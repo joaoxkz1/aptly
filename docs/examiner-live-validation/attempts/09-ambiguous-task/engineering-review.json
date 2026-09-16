@@ -1,0 +1,267 @@
+{
+  "number": 9,
+  "caseId": "ambiguous-task",
+  "status": "complete",
+  "httpStatus": 200,
+  "question": "Explain how the mechanism discussed in class changes the outcome. [10 marks]",
+  "submittedAnswer": "A change in incentives can alter decisions. If borrowing becomes cheaper, spending may rise, although the outcome depends on confidence.",
+  "sourceMaterial": null,
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": "not_provided"
+  },
+  "framework": "paper1a_10_mark",
+  "finalContract": {
+    "mode": "holistic_diagram",
+    "part": "a",
+    "level": "unknown",
+    "paper": "1",
+    "scope": "same_question_part",
+    "topic": "unknown",
+    "total": 10,
+    "diagram": null,
+    "version": "economics-diagram-contract-v1",
+    "framework": "paper1a_10_mark",
+    "provenance": "inferred_practice",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "sourceRequired": false,
+    "essayResolution": {
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ],
+      "method": "constrained_interpretation",
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "interpretation": {
+        "matches": [],
+        "coverage": "unresolved",
+        "confidence": "uncertain",
+        "uncertainty": "The question does not identify the mechanism, economic model, or outcome to be explained; “discussed in class” is unavailable context."
+      },
+      "registryVersion": "ib-task-families-2026-v1"
+    },
+    "syllabusVersion": "economics-2022-v1",
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "blueprintVersion": "inferred-essay-contract-v2"
+  },
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1a_10_mark",
+    "paper": "1",
+    "part": "a",
+    "total": 10,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "task-resolution",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 2530,
+      "usage": {
+        "input_tokens": 2860,
+        "input_tokens_details": {
+          "cache_write_tokens": 40,
+          "cached_tokens": 2817
+        },
+        "output_tokens": 60,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2920
+      },
+      "estimatedUSD": 0.0013894,
+      "structuredOutput": {
+        "confidence": "uncertain",
+        "coverage": "unresolved",
+        "matches": [],
+        "uncertainty": "The question does not identify the mechanism, economic model, or outcome to be explained; “discussed in class” is unavailable context."
+      }
+    },
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 15566,
+      "usage": {
+        "input_tokens": 5594,
+        "input_tokens_details": {
+          "cache_write_tokens": 5591,
+          "cached_tokens": 0
+        },
+        "output_tokens": 906,
+        "output_tokens_details": {
+          "reasoning_tokens": 159
+        },
+        "total_tokens": 6500
+      },
+      "estimatedUSD": 0.0248555,
+      "structuredOutput": {
+        "strengths": [
+          "Identifies a valid general link between incentives and decision-making.",
+          "Gives a plausible example: cheaper borrowing may increase spending.",
+          "Recognises that consumer confidence can affect the size of the response."
+        ],
+        "improvements": [
+          "State the specific mechanism being examined and explain its full causal chain, rather than referring generally to incentives.",
+          "Develop how cheaper borrowing affects households and/or firms, aggregate spending, and the particular economic outcome named in the question.",
+          "Because the task wording does not identify the classroom mechanism, this estimate is provisional; match your explanation closely to the model and outcome specified by your teacher."
+        ],
+        "mistakes": [
+          "Underdeveloped economic analysis"
+        ],
+        "examinerComment": "Estimated practice mark only: the response contains one plausible causal link and a relevant condition, but it does not identify the mechanism or explain the outcome sufficiently for a 10-mark Paper 1(a) response. The diagram expectation cannot be established from this unusually vague task wording, so no missing-diagram finding is made.",
+        "studyNext": "Write a 4–5 step causal chain for the exact mechanism studied in class: initial change → decisions by households/firms → spending, saving, investment or production → final outcome. Define key terms only where they help make that chain precise.",
+        "assessmentFormat": "paper_1_a",
+        "paper": "paper_1",
+        "questionPart": "a",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "economic_analysis"
+        ],
+        "commandTerm": "explain",
+        "commandTermLabel": "Explain",
+        "syllabusUnit": "unknown",
+        "syllabusTopic": "unknown",
+        "topicLabel": "Unknown: the question does not specify the mechanism or economic model.",
+        "classificationConfidence": "low",
+        "markingConfidence": "medium",
+        "diagramExpected": false,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_submitted",
+        "workingsExpected": false,
+        "workingsSubmitted": false,
+        "workingsAssessmentStatus": "not_relevant",
+        "attachmentContent": "none",
+        "assessableEarned": 2,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 1,
+            "available": 4,
+            "reason": "Uses broadly relevant terms such as incentives, borrowing, spending and confidence, but does not name or define the specific mechanism."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 1,
+            "available": 4,
+            "reason": "Provides only a short conditional link from cheaper borrowing to higher spending; the mechanism and resulting outcome are not developed."
+          },
+          {
+            "label": "Structure and clarity",
+            "awarded": 2,
+            "available": 4,
+            "reason": "The two sentences are clear, but the response is too brief to form a coherent explanation of the unspecified outcome."
+          }
+        ],
+        "bandRationale": "Best fit in the 1–2 band: there is limited relevant understanding through a plausible cheaper-borrowing-to-spending link, but the answer neither identifies the intended mechanism nor develops a coherent explanation of how it changes the outcome.",
+        "limitations": [
+          "The question does not specify the mechanism, economic model, or outcome, so the classification and diagram role remain provisional.",
+          "No diagram requirement can be established from the available task wording."
+        ],
+        "examinerJudgment": {
+          "task": "Explain how the specified classroom mechanism changes an economic outcome.",
+          "demonstrated": "A general incentive-based explanation, including the plausible claim that cheaper borrowing may raise spending and that confidence can condition the effect.",
+          "materialLimitations": [
+            "The relevant mechanism is not identified.",
+            "The final outcome is not named or causally explained.",
+            "The explanation is too brief and general for a developed 10-mark response."
+          ],
+          "selectedBand": "1-2",
+          "withinBand": "upper",
+          "diagramEffect": "unresolved",
+          "summary": "The response has a valid fragment of analysis but lacks the focused, developed causal explanation needed for higher bands."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 2,
+    "finalMark": 2,
+    "componentDecision": null,
+    "finalBand": "1-2",
+    "withinBand": "upper",
+    "diagnostics": [
+      {
+        "label": "Knowledge and terminology",
+        "reason": "Uses broadly relevant terms such as incentives, borrowing, spending and confidence, but does not name or define the specific mechanism.",
+        "awarded": 1,
+        "available": 4
+      },
+      {
+        "label": "Economic analysis",
+        "reason": "Provides only a short conditional link from cheaper borrowing to higher spending; the mechanism and resulting outcome are not developed.",
+        "awarded": 1,
+        "available": 4
+      },
+      {
+        "label": "Structure and clarity",
+        "reason": "The two sentences are clear, but the response is too brief to form a coherent explanation of the unspecified outcome.",
+        "awarded": 2,
+        "available": 4
+      }
+    ],
+    "feedback": {
+      "band": "Minimal 1",
+      "score": 1,
+      "mistakes": [
+        "Underdeveloped economic analysis"
+      ],
+      "strengths": [
+        "Identifies a valid general link between incentives and decision-making.",
+        "Gives a plausible example: cheaper borrowing may increase spending.",
+        "Recognises that consumer confidence can affect the size of the response."
+      ],
+      "studyNext": "Write a 4–5 step causal chain for the exact mechanism studied in class: initial change → decisions by households/firms → spending, saving, investment or production → final outcome. Define key terms only where they help make that chain precise.",
+      "improvements": [
+        "State the specific mechanism being examined and explain its full causal chain, rather than referring generally to incentives.",
+        "Develop how cheaper borrowing affects households and/or firms, aggregate spending, and the particular economic outcome named in the question.",
+        "Because the task wording does not identify the classroom mechanism, this estimate is provisional; match your explanation closely to the model and outcome specified by your teacher."
+      ],
+      "examinerComment": "Estimated practice mark only: the response contains one plausible causal link and a relevant condition, but it does not identify the mechanism or explain the outcome sufficiently for a 10-mark Paper 1(a) response. The diagram expectation cannot be established from this unusually vague task wording, so no missing-diagram finding is made. The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required."
+    }
+  },
+  "judgment": {
+    "task": "Explain how the specified classroom mechanism changes an economic outcome.",
+    "summary": "The response has a valid fragment of analysis but lacks the focused, developed causal explanation needed for higher bands.",
+    "withinBand": "upper",
+    "demonstrated": "A general incentive-based explanation, including the plausible claim that cheaper borrowing may raise spending and that confidence can condition the effect.",
+    "selectedBand": "1-2",
+    "diagramEffect": "unresolved",
+    "materialLimitations": [
+      "The relevant mechanism is not identified.",
+      "The final outcome is not named or causally explained.",
+      "The explanation is too brief and general for a developed 10-mark response."
+    ]
+  },
+  "latencyMs": 18200,
+  "estimatedUSD": 0.026244899999999998,
+  "engineeringReview": "The mechanism and outcome are genuinely unspecified. Interpretation must remain uncertain; a provisional estimate is excluded from core analytics. This is not the source-resolvable PED case.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

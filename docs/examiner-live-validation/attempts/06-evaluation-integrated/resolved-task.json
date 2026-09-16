@@ -1,0 +1,45 @@
+{
+  "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+  "sourceMaterial": null,
+  "answer": "Real GDP per capita is inflation-adjusted domestic output divided by population. It is useful for the material capacity underlying living standards, but it is an incomplete measure of the welfare people actually obtain. Removing price changes matters because a rise in nominal GDP caused only by inflation does not mean more goods are available; using a per-person figure avoids confusing a larger population with a richer average resident. Higher real output can support consumption, employment incomes and the tax base for health and education. During the UK's 2020 pandemic contraction, the fall in measured output reflected substantial disruption to paid activity and the services available to people. GDP therefore captured a real material deterioration, even though it could not itself measure lost health or social contact.\n\nThe strength of the relationship depends on where income goes. GDP per capita is a mean: extra output accruing mainly to high-income households can coexist with little change in median consumption. Transfers and public provision may convert similar GDP levels into very different access to essentials. Nor does domestic production necessarily correspond to residents' command over resources. Ireland's CSO initially reported 26.3% real GDP growth for 2015 after multinational balance-sheet relocations. Such changes in the location of recorded capital and activity did not imply a comparable improvement in the daily consumption of Irish households. In this kind of economy, national-income measures adjusted for globalisation and household disposable income are more informative complements than simply accepting the GDP growth figure as welfare growth. This is a particularly serious limitation for comparisons of countries with very different multinational sectors; it does not make normal domestic production data worthless.\n\nGDP also excludes unpaid care, does not subtract environmental damage, and does not value leisure directly. Paid reconstruction after a disaster adds output while restoring lost assets, so a recovery in GDP need not restore the previous stock of wealth or well-being. More working hours can increase output but reduce leisure; whether living standards improve depends on whether people value the additional consumption more than the time given up. These are reasons to examine the composition and costs of growth, rather than assume every increase is beneficial.\n\nOverall, real GDP per capita is a useful starting indicator of material productive capacity and changes within a broadly stable economic structure. For cross-country comparisons, purchasing-power adjustments are also needed because exchange rates alone do not reflect local buying power. For actual living standards it should be read alongside median household income, distribution, health and environmental indicators. The Irish case makes the domestic-versus-resident-income distinction decisive; the UK pandemic example shows why even a sound output measure cannot capture all welfare losses. No single index removes all value judgments, so the defensible conclusion is to retain GDP for the production dimension while avoiding an unsupported inference that it is a complete ranking of people's lives.",
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1b_15_mark",
+    "paper": "1",
+    "part": "b",
+    "total": 15,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "bankQuestionId": null,
+  "imagePath": null,
+  "imageHash": null,
+  "implementationHashes": {
+    "lib/ai/combined-assessment.ts": "98698a7011392f9890913095cfb5e31b3d7963bd6038d0047841c6c3152199dd",
+    "lib/ai/examiner-judgment.ts": "a482dfeeaf3d620b28aa0aeff15ee904064de9ee8d8549be2ce9cb2495dc39c5",
+    "lib/ai/manual-task-resolution.ts": "75f4bd8e2a8f50b65cd72ad02ca6833022e7667ed9ce741f74b208cdccbc9583",
+    "lib/assessment/examiner-task-registry.ts": "725c1b430ad92c48681e0b02e7fc82b334d0267e5d91edd2c0222afaa7c15e64",
+    "lib/ai/assessed-visual-review.ts": "5f9d8064b3e007e9e235cf5dd3938a554b594619504f3afb8aa35eea6f0ebbfb",
+    "lib/assessment/component-scoring.ts": "9fb37e957aa52b7d96f51a1318154caa424590273db888e5d761a5684d8a27ac",
+    "app/api/grade/route.ts": "ea36569a6944b43a8ad56e6e1cdbb927f4ba032ebea7363c7f5dd19b8a8ac452"
+  }
+}

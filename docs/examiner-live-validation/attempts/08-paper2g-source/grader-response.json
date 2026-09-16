@@ -1,0 +1,601 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 23018,
+  "requestId": "req_f97e27bce6fd46e3b8f5bfffc43a9b60",
+  "response": {
+    "id": "resp_08c0f3ef26230f66016aaad325368087d29e76e785ba679cb2",
+    "object": "response",
+    "created_at": 1789580069,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789580091,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_08c0f3ef26230f66016aaad32650f087d2934739988247f825",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqtM7Gi1lU2hE-sy1sYQ4bPb8cj3fxdAOVtx3-16a6VB2D3pGXAChzrHAgVAMHW1eVexWDspJ0L1uIBashCLHuV3FX4sDaeA8hrwgesMeDf3mmiFP3qsyicZMPL7J7BtZNnIYXCDfOfS4Zs8410CzXOnn-V1Idw7hObFTu1me9JQHEGbENA1eQQOQwpohNMcAG8hbIdC7Rv4W0-45FkrWt8vNH6y1snEY8_niJZAv8XS1H7g65y9F9BqTscJDJ5aLKPL5YgrgI78GskuSVhGleKh1sAfGLleMcS3Sc1FqI2LhJE3S_OlAIOP8bPknGCAw8B6mY8ag7a0exxkjif1G7jx7cM08i0l30yoam0KqTDnIvv1OqmVRV4b0M9i3gl55GxhGk4efZpJLj46r1YDgguRDzCooZzsa-xQSuwxPrvaBf9oYLXlcplxVLdneUdYp-uvYGCn7WwHU-khWSOQgvuSszk1pP6aqGFMjVis1scEserAC4oUATezeFi5B7y4_P18dC82vv2MG-2PljqwJiUHBpo6P-kTw9_anQEpBgc-DUmuhUzxUvNBCghFI6W6ICkIjrvMpCHPQiSn1xJK3X1s9X6w_khyYA0hlw6c09anQF_DTzifQkO28p8MbFqMpWdSiwQPYBrWWDPjWjuN2lBEVZ03PPFlBWQZTlrCBxEsOsEyxIfSCHLy4NunJ1JINhfvo9IjT4cB9E7TlW2ZYhtlxrRpCVHs_-dQBO8_6kuhxe4RXLOc8n7JMZMZjg1-T0M4jEUQuYGUpK7pLCHxtYs78OLFlBD5Xrcfa9dQn37lHh-RrcguLeteTkc8W-s1uEcJCurJ_Jqm4Dc_lpJLzsrn9YzEj4MtvET0H8ajY0i1IINC3NOeDpN8wUFRnydF15arx8zqHM6SGx7kXjVyeXFuO5uo3dDcZxQBj3PAy8YN_AtoQIuD6HG1j6mxaqVzWd307V5VRyVW6mVxcRXiWYPilUWoFGW8HDrfqq_H0sGQjR6Njv4WvdXVP3aqwfZe3cQ-ozA5JTolAiPFUgYIm37lbb7zLEdAONJOaz1PXbybHtuoX8-0UgrLJ0beKtNQuzN_7CGpaJoOHu2DdUUiPYHzo3Yz0P7uex4Y7qjO5Q-IhM-Mtq99vVt4SMkrqyzfOe6ayoACZ4P2-A0E-F-VIgFuO5rA178txZ3Z6N26uiVqVRlBYzYRhXRVn9qBZb2ZhHVUX2v5Dbsi7tO9w13VsEqPhF_ZLkguefOwIL3KEtIDh5_1Td1kaNgyImAJyS-gvsiZ_BV8MZF6JklEF6W5WFJ8qaD6fbgdqWVGhy0eIEmGN8AsaOXTdkIVbspQw9YWG8Hta63U-6ip7Zc_j-VPkfZ2bdsNpCTpc2_g2sXXQRdleKaI7sVdHVj3bkXFJ9sWCGESeL7N_C8haG_VaqzUvwJ2Om879WSo7c98dtgmc3LAw5PLOCGoiM275KM3etTP19zc-iDv08TCJqpy-f0DTIl0iI5ntWlhKtfWyCalr1iw-sYbhNrxbfWFA9dlyFIRGJWb3gkOvdvpDCdoLuIVIhITmsgk2BZFCGEEnm31vg16gTqz8aX6FtTmGzJZru-WC0r8Pew705cO0T1CgTzG29DOvlH-MuGGe0hO6FSPmf81KVSvoYtTUqnprggaJEM_e1lVvfuvkk0L0zUCeEWEPF3xrmrovTMs-Y8p4gWXvJpQfVidQXDyDDgo3FISB1__yFLj1AhGUiKORzMpeodb4uDrs5UY4fcIYMtow3GIEdtRH4ParTZJ2OI1YaiT-FOmJMPJuI-EegIgQEWWf7e63OlWkrCsrfqgl-rAVc2MV5mh5Qnw4SWKWstjNygOPhEL_cnEzKVBfgFope0bGT6p0j-jOA83Rl5NHjvksntNbH2RfE6QdybQupTqLaI35H_xXr4ukNfqRyymDgOogiukMBvoH3IgRhklN9PrT-HguIm0VTZflGLPare2lZAqT8xSMxVUxU52a5-YrelXL74aRveoH2tpvZSQE3xLSlxfEMmc-3rQUG7Ng7IuHBftt20GqZq9wZfcdjddFBSl4Ev2622GM5-IIWJTWvGMDfvbOfInH2LLYI5SE-90dUIdp26ql5Zox9_q2APNSLTP39ibDbwWALOMVAltzkhEEThDA7Lh2D55itQecIEy8HcMeb_zEyaylOG9UP3HsjbAKsamYQmiJsNgO1Nb6Y6e9dnKeRUUd143ynrOE-4OjYeq0eL55xmwCFPwIDspse81reeR5xR3ZmjkqTANi0gbzOVCR9mRSGSBBAzKFHCQOHLFebdJzoKd7brrPkqBtQTgoafuGPbt7u6BXrG8ioM0zoULkw8cCNYFjuQ3hqpr8imlWHquYQv5SkDmetgLiP74VXMc_wQ0r_jF_fPlmwskGsGhlYi_kJxksiNH2AyiUnHtHPs4nFAlKs6bc0MtDGC4IibBqs9pQVKyzvpY8hy0lJt7mnxgp-2oPccy4bmJEqDhus3thomcPWWOSi6lmHmtX7kiHvemf98Mf8CLU2jF8XttNnQd1uuTrzYz3k7Sl_xE5I68UqSpxEazkn5NniOS6VAo4BssyU8PYp0lE7bseBUR5n6uz5JMttTQ8aq7vcURyu54fyeZui0GwftF5Vigejo5wPwXq7tX9oyg6d4yAHBHom4b36RFQqUClKAehRCC2ZC83GG29deCIY987811a-RfDWGYHtAXFmBAxREQ-tN8GGygJglxiyWWo3EC0mbsnqB15WGN7RZ709sYzOJPSFZHx7Fi44MQ8eez_gTPUwvq_tF9zfWYWnEHEq1BfXIikfFwU7e1QlL3A4HhDRAaiJ_htEqw8DL9S1uNqHoyKYk4dT-cNobjaPbzj7IcbKFZr05-b1WbNJ6-aWEmnXzaBdZ17UwZkWJ3IzeqFEnWuF4BhkoI271zxXgbZvHyNIT2te3qR4qQTK6yGs-qD8y_t0hiuiCUyWN3hsNoRWtTL92yJ2qwxXKbxOxjeN79GfIB_XxdVDrCsFeYPcfdR0WjUD94l2oZ-meB6gIHm0dqRbKctFJJcv1de619UIpg4AwGyTOKVmHSsPN8GeuPcVastqt9DRcKIAYqTaf1Y5pmh-4p1AoPwQOlWUbNKJGba_gVIRBzr-hltI4QXFCEwpqe4eNg4d__a2OgiYrmjDoDvpXdwmC0QhPuUGBguSnvklYUuuxycCleIdbjTakoAa6bwpHYhLi5N9BsYyvuMOHBaXlgiu69lrU0SFyCWUV2f3lxG3c5YNhY74fXLLeVlBpzwvSTP8U7DLKEjoj6O93Jcq0bQ4jCo3XMfIrLRubrZvkcVoY7vHr3V5EE8QfZ0gpwrV4LTfH0WBhvx5ORaFLb5rbQIZDkJutGq0k-mwX2SaXAk6Usi7GXRafL5ywGqFu8dwJszcWJrb2iMvtQgVYtrYBk7N26-tLkug3oW13gLPudoMAKOny9EJmrlceab8qrytSKWmw7TC8GxBSUnYoFS-E7M2T9n8QxDaoD8fnIoY0IG8_5BNBCZ59v_qXUeZxbnJhjBBg8WZ7M8d7KCxYTQ4inQEZN4nrINGFPv7t_cd7PloOzohZmdUr17fyg04J9FJ6pvk1JMvIiCFHn5JI1Dj7IzVFj2kvqgunlrGv0xcCPy0SsaXrZeGARpklFyjwKmrFgFkbl9tA82_eAmOv7XnNhWaj6djefKRQLNBNXlROq5VhtqEnUgIoophYftLWOtGqpu-GQg2uuMAvZ2BURnnGMgyDsxx3_t4zcq4PEmPUw8woKy4urdG_COgUyfXxxG4C4eNa33x7viktmrk3lWgJtfDyoueEiAdHJZzw_jW8UF6dCHV6mi0bXTYElM8KhBOT34iNPPzXOtwPMnNofptWFJJIub9rmsGmrNxTWeOLeTr9Zb7bBHks6gfPvHQcGYHPo7nkNMuT59mKsp3PPR87i3wASy8uSMh8SsFBZQxnEAe7Zc7Ro3TZV9Zc6dbjXLLJzYQJ47J4ZliM_Uhxd9rSKe8HTqQ6dC7U_jA0VL4swSiySjzOzqYrErolowcy_G1lYxMpwURQNhZa61l_dyf4L76-LVzuLXVqKVYqpMJ4Kta-tW-aVEuOEF35YKEt5952VsR0dLPOyU4n6wColNwHJP7JUxDGkQYbHH56JUFeK4Z9m43ZyWaxeN2NjiDfX2j-hqOdbVa3Z2qb4Z2vg-ZOIZJag7be7fMATSXnGfo-UfT5LTD7BpS9VDoGe6J2pmZfSANEzTafWBxJYc8KpIWuas9HfF1llPmcSWaQ5ZwdLBOWPxhMXxKWr25chIB2TdsgTBWJvtOA7eq_XdPwQdiOf8WKHn9D1V1kY2n-dR7gDB5Q1kpeMVB1MZ9pb0E4T7LyJXIZ9N2WCLgoJcZlzdL-6OuEetFcclDdGRv5SDiTErIguMRP-CbELwZh0ndmr6lqSDCXU-pA==",
+        "summary": []
+      },
+      {
+        "id": "msg_08c0f3ef26230f66016aaad330639887d2965e84e3c4bf2b23",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"strengths\":[\"Uses the source precisely: GDP per capita, school attendance, income-share, export-share and pollution-admissions figures are applied to economic arguments rather than merely repeated.\",\"Develops strong, accurate analysis of how growth can fund education and human capital, while distributional inequality and negative externalities can limit development.\",\"Reaches a well-supported, qualified judgment that distinguishes progress in particular dimensions from an overall improvement for all groups.\"],\"improvements\":[],\"mistakes\":[],\"examinerComment\":\"Estimated practice mark: this is a highly focused discussion. It distinguishes growth from multidimensional development, applies the evidence carefully, including appropriately qualified assumptions behind the income-share calculation, and weighs education gains against inequality and health costs. The conclusion is nuanced and directly answers whether growth has improved development in Country R.\",\"studyNext\":\"Optional extension (not needed for credit): practise applying alternative development indicators, such as HDI components, multidimensional poverty measures and genuine-progress measures, to reinforce why GDP per capita alone is incomplete.\",\"assessmentFormat\":\"paper_2_g_extended_response\",\"paper\":\"paper_2\",\"questionPart\":\"g\",\"levelRelevance\":\"shared_sl_hl\",\"assessmentSkills\":[\"economic_analysis\",\"data_interpretation\",\"application\",\"evaluation\"],\"commandTerm\":\"discuss\",\"commandTermLabel\":\"Discuss\",\"syllabusUnit\":\"unit_4\",\"syllabusTopic\":\"4.8\",\"topicLabel\":\"Measuring development\",\"classificationConfidence\":\"high\",\"markingConfidence\":\"high\",\"diagramExpected\":false,\"diagramSubmitted\":false,\"diagramAssessmentStatus\":\"not_submitted\",\"workingsExpected\":false,\"workingsSubmitted\":true,\"workingsAssessmentStatus\":\"typed_and_assessed\",\"attachmentContent\":\"none\",\"assessableEarned\":15,\"markBreakdown\":[{\"label\":\"Knowledge and terminology\",\"awarded\":4,\"available\":4,\"reason\":\"Accurately distinguishes economic growth from economic development and uses concepts including real GDP per capita, human capital, income distribution, external costs and disposable income precisely.\"},{\"label\":\"Economic analysis\",\"awarded\":4,\"available\":4,\"reason\":\"Explains clear mechanisms from higher output and tax receipts to school grants, attendance, capabilities and future earnings, while analysing inequality and pollution as limits to development.\"},{\"label\":\"Application to context\",\"awarded\":4,\"available\":4,\"reason\":\"Integrates all major source evidence into the reasoning, including the 12% GDP-per-capita increase, 72% to 86% attendance increase, 8% to 6% poorest-quintile share change, export shift and 18% admissions increase.\"},{\"label\":\"Data use\",\"awarded\":4,\"available\":4,\"reason\":\"Uses data analytically, notably the conditional 1.12 × 6/8 calculation and the explanation of why it is suggestive rather than conclusive evidence about poorer households' incomes.\"},{\"label\":\"Evaluation and judgment\",\"awarded\":4,\"available\":4,\"reason\":\"Evaluates the limits of GDP, data gaps, causation and the relative importance of distribution and persistent health damage, then gives a balanced, supported final judgment.\"},{\"label\":\"Structure and clarity\",\"awarded\":4,\"available\":4,\"reason\":\"The response is coherent and logically sequenced, moving from potential benefits to qualifications before reaching a direct conclusion.\"}],\"bandRationale\":\"Top-band, upper position: the answer provides thorough and accurate economic reasoning, develops arguments directly from the supplied evidence, evaluates important limitations and reaches a clearly qualified, supported judgment. It fully addresses the question without needing a diagram.\",\"limitations\":[],\"examinerJudgment\":{\"task\":\"Discuss, using the supplied information and economic knowledge, whether economic growth has improved economic development in Country R.\",\"demonstrated\":\"Thorough source-integrated analysis of education and human-capital gains, income distribution, export diversification and pollution externalities, with careful treatment of evidence limits and a qualified final judgment.\",\"materialLimitations\":[],\"selectedBand\":\"13-15\",\"withinBand\":\"upper\",\"diagramEffect\":\"not_required\",\"summary\":\"A comprehensive, balanced and well-evidenced discussion that securely meets the highest-band descriptors.\"},\"componentEvaluation\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_grade_result",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strengths",
+            "improvements",
+            "mistakes",
+            "examinerComment",
+            "studyNext",
+            "assessmentFormat",
+            "paper",
+            "questionPart",
+            "levelRelevance",
+            "assessmentSkills",
+            "commandTerm",
+            "commandTermLabel",
+            "syllabusUnit",
+            "syllabusTopic",
+            "topicLabel",
+            "classificationConfidence",
+            "markingConfidence",
+            "diagramExpected",
+            "diagramSubmitted",
+            "diagramAssessmentStatus",
+            "workingsExpected",
+            "workingsSubmitted",
+            "workingsAssessmentStatus",
+            "attachmentContent",
+            "assessableEarned",
+            "markBreakdown",
+            "bandRationale",
+            "limitations",
+            "componentEvaluation",
+            "examinerJudgment"
+          ],
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mistakes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lack of evaluation",
+                  "Underdeveloped evaluation",
+                  "Weak definitions",
+                  "Weak terminology",
+                  "Inaccurate economic theory",
+                  "Underdeveloped economic analysis",
+                  "No real-world example",
+                  "Irrelevant real-world example",
+                  "Underdeveloped real-world example",
+                  "Missing required diagram",
+                  "Incorrect diagram explanation",
+                  "Insufficient source use",
+                  "Calculation/setup error",
+                  "Unsupported judgement",
+                  "Unclear structure"
+                ]
+              }
+            },
+            "examinerComment": {
+              "type": "string"
+            },
+            "studyNext": {
+              "type": "string"
+            },
+            "assessmentFormat": {
+              "type": "string",
+              "enum": [
+                "paper_1_a",
+                "paper_1_b",
+                "paper_2_a_definition",
+                "paper_2_b_quantitative_or_diagram",
+                "paper_2_c_to_f_diagram_and_explanation",
+                "paper_2_g_extended_response",
+                "paper_3_a_technical_or_quantitative",
+                "paper_3_b_policy_recommendation",
+                "custom_short_response",
+                "custom_extended_response",
+                "uncertain"
+              ]
+            },
+            "paper": {
+              "type": "string",
+              "enum": [
+                "paper_1",
+                "paper_2",
+                "paper_3",
+                "custom",
+                "uncertain"
+              ]
+            },
+            "questionPart": {
+              "type": "string",
+              "enum": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "unknown"
+              ]
+            },
+            "levelRelevance": {
+              "type": "string",
+              "enum": [
+                "shared_sl_hl",
+                "hl_only",
+                "unknown"
+              ]
+            },
+            "assessmentSkills": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "definition",
+                  "calculation",
+                  "diagram_explanation",
+                  "economic_analysis",
+                  "data_interpretation",
+                  "application",
+                  "evaluation",
+                  "policy_recommendation"
+                ]
+              }
+            },
+            "commandTerm": {
+              "type": "string",
+              "enum": [
+                "define",
+                "describe",
+                "distinguish",
+                "draw",
+                "calculate",
+                "explain",
+                "analyse",
+                "discuss",
+                "evaluate",
+                "examine",
+                "justify",
+                "compare",
+                "contrast",
+                "compare_contrast",
+                "to_what_extent",
+                "recommend",
+                "other"
+              ]
+            },
+            "commandTermLabel": {
+              "type": "string"
+            },
+            "syllabusUnit": {
+              "type": "string",
+              "enum": [
+                "unit_1",
+                "unit_2",
+                "unit_3",
+                "unit_4",
+                "unknown"
+              ]
+            },
+            "syllabusTopic": {
+              "type": "string",
+              "enum": [
+                "1.1",
+                "1.2",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+                "3.1",
+                "3.2",
+                "3.3",
+                "3.4",
+                "3.5",
+                "3.6",
+                "3.7",
+                "4.1",
+                "4.2",
+                "4.3",
+                "4.4",
+                "4.5",
+                "4.6",
+                "4.7",
+                "4.8",
+                "4.9",
+                "4.10",
+                "unknown"
+              ]
+            },
+            "topicLabel": {
+              "type": "string"
+            },
+            "classificationConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "markingConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "diagramExpected": {
+              "type": "boolean"
+            },
+            "diagramSubmitted": {
+              "type": "boolean"
+            },
+            "diagramAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "text_description_only",
+                "submitted_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "workingsExpected": {
+              "type": "boolean"
+            },
+            "workingsSubmitted": {
+              "type": "boolean"
+            },
+            "workingsAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "typed_and_assessed",
+                "image_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "attachmentContent": {
+              "type": "string",
+              "enum": [
+                "none",
+                "diagram",
+                "workings",
+                "both",
+                "neither_or_unreadable"
+              ]
+            },
+            "assessableEarned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY."
+            },
+            "markBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "awarded",
+                  "available",
+                  "reason"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "enum": [
+                      "Knowledge and terminology",
+                      "Economic analysis",
+                      "Application to context",
+                      "Evaluation and judgment",
+                      "Data use",
+                      "Diagram",
+                      "Calculation method",
+                      "Final answer",
+                      "Policy recommendation",
+                      "Structure and clarity"
+                    ]
+                  },
+                  "awarded": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "Integer 0..4 on Aptly's fixed diagnostic scale."
+                  },
+                  "available": {
+                    "type": "integer",
+                    "enum": [
+                      4
+                    ],
+                    "description": "Always exactly 4. OMIT any criterion the question does not test."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Non-empty, specific to this answer."
+                  }
+                }
+              }
+            },
+            "bandRationale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames."
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "examinerJudgment": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "task",
+                    "demonstrated",
+                    "materialLimitations",
+                    "selectedBand",
+                    "withinBand",
+                    "diagramEffect",
+                    "summary"
+                  ],
+                  "properties": {
+                    "task": {
+                      "type": "string"
+                    },
+                    "demonstrated": {
+                      "type": "string"
+                    },
+                    "materialLimitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "selectedBand": {
+                      "type": "string"
+                    },
+                    "withinBand": {
+                      "type": "string",
+                      "enum": [
+                        "lower",
+                        "middle",
+                        "upper"
+                      ]
+                    },
+                    "diagramEffect": {
+                      "type": "string",
+                      "enum": [
+                        "integrated",
+                        "limited",
+                        "missing_material",
+                        "not_required",
+                        "unresolved"
+                      ]
+                    },
+                    "summary": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            },
+            "componentEvaluation": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "diagram",
+                    "explanation",
+                    "diagramReason",
+                    "explanationReason",
+                    "explanationIssue",
+                    "incompatibleMechanisms",
+                    "mismatchEvidence",
+                    "labelingDeficiency",
+                    "labelingEvidence",
+                    "rootErrors"
+                  ],
+                  "properties": {
+                    "diagram": {
+                      "type": "integer"
+                    },
+                    "explanation": {
+                      "type": "integer"
+                    },
+                    "diagramReason": {
+                      "type": "string"
+                    },
+                    "explanationReason": {
+                      "type": "string"
+                    },
+                    "explanationIssue": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "missing",
+                        "underdeveloped",
+                        "incorrect"
+                      ],
+                      "description": "Missing = no explanation; underdeveloped = incomplete but not economically false; incorrect = an actual economic contradiction/error. This classifies feedback, never changes marks."
+                    },
+                    "incompatibleMechanisms": {
+                      "type": "boolean"
+                    },
+                    "mismatchEvidence": {
+                      "type": "string"
+                    },
+                    "labelingDeficiency": {
+                      "type": "boolean",
+                      "description": "Only a labeling weakness within a relevant diagram family. False for absent or wrong-family evidence, which is a missing required diagram rather than a label defect."
+                    },
+                    "labelingEvidence": {
+                      "type": "string"
+                    },
+                    "rootErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "diagramEvidence",
+                          "explanationEvidence",
+                          "carriedForward"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "diagramEvidence": {
+                            "type": "string"
+                          },
+                          "explanationEvidence": {
+                            "type": "string"
+                          },
+                          "carriedForward": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 5984,
+      "input_tokens_details": {
+        "cache_write_tokens": 5981,
+        "cached_tokens": 0
+      },
+      "output_tokens": 1313,
+      "output_tokens_details": {
+        "reasoning_tokens": 465
+      },
+      "total_tokens": 7297
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

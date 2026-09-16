@@ -1,0 +1,185 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 2093,
+  "requestId": "req_0464a7f543f84698858e1cbe7d0462a2",
+  "response": {
+    "id": "resp_08a16e047e5797e3016aaad2739f3487d28cfc4066c219d3ea",
+    "object": "response",
+    "created_at": 1789579891,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789579893,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 2600,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "msg_08a16e047e5797e3016aaad2744e5487d29aa2d431769fad48",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"confidence\":\"high\",\"coverage\":\"complete\",\"matches\":[{\"ruleId\":\"indicator-appraisal\",\"demandQuote\":\"“evaluate the usefulness of real GDP per capita as an indicator of living standards”\",\"mechanism\":\"Appraise what real GDP per capita captures about average inflation-adjusted output/income and the limitations that can make it diverge from living standards, using real-world examples.\"}],\"uncertainty\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_manual_task_interpretation",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "confidence",
+            "coverage",
+            "matches",
+            "uncertainty"
+          ],
+          "properties": {
+            "confidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "uncertain"
+              ]
+            },
+            "coverage": {
+              "type": "string",
+              "enum": [
+                "complete",
+                "partial",
+                "unresolved"
+              ]
+            },
+            "matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "ruleId",
+                  "demandQuote",
+                  "mechanism"
+                ],
+                "properties": {
+                  "ruleId": {
+                    "type": "string",
+                    "enum": [
+                      "market-adjustment",
+                      "market-intervention",
+                      "elasticity-determinants",
+                      "elasticity-revenue",
+                      "externality-allocation",
+                      "firm-equilibrium",
+                      "aggregate-transmission",
+                      "inflation-redistribution",
+                      "phillips-relationship",
+                      "distribution-representation",
+                      "trade-protection",
+                      "currency-equilibrium",
+                      "current-account-transmission",
+                      "ppc-representation",
+                      "comparative-advantage",
+                      "circular-flow",
+                      "poverty-feedback",
+                      "debt-sustainability",
+                      "institutional-comparison",
+                      "information-remedies",
+                      "indicator-appraisal"
+                    ]
+                  },
+                  "demandQuote": {
+                    "type": "string"
+                  },
+                  "mechanism": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "uncertainty": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2869,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 2866
+      },
+      "output_tokens": 98,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 2967
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

@@ -1035,7 +1035,7 @@ function SubmitPageInner({
 
             {diagramConfirmation && !grading && (
               <div className="space-y-2 rounded-xl border border-amber-300/60 bg-amber-50/40 p-4 text-sm dark:bg-amber-950/15" role="alert">
-                <p>No diagram is attached. Grading without it treats the diagram as omitted work and applies this task&apos;s assessment contract.</p>
+                <p>No diagram is attached. Aptly will check whether this question needs one and assess the evidence you submit. You can attach a diagram or continue without one.</p>
                 <Button type="button" variant="outline" size="sm" onClick={() => void grade(diagramConfirmation, true)}>Grade without a diagram</Button>
               </div>
             )}

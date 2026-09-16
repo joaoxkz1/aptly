@@ -4,11 +4,17 @@ import type { DiagramFamily, DiagramRole } from "./diagram-contract";
 import { ECONOMICS_QUESTION_BANK } from "./question-bank/economics-v1";
 import { ESSAY_DIAGRAM_AUDIT } from "./question-bank/economics-v1/essay-diagram-audit";
 
-export const MANUAL_ESSAY_BLUEPRINT_VERSION = "inferred-essay-contract-v1";
+export const MANUAL_ESSAY_BLUEPRINT_VERSION = "inferred-essay-contract-v2";
 export interface EssayResolutionEvidence {
   ruleId: string;
   confidence: "source_matched" | "audited_match" | "mechanism_matched" | "unresolved";
   basis: string[];
+  registryVersion?: string;
+  method?: "constrained_interpretation";
+  interpretation?: import("@/lib/ai/manual-task-resolution").ManualTaskInterpretation;
+  diagramExpectations?: string[];
+  taskDemands?: string[];
+  families?: DiagramFamily[];
 }
 export interface EssayDiagramResolution {
   role: DiagramRole;
@@ -125,7 +131,7 @@ export function resolveManualEssayDiagram(input: {
     "unresolved-framework", "unresolved", [BASIS.paper1]);
   // Explicit counterexamples are tied to their question demand, not the topic alone.
   const singleKnownDemand = matches.length === 0 && !/\b(?:and|also) (?:how|why|explain|analyse|evaluate)\b/.test(q);
-  if (singleKnownDemand && /\bexplain\b/.test(q) && /\bsustainable (?:government(?: national)?|national|public) debt\b/.test(q) &&
+  if (singleKnownDemand && /\bexplain\b/.test(q) && /\bsustainable (?:level of )?(?:government(?: national)?|national|public) debt\b/.test(q) &&
       /\b(?:important|importance)\b/.test(q) && /\bmacroeconomic objective\b/.test(q)) {
     return result("optional", "ad_as", "This debt-sustainability objective can be fully explained without a diagram. AD/AS is an optional illustration; its absence is not an unmet requirement.",
       "sustainable-debt-objective", "source_matched", [BASIS.debt, BASIS.paper1]);

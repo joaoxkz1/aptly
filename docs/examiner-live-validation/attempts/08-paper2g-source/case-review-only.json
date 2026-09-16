@@ -1,0 +1,19 @@
+{
+  "caseId": "paper2g-source",
+  "modelInput": {
+    "question": "Using the supplied information and your knowledge of economics, discuss whether economic growth has improved economic development in Country R. [15 marks]",
+    "answer": "Economic growth is an increase in real output; development concerns broader improvements in people's living standards and opportunities. R's 12% rise in real GDP per capita suggests more material resources per person, but the other evidence makes an unconditional development claim doubtful. Higher production can create jobs and tax receipts, and R used the latter for rural school grants. Attendance rising from 72% to 86% indicates improved access to education, increasing capabilities now and potentially human capital and earning opportunities later. This is stronger evidence of development than output growth alone, although attendance does not show educational quality or completion.\n\nDistribution qualifies the gain. Combining the poorest fifth's falling share with output growth, 1.12 times 6/8 equals 0.84. If the income shares and GDP measure correspond and population shares remain comparable, this suggests the group's aggregate share of real income may actually have fallen despite national growth. Since GDP and household disposable income are not identical, this calculation is a warning, not proof of the precise income change. Median disposable income and household survey data are needed. A larger average therefore cannot establish that the poorest have gained.\n\nManufacturing's export share rising from 20% to 35% suggests diversification, potentially reducing vulnerability to one primary commodity and creating more stable employment. Yet shares alone do not establish higher export volumes, domestic value added or good working conditions. Meanwhile the 18% rise in pollution-related admissions signals a cost to health and productivity. Additional output may impose external costs that the GDP figure does not subtract; health spending to treat damage could even add to GDP without improving health relative to the initial position.\n\nThus growth appears to have supported at least one important development gain, rural education, but R's development is uneven. Whether the gains outweigh the losses depends especially on who receives the extra resources and the seriousness and persistence of the health damage. Education can improve future opportunities, whereas worsening poverty and pollution can undermine them. The supplied evidence supports a qualified conclusion of progress in some dimensions, not a general claim that all groups enjoy higher living standards. Household income, education outcomes and health trends would clarify that judgment.",
+    "framework": "paper2g_15_mark",
+    "sourceMaterial": "Original hypothetical stimulus: Between 2021 and 2025, Country R's real GDP per capita rose 12%, while the income share of the poorest fifth fell from 8% to 6%. Rural school attendance rose from 72% to 86%, but urban air-pollution hospital admissions rose 18%. Manufacturing exports now provide 35% of export revenue, compared with 20% in 2021. The government expanded rural school grants using higher tax receipts. No data on median disposable income or life expectancy are supplied."
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "sources": [
+      "E26:P2g",
+      "M25-P2:Q1g"
+    ],
+    "review": "Use source evidence as part of causal and evaluative reasoning; no P1 real-world-example or necessary-diagram gate. Conditional calculation acknowledges measure mismatch.",
+    "officialMark": null,
+    "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+  }
+}

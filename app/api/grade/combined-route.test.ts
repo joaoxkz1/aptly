@@ -35,6 +35,7 @@ function visual(overrides: Record<string, unknown> = {}) {
 }
 function grade(overrides: Record<string, unknown> = {}) {
   return {
+    examinerJudgment: null,
     strengths: ["A relevant mechanism is explained."], improvements: ["Check the relationship between the diagram and explanation."], mistakes: [],
     examinerComment: "This estimate concerns the submitted evidence.", studyNext: "Check that the explanation follows the visible shift.",
     assessmentFormat: "paper_2_c_to_f_diagram_and_explanation", paper: "paper_2", questionPart: "c", levelRelevance: "shared_sl_hl",
@@ -83,6 +84,36 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
 describe("authoritative combined route with real input and assessment validators", () => {
+  const ped = { question: "Explain how close substitutes and adjustment time influence price elasticity of demand. [10]", answer: "Substitutes allow switching, so quantity responds more to a price rise. Longer adjustment gives consumers more alternatives.", practiceQuestionId: null, requestedFramework: "paper1a_10_mark" };
+  const interpretation = { confidence: "high", coverage: "complete", matches: [{ ruleId: "elasticity-determinants", demandQuote: "close substitutes and adjustment time", mechanism: "Substitution opportunities and adjustment time affect responsiveness to a price change." }], uncertainty: null };
+  it("reserves before semantic interpretation, then freezes the resolved task and coherent best-fit judgment", async () => {
+    mocks.create.mockResolvedValueOnce(reply(interpretation)).mockResolvedValueOnce(reply(grade({ componentEvaluation: null, assessableEarned: 6,
+      diagramExpected: false, assessmentFormat: "paper_1_a", paper: "paper_1", questionPart: "a", syllabusTopic: "2.5", bandRationale: "Relevant but brief explanation",
+      examinerJudgment: { task: "Explain two determinants of PED", demonstrated: "Both determinants linked to responsiveness", materialLimitations: ["Development is brief"], selectedBand: "5-6", withinBand: "upper", diagramEffect: "not_required", summary: "Relevant reasoning needs fuller causal development" } })));
+    const response = await POST(request({ image: false, body: ped }));
+    expect(response.status).toBe(200);
+    expect(mocks.reserve.mock.invocationCallOrder[0]).toBeLessThan(mocks.create.mock.invocationCallOrder[0]);
+    expect(mocks.create.mock.calls.map(([p]) => p.text.format.name)).toEqual(["aptly_manual_task_interpretation", "aptly_grade_result"]);
+    expect(mocks.create.mock.calls[0][0].input[1].content).not.toContain(ped.answer);
+    const snapshot = mocks.save.mock.calls[0][2].snapshot;
+    expect(snapshot.resolutionInputContract.diagramRole).toBe("unresolved");
+    expect(snapshot.contract.diagramRole).toBe("appropriate_support");
+    expect(snapshot.examinerJudgment.diagramEffect).toBe("not_required");
+    expect((await response.json()).attempt.assessment.scoringState).toBe("marked");
+  });
+  it("does not dispatch classification before confirmation or when quota is exhausted", async () => {
+    expect((await POST(request({ image: false, body: { ...ped, diagramOmitted: false } }))).status).toBe(422);
+    expect(mocks.reserve).not.toHaveBeenCalled();
+    mocks.reserve.mockResolvedValue(reservation("grade", "limited"));
+    expect((await POST(request({ image: false, body: ped }))).status).toBe(429);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+  it("rejects a contradictory full-credit judgment and saves no assessment", async () => {
+    mocks.create.mockResolvedValueOnce(reply(grade({ componentEvaluation: null, assessableEarned: 10, assessmentFormat: "paper_1_a", paper: "paper_1", questionPart: "a", bandRationale: "Strong but absent diagram",
+      examinerJudgment: { task: "Explain market failure", demonstrated: "Developed causal analysis", materialLimitations: ["Necessary diagram absent"], selectedBand: "9-10", withinBand: "upper", diagramEffect: "missing_material", summary: "Material omission" } })));
+    expect((await POST(request({ image: false, body: { question: POLLUTION_QUESTION, answer: POLLUTION_ANSWER, practiceQuestionId: null, requestedFramework: "paper1a_10_mark" } }))).status).toBe(502);
+    expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.create).toHaveBeenCalledTimes(1);
+  });
   const pollution = { question: POLLUTION_QUESTION, answer: POLLUTION_ANSWER, practiceQuestionId: null, requestedFramework: "paper1a_10_mark" };
   it("resolves the actual manual pollution task before reserving/provider work", async () => {
     const response = await POST(request({ image: false, body: { ...pollution, diagramOmitted: false } }));
@@ -93,6 +124,7 @@ describe("authoritative combined route with real input and assessment validators
   });
   it("dispatches a frozen necessary contract and exact prose after confirmed omission", async () => {
     mocks.create.mockResolvedValueOnce(reply(grade({ componentEvaluation: null, assessableEarned: 9,
+      examinerJudgment: { task: "Explain pollution market failure", demonstrated: "Developed external-cost analysis", materialLimitations: ["Necessary diagram absent"], selectedBand: "9-10", withinBand: "lower", diagramEffect: "missing_material", summary: "Strong explanation with an important diagram omission" },
       assessmentFormat: "paper_1_a", paper: "paper_1", questionPart: "a", syllabusTopic: "2.8",
       bandRationale: "The best-fit judgment considers the explanation and missing relevant diagram." })));
     const response = await POST(request({ image: false, body: pollution }));
@@ -100,7 +132,7 @@ describe("authoritative combined route with real input and assessment validators
     const { attempt } = await response.json();
     expect(attempt.assessment.assessedDiagram).toMatchObject({ state: "not_provided", componentDecision: null,
       contract: { diagramRole: "necessary_for_task" } });
-    expect(attempt.assessment.gradingProvenance.gradingContractVersion).toBe("ib-econ-2026-v4");
+    expect(attempt.assessment.gradingProvenance.gradingContractVersion).toBe("ib-econ-2026-v5");
     expect(attempt.assessment.marksEarned).toBe(9); // mocked provider mark, not an omission rule
     expect(mocks.create).toHaveBeenCalledTimes(1);
     const sent = mocks.create.mock.calls[0][0];
@@ -108,7 +140,7 @@ describe("authoritative combined route with real input and assessment validators
     expect(sent.input[1].content).toContain(POLLUTION_ANSWER);
     expect(sent.input[1].content).toContain('"state":"not_provided"');
     expect(sent.input[1].content).not.toMatch(/calibration target|safest calibration|expected mark/i);
-    expect(mocks.save.mock.calls[0][2].snapshot.contract).toMatchObject({ blueprintVersion: "inferred-essay-contract-v1",
+    expect(mocks.save.mock.calls[0][2].snapshot.contract).toMatchObject({ blueprintVersion: "inferred-essay-contract-v2",
       essayResolution: { ruleId: "negative-production-externality" } });
   });
   it("returns a completed historical essay before applying the new omission gate", async () => {

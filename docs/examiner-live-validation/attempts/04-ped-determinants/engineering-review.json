@@ -1,0 +1,279 @@
+{
+  "number": 4,
+  "caseId": "ped-determinants",
+  "status": "complete",
+  "httpStatus": 200,
+  "question": "Explain two determinants of price elasticity of demand. [10 marks]",
+  "submittedAnswer": "Price elasticity of demand measures the responsiveness of quantity demanded to a change in the good's own price: percentage change in quantity demanded divided by percentage change in price, usually discussed in absolute value. One determinant is the availability and closeness of substitutes. If a brand of breakfast cereal becomes more expensive while close substitutes retain their prices, buyers can switch with little loss of satisfaction. A given price rise then produces a relatively large percentage reduction in quantity demanded, making demand more elastic. For an essential medicine with no effective alternative, the same price rise gives patients little scope to switch, so quantity responds less and demand is more inelastic. The relevant market definition matters: an individual cereal brand has more close substitutes than food as a whole. A second determinant is the time available for adjustment. In the short run a commuter whose car and workplace are fixed may continue buying much the same petrol after a price rise. Over time the commuter can arrange car sharing, relocate, or replace the car with a more fuel-efficient one. These adjustments enlarge the range of substitutes and reduce the petrol quantity demanded more strongly for the given price change. Demand therefore tends to be more elastic in the long run, other things equal. Time does not guarantee elasticity above one; it increases opportunities to respond, while the actual response still depends on the alternatives available.",
+  "sourceMaterial": null,
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": "not_provided"
+  },
+  "framework": "paper1a_10_mark",
+  "finalContract": {
+    "mode": "holistic_diagram",
+    "part": "a",
+    "level": "unknown",
+    "paper": "1",
+    "scope": "same_question_part",
+    "topic": "unknown",
+    "total": 10,
+    "diagram": null,
+    "version": "economics-diagram-contract-v1",
+    "framework": "paper1a_10_mark",
+    "provenance": "inferred_practice",
+    "diagramRole": "appropriate_support",
+    "diagramReason": "The reviewed task demands can be fully met in prose. A relevant diagram can support the explanation, but omission alone is not a missing requirement.",
+    "sourceRequired": false,
+    "essayResolution": {
+      "basis": [
+        "docs/ib-marker-behavior-model.md",
+        "G22:2.5–2.6",
+        "E26:P1a; Aptly bounded task judgment"
+      ],
+      "method": "constrained_interpretation",
+      "ruleId": "elasticity-determinants",
+      "families": [
+        "demand_supply"
+      ],
+      "confidence": "mechanism_matched",
+      "taskDemands": [
+        "For each of two determinants, explain how it changes consumers’ responsiveness of quantity demanded to a price change—for example, closer substitutes make demand more elastic, while necessity tends to make it more inelastic."
+      ],
+      "interpretation": {
+        "matches": [
+          {
+            "ruleId": "elasticity-determinants",
+            "mechanism": "For each of two determinants, explain how it changes consumers’ responsiveness of quantity demanded to a price change—for example, closer substitutes make demand more elastic, while necessity tends to make it more inelastic.",
+            "demandQuote": "“Explain two determinants of price elasticity of demand.”"
+          }
+        ],
+        "coverage": "complete",
+        "confidence": "high",
+        "uncertainty": null
+      },
+      "registryVersion": "ib-task-families-2026-v1",
+      "diagramExpectations": []
+    },
+    "syllabusVersion": "economics-2022-v1",
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "blueprintVersion": "inferred-essay-contract-v2"
+  },
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1a_10_mark",
+    "paper": "1",
+    "part": "a",
+    "total": 10,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "task-resolution",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 2788,
+      "usage": {
+        "input_tokens": 2858,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 2855
+        },
+        "output_tokens": 100,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2958
+      },
+      "estimatedUSD": 0.001777,
+      "structuredOutput": {
+        "confidence": "high",
+        "coverage": "complete",
+        "matches": [
+          {
+            "ruleId": "elasticity-determinants",
+            "demandQuote": "“Explain two determinants of price elasticity of demand.”",
+            "mechanism": "For each of two determinants, explain how it changes consumers’ responsiveness of quantity demanded to a price change—for example, closer substitutes make demand more elastic, while necessity tends to make it more inelastic."
+          }
+        ],
+        "uncertainty": null
+      }
+    },
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 12224,
+      "usage": {
+        "input_tokens": 5837,
+        "input_tokens_details": {
+          "cache_write_tokens": 5834,
+          "cached_tokens": 0
+        },
+        "output_tokens": 766,
+        "output_tokens_details": {
+          "reasoning_tokens": 108
+        },
+        "total_tokens": 6603
+      },
+      "estimatedUSD": 0.023783,
+      "structuredOutput": {
+        "strengths": [
+          "Defines PED precisely using percentage changes and correctly notes the usual use of absolute values.",
+          "Explains two distinct determinants—close substitutes and time for adjustment—with clear causal links to greater or lower responsiveness of quantity demanded.",
+          "Uses well-chosen illustrative contexts (cereal, essential medicine and petrol) to make the mechanisms concrete and maintains relevant qualifications."
+        ],
+        "improvements": [],
+        "mistakes": [],
+        "examinerComment": "Estimated practice mark: an excellent, fully focused response. Both required determinants are identified and developed through accurate causal analysis of how consumers can adjust quantity demanded after a price change. The qualification that more adjustment time need not make PED greater than one is particularly precise. A diagram was not needed for this explanation task.",
+        "studyNext": "Optional extension (not needed for credit): practise explaining further PED determinants, such as proportion of income spent and addiction/habit formation, with the same explicit link to consumers’ ability and willingness to switch or reduce consumption.",
+        "assessmentFormat": "paper_1_a",
+        "paper": "paper_1",
+        "questionPart": "a",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "definition",
+          "economic_analysis",
+          "application"
+        ],
+        "commandTerm": "explain",
+        "commandTermLabel": "Explain",
+        "syllabusUnit": "unit_2",
+        "syllabusTopic": "2.5",
+        "topicLabel": "Elasticity of demand",
+        "classificationConfidence": "high",
+        "markingConfidence": "high",
+        "diagramExpected": false,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_relevant",
+        "workingsExpected": false,
+        "workingsSubmitted": false,
+        "workingsAssessmentStatus": "not_relevant",
+        "attachmentContent": "none",
+        "assessableEarned": 10,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 4,
+            "available": 4,
+            "reason": "PED is accurately defined and key terms including quantity demanded, substitutes, elastic and inelastic are used precisely."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 4,
+            "available": 4,
+            "reason": "For each determinant, the answer clearly traces how a price rise changes consumers’ scope to adjust and therefore the magnitude of the quantity response."
+          },
+          {
+            "label": "Application to context",
+            "awarded": 4,
+            "available": 4,
+            "reason": "The cereal, medicine and petrol contexts are relevant illustrative applications that directly clarify the mechanisms."
+          },
+          {
+            "label": "Structure and clarity",
+            "awarded": 4,
+            "available": 4,
+            "reason": "The response is coherent, separates the two determinants clearly and remains tightly focused on the question."
+          }
+        ],
+        "bandRationale": "Best fit: 9–10, upper. The response gives accurate, well-developed and coherent explanations of exactly two PED determinants, with explicit causal reasoning and relevant illustrations. It also includes a valid qualification about long-run elasticity without losing focus.",
+        "limitations": [],
+        "examinerJudgment": {
+          "task": "Explain two determinants of price elasticity of demand.",
+          "demonstrated": "Accurate definition of PED and fully developed explanations of the availability of close substitutes and time for adjustment, explicitly linking each to the responsiveness of quantity demanded after a price change.",
+          "materialLimitations": [],
+          "selectedBand": "9-10",
+          "withinBand": "upper",
+          "diagramEffect": "not_required",
+          "summary": "Fully focused, accurate and coherent analysis meets the highest band to a great extent."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 10,
+    "finalMark": 10,
+    "componentDecision": null,
+    "finalBand": "9-10",
+    "withinBand": "upper",
+    "diagnostics": [
+      {
+        "label": "Knowledge and terminology",
+        "reason": "PED is accurately defined and key terms including quantity demanded, substitutes, elastic and inelastic are used precisely.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Economic analysis",
+        "reason": "For each determinant, the answer clearly traces how a price rise changes consumers’ scope to adjust and therefore the magnitude of the quantity response.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Application to context",
+        "reason": "The cereal, medicine and petrol contexts are relevant illustrative applications that directly clarify the mechanisms.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Structure and clarity",
+        "reason": "The response is coherent, separates the two determinants clearly and remains tightly focused on the question.",
+        "awarded": 4,
+        "available": 4
+      }
+    ],
+    "feedback": {
+      "band": "Excellent 7",
+      "score": 7,
+      "mistakes": [],
+      "strengths": [
+        "Defines PED precisely using percentage changes and correctly notes the usual use of absolute values.",
+        "Explains two distinct determinants—close substitutes and time for adjustment—with clear causal links to greater or lower responsiveness of quantity demanded.",
+        "Uses well-chosen illustrative contexts (cereal, essential medicine and petrol) to make the mechanisms concrete and maintains relevant qualifications."
+      ],
+      "studyNext": "Optional extension (not needed for credit): practise explaining further PED determinants, such as proportion of income spent and addiction/habit formation, with the same explicit link to consumers’ ability and willingness to switch or reduce consumption.",
+      "improvements": [],
+      "examinerComment": "Estimated practice mark: an excellent, fully focused response. Both required determinants are identified and developed through accurate causal analysis of how consumers can adjust quantity demanded after a price change. The qualification that more adjustment time need not make PED greater than one is particularly precise. A diagram was not needed for this explanation task."
+    }
+  },
+  "judgment": {
+    "task": "Explain two determinants of price elasticity of demand.",
+    "summary": "Fully focused, accurate and coherent analysis meets the highest band to a great extent.",
+    "withinBand": "upper",
+    "demonstrated": "Accurate definition of PED and fully developed explanations of the availability of close substitutes and time for adjustment, explicitly linking each to the responsiveness of quantity demanded after a price change.",
+    "selectedBand": "9-10",
+    "diagramEffect": "not_required",
+    "materialLimitations": []
+  },
+  "latencyMs": 15123,
+  "estimatedUSD": 0.02556,
+  "engineeringReview": "Correctly matches the pure determinant demand, not a revenue or equilibrium task; no compulsory graph. First classification failed only because verbatim evidence had outer quote delimiters. Exact matching now tolerates those delimiters; real retry resolves, saves and provides optional next study with no invented deficiency.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

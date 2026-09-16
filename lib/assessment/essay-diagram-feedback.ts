@@ -27,7 +27,7 @@ export function reconcileEssayDiagramFeedback(assessment: Assessment, feedback: 
     : contract.diagram ? `${contract.diagram.family.replaceAll("_", " ")} diagram` : "task-required economic diagram";
   const evidence = state === "not_provided" ? `The necessary ${name} was not submitted.`
     : `The submitted image does not supply the necessary ${name}.`;
-  const expectations = contract.diagram?.relationships.join(" ") ?? "Show and explain the economic relationships and outcome requested by this question.";
+  const expectations = contract.essayResolution?.diagramExpectations?.join(" ") || contract.diagram?.relationships.join(" ") || "Show and explain the economic relationships and outcome requested by this question.";
   const action = `Construct and explain the ${name}. ${expectations}`;
   const meaning = `${evidence} This is an unmet element of holistic best fit, even when the written economics is strong; it has no fixed mark deduction.`;
   if (assessment.bandRationale) assessment.bandRationale = [withoutFalseExemption(assessment.bandRationale), meaning].filter(Boolean).join(" ");

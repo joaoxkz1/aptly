@@ -1,0 +1,207 @@
+{
+  "number": 1,
+  "caseId": "pollution-omitted",
+  "status": "incomplete",
+  "httpStatus": 502,
+  "question": "Explain how pollution from production can cause a market failure. [10 marks]",
+  "submittedAnswer": "Market failure occurs when the market allocation does not maximize social surplus. Suppose a cement producer releases dust that damages nearby residents' health. The producer pays for labour, energy and materials, but without liability does not pay all the additional health costs it imposes on third parties. These are external costs of production. At each output, marginal social cost equals marginal private cost plus marginal external cost, so MSC exceeds MPC. Assuming no consumption externality, marginal social and private benefit coincide. Profit-seeking firms and buyers respond to the private supply and demand incentives, giving an output Qm where MPC equals MPB. The socially efficient output Qs instead equates MSC and MSB. Because social cost exceeds private cost, Qs is below Qm. The units between Qs and Qm cost society more at the margin than the benefit they create. Their production therefore reduces social surplus, creating a welfare loss equal to the excess of MSC over MSB across those units. Resources are overallocated to cement relative to the social optimum. The failure arises from unpriced third-party harm, not simply because all pollution or all production is undesirable: some output can still be socially worthwhile.",
+  "sourceMaterial": null,
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": null
+  },
+  "framework": "paper1a_10_mark",
+  "finalContract": null,
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "necessary_for_task",
+    "diagramReason": "The requested negative production externality mechanism calls for a diagram to support its economic relationships and outcome. A missing diagram is a meaningful unmet element of holistic best fit, not a fixed mark deduction.",
+    "provenance": "inferred_practice",
+    "framework": "paper1a_10_mark",
+    "paper": "1",
+    "part": "a",
+    "total": 10,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": {
+      "family": "externality",
+      "acceptableAlternatives": [
+        "Accept a coherent theoretically valid alternative mechanism satisfying the task and supplied context."
+      ],
+      "labels": [
+        "Use the labels identifying the economic variables and relationships requested in the question; conventional abbreviations are acceptable."
+      ],
+      "relationships": [
+        "A negative-production-externality diagram with price/cost/benefit and quantity axes, MSC above MPC, and MPB = MSB under the standard no-consumption-externality assumption.",
+        "Identify market output at MPC = MPB and socially efficient output at MSC = MSB, with market output greater than socially efficient output.",
+        "Show and explain the welfare loss between MSC and MSB over the excess output; accept equivalent notation and a coherent alternative representation of the same mechanism."
+      ],
+      "outcomes": [
+        "The outcome must follow from the diagram and match the explanation of the selected question part."
+      ],
+      "essentialAreas": [],
+      "diagram": {
+        "zero": "No creditworthy relevant economic relationship is visible.",
+        "one": "A relevant relationship or initial model is correct, but the task's change or outcome is materially incomplete or wrong.",
+        "two": "The relevant model, change and outcome are correct and identifiable for the exact task, allowing equivalent notation."
+      },
+      "explanation": {
+        "zero": "No correct relevant causal link is explained.",
+        "one": "One relevant causal link is correct but the mechanism or resulting outcome is incomplete.",
+        "two": "A developed, context-compatible causal chain explains the requested outcome; apply same-part error carry forward without repeating its root-error penalty."
+      },
+      "contextConstraints": [
+        "Use only context actually supplied. Do not invent missing stimulus."
+      ],
+      "permittedMechanisms": [
+        "Any theoretically valid mechanism that answers this task and fits its supplied context."
+      ],
+      "rules": [],
+      "labelingRuleReason": null
+    },
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "negative-production-externality",
+      "confidence": "mechanism_matched",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions.",
+        "IB November 2020 SL Paper 1 Q1(a), p3: production pollution, MSC above MPC and over-allocation."
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 60922,
+      "usage": {
+        "input_tokens": 6001,
+        "input_tokens_details": {
+          "cache_write_tokens": 5998,
+          "cached_tokens": 0
+        },
+        "output_tokens": 924,
+        "output_tokens_details": {
+          "reasoning_tokens": 134
+        },
+        "total_tokens": 6925
+      },
+      "estimatedUSD": 0.026089,
+      "structuredOutput": {
+        "strengths": [
+          "Accurately identifies the external cost imposed on nearby residents and distinguishes private from social costs.",
+          "Develops the full overproduction mechanism: MSC exceeds MPC, market output is Qm, and the socially efficient output Qs is lower.",
+          "Clearly explains welfare loss and overallocation of resources, while correctly noting that pollution does not imply all production is socially undesirable."
+        ],
+        "improvements": [
+          "Add the required negative-production-externality diagram: price/cost/benefit on the vertical axis, quantity on the horizontal axis, MSC above MPC, MPB = MSB, Qm to the right of Qs, and the welfare-loss area over excess output."
+        ],
+        "mistakes": [
+          "Missing required diagram"
+        ],
+        "examinerComment": "Estimated practice mark: 8/10. This is a precise and well-developed written explanation of market failure from a negative externality of production. The missing diagram is the material limitation because it was necessary for this task; a correctly labelled diagram would visibly support the cost curves, excess output and welfare loss explained in the prose.",
+        "studyNext": "Practise drawing the negative-production-externality model from memory, then annotate Qm, Qs and the welfare-loss area and link each feature to one sentence of explanation.",
+        "assessmentFormat": "paper_1_a",
+        "paper": "paper_1",
+        "questionPart": "a",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "economic_analysis",
+          "diagram_explanation",
+          "application"
+        ],
+        "commandTerm": "explain",
+        "commandTermLabel": "Explain",
+        "syllabusUnit": "unit_2",
+        "syllabusTopic": "2.8",
+        "topicLabel": "Externalities and common pool/common access resources",
+        "classificationConfidence": "high",
+        "markingConfidence": "high",
+        "diagramExpected": true,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_submitted",
+        "workingsExpected": false,
+        "workingsSubmitted": false,
+        "workingsAssessmentStatus": "not_relevant",
+        "attachmentContent": "none",
+        "assessableEarned": 8,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Uses market failure, external costs, marginal social cost, marginal private cost, MPB, MSB and welfare loss accurately."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Explains the causal chain from unpriced third-party health costs to MSC > MPC, overproduction and reduced social surplus clearly and accurately."
+          },
+          {
+            "label": "Application to context",
+            "awarded": 3,
+            "available": 4,
+            "reason": "The cement-dust example is relevant and is used coherently to illustrate third-party health costs, although outside application was not essential to this task."
+          },
+          {
+            "label": "Diagram",
+            "awarded": 0,
+            "available": 4,
+            "reason": "No submitted diagram shows MSC above MPC, Qm and Qs, or the welfare-loss area required to support this externality mechanism."
+          }
+        ],
+        "bandRationale": "The answer securely fits the 7–8 band: it is focused, accurate and well-developed in writing, with a complete negative-production-externality mechanism. It cannot move higher because the necessary diagram is absent, leaving an important element of the task unmet.",
+        "limitations": [
+          "No diagram was provided to show the negative production externality, market and socially efficient outputs, and welfare loss."
+        ],
+        "examinerJudgment": {
+          "task": "Explain how pollution from production can cause market failure.",
+          "demonstrated": "A complete written explanation using a cement-pollution example: external costs mean MSC exceeds MPC, market output Qm exceeds efficient output Qs, and excess output creates welfare loss and resource overallocation.",
+          "materialLimitations": [
+            "The necessary negative-production-externality diagram is absent."
+          ],
+          "selectedBand": "7-8",
+          "withinBand": "upper",
+          "diagramEffect": "missing_material",
+          "summary": "Strong, accurate written analysis, materially limited by omission of the required supporting diagram."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 8,
+    "finalMark": null,
+    "componentDecision": null,
+    "finalBand": null,
+    "withinBand": null,
+    "diagnostics": null,
+    "feedback": null
+  },
+  "judgment": {
+    "task": "Explain how pollution from production can cause market failure.",
+    "demonstrated": "A complete written explanation using a cement-pollution example: external costs mean MSC exceeds MPC, market output Qm exceeds efficient output Qs, and excess output creates welfare loss and resource overallocation.",
+    "materialLimitations": [
+      "The necessary negative-production-externality diagram is absent."
+    ],
+    "selectedBand": "7-8",
+    "withinBand": "upper",
+    "diagramEffect": "missing_material",
+    "summary": "Strong, accurate written analysis, materially limited by omission of the required supporting diagram."
+  },
+  "latencyMs": 45325,
+  "estimatedUSD": 0.026089,
+  "engineeringReview": "Task, private/social divergence and welfare reasoning correctly recognized. Necessary diagram omission is material in band judgment and feedback; no deterministic essay deduction. The first run timed out at 45 seconds despite a completed 61-second provider response; replay offline and the later real retry test the repair.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

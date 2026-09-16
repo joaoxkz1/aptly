@@ -1,0 +1,168 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 9174,
+  "requestId": "req_9f4eb6ba9e43493392fbe2ef1433b809",
+  "response": {
+    "id": "resp_070bbce2b67736e8016aaad2c3eccc87d2b1d029068ea9a70f",
+    "object": "response",
+    "created_at": 1789579971,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789579980,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_070bbce2b67736e8016aaad2c546fc87d2b84dfdbc2ce19496",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqtLMQfTM5uNfN21G2ByVeWFjytgV_jMHIedxLapqSW9KaJzUalxcric_5PpQ5Zo3cRHd9PMGrNVefBOxyScnUb2xG1d79lx3T8zCfxiJPzP6akEDNJketCVyYLb2YNoHTFyAetGorO0ykTc4yeCuyp9H_ZzottgkhCRCq4CTtXl3VjN-yp8y7HBJ9ZcYK6n8Dgd-vvlUYxEfdWvOT_8m2pgWnQ1qsk0bZ8fZz84Gmp0e3SKhmkuBY8vtrtUbrWEGpU6cACQFbZlqwHNcBGgNHWFZPzRTEFpETwX1pb8m74J6FL9qHGBCk7VOqCn7e5y2x46nH-Gyl8rrDyA6iOFpwylkTmlfl02l1U6T4nl3ucD5nEER_o_fL7CrJXwG58hTLNHrOZFMSJyA1GlpBOeycUKO-9PVvdgEHOibJfbwAcyUodcYFJ0gy72mXFGfYw9jZC4wY9ktRMu4xL-Dtua2MTVDrrqJ6gPYc_rlu0PAB49o_tozXum_i77EXmIE_0VnhIETBwB6KbFXGx5fexikjGuv4H_d-l3oTwhD__8qHHUFxZ1QTtXyeJ2Vqp1JKm22DmgN_TorXmb1jlTeHSCVOBncV9oDNX6OxOL2K9agvcmaDgP9tiLLPsbyJ0hgDV5hzwD6C3E8ZV5KIRUM36lVaMLnm4z5KlCAJ8TVKIXRKW6YR0fM1aCaCsY9lLeeuc2O9B1uzOCCbTfWMksgKRWZi6paYeoM1vHUjc58uYgw3ak5DQY9WE1LKPsulIj-tbzin95djYNm8lGHy1AaDcc-5ertXSsn1zpzrIjbmzGo8QZuOO400B19aXYjB6eMZUBRu-i0ZTMwnIsapYA-fw7_hg_Q7RkYiWVR4_P10c2wx8bQp_SGtI3H4Gt40GV7N4poaJpNkfhXniaeRtZ3YiGtQPP-5AlIBvCk_oQOVK_TgzBTS9n-tQ6PRb5KC7uIGdNVDs3FJAqcmklFHp9KuBYrHeEIKQ0stB6vWRqjkyCSnhDqVf-ZI0_q6f8tCr4AcC9DOg_hOaRWIKGgVLf3dyPQ_8UFAnMnUbC7w34t-ZcrqpaPvs3nzeg7PNRzlO6fETlBBG0C034uNyM--vZg3H59Fqb9a9oYBOW8FPTNLl6Oi_52jzeBFd5E_yoVxRYf7N9tM0uqv5uIMS4SaMXJe52r6uwEwaqLURDHcXkW109dO_EfN7UxWInw9woc0r6bXZzafeisusaGw4_3tckrXswT6nc6u3RaSKYZqwxSfGhkJQZIVINIdC02SPe6YFEe6HqmacucnVFQRR9PKxbCUIbMBX7C_g7umLaI0mpsFaRZ5vlIlaXX2oaJ9KRfT6RyJZY5972GpR3U-2Gwe86zmCCdcWgiAKBhm3JSwIZxTrE3wqdfRkFHo1Cr3ZYQeQoTLmT0NFwbvRKDts2J8a1MfiIwE_A7HmiyDkrxFieCWrZzZPLoix6sG5qxVBh_-1-qUQF22LzUyL1OQzUFqgaFwGy0QfbEjEHI3Jr-znWoG5HoO4O3fPyTIRPc3p7CU07YLMSGlJiX8JOvHmz6GneSBUYcB2j8yvfOrj51lriKalWDShJStWWgPvYInoSBuPyMQFCkOdmFxMpnCxJKyhvsQHsbl_G4PkFU7A91HXdpU0848GUB-sqPg4LCa6-Wsv4bPGqveRoD3vyX1ltT0slWdsS7d93h-yWDsxErQ8g6ez_mUgTKsfwPWdOh1uEhpu6QZFY-3A3VlnUbGFJCPvsPE9_ouIdIkxpNWML7dZA-X6JHeo6EdVVLaD9-tbIGKYtypYIEOzNd0FYU8pNkmx2A6nm6RQ4MXy1pv_jfyHplhdlwzOzCnW-dvvm6ZW5zKtkVPsqjzP_Wj1YMjC5nM1j39hu-eWsetGUXX9jde3QrCpkwFCG13Td486syFoWGwTtKmsuVdV553I1-iNFMXHX4kVHsY5CvQLzWsMQ64FcAkW3y6GByiLA02XuZ1DBUwFA-K-sfb2GpFCoWjoqphS99gtjL-u3HKPZxBi3gBmDefm9CPAKu_BmoPivsOmqyFixnnTmLa40mVQkdEWt4yraeSS88Bo_RcM1gfnu7KdaG9z8ynju2PgweedKD0n4P5hamwT0tymE3Hxlsht3qPh09o1GwjnevNxjPEraiBMj-va7IU9LKEvyzaQFtpUrFQhdCdIQo7bvlPh-fVXdVKZTyDdYRGAd4Z56tqcBuAuigGTjzwJ7CoirUI0BAd2zpXVJrDOsZmxKlG8aO7p6SrLQeQfEHA_uRecH_UT9qoke0D-BlOkejl-YEfkx2SY-YBpCq0TpxP3RRIKCvFZaVyCThX-z2rwYQDeI_5ynkDX0ad9XRRLuZPrB8ZCeH-VErdh5QOx52IAaxsVKa8CnVnEXqXUELziV_7Ttvq2J__wpxnUbz6jBFIBp2SygLrcX7FTc8b76QgMaM8F2hQioLxYmlWw_RQh3DjsAf67b-229L3JPWiZ68lJu-r_LaGdKdomdXtL72pQao-suPsnFsRUJ5nBSSlV5D9npyhQhGwXKEB1AccQXmMGeLcrnJZnB36CVfCTiDkg6vrWeDWMe35Fu843Kk_6OXKeWuuN0HDgYL_mQNmz6iTFBn2RzEcUOP5ktH2yQv3jZPQ1TTtgcOhMAro1uB0sUggWGOOOuSVlIpBrHSgLSgSWdGcQSSKjt3YJU1nu3VdGzE1LBOyBnLEYm4KmYzIOZoUDkUO5mmFqLfc6wSFU3Mde9PTA0NQatk6ih8FfNpfy4GZ3XNypDtK_F2gl1q6rRo_jbLAuRapu9XA-UVMIkcRfVdDvXVUSHvNhXf7rGMrRxZTNR7ghqyyEWRT8NDjyDTdC4mpHA2jp1zZO57NtR-MuYTfbor5y8TxbI5C-hdG2HAEbrlWZUULoaxGW-GdhrzYMjBNpVmrtsH546TNAL0zELjaxKFwOEeoX6OsP2HIbtNUh0JvihNWNq96c90s0XNJ-TyzOSxUYbjLFHvF8Va3ZpBprM2Clox5GWOi8HsDTgv4k95RNpOAJu4ORvzaPtMm_7nDaP8W2A-pZazLMVy8UjQi71X9LU-iZ3lkb0RgsLgyOadTkqj371PnvsJMA7F1olwqQyyXtduBl0tbRif76UqkoZwb_YfHTJbwbx_wFAlCSEJXz5CaD-Gffagv6vTB32h19T7ergBPs-hB4a39vjq4SI_o4AnGg8DV3eyQKg7mfkQP2SUFBF2zuq4_EeXG4yf9pzb95A9FOpyKcYu-2H_w0gVSAzvBzDN2hEU80IYHdFuALU50S43u-cSnsQ0AgWQt4KICbNFYe6nblnch_mg2zra01mtGBtp9vbUH1somrn1X8qn42j3L3uLsn7fXlnamKVKx6gdgLGjQ-X0jY5ax27l-uHixm1DIy800oyUfGFpMsMmflUPo7fiPyzi0uZjn3I9QPR-rw5Zsoh7bjs=",
+        "summary": []
+      },
+      {
+        "id": "msg_070bbce2b67736e8016aaad2c8a56087d2a465ce8363b562ce",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"top and axes\",\"observation\":\"The diagram is titled 'Wheat market'. The vertical axis is labeled 'Price of wheat' and the horizontal axis is labeled 'Quantity of wheat'.\",\"interpretation\":\"The market and both axes are identified in a way relevant to a wheat demand-and-supply diagram.\",\"uncertain\":false},{\"region\":\"centre-right\",\"observation\":\"There is one upward-sloping curve labeled 'S'.\",\"interpretation\":\"This indicates a supply curve, but only one supply curve is shown.\",\"uncertain\":false},{\"region\":\"centre to lower-right\",\"observation\":\"There are two downward-sloping curves labeled 'D1' and 'D2'.\",\"interpretation\":\"The diagram distinguishes two demand curves rather than two supply curves.\",\"uncertain\":false},{\"region\":\"upper-centre\",\"observation\":\"A horizontal arrow points to the right from the left/downward-sloping curve toward the right/upward-sloping downward curve.\",\"interpretation\":\"The visible shift shown is a rightward movement of demand, not a leftward/upward shift of supply.\",\"uncertain\":false},{\"region\":\"middle\",\"observation\":\"Equilibrium points 'E1' and 'E2' are marked where the upward-sloping curve intersects D1 and D2. Dashed guides mark P1 at E1, P2 at E2, Q1 at E1, and Q2 at E2.\",\"interpretation\":\"The marked equilibria show price rising from P1 to P2 and quantity rising from Q1 to Q2.\",\"uncertain\":false},{\"region\":\"overall diagram\",\"observation\":\"No unchanged demand curve is identified alongside two supply positions such as S1 and S2.\",\"interpretation\":\"The required drought mechanism of reduced supply with demand unchanged is not the one depicted in the diagram.\",\"uncertain\":false}],\"summary\":\"Readable and relevant demand-and-supply diagram with correctly identified wheat axes. However, the drawing shows one supply curve and a rightward shift in demand from D1 to D2, producing higher price and higher quantity at E2, rather than an unchanged demand curve and a leftward supply shift causing higher price and lower quantity.\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean",
+              "description": "Whether the photo is readable enough to judge the submitted evidence, including to establish that no relevant diagram exists. This is readability, not correctness or completeness. Must be true for no_relevant_diagram; false when blur/occlusion prevents the essential judgment."
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2453,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 808,
+      "output_tokens_details": {
+        "reasoning_tokens": 332
+      },
+      "total_tokens": 3261
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

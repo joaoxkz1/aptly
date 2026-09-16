@@ -90,7 +90,7 @@ describe("question-scoped feedback", () => {
     attempt.assessment!.markBreakdown.forEach(row => { row.awarded = row.available; });
     attempt.feedback.mistakes = [];
     expect(scopeFeedbackToQuestion(attempt.feedback, attempt.assessment!, attempt.question).studyNext)
-      .toBe("Review the feedback for this question and address any stated limitations.");
+      .toBe("Optional extension (not needed for credit): compare another industry.");
   });
 
   it("does not request an out-of-scope policy recommendation even if it was called optional", () => {

@@ -19,6 +19,8 @@ export const COMBINED_ASSESSMENT_VERSION = 4;
 export const COMBINED_GRADING_CONTRACT_VERSION = "ib-econ-2026-v3";
 /** Corrected manual essay resolution; other frozen task contracts retain v3. */
 export const MANUAL_ESSAY_GRADING_CONTRACT_VERSION = "ib-econ-2026-v4";
+/** New assessments only; historical rows retain their original contract. */
+export const EXAMINER_GRADING_CONTRACT_VERSION = "ib-econ-2026-v5";
 
 // --- Weighting -------------------------------------------------------------
 // Weight an attempt by the marks Aptly actually judged: a 15-mark answer

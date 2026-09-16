@@ -71,6 +71,8 @@ import {
   type TrustedPracticeGuidance,
 } from "@/lib/supabase/server-authority";
 import { completedEssayReplay } from "@/lib/supabase/completed-essay-replay";
+import { interpretManualTask, needsManualTaskInterpretation } from "@/lib/ai/manual-task-resolution";
+import { EXAMINER_WORKFLOW_VERSION, type ExaminerJudgment } from "@/lib/ai/examiner-judgment";
 
 export const runtime = "nodejs";
 // Allow the 120-second combined provider deadline plus auth and persistence.
@@ -296,16 +298,15 @@ export async function POST(request: Request) {
     policy = enforceRevisionSourceGate(policy, parentFramework, sourceMaterial);
   }
 
+  const policyBeforeContract = policy;
   let contract = null;
   if (diagramAssessmentEnabled()) {
     try {
-      // Completed manual essays replay their original frozen contract/result,
-      // even when new task resolution would now ask for omission confirmation.
-      if (practiceQuestionId === null && (policy.total === 10 || policy.total === 15)) {
-        const completed = await completedEssayReplay(userId, idempotencyKey, raw, image?.hash ?? null);
-        if (completed.kind === "conflict") return fail(409, "idempotency_conflict");
-        if (completed.kind === "replay") return NextResponse.json({ attempt: completed.attempt, replayed: true });
-      }
+      // Every completed combined assessment keeps its frozen reservation and
+      // result across workflow upgrades, before any new omission gate.
+      const completed = await completedEssayReplay(userId, idempotencyKey, raw, image?.hash ?? null);
+      if (completed.kind === "conflict") return fail(409, "idempotency_conflict");
+      if (completed.kind === "replay") return NextResponse.json({ attempt: completed.attempt, replayed: true });
       contract = resolveAssessmentContract({ policy, question: policy.selectedQuestionPart ?? gradedQuestion,
         topic: trustedPracticeGuidance?.topicCode ?? gradedTopic, sourceMaterial,
         blueprint: trustedPracticeGuidance?.gradingBlueprint, level: trustedPracticeGuidance?.levelRelevance ?? "unknown",
@@ -316,7 +317,7 @@ export async function POST(request: Request) {
       }
       if (contract) {
         policy = policyWithContract(policy, contract);
-        if (["required_explicitly", "necessary_for_task"].includes(contract.diagramRole) && !image && raw.diagramOmitted !== true) return fail(422, "diagram_confirmation_required");
+        if ((["required_explicitly", "necessary_for_task"].includes(contract.diagramRole) || needsManualTaskInterpretation(contract)) && !image && raw.diagramOmitted !== true) return fail(422, "diagram_confirmation_required");
       } else if (image) return fail(422, "diagram_contract_required");
     } catch (err) {
       if (err instanceof Error && ["contract_context_required", "diagram_family_unsupported"].includes(err.message)) return fail(422, err.message);
@@ -330,6 +331,7 @@ export async function POST(request: Request) {
     contract, contractHash: requestFingerprint(contract), attachments: image ? [{ identity: `${idempotencyKey}:image:1`, contentHash: image.hash, role: "student_diagram", retained: false }] : [],
     reviewerVersion: image ? ASSESSED_VISUAL_VERSION : null, reviewerModel: image ? DIAGRAM_MODEL : null, reviewerEffort: image ? ASSESSED_VISUAL_EFFORT : null,
     graderModel: WRITTEN_GRADING_MODEL, graderEffort: WRITTEN_GRADING_REASONING_EFFORT, observations: null,
+    examinerWorkflowVersion: EXAMINER_WORKFLOW_VERSION,
   } : null;
 
   // Reserve atomically immediately before dispatch. Invalid/contextless work
@@ -367,8 +369,20 @@ export async function POST(request: Request) {
   }
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), image ? 120_000 : REQUEST_TIMEOUT_MS);
+  // Combined examiner judgment can exceed the legacy text-only deadline even
+  // without an image. Keep one bounded budget across all provider stages.
+  const timer = setTimeout(() => controller.abort(), contract ? 120_000 : REQUEST_TIMEOUT_MS);
   try {
+    if (contract && snapshot && needsManualTaskInterpretation(contract)) {
+      stage = "task_resolution";
+      providerDispatched = true;
+      snapshot.resolutionInputContract = contract;
+      contract = await interpretManualTask({ contract, question: policy.selectedQuestionPart ?? gradedQuestion,
+        source: sourceMaterial, signal: controller.signal, reservationId: reservationId! });
+      snapshot.contract = contract;
+      snapshot.contractHash = requestFingerprint(contract);
+      policy = policyWithContract(policyBeforeContract, contract);
+    }
     let visual: AssessedVisualEvidence | null = null;
     if (image && contract && snapshot) {
       stage = "visual_review";
@@ -422,12 +436,13 @@ export async function POST(request: Request) {
     }
     const parsed: unknown = JSON.parse(response.output_text);
     stage = "schema_validation";
-    const validated = contract ? validateCombinedGrade(parsed, { policy, contract, visual, question: policy.selectedQuestionPart ?? gradedQuestion,
-      attachmentHashes: image ? [image.hash] : [], snapshotId: idempotencyKey, hasExplanation: a !== "" }) : validateGradeResult(parsed, {
+    const validated: ReturnType<typeof validateGradeResult> & { examinerJudgment?: ExaminerJudgment | null } = contract ? validateCombinedGrade(parsed, { policy, contract, visual, question: policy.selectedQuestionPart ?? gradedQuestion,
+      attachmentHashes: image ? [image.hash] : [], snapshotId: idempotencyKey, hasExplanation: a !== "", requireExaminerJudgment: true }) : validateGradeResult(parsed, {
       hasImageAttachment: false,
       policy,
     });
     const feedback = validated.feedback;
+    if (snapshot) snapshot.examinerJudgment = validated.examinerJudgment ?? null;
     let assessment = validated.assessment;
     if (
       trustedPracticeGuidance?.gradingBlueprint != null &&

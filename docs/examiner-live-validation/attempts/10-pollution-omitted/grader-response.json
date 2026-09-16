@@ -1,0 +1,601 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 23857,
+  "requestId": "req_6cf2b276c52d4d7a9f13f2b8e57ab9a5",
+  "response": {
+    "id": "resp_0d514d0515d3919f016aaad3f848fc87d28d07c174fa8919a3",
+    "object": "response",
+    "created_at": 1789580280,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789580303,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.6-terra",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0d514d0515d3919f016aaad3fdf79887d2bf9874f1f9830534",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqtQPbQzKh5ChUv4S-COjMhMEgQafn3v0MY4QzrYgmhhMhYtquCIzh8dF14Cpr21IKpWveU_z1wUSETB_XpXZHQefGlQ8lXmJRRSl3xQd_rzmwFBcpMgP3aC0Qm3SXDBQnoGYT7z1ji1vacet543GYpXgjfFy4EXOO1XM-PXG70xMn0ra4qnMINAe2TY80N_0cZ_xb5Q2IAqWADAlmVOwblnlKDvSKs400KL6vEWTEXKaYqlRXJ_XllHGXkiFU2h7VxAL5AMZSpD_m9RAPbkW28BixK2B9i3yru3Uc5bhY9MxbcILxYdAV0DmgUGn_qXv0EIFGNtgMHyDcHmQYgqpqlT0bCqFz_OZKJIOcSjxON2Cox8d22umXqcmPjB2bFGzCdgVwgeD11OiRn0mG1clISBgYvoT3OkiHqT-2KeU8TXqoqgkypymqioBWF-wkvQiHEuCZB-WOvGvyqexYuVa6X297fqwToD2C1Lqj-IJwB3DA8jXyOc4UAU1jCcTaaC5JhnWYuFx2Nf0EUgEFQkjxF-xQ5Jvfs11AP3UdblYvslvq7tcLJLWIdXYoSjdnDhaHmutKLX1VFFHM4Il2EEg26zIzbA4jAa1zf0w-GSjzppJKn6c-xlcBpYm1teYed27aNJqpkRE0PuC3oMXwfoeDK39vSPWOMa_HiOitETmbMsLwf_OG9OSqi-wUyDNGFw29XrdPRXmM3FTsI-wZTTMSPQEz3jDJN3CO2l4fITLP5muGpY7Xv9JveE8-hWMeM5QMQwGOPottNY8dP6XmQeAfNx1Kx8T1qMKdTVGZn3lsijM6igUWnleStHYLnUvvKZOuThFZZJ22hPutlEVjTmEN9WprMd6tmg85D4FwrDjkKXn1m3O9z7szC3HC_LPABsxyT85ZXW7gfcErql2OorFNwtTEl6oty4taiCOwksemS--MBWqOQ7BWEF_8jAmUypJFXXk7tvDVDAcOhfXIo3PbWeXVJFqvL1gmA6AR0VqntHv4PvQA0SMvv4BOUNBe2Maf74cTtcZQVrS5ySCmhEwgukKpMqFnRT-wYPtwwPQhGZipVqJPHkfbjq_6kAC8MYQ3j52184sNLEh-jiGNMaswcHF8F4TqS6MNP8VKID4__Giwb2GJb61cB5pLdZehUwPt-gG0hz_VWLuoAUL3Jf6xu5BTpXdRB0IvO3A5IfvSLSsJtW1h4SQtOnGsXbjCbMLBmZApdLx8mIhkP3xfCBOiQL3BYrTKcrIVYKPMdCEgPi7HejW_O5YrmxXoEJARm33q3TpuzD2R6imVfNUWi5so404ZXiJVV2puSX6Sddnc8qvnCzIwNdhE0dwtYVVedFdyx3eUc7bpdxxMZPvBpMtTGBDC8ZOp6QhC34xOZ_guL0GapPNFG5zju7sD7EwDbD5Doy-sKVIwKH88q7TgDntyPnTYxDF2oKp2W6OZsJhlB4k0z6FpCi3zTqUjQr2Fo1A7C1zsaRBNP52VO2gy_-VwYDxX-ARmP66wkjI0jOWoNQ6O5Z2rrrMkNFoDYKrgDRm4hENMiWjBEfmRdFY6qWlfbufva9W-7m7R4DMUHt_IULa1NM3ntYk2mF_sLAcHd-nb8sEw0JBSqo3JFHx8-eASlcCZOfnBTYao5bUYHOYy-uKtksWthf5UmsjYlNLTcFGsTaND1fQQl4KxqEBSQfZOzUpnJn_2cXI3Me78Ij0Ri9kSMcrM3sSwfaEyyTwyDzG5NP1pMmyqVjD10cwz_eXUNmvGy5siK7wMA-KDhTw2qm-Ge3eUV9HVA4Oas4_woBxUAR-unttjldJsnO0rraLtcMWL1j4BKiBIVtbAD30L3PiufeqcLteq--2YMir2hzhbRWYTBESZRaYJY2UnRiVRWJNNe-WSRwIas81YhMBXrlv9KJJrAczj2Kb9YEZpZWww5lYa9TNsC3A1-dDngPMq2kIrkUkbn13paEuP4PVt17uc22jftrpCCZJ6G-lnrz7xqKGRThfwo_TzysindjOGgKiek8or0j0K8XkcisHKwRkidemkMAT2Prpi_fsPCWbR4FvtAqWfq4NVKI4P0xnIc_RbU7ocCjkK5F9goxXUmggCdg-Bhza0m_uyruJCUGYOX8XaudhND10o83VOojcbUYGTkQ4fojJqU9tOL_446rFXTNQZG81Zn_CUnJ6USehFdaGmMbo3AS4Hn91aITKRm23xkpg3PGHV5mvOIHv-rBwQeMmxp3hbD42NDVAleaMiVi0uCH_T6U5cZeQg5PA8WtwBxtsL3F7jz8Pt7Ya82P2h5vz4XXqdiO4Gtz7puWckOG042ftd-1Soe6bqtmle2pBDg==",
+        "summary": []
+      },
+      {
+        "id": "msg_0d514d0515d3919f016aaad402315c87d2964e5ee4f5573a5a",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"strengths\":[\"Accurately defines market failure in terms of social surplus and identifies the unpriced harm as an external cost of production.\",\"Develops the negative-production-externality mechanism clearly: MSC = MPC + MEC, MSC exceeds MPC, and market output exceeds the socially efficient output.\",\"Explains the welfare loss precisely, including why output between Qs and Qm has marginal social cost greater than marginal social benefit.\"],\"improvements\":[\"Add the required negative production externality diagram. It should show MSC above MPC, MPB = MSB, Qm at MPC = MPB, Qs at MSC = MSB, and the welfare-loss area over the excess output from Qs to Qm.\"],\"mistakes\":[\"Missing required diagram\"],\"examinerComment\":\"Estimated practice mark: this is a highly accurate and well-focused written explanation. The cement example is used effectively to show third-party health costs, and the causal chain to overproduction and welfare loss is complete. However, the task requires a negative-production-externality diagram as part of the explanation, and no diagram was submitted. Adding a clear, correctly labelled diagram would make the response more complete.\",\"studyNext\":\"Practise drawing the negative production externality model from memory, then write two or three sentences linking MSC > MPC to Qm > Qs and the welfare loss.\",\"assessmentFormat\":\"paper_1_a\",\"paper\":\"paper_1\",\"questionPart\":\"a\",\"levelRelevance\":\"shared_sl_hl\",\"assessmentSkills\":[\"diagram_explanation\",\"economic_analysis\",\"application\"],\"commandTerm\":\"explain\",\"commandTermLabel\":\"Explain\",\"syllabusUnit\":\"unit_2\",\"syllabusTopic\":\"2.8\",\"topicLabel\":\"Externalities and common pool/common access resources\",\"classificationConfidence\":\"high\",\"markingConfidence\":\"high\",\"diagramExpected\":true,\"diagramSubmitted\":false,\"diagramAssessmentStatus\":\"not_submitted\",\"workingsExpected\":false,\"workingsSubmitted\":false,\"workingsAssessmentStatus\":\"not_relevant\",\"attachmentContent\":\"none\",\"assessableEarned\":8,\"markBreakdown\":[{\"label\":\"Knowledge and terminology\",\"awarded\":4,\"available\":4,\"reason\":\"Uses accurate terminology throughout, including external costs, MSC, MPC, social surplus, welfare loss and over-allocation of resources.\"},{\"label\":\"Economic analysis\",\"awarded\":4,\"available\":4,\"reason\":\"Provides a complete causal explanation from unpriced third-party health costs to MSC exceeding MPC, market overproduction, and welfare loss.\"},{\"label\":\"Application to context\",\"awarded\":3,\"available\":4,\"reason\":\"The cement-and-dust example appropriately illustrates production pollution and harm to nearby residents, though the question did not require extensive real-world evidence.\"},{\"label\":\"Diagram\",\"awarded\":0,\"available\":4,\"reason\":\"No diagram was submitted, despite the negative-production-externality model being a necessary element of this task.\"}],\"bandRationale\":\"The written response is accurate, coherent and fully developed, with a correct explanation of the divergence between private and social costs and the resulting welfare loss. It fits the 7–8 band strongly, but the absence of the necessary externality diagram is a material unmet part of the task, preventing a top-band outcome.\",\"limitations\":[\"No negative production externality diagram was provided to show MSC above MPC, Qm above Qs, and the welfare-loss area.\"],\"examinerJudgment\":{\"task\":\"Explain how pollution from production causes market failure.\",\"demonstrated\":\"A precise negative production externality explanation using a cement-pollution example, correct MSC/MPC and MSB/MPB relationships, overproduction, and welfare loss.\",\"materialLimitations\":[\"The necessary negative production externality diagram was not submitted.\"],\"selectedBand\":\"7-8\",\"withinBand\":\"upper\",\"diagramEffect\":\"missing_material\",\"summary\":\"Strong, complete written analysis, materially limited only by the missing diagram required to support the mechanism.\"},\"componentEvaluation\":null}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "all_turns",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_grade_result",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "strengths",
+            "improvements",
+            "mistakes",
+            "examinerComment",
+            "studyNext",
+            "assessmentFormat",
+            "paper",
+            "questionPart",
+            "levelRelevance",
+            "assessmentSkills",
+            "commandTerm",
+            "commandTermLabel",
+            "syllabusUnit",
+            "syllabusTopic",
+            "topicLabel",
+            "classificationConfidence",
+            "markingConfidence",
+            "diagramExpected",
+            "diagramSubmitted",
+            "diagramAssessmentStatus",
+            "workingsExpected",
+            "workingsSubmitted",
+            "workingsAssessmentStatus",
+            "attachmentContent",
+            "assessableEarned",
+            "markBreakdown",
+            "bandRationale",
+            "limitations",
+            "componentEvaluation",
+            "examinerJudgment"
+          ],
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mistakes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Lack of evaluation",
+                  "Underdeveloped evaluation",
+                  "Weak definitions",
+                  "Weak terminology",
+                  "Inaccurate economic theory",
+                  "Underdeveloped economic analysis",
+                  "No real-world example",
+                  "Irrelevant real-world example",
+                  "Underdeveloped real-world example",
+                  "Missing required diagram",
+                  "Incorrect diagram explanation",
+                  "Insufficient source use",
+                  "Calculation/setup error",
+                  "Unsupported judgement",
+                  "Unclear structure"
+                ]
+              }
+            },
+            "examinerComment": {
+              "type": "string"
+            },
+            "studyNext": {
+              "type": "string"
+            },
+            "assessmentFormat": {
+              "type": "string",
+              "enum": [
+                "paper_1_a",
+                "paper_1_b",
+                "paper_2_a_definition",
+                "paper_2_b_quantitative_or_diagram",
+                "paper_2_c_to_f_diagram_and_explanation",
+                "paper_2_g_extended_response",
+                "paper_3_a_technical_or_quantitative",
+                "paper_3_b_policy_recommendation",
+                "custom_short_response",
+                "custom_extended_response",
+                "uncertain"
+              ]
+            },
+            "paper": {
+              "type": "string",
+              "enum": [
+                "paper_1",
+                "paper_2",
+                "paper_3",
+                "custom",
+                "uncertain"
+              ]
+            },
+            "questionPart": {
+              "type": "string",
+              "enum": [
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
+                "g",
+                "unknown"
+              ]
+            },
+            "levelRelevance": {
+              "type": "string",
+              "enum": [
+                "shared_sl_hl",
+                "hl_only",
+                "unknown"
+              ]
+            },
+            "assessmentSkills": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "definition",
+                  "calculation",
+                  "diagram_explanation",
+                  "economic_analysis",
+                  "data_interpretation",
+                  "application",
+                  "evaluation",
+                  "policy_recommendation"
+                ]
+              }
+            },
+            "commandTerm": {
+              "type": "string",
+              "enum": [
+                "define",
+                "describe",
+                "distinguish",
+                "draw",
+                "calculate",
+                "explain",
+                "analyse",
+                "discuss",
+                "evaluate",
+                "examine",
+                "justify",
+                "compare",
+                "contrast",
+                "compare_contrast",
+                "to_what_extent",
+                "recommend",
+                "other"
+              ]
+            },
+            "commandTermLabel": {
+              "type": "string"
+            },
+            "syllabusUnit": {
+              "type": "string",
+              "enum": [
+                "unit_1",
+                "unit_2",
+                "unit_3",
+                "unit_4",
+                "unknown"
+              ]
+            },
+            "syllabusTopic": {
+              "type": "string",
+              "enum": [
+                "1.1",
+                "1.2",
+                "2.1",
+                "2.2",
+                "2.3",
+                "2.4",
+                "2.5",
+                "2.6",
+                "2.7",
+                "2.8",
+                "2.9",
+                "2.10",
+                "2.11",
+                "2.12",
+                "3.1",
+                "3.2",
+                "3.3",
+                "3.4",
+                "3.5",
+                "3.6",
+                "3.7",
+                "4.1",
+                "4.2",
+                "4.3",
+                "4.4",
+                "4.5",
+                "4.6",
+                "4.7",
+                "4.8",
+                "4.9",
+                "4.10",
+                "unknown"
+              ]
+            },
+            "topicLabel": {
+              "type": "string"
+            },
+            "classificationConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "markingConfidence": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "diagramExpected": {
+              "type": "boolean"
+            },
+            "diagramSubmitted": {
+              "type": "boolean"
+            },
+            "diagramAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "text_description_only",
+                "submitted_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "workingsExpected": {
+              "type": "boolean"
+            },
+            "workingsSubmitted": {
+              "type": "boolean"
+            },
+            "workingsAssessmentStatus": {
+              "type": "string",
+              "enum": [
+                "not_relevant",
+                "not_submitted",
+                "typed_and_assessed",
+                "image_and_assessed",
+                "unable_to_assess"
+              ]
+            },
+            "attachmentContent": {
+              "type": "string",
+              "enum": [
+                "none",
+                "diagram",
+                "workings",
+                "both",
+                "neither_or_unreadable"
+              ]
+            },
+            "assessableEarned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "REQUIRED integer 0..assessable whenever the MARKING FRAME states an assessable total (use 0 for a very weak answer — never null). null ONLY when the frame says FEEDBACK ONLY."
+            },
+            "markBreakdown": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "awarded",
+                  "available",
+                  "reason"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "enum": [
+                      "Knowledge and terminology",
+                      "Economic analysis",
+                      "Application to context",
+                      "Evaluation and judgment",
+                      "Data use",
+                      "Diagram",
+                      "Calculation method",
+                      "Final answer",
+                      "Policy recommendation",
+                      "Structure and clarity"
+                    ]
+                  },
+                  "awarded": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4
+                    ],
+                    "description": "Integer 0..4 on Aptly's fixed diagnostic scale."
+                  },
+                  "available": {
+                    "type": "integer",
+                    "enum": [
+                      4
+                    ],
+                    "description": "Always exactly 4. OMIT any criterion the question does not test."
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Non-empty, specific to this answer."
+                  }
+                }
+              }
+            },
+            "bandRationale": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Concise observable-feature rationale for the selected best-fit band and position; null for non-best-fit or feedback-only frames."
+            },
+            "limitations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "examinerJudgment": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "task",
+                    "demonstrated",
+                    "materialLimitations",
+                    "selectedBand",
+                    "withinBand",
+                    "diagramEffect",
+                    "summary"
+                  ],
+                  "properties": {
+                    "task": {
+                      "type": "string"
+                    },
+                    "demonstrated": {
+                      "type": "string"
+                    },
+                    "materialLimitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "selectedBand": {
+                      "type": "string"
+                    },
+                    "withinBand": {
+                      "type": "string",
+                      "enum": [
+                        "lower",
+                        "middle",
+                        "upper"
+                      ]
+                    },
+                    "diagramEffect": {
+                      "type": "string",
+                      "enum": [
+                        "integrated",
+                        "limited",
+                        "missing_material",
+                        "not_required",
+                        "unresolved"
+                      ]
+                    },
+                    "summary": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            },
+            "componentEvaluation": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "diagram",
+                    "explanation",
+                    "diagramReason",
+                    "explanationReason",
+                    "explanationIssue",
+                    "incompatibleMechanisms",
+                    "mismatchEvidence",
+                    "labelingDeficiency",
+                    "labelingEvidence",
+                    "rootErrors"
+                  ],
+                  "properties": {
+                    "diagram": {
+                      "type": "integer"
+                    },
+                    "explanation": {
+                      "type": "integer"
+                    },
+                    "diagramReason": {
+                      "type": "string"
+                    },
+                    "explanationReason": {
+                      "type": "string"
+                    },
+                    "explanationIssue": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "missing",
+                        "underdeveloped",
+                        "incorrect"
+                      ],
+                      "description": "Missing = no explanation; underdeveloped = incomplete but not economically false; incorrect = an actual economic contradiction/error. This classifies feedback, never changes marks."
+                    },
+                    "incompatibleMechanisms": {
+                      "type": "boolean"
+                    },
+                    "mismatchEvidence": {
+                      "type": "string"
+                    },
+                    "labelingDeficiency": {
+                      "type": "boolean",
+                      "description": "Only a labeling weakness within a relevant diagram family. False for absent or wrong-family evidence, which is a missing required diagram rather than a label defect."
+                    },
+                    "labelingEvidence": {
+                      "type": "string"
+                    },
+                    "rootErrors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "id",
+                          "diagramEvidence",
+                          "explanationEvidence",
+                          "carriedForward"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "diagramEvidence": {
+                            "type": "string"
+                          },
+                          "explanationEvidence": {
+                            "type": "string"
+                          },
+                          "carriedForward": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 6001,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 5998
+      },
+      "output_tokens": 980,
+      "output_tokens_details": {
+        "reasoning_tokens": 168
+      },
+      "total_tokens": 6981
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

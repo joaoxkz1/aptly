@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Local Supabase generates bundled runtime files here during Docker QA.
     "supabase/.temp/**",
+    "tmp/**",
   ]),
 ]);
 

@@ -12,6 +12,7 @@ import { classifyOperationOutcome } from "./operation-outcome";
  */
 
 export const GRADE_STAGES = [
+  "task_resolution",
   "assessment_policy",
   "practice_context", // fetching the stored Aptly-generated question/source
   "revision_context", // fetching the parent attempt's retained manual source

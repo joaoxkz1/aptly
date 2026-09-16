@@ -1,0 +1,236 @@
+{
+  "number": 8,
+  "caseId": "paper2g-source",
+  "status": "complete",
+  "httpStatus": 200,
+  "question": "Using the supplied information and your knowledge of economics, discuss whether economic growth has improved economic development in Country R. [15 marks]",
+  "submittedAnswer": "Economic growth is an increase in real output; development concerns broader improvements in people's living standards and opportunities. R's 12% rise in real GDP per capita suggests more material resources per person, but the other evidence makes an unconditional development claim doubtful. Higher production can create jobs and tax receipts, and R used the latter for rural school grants. Attendance rising from 72% to 86% indicates improved access to education, increasing capabilities now and potentially human capital and earning opportunities later. This is stronger evidence of development than output growth alone, although attendance does not show educational quality or completion.\n\nDistribution qualifies the gain. Combining the poorest fifth's falling share with output growth, 1.12 times 6/8 equals 0.84. If the income shares and GDP measure correspond and population shares remain comparable, this suggests the group's aggregate share of real income may actually have fallen despite national growth. Since GDP and household disposable income are not identical, this calculation is a warning, not proof of the precise income change. Median disposable income and household survey data are needed. A larger average therefore cannot establish that the poorest have gained.\n\nManufacturing's export share rising from 20% to 35% suggests diversification, potentially reducing vulnerability to one primary commodity and creating more stable employment. Yet shares alone do not establish higher export volumes, domestic value added or good working conditions. Meanwhile the 18% rise in pollution-related admissions signals a cost to health and productivity. Additional output may impose external costs that the GDP figure does not subtract; health spending to treat damage could even add to GDP without improving health relative to the initial position.\n\nThus growth appears to have supported at least one important development gain, rural education, but R's development is uneven. Whether the gains outweigh the losses depends especially on who receives the extra resources and the seriousness and persistence of the health damage. Education can improve future opportunities, whereas worsening poverty and pollution can undermine them. The supplied evidence supports a qualified conclusion of progress in some dimensions, not a general claim that all groups enjoy higher living standards. Household income, education outcomes and health trends would clarify that judgment.",
+  "sourceMaterial": "Original hypothetical stimulus: Between 2021 and 2025, Country R's real GDP per capita rose 12%, while the income share of the poorest fifth fell from 8% to 6%. Rural school attendance rose from 72% to 86%, but urban air-pollution hospital admissions rose 18%. Manufacturing exports now provide 35% of export revenue, compared with 20% in 2021. The government expanded rural school grants using higher tax receipts. No data on median disposable income or life expectancy are supplied.",
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": "not_provided"
+  },
+  "framework": "paper2g_15_mark",
+  "finalContract": {
+    "mode": "holistic_diagram",
+    "part": "g",
+    "level": "unknown",
+    "paper": "2",
+    "scope": "same_question_part",
+    "topic": "unknown",
+    "total": 15,
+    "diagram": null,
+    "version": "economics-diagram-contract-v1",
+    "framework": "paper2g_15_mark",
+    "provenance": "inferred_practice",
+    "diagramRole": "optional_appropriate",
+    "diagramReason": "Diagrams may support this source-based argument. Its highest level can be reached without diagrams when the other descriptors are met.",
+    "sourceRequired": true,
+    "syllabusVersion": "economics-2022-v1",
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "blueprintVersion": "inferred-question-contract-v2"
+  },
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "optional_appropriate",
+    "diagramReason": "Diagrams may support this source-based argument. Its highest level can be reached without diagrams when the other descriptors are met.",
+    "provenance": "inferred_practice",
+    "framework": "paper2g_15_mark",
+    "paper": "2",
+    "part": "g",
+    "total": 15,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-question-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": true,
+    "scope": "same_question_part"
+  },
+  "stages": [
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 23018,
+      "usage": {
+        "input_tokens": 5984,
+        "input_tokens_details": {
+          "cache_write_tokens": 5981,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1313,
+        "output_tokens_details": {
+          "reasoning_tokens": 465
+        },
+        "total_tokens": 7297
+      },
+      "estimatedUSD": 0.0307145,
+      "structuredOutput": {
+        "strengths": [
+          "Uses the source precisely: GDP per capita, school attendance, income-share, export-share and pollution-admissions figures are applied to economic arguments rather than merely repeated.",
+          "Develops strong, accurate analysis of how growth can fund education and human capital, while distributional inequality and negative externalities can limit development.",
+          "Reaches a well-supported, qualified judgment that distinguishes progress in particular dimensions from an overall improvement for all groups."
+        ],
+        "improvements": [],
+        "mistakes": [],
+        "examinerComment": "Estimated practice mark: this is a highly focused discussion. It distinguishes growth from multidimensional development, applies the evidence carefully, including appropriately qualified assumptions behind the income-share calculation, and weighs education gains against inequality and health costs. The conclusion is nuanced and directly answers whether growth has improved development in Country R.",
+        "studyNext": "Optional extension (not needed for credit): practise applying alternative development indicators, such as HDI components, multidimensional poverty measures and genuine-progress measures, to reinforce why GDP per capita alone is incomplete.",
+        "assessmentFormat": "paper_2_g_extended_response",
+        "paper": "paper_2",
+        "questionPart": "g",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "economic_analysis",
+          "data_interpretation",
+          "application",
+          "evaluation"
+        ],
+        "commandTerm": "discuss",
+        "commandTermLabel": "Discuss",
+        "syllabusUnit": "unit_4",
+        "syllabusTopic": "4.8",
+        "topicLabel": "Measuring development",
+        "classificationConfidence": "high",
+        "markingConfidence": "high",
+        "diagramExpected": false,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_submitted",
+        "workingsExpected": false,
+        "workingsSubmitted": true,
+        "workingsAssessmentStatus": "typed_and_assessed",
+        "attachmentContent": "none",
+        "assessableEarned": 15,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Accurately distinguishes economic growth from economic development and uses concepts including real GDP per capita, human capital, income distribution, external costs and disposable income precisely."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Explains clear mechanisms from higher output and tax receipts to school grants, attendance, capabilities and future earnings, while analysing inequality and pollution as limits to development."
+          },
+          {
+            "label": "Application to context",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Integrates all major source evidence into the reasoning, including the 12% GDP-per-capita increase, 72% to 86% attendance increase, 8% to 6% poorest-quintile share change, export shift and 18% admissions increase."
+          },
+          {
+            "label": "Data use",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Uses data analytically, notably the conditional 1.12 × 6/8 calculation and the explanation of why it is suggestive rather than conclusive evidence about poorer households' incomes."
+          },
+          {
+            "label": "Evaluation and judgment",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Evaluates the limits of GDP, data gaps, causation and the relative importance of distribution and persistent health damage, then gives a balanced, supported final judgment."
+          },
+          {
+            "label": "Structure and clarity",
+            "awarded": 4,
+            "available": 4,
+            "reason": "The response is coherent and logically sequenced, moving from potential benefits to qualifications before reaching a direct conclusion."
+          }
+        ],
+        "bandRationale": "Top-band, upper position: the answer provides thorough and accurate economic reasoning, develops arguments directly from the supplied evidence, evaluates important limitations and reaches a clearly qualified, supported judgment. It fully addresses the question without needing a diagram.",
+        "limitations": [],
+        "examinerJudgment": {
+          "task": "Discuss, using the supplied information and economic knowledge, whether economic growth has improved economic development in Country R.",
+          "demonstrated": "Thorough source-integrated analysis of education and human-capital gains, income distribution, export diversification and pollution externalities, with careful treatment of evidence limits and a qualified final judgment.",
+          "materialLimitations": [],
+          "selectedBand": "13-15",
+          "withinBand": "upper",
+          "diagramEffect": "not_required",
+          "summary": "A comprehensive, balanced and well-evidenced discussion that securely meets the highest-band descriptors."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 15,
+    "finalMark": 15,
+    "componentDecision": null,
+    "finalBand": "13-15",
+    "withinBand": "upper",
+    "diagnostics": [
+      {
+        "label": "Knowledge and terminology",
+        "reason": "Accurately distinguishes economic growth from economic development and uses concepts including real GDP per capita, human capital, income distribution, external costs and disposable income precisely.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Economic analysis",
+        "reason": "Explains clear mechanisms from higher output and tax receipts to school grants, attendance, capabilities and future earnings, while analysing inequality and pollution as limits to development.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Application to context",
+        "reason": "Integrates all major source evidence into the reasoning, including the 12% GDP-per-capita increase, 72% to 86% attendance increase, 8% to 6% poorest-quintile share change, export shift and 18% admissions increase.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Data use",
+        "reason": "Uses data analytically, notably the conditional 1.12 × 6/8 calculation and the explanation of why it is suggestive rather than conclusive evidence about poorer households' incomes.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Evaluation and judgment",
+        "reason": "Evaluates the limits of GDP, data gaps, causation and the relative importance of distribution and persistent health damage, then gives a balanced, supported final judgment.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Structure and clarity",
+        "reason": "The response is coherent and logically sequenced, moving from potential benefits to qualifications before reaching a direct conclusion.",
+        "awarded": 4,
+        "available": 4
+      }
+    ],
+    "feedback": {
+      "band": "Excellent 7",
+      "score": 7,
+      "mistakes": [],
+      "strengths": [
+        "Uses the source precisely: GDP per capita, school attendance, income-share, export-share and pollution-admissions figures are applied to economic arguments rather than merely repeated.",
+        "Develops strong, accurate analysis of how growth can fund education and human capital, while distributional inequality and negative externalities can limit development.",
+        "Reaches a well-supported, qualified judgment that distinguishes progress in particular dimensions from an overall improvement for all groups."
+      ],
+      "studyNext": "Optional extension (not needed for credit): practise applying alternative development indicators, such as HDI components, multidimensional poverty measures and genuine-progress measures, to reinforce why GDP per capita alone is incomplete.",
+      "improvements": [],
+      "examinerComment": "Estimated practice mark: this is a highly focused discussion. It distinguishes growth from multidimensional development, applies the evidence carefully, including appropriately qualified assumptions behind the income-share calculation, and weighs education gains against inequality and health costs. The conclusion is nuanced and directly answers whether growth has improved development in Country R."
+    }
+  },
+  "judgment": {
+    "task": "Discuss, using the supplied information and economic knowledge, whether economic growth has improved economic development in Country R.",
+    "summary": "A comprehensive, balanced and well-evidenced discussion that securely meets the highest-band descriptors.",
+    "withinBand": "upper",
+    "demonstrated": "Thorough source-integrated analysis of education and human-capital gains, income distribution, export diversification and pollution externalities, with careful treatment of evidence limits and a qualified final judgment.",
+    "selectedBand": "13-15",
+    "diagramEffect": "not_required",
+    "materialLimitations": []
+  },
+  "latencyMs": 23115,
+  "estimatedUSD": 0.0307145,
+  "engineeringReview": "Source-dependent framework must remain P2(g); inspect integrated stimulus reasoning, evidence-qualified calculation and conditional judgment. No generic P1 example or diagram gate is appropriate.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

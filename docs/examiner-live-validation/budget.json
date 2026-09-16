@@ -1,0 +1,129 @@
+{
+  "authorizedAt": "2026-09-16T17:24:31.488Z",
+  "maximumStarted": 10,
+  "counting": "Every started slot, even incomplete, failed or undispatched; no SDK retries",
+  "attempts": [
+    {
+      "number": 1,
+      "caseId": "pollution-omitted",
+      "operationKey": "330097a1-408f-4d6c-a289-b4b647ce9bbe",
+      "folder": "01-pollution-omitted",
+      "startedAt": "2026-09-16T17:25:11.641Z",
+      "status": "incomplete",
+      "httpStatus": 502,
+      "finalMark": null,
+      "total": 10,
+      "latencyMs": 45325
+    },
+    {
+      "number": 2,
+      "caseId": "aggregate-integrated",
+      "operationKey": "7bd72511-0d80-488e-82e3-651277c773a3",
+      "folder": "02-aggregate-integrated",
+      "startedAt": "2026-09-16T17:26:57.377Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 10,
+      "total": 10,
+      "latencyMs": 30590
+    },
+    {
+      "number": 3,
+      "caseId": "ped-determinants",
+      "operationKey": "dfc81e0f-0350-480d-aed9-09cb639b7983",
+      "folder": "03-ped-determinants",
+      "startedAt": "2026-09-16T17:27:59.019Z",
+      "status": "incomplete",
+      "httpStatus": 502,
+      "finalMark": null,
+      "total": 10,
+      "latencyMs": 2527
+    },
+    {
+      "number": 4,
+      "caseId": "ped-determinants",
+      "operationKey": "50619abd-4234-48e2-9eab-a5e88314d9ca",
+      "folder": "04-ped-determinants",
+      "startedAt": "2026-09-16T17:29:15.987Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 10,
+      "total": 10,
+      "latencyMs": 15123
+    },
+    {
+      "number": 5,
+      "caseId": "evaluation-generic",
+      "operationKey": "418aa04c-1cbc-438b-a55e-63ce88859cbb",
+      "folder": "05-evaluation-generic",
+      "startedAt": "2026-09-16T17:30:14.390Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 8,
+      "total": 15,
+      "latencyMs": 18850
+    },
+    {
+      "number": 6,
+      "caseId": "evaluation-integrated",
+      "operationKey": "f1fbd8fd-7cda-4467-865f-4fc45ac6b721",
+      "folder": "06-evaluation-integrated",
+      "startedAt": "2026-09-16T17:31:31.347Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 15,
+      "total": 15,
+      "latencyMs": 16743
+    },
+    {
+      "number": 7,
+      "caseId": "four-mark-mismatch",
+      "operationKey": "6f09c8d1-4d07-42b3-b23b-8013bf27eaa3",
+      "folder": "07-four-mark-mismatch",
+      "startedAt": "2026-09-16T17:32:51.513Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 2,
+      "total": 4,
+      "latencyMs": 26380
+    },
+    {
+      "number": 8,
+      "caseId": "paper2g-source",
+      "operationKey": "ef5005cb-958d-400f-a420-8f08b06bf810",
+      "folder": "08-paper2g-source",
+      "startedAt": "2026-09-16T17:34:28.876Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 15,
+      "total": 15,
+      "latencyMs": 23115
+    },
+    {
+      "number": 9,
+      "caseId": "ambiguous-task",
+      "operationKey": "17d98c86-2356-479e-b2a5-3ef786f37920",
+      "folder": "09-ambiguous-task",
+      "startedAt": "2026-09-16T17:35:34.853Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 2,
+      "total": 10,
+      "latencyMs": 18200
+    },
+    {
+      "number": 10,
+      "caseId": "pollution-omitted",
+      "operationKey": "314292bd-5517-4efa-a2a8-5ae202a3aad1",
+      "folder": "10-pollution-omitted",
+      "startedAt": "2026-09-16T17:37:59.972Z",
+      "status": "complete",
+      "httpStatus": 200,
+      "finalMark": 8,
+      "total": 10,
+      "latencyMs": 23963
+    }
+  ],
+  "closedAt": "2026-09-16T17:40:31.521Z",
+  "closure": "Absolute ten-attempt authorization exhausted: eight complete, two failures retained; no further provider assessments authorized in this run."
+}

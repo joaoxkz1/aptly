@@ -1,0 +1,176 @@
+{
+  "maximumStarted": 10,
+  "started": 10,
+  "completed": 8,
+  "estimatedUSD": 0.2832371,
+  "pricing": {
+    "retrieved": "2026-09-16",
+    "ratesPerMillion": {
+      "gpt-5.6-terra": {
+        "input": 2,
+        "cached": 0.2,
+        "write": 2.5,
+        "output": 12
+      },
+      "gpt-5.4": {
+        "input": 2.5,
+        "cached": 0.25,
+        "write": 2.5,
+        "output": 15
+      }
+    },
+    "sources": [
+      "https://developers.openai.com/api/docs/pricing",
+      "https://developers.openai.com/api/docs/models/gpt-5.4"
+    ],
+    "basis": "Standard short-context list rates, including recorded cache writes and cached reads; estimate, not an invoice; no tax or account-specific credits. All response output tokens include reasoning."
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "caseId": "pollution-omitted",
+      "status": "incomplete",
+      "mark": null,
+      "total": 10,
+      "band": null,
+      "role": null,
+      "latencyMs": 45325,
+      "estimatedUSD": 0.026089,
+      "providerStages": [
+        "grader"
+      ]
+    },
+    {
+      "number": 2,
+      "caseId": "aggregate-integrated",
+      "status": "complete",
+      "mark": 10,
+      "total": 10,
+      "band": "9-10",
+      "role": "necessary_for_task",
+      "latencyMs": 30590,
+      "estimatedUSD": 0.046163499999999996,
+      "providerStages": [
+        "observer",
+        "grader"
+      ]
+    },
+    {
+      "number": 3,
+      "caseId": "ped-determinants",
+      "status": "incomplete",
+      "mark": null,
+      "total": 10,
+      "band": null,
+      "role": null,
+      "latencyMs": 2527,
+      "estimatedUSD": 0.0082835,
+      "providerStages": [
+        "task-resolution"
+      ]
+    },
+    {
+      "number": 4,
+      "caseId": "ped-determinants",
+      "status": "complete",
+      "mark": 10,
+      "total": 10,
+      "band": "9-10",
+      "role": "appropriate_support",
+      "latencyMs": 15123,
+      "estimatedUSD": 0.02556,
+      "providerStages": [
+        "task-resolution",
+        "grader"
+      ]
+    },
+    {
+      "number": 5,
+      "caseId": "evaluation-generic",
+      "status": "complete",
+      "mark": 8,
+      "total": 15,
+      "band": "7-9",
+      "role": "appropriate_support",
+      "latencyMs": 18850,
+      "estimatedUSD": 0.0295939,
+      "providerStages": [
+        "task-resolution",
+        "grader"
+      ]
+    },
+    {
+      "number": 6,
+      "caseId": "evaluation-integrated",
+      "status": "complete",
+      "mark": 15,
+      "total": 15,
+      "band": "13-15",
+      "role": "appropriate_support",
+      "latencyMs": 16743,
+      "estimatedUSD": 0.027571699999999998,
+      "providerStages": [
+        "task-resolution",
+        "grader"
+      ]
+    },
+    {
+      "number": 7,
+      "caseId": "four-mark-mismatch",
+      "status": "complete",
+      "mark": 2,
+      "total": 4,
+      "band": null,
+      "role": "required_explicitly",
+      "latencyMs": 26380,
+      "estimatedUSD": 0.0500505,
+      "providerStages": [
+        "observer",
+        "grader"
+      ]
+    },
+    {
+      "number": 8,
+      "caseId": "paper2g-source",
+      "status": "complete",
+      "mark": 15,
+      "total": 15,
+      "band": "13-15",
+      "role": "optional_appropriate",
+      "latencyMs": 23115,
+      "estimatedUSD": 0.0307145,
+      "providerStages": [
+        "grader"
+      ]
+    },
+    {
+      "number": 9,
+      "caseId": "ambiguous-task",
+      "status": "complete",
+      "mark": 2,
+      "total": 10,
+      "band": "1-2",
+      "role": "unresolved",
+      "latencyMs": 18200,
+      "estimatedUSD": 0.026244899999999998,
+      "providerStages": [
+        "task-resolution",
+        "grader"
+      ]
+    },
+    {
+      "number": 10,
+      "caseId": "pollution-omitted",
+      "status": "complete",
+      "mark": 8,
+      "total": 10,
+      "band": "7-8",
+      "role": "necessary_for_task",
+      "latencyMs": 23963,
+      "estimatedUSD": 0.0129656,
+      "providerStages": [
+        "grader"
+      ]
+    }
+  ]
+}

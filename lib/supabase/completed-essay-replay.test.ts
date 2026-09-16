@@ -33,6 +33,11 @@ describe("completed manual essay replay across contract versions", () => {
     expect((await completedEssayReplay("owner", "key", request, "image-original")).kind).toBe("replay");
     expect(snapshot.observations?.summary).toBe("Frozen actual observations");
   });
+  it("preserves pre-workflow four-mark replay as well as essays", async () => {
+    const snapshot = setup(); snapshot.contract.mode = "four_mark_diagram";
+    mock.rows[1] = { request_fingerprint: requestFingerprint({ request, snapshot }) };
+    expect((await completedEssayReplay("owner", "key", request, null)).kind).toBe("replay");
+  });
   it.each([null, "different-image"])("rejects changed image bytes/presence %s", async image => {
     setup(true);
     expect(await completedEssayReplay("owner", "key", request, image)).toEqual({ kind: "conflict" });
@@ -47,5 +52,15 @@ describe("completed manual essay replay across contract versions", () => {
     mock.rows.push(null);
     expect(await completedEssayReplay("owner", "key", request, null)).toEqual({ kind: "none" });
     expect(mock.find).not.toHaveBeenCalled();
+  });
+  it("replays a semantic v5 contract using the original reservation binding without rerunning interpretation", async () => {
+    const initialContract = { mode: "holistic_diagram", diagramRole: "unresolved" };
+    const initial = { userId: "owner", operationIdentity: "key", contract: initialContract, contractHash: requestFingerprint(initialContract), attachments: [], observations: null, examinerWorkflowVersion: "examiner-workflow-2026-v1" };
+    const resolvedContract = { ...initialContract, diagramRole: "appropriate_support" };
+    const snapshot = { ...initial, contract: resolvedContract, contractHash: requestFingerprint(resolvedContract), resolutionInputContract: initialContract, examinerJudgment: { summary: "Frozen judgment" } };
+    const before = structuredClone(snapshot);
+    mock.rows.push({ snapshot, attempt_id: "saved" }, { request_fingerprint: requestFingerprint({ request, snapshot: initial }) });
+    expect((await completedEssayReplay("owner", "key", request, null)).kind).toBe("replay");
+    expect(snapshot).toEqual(before);
   });
 });

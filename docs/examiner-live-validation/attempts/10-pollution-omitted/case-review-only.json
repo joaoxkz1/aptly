@@ -1,0 +1,18 @@
+{
+  "caseId": "pollution-omitted",
+  "modelInput": {
+    "question": "Explain how pollution from production can cause a market failure. [10 marks]",
+    "answer": "Market failure occurs when the market allocation does not maximize social surplus. Suppose a cement producer releases dust that damages nearby residents' health. The producer pays for labour, energy and materials, but without liability does not pay all the additional health costs it imposes on third parties. These are external costs of production. At each output, marginal social cost equals marginal private cost plus marginal external cost, so MSC exceeds MPC. Assuming no consumption externality, marginal social and private benefit coincide. Profit-seeking firms and buyers respond to the private supply and demand incentives, giving an output Qm where MPC equals MPB. The socially efficient output Qs instead equates MSC and MSB. Because social cost exceeds private cost, Qs is below Qm. The units between Qs and Qm cost society more at the margin than the benefit they create. Their production therefore reduces social surplus, creating a welfare loss equal to the excess of MSC over MSB across those units. Resources are overallocated to cement relative to the social optimum. The failure arises from unpriced third-party harm, not simply because all pollution or all production is undesirable: some output can still be socially worthwhile.",
+    "framework": "paper1a_10_mark"
+  },
+  "artifacts": [],
+  "reviewOnly": {
+    "sources": [
+      "E26:P1a",
+      "M23-P1-SL-TZ1:Q1a"
+    ],
+    "review": "Developed causal analysis deserves credit. Missing necessary diagram must enter best fit, comment and next action; no universal ceiling.",
+    "officialMark": null,
+    "forecastKind": "qualitative engineering hypothesis; not examiner calibration"
+  }
+}

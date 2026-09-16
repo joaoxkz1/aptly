@@ -1,0 +1,168 @@
+{
+  "httpStatus": 200,
+  "latencyMs": 11244,
+  "requestId": "req_b53c5829496e49b8bc9f261c003129c6",
+  "response": {
+    "id": "resp_0b8030aed0a11597016aaad161cab087d2ac5d267549c4f457",
+    "object": "response",
+    "created_at": 1789579617,
+    "status": "completed",
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1789579628,
+    "error": null,
+    "frequency_penalty": 0,
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 4400,
+    "max_tool_calls": null,
+    "model": "gpt-5.4-2026-03-05",
+    "moderation": null,
+    "output": [
+      {
+        "id": "rs_0b8030aed0a11597016aaad163609087d285f6804e3a3dfeb5",
+        "type": "reasoning",
+        "content": [],
+        "encrypted_content": "gAAAAABqqtFsK79TRGLBsPKzbXrAtxC8aXUZCfrj_GGCDsg7INIk1K1v7ZXQznRhpZvah695vjMlSOuEBND_kP26wkG-0MvdoxY358gxwOmqVdoCMFiPs7KTkS9yWMFUneu9VxnkBFPgKDDbfVDmqD8HohKlffbrrK5nFIk-SanmUv3dRt-dm2FBwY_e8UUYFjy18tVH0sBqIVM_h8FQzjODRm5YKko-jyVpXxbWfV1MIRYmBQICHnMS1ngtXPOx_rFAEaBwE78YAbV30VeSFxpb0R_oLADyINFeNA9qh_1nU6rTea0-wOKCddY4j3HNCHyEdv380HL0ioYbwqRgxC1p_UjeRRFTaSOR3aWtIjXQ1l_7E8GTQs2JwcULG79trB7EEAPLHs3xFZx5qHsGMA3rHqMjM20bDwlzv_Ix7FiYcynTebdySdIoqSB6QUTYNIertt3HPPUQMa1eQZN0j0Su07ZSjogPNiFDzRsiDMSIDofwyGoT8L3HfTvDTFETvR2p2U5Z_jGzFPZ77uCY_wKKCf1ilkFKJWY_crVBkbFVjYEzyK_gqYzGEZ1-UBreOvdGArkB_l1KLdsG35b4-awGn5wcNaw_cEoD5Chk1COYRSO-YCkGepvUvWE-KrdAFW92ZYusbxIUB8NethB9V91Qffc4VfuE_HgB4Phi4lltK90e7RAa4ZcE1tTutyEMv1brnvdj0WwVn5toK13jkhJBvd2TCAjLyPFAHRj_bJWXYK6SHYcCIXv0942nR4s3XWdiViWpyDj_nf0TcHsLHL4lDexEbgKq9B6RQrhtno6EK2GuuvtDQgq1EnYJVPlWWjH4H6mF2juWLPJuDftsOqtoXeWJMxUA4OP0EUhyXqdt8gNdKolAt8BiCeCNRZ-k5mqllhvCxGXa7lJjej47a8gE28WDRIqjs_6dT3BztzTCxL75wS9SUvweYReVzovaM-K3cC-9yVa2gUnarCDUToaXBwWaUp52djzUDIUr_amoMG6_Xh0bMIOGaElZBtbaChUfrn-6DUfUe6eoGO1jJglB_-78xd_IyvO1QcLpprSzTw095ARKBLWYhNJ3fGAKD8SNCNopfoF3MFLjPrWxE6OKncDRbqhGwX8-HnlevL4udbd4VauPj2AGmlfcJ6F0IvY5XKFiKxcUT-PhiqA3MnS61dqf1DiO9GJchaPQqQAjEKM00FDrTH64TwGQys4QVau9pNsf-EcgonuOSk6HewVCDSXBmIksN9BWsn2YxpsA-PDh4znPPNZFlPb5120_HEYHrIRZOulxoxO1r2pa_dDLgPK6k0FoZnXnGn-PILElDI9YtfdPvrAFM6HnwNC-7dSJxKuF_renDv8rbQMVTujqn6v1_tV0B1E_3nIlRL-NHPECenE2TwdxdpTl72C7I1PJ0MgLshG6Eza82YXwfN3rKt7AqW2gjKvs0CqAgPOKhsq5c99c_8UsKwB6K5tsNYMm8Hifjhe1aqoOPHmVOFpQ5k-xrZ5CC4IdPa3oTDgUHEkbJyXMd7boEqnccKuQIhJSq_TofEkwXlCpal_0all43PrNJKd78gObFfP5Lh2x8dWHKaGokL5mGPeFOp75hgewhNeE0451vgp-jKc4AJ1ElLCm0jG_DQvZMSKbMgLyDEy9_lKZo1Kl_2e65eAEWN5jyBzi96HhE7h8k4VlpIL4dBY38p_x90Uznx24MG5hwmgUTEe4LQfcg-Ybw4SZdqCsQa8DjUWIYkD7_mm-ur68FeAt0kwhELmSLidHUGDht9Hxct7RJLhfRSWeBA2xpK0gzJ8BW3Klt26ghe1D9z-hWEhKJkT38EEhHvjEvXP7dSOg6J_O7cCJWpjCiWNQDlQRbgc2w-JL1cdLmU4nF0sRuNnCPlR32sYDpXsCibcDzjqOKBGbCGSFXbb22ZlfSgvv7uR7Xpidgp9S1THBdb1LNnkEGn7lKr7somk85_eztoI2xNCXfBHfB-VhDwhg6LMc2g_wZHuZ4fM8n0b3OuTXyo6khcVgGEp8Lc3TnT7Gl3pDclLvNY71eS63PA7DaHZJi0OSU4iMQYGpe_4mZGFINqbeOFAltGBfKeRzjxLGx76NWS-CSkwu2tA_ygBigW4cGo-ojbdbLstxLk5iBixcmVw8lpQt5JLJu7u7pFmzzfxdtzGIJ1eoLW5jzyLpIEEAY3ePjFMhz9R5h2xjnyqvineKtl3p5js9i72XA9z-pKMU19yyRt7X8546GwVuz_fEy545DvTmNhnRT1U5ARaCLNyidrXk9pv8PkcJ-GclKDqys-RTUH8SE7np7RBD7xGWJW-vKm94wrhYsUAr4eiyCDZ2Oyh7sG5tQUAJsEirjXf4zKj8g1hA-0fYdRpk099xhJgDc9FJMa4vNZLH0oqYceNqUrF5QNAT3pfg22wCec1HIDXOTmFy99no-27goOzeekA5SumHdd6GL7LBzcKW038cLkVn4WfaGIhFWKjLpuauyF43yhcZzeVcPuCPrlXc-SdJrt_x_-HqU5esVkgTN0hRbrmHH0vsV2rgcbde37z-IaovKTlVEpETwE2KS9DEURzSyyhSIIlf4nORACIlgyy5AN_7IZ_N6fuTpQN35GUdKmBM7fHp5TwWYBQ1A_ADp77D-QYwiIj4lduO_M7YYcQQs4xX2ArMnIMtlhAGdfX0GZs037DZyT1BqNEw5styKMHoCnwPTKfk5vxzAMx1Nk2ibaioHkxWmNL1JZ638szsTSh69-6FOYaUntTl51iUY_xuf94utnK08z968YFN3ZFldMzTQz6lfKmoDCb7iW95ot6aE1olrR1gVAO2Wl5rqMXW2m8hPcyfI7i1qoRQS1EZd3e6nzGNgfaQ60ve9Mm4ZTwKKqWqdwH71o0suJBAlcqPGyEi5EHsnB5muiXShsRcqM0ZmTT0QhczzBOJLYmimiESuNExQRD-dS5EoSTwhP7A36Zh89Jcc4GNql_opow5JYYL07N3q1P046VhaDvTlPG0dRaw1ezKiXI9WWsonGnn6fsbkRnBQlcwH5tXex94kemsnglsobROXjp8NSeoPy37rGz2EoGjc6aSWdswPPpHjKjmo-jGplR_dWuoF818vvjGiqS2pau4Nxj6ryNmrcvBzIg6RQ_L6JgnCi73ja1KdYSp4cfXYIapSsVKDCQrMrlY8jJhw5O2ih-IEJ1ZNN-TDfLXQ_FokFd7LZVILLsZlItjWCQHWBWJ38KSPzHbI9v8TdGY-KKwr5fa6NQJw2FnvWYwvZXTmX2kTZfVsFZh_aXL3FuZt6SXo3FbruK1KHBiHEyhVK-ePCn4O_BOzbTThxsgmIKej7Ttm8q3IhfTHR5yai8c9Wr6ffM49A26Ci8bX-0ySSiXwE-Wf4UXi64Eu4VgaByRp-WruN0WI71iB5BOdNQXLL6gpx6Gij6pr_cbIKoYeG0WUfi5Awc3UVLj4CNROiJAiFlZ9f0qzXOn_4ozBxWwAROdyAZXLcaiYBIgEKv0QwADDKPSi5XujU4B6DaVK4K2qUQH69-RbeXfLwAe9lddVbPbUUdxMDuuXSUOp7IKFS3Ady2uUBpAuCk9PWnmqYyX7IYRNvWkP9fLP37XvDPMPYNoWE1m__msM2lgH7Vov0r4D31HTx46P9HHFMQ9biPWPHtto_Zv9dtaGih5LN40CJr7L5BxunJjpQ-4Pqfc09iTlUMe8tccPd6zpQ_QgTd6QfTOzU91qMQoBs4yYL8VRgYl2qufxqw5plKhuU6Q63fthNlnkOF1KMdyJT-plDKjr4IQMZJ4G0fK5V_UtywSnEzuDqns3ZwurbdSyWlt1cPgT6J6UpZX8TsQo3b-A0l71UjTg5oD_lG4cOPNo0ftG1a9jjx1BTuxxHOlnWW4xvtVohXwL8m19w7gP8-0INc5k4E9SxDITSRLto00iX0NIXIZavVP1Vuetql2ZSs_elPqyRRGLaeVYONFDqnv5paDK0rz46nuWzmP5Qh4mKPdHtGNjTNKA9fvb-EM19xK1XqVATiE92TpFdeuNMekK8D5kxdjk7rXPjTLqGQeOKVCCuE-g4G4fW-a_tTwfQoVfL3aofJNgKMoujny5WRznkd8YNs4eStoH87B8oKJhDE10AoABEDWZtZDETK_4XT_jVOyOKmzrARtFpKiUS8SVirYZsJhYHI44-OseNVoqQZitiK6q6ugGCvw_9DRm-U-eceTA0o-P7_OcJ17HS-Q-Dt9wkZc_CXTYVdpwp67",
+        "summary": []
+      },
+      {
+        "id": "msg_0b8030aed0a11597016aaad168d96c87d2b4eafa8f3350c38c",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "{\"state\":\"usable\",\"essentialEvidenceReadable\":true,\"studentRegionCertain\":true,\"observations\":[{\"region\":\"left and bottom axes\",\"observation\":\"The vertical axis is labelled 'Average price level' and the horizontal axis is labelled 'Real GDP'.\",\"interpretation\":\"This is an AD/AS-style macro diagram using price level and real output axes.\",\"uncertain\":false},{\"region\":\"centre to right\",\"observation\":\"One upward-sloping curve is labelled 'SRAS'.\",\"interpretation\":\"The student is showing short-run aggregate supply.\",\"uncertain\":false},{\"region\":\"centre to lower right\",\"observation\":\"Two downward-sloping curves are drawn and labelled 'AD1' and 'AD2'. AD2 lies to the left of AD1.\",\"interpretation\":\"This shows aggregate demand shifting leftward from AD1 to AD2.\",\"uncertain\":false},{\"region\":\"upper left of centre\",\"observation\":\"A horizontal arrow points left near the two downward-sloping curves.\",\"interpretation\":\"The arrow reinforces a leftward shift of aggregate demand, though the shift is already visible from the positions of AD1 and AD2.\",\"uncertain\":false},{\"region\":\"centre-right intersection\",\"observation\":\"The intersection of SRAS with AD1 is marked 'E1'. Dashed guides from this point align with 'PL1' on the vertical axis and 'Y1' on the horizontal axis.\",\"interpretation\":\"E1 is the initial equilibrium with higher price level and higher real output.\",\"uncertain\":false},{\"region\":\"centre-left intersection\",\"observation\":\"The intersection of SRAS with AD2 is marked 'E2'. Dashed guides from this point align with 'PL2' on the vertical axis and 'Y2' on the horizontal axis.\",\"interpretation\":\"E2 is the new equilibrium after the AD shift.\",\"uncertain\":false},{\"region\":\"left axis and bottom axis\",\"observation\":\"PL2 is drawn below PL1, and Y2 is drawn to the left of Y1.\",\"interpretation\":\"The new equilibrium shown has a lower price level and lower real GDP than the initial equilibrium.\",\"uncertain\":false}],\"summary\":\"A clear, relevant AD-AS diagram is present. It shows aggregate demand shifting left from AD1 to AD2 against SRAS, moving equilibrium from E1 to E2, with both price level falling (PL1 to PL2) and real output falling (Y1 to Y2).\"}"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0,
+    "previous_response_id": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "medium",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1,
+    "text": {
+      "format": {
+        "type": "json_schema",
+        "description": null,
+        "name": "aptly_assessed_diagram_observations",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "essentialEvidenceReadable",
+            "studentRegionCertain",
+            "observations",
+            "summary"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "usable",
+                "partially_readable",
+                "unreadable_ambiguous",
+                "no_relevant_diagram"
+              ]
+            },
+            "essentialEvidenceReadable": {
+              "type": "boolean",
+              "description": "Whether the photo is readable enough to judge the submitted evidence, including to establish that no relevant diagram exists. This is readability, not correctness or completeness. Must be true for no_relevant_diagram; false when blur/occlusion prevents the essential judgment."
+            },
+            "studentRegionCertain": {
+              "type": "boolean"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "region",
+                  "observation",
+                  "interpretation",
+                  "uncertain"
+                ],
+                "properties": {
+                  "region": {
+                    "type": "string"
+                  },
+                  "observation": {
+                    "type": "string"
+                  },
+                  "interpretation": {
+                    "type": "string"
+                  },
+                  "uncertain": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "summary": {
+              "type": "string"
+            }
+          }
+        },
+        "strict": true
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 2282,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 966,
+      "output_tokens_details": {
+        "reasoning_tokens": 457
+      },
+      "total_tokens": 3248
+    },
+    "user": null,
+    "metadata": {}
+  }
+}

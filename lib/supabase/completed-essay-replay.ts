@@ -2,10 +2,11 @@ import "server-only";
 import { getAdminClient } from "./admin";
 import { findAttemptById } from "./server-authority";
 import { requestFingerprint } from "@/lib/ai/request-integrity";
-import type { AssessmentSnapshot } from "@/lib/assessment/assessment-snapshot";
+import { reservationSnapshot, type AssessmentSnapshot } from "@/lib/assessment/assessment-snapshot";
 import type { Attempt } from "@/lib/types";
 
-/** Completed requests keep their frozen contract across resolver upgrades. */
+/** Completed combined requests keep their frozen contract across workflow upgrades.
+ * The historical export name is retained for compatibility with route mocks. */
 export async function completedEssayReplay(userId: string, key: string, request: Record<string, unknown>, imageHash: string | null): Promise<
   { kind: "none" } | { kind: "conflict" } | { kind: "replay"; attempt: Attempt }
 > {
@@ -15,15 +16,17 @@ export async function completedEssayReplay(userId: string, key: string, request:
   if (error) throw error;
   if (!data) return { kind: "none" };
   const stored = data.snapshot as AssessmentSnapshot;
-  if (stored.contract.mode !== "holistic_diagram") return { kind: "none" };
+  if (!["holistic_diagram", "four_mark_diagram", "four_mark_written"].includes(stored.contract.mode)) return { kind: "none" };
   const { data: reservation, error: reservationError } = await admin.from("ai_usage_reservations")
     .select("request_fingerprint").eq("user_id", userId).eq("idempotency_key", key).eq("capability", "grade").maybeSingle();
   if (reservationError) throw reservationError;
   // The fingerprint was captured before observation, but after artifact hashing.
   const incomingHashes = imageHash ? [imageHash] : [];
   const savedHashes = stored.attachments.map(attachment => attachment.contentHash);
+  const reserved = reservationSnapshot(stored);
+  if (stored.resolutionInputContract) reserved.contractHash = requestFingerprint(reserved.contract);
   if (!reservation || JSON.stringify(incomingHashes) !== JSON.stringify(savedHashes) ||
-      requestFingerprint({ request, snapshot: { ...stored, observations: null } }) !== reservation.request_fingerprint) {
+      requestFingerprint({ request, snapshot: reserved }) !== reservation.request_fingerprint) {
     return { kind: "conflict" };
   }
   const attempt = await findAttemptById(userId, data.attempt_id);

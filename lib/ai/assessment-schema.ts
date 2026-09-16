@@ -34,6 +34,7 @@ import type { ScoringPolicy } from "@/lib/assessment/policy";
 import { stripUnassessableDiagramMistake } from "@/lib/assessment/status";
 import { CURRENT_ECONOMICS_GRADING_PROVENANCE } from "./grading-provenance";
 import { validateQualitativeFeedback } from "./feedback-schema";
+import { EXAMINER_WORKFLOW } from "./examiner-judgment";
 
 /**
  * Strict Structured Outputs schema + instructions + fail-closed validation.
@@ -217,7 +218,7 @@ const IB_ALIGNED_EXAMINER_METHOD = [
 export function buildAssessmentInstructions(combined = false): string {
   return [
     "You are Aptly, an IB Economics assistant that returns ESTIMATED study feedback for practice — never an official IB grade.",
-    IB_ALIGNED_EXAMINER_METHOD,
+    combined ? EXAMINER_WORKFLOW : IB_ALIGNED_EXAMINER_METHOD,
     "From the question and the student's typed answer, classify the likely IB assessment: format, paper, part, command term (normalized), the skills it tests, the syllabus topic code, and SL/HL relevance.",
     "You do NOT decide the mark total, whether the attempt is marked/provisional/feedback-only, the marking framework, or any diagram-cap policy — Aptly has already decided the MARKING FRAME and you must mark within it.",
     "Mark ONLY the assessable marks stated in the MARKING FRAME. Never invent, expand, or reduce the total. Never award marks for a diagram you cannot see; typed workings in the answer ARE assessable.",

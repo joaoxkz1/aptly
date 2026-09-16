@@ -53,7 +53,7 @@ try {
     const sql=await readFile(new URL(`../supabase/migrations/${filename}`,import.meta.url),"utf8");
     ok(schemaSnapshot.replace(/\r\n/g,"\n").includes(sql.replace(/\r\n/g,"\n")),`snapshot includes exact ${filename}`);
     await db.exec(sql);
-    if(filename.startsWith("0015") || filename.startsWith("0016")) await db.exec(sql);
+    if(filename.startsWith("0015") || filename.startsWith("0016") || filename.startsWith("0017")) await db.exec(sql);
   }
   const preserved=(await db.query("select to_jsonb(a) as row, s.snapshot from public.attempts a join public.assessment_snapshots s on s.attempt_id=a.id where a.id=$1",[saved.id])).rows[0];
   ok(JSON.stringify(historical)===JSON.stringify(preserved),"source-review upgrade preserves old v2 result and frozen blueprint byte-for-byte");
@@ -82,6 +82,34 @@ try {
     delete missingMetadata.snapshot.contract.essayResolution;
     await rejects(()=>save(missingMetadata),"manual essay version rejects missing private resolution evidence");
   }
+  const examinerBundle=()=>{
+    const b=bundle({diagram:0,state:"not_provided"});
+    b.attempt.grading_contract_version="ib-econ-2026-v5";
+    Object.assign(b.attempt,{marks_earned:9,marks_available:10,marks_assessable:10});
+    Object.assign(b.attempt.assessment,{marksEarned:9,markBand:"9-10",bandPosition:"lower"});
+    b.snapshot.contract={...b.snapshot.contract,total:10,framework:"paper1a_10_mark",mode:"holistic_diagram",diagramRole:"necessary_for_task",provenance:"inferred_practice",blueprintVersion:"inferred-essay-contract-v2",essayResolution:{ruleId:"externality-allocation",confidence:"mechanism_matched",basis:["Synthetic DB test"]}};
+    b.attempt.assessment.assessedDiagram.componentDecision=null;
+    b.attempt.assessment.assessedDiagram.contract={...publicContract,mode:"holistic_diagram",diagramRole:"necessary_for_task",provenance:"inferred_practice"};
+    b.snapshot.examinerWorkflowVersion="examiner-workflow-2026-v1";
+    b.snapshot.examinerJudgment={task:"Explain allocation",demonstrated:"Developed causal analysis",materialLimitations:["Necessary diagram absent"],selectedBand:"9-10",withinBand:"lower",diagramEffect:"missing_material",summary:"Synthetic consistency check, not a predicted mark"};
+    b.snapshot.resolutionInputContract={...b.snapshot.contract,diagramRole:"unresolved"};
+    return b;
+  };
+  const examiner=examinerBundle(), examinerSaved=(await save(examiner)).rows[0];
+  ok(examinerSaved.grading_contract_version==="ib-econ-2026-v5","v5 best-fit assessment and private task evidence persist");
+  ok((await save(examiner)).rows[0].id===examinerSaved.id,"v5 retry preserves exact saved judgment");
+  for(const [label,mutate] of [
+    ["workflow missing",b=>delete b.snapshot.examinerWorkflowVersion],
+    ["judgment missing",b=>delete b.snapshot.examinerJudgment],
+    ["wrong band",b=>b.snapshot.examinerJudgment.selectedBand="7-8"],
+    ["wrong within-band position",b=>b.snapshot.examinerJudgment.withinBand="upper"],
+    ["full credit and material limitation",b=>{b.attempt.marks_earned=10;b.attempt.assessment.marksEarned=10;}],
+    ["different resolution framework",b=>b.snapshot.resolutionInputContract.framework="paper1b_15_mark"],
+    ["stale manual blueprint",b=>b.snapshot.contract.blueprintVersion="inferred-essay-contract-v1"],
+  ]) { const b=examinerBundle();mutate(b);await rejects(()=>save(b),`v5 rejects ${label}`); }
+  const examinerShort=bundle();examinerShort.attempt.grading_contract_version="ib-econ-2026-v5";
+  examinerShort.snapshot.examinerWorkflowVersion="examiner-workflow-2026-v1";examinerShort.snapshot.examinerJudgment=null;
+  ok((await save(examinerShort)).rows[0].marks_earned===4,"v5 analytic task keeps component arithmetic without best-fit judgment");
   const unknownVersion=bundle(); unknownVersion.attempt.grading_contract_version="ib-econ-2099-v99";
   await rejects(()=>save(unknownVersion),"unknown contract version still rejected");
   for (const version of ["economics-grading-blueprint-v1","economics-grading-blueprint-v2","economics-four-mark-blueprint-v1","economics-four-mark-blueprint-v2","economics-essay-blueprint-v2","economics-essay-blueprint-v3"]) {
@@ -124,7 +152,7 @@ try {
   ok((await db.query("select * from public.assessment_snapshots where attempt_id=$1",[saved.id])).rows.length===0,"delete cascades private snapshot");
   await db.query("delete from auth.users where id=$1",[user]);
   ok((await db.query("select * from public.assessment_snapshots where user_id=$1",[user])).rows.length===0,"account deletion cascades private snapshots");
-  console.log(`PASS migration replay 0001–0016, seeded upgrade, 0013/0015/0016 reapply: ${assertions} database assertions. No network or AI calls.`);
+  console.log(`PASS migration replay 0001–0017, seeded upgrade, 0013/0015/0016/0017 reapply: ${assertions} database assertions. No network or AI calls.`);
 } catch (error) {
   console.error(`FAIL migration verification: ${error.message}${error.where ? ` (${error.where})` : ""}`);
   process.exitCode = 1;

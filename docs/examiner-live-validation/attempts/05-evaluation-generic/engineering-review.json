@@ -1,0 +1,316 @@
+{
+  "number": 5,
+  "caseId": "evaluation-generic",
+  "status": "complete",
+  "httpStatus": 200,
+  "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+  "submittedAnswer": "GDP is the value of final goods and services produced within an economy. Real GDP removes changes in prices and dividing by population makes differently sized countries more comparable. More output per person can make more goods and services available, enabling more consumption and providing a tax base for public services. However, GDP is an average so a rise may go mainly to a small group while most incomes stagnate. Unpaid care is useful but not traded and therefore omitted. Pollution and resource depletion reduce welfare without necessarily reducing measured current production. The composition of spending matters because defensive expenditure can raise measured GDP while responding to harm. It depends on the short run and long run and there are winners and losers. Everything has advantages and disadvantages. On balance GDP is useful but also not useful and governments should think about all the factors.",
+  "sourceMaterial": null,
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": "not_provided"
+  },
+  "framework": "paper1b_15_mark",
+  "finalContract": {
+    "mode": "holistic_diagram",
+    "part": "b",
+    "level": "unknown",
+    "paper": "1",
+    "scope": "same_question_part",
+    "topic": "unknown",
+    "total": 15,
+    "diagram": null,
+    "version": "economics-diagram-contract-v1",
+    "framework": "paper1b_15_mark",
+    "provenance": "inferred_practice",
+    "diagramRole": "appropriate_support",
+    "diagramReason": "The reviewed task demands can be fully met in prose. A relevant diagram can support the explanation, but omission alone is not a missing requirement.",
+    "sourceRequired": false,
+    "essayResolution": {
+      "basis": [
+        "docs/ib-marker-behavior-model.md",
+        "G22:3.1,3.4,4.8",
+        "M25-P1-SL-TZ3:Q2b; Aptly task judgment"
+      ],
+      "method": "constrained_interpretation",
+      "ruleId": "indicator-appraisal",
+      "families": [],
+      "confidence": "mechanism_matched",
+      "taskDemands": [
+        "Appraise what real GDP per capita captures about average inflation-adjusted output/income and material living standards, and what it omits or can misrepresent (for example distribution, non-market activity, quality, sustainability, and other well-being dimensions), using real-world examples."
+      ],
+      "interpretation": {
+        "matches": [
+          {
+            "ruleId": "indicator-appraisal",
+            "mechanism": "Appraise what real GDP per capita captures about average inflation-adjusted output/income and material living standards, and what it omits or can misrepresent (for example distribution, non-market activity, quality, sustainability, and other well-being dimensions), using real-world examples.",
+            "demandQuote": "“evaluate the usefulness of real GDP per capita as an indicator of living standards”"
+          }
+        ],
+        "coverage": "complete",
+        "confidence": "high",
+        "uncertainty": null
+      },
+      "registryVersion": "ib-task-families-2026-v1",
+      "diagramExpectations": []
+    },
+    "syllabusVersion": "economics-2022-v1",
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "blueprintVersion": "inferred-essay-contract-v2"
+  },
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1b_15_mark",
+    "paper": "1",
+    "part": "b",
+    "total": 15,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "task-resolution",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 3306,
+      "usage": {
+        "input_tokens": 2869,
+        "input_tokens_details": {
+          "cache_write_tokens": 49,
+          "cached_tokens": 2817
+        },
+        "output_tokens": 118,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2987
+      },
+      "estimatedUSD": 0.0021079000000000002,
+      "structuredOutput": {
+        "confidence": "high",
+        "coverage": "complete",
+        "matches": [
+          {
+            "ruleId": "indicator-appraisal",
+            "demandQuote": "“evaluate the usefulness of real GDP per capita as an indicator of living standards”",
+            "mechanism": "Appraise what real GDP per capita captures about average inflation-adjusted output/income and material living standards, and what it omits or can misrepresent (for example distribution, non-market activity, quality, sustainability, and other well-being dimensions), using real-world examples."
+          }
+        ],
+        "uncertainty": null
+      }
+    },
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 15447,
+      "usage": {
+        "input_tokens": 5787,
+        "input_tokens_details": {
+          "cache_write_tokens": 5784,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1085,
+        "output_tokens_details": {
+          "reasoning_tokens": 151
+        },
+        "total_tokens": 6872
+      },
+      "estimatedUSD": 0.027486,
+      "structuredOutput": {
+        "strengths": [
+          "Accurately explains why real GDP per capita improves cross-country comparability: it adjusts for inflation and population size.",
+          "Develops relevant mechanisms through which higher output per person can support consumption and fund public services.",
+          "Identifies several major limitations: inequality, unpaid work, environmental damage/resource depletion and defensive expenditure."
+        ],
+        "improvements": [
+          "Use genuine real-world examples and connect each one to the limitation being evaluated—for example, contrast GDP per capita with income distribution or environmental outcomes in a named country.",
+          "Turn the listed limitations into evaluation: explain when real GDP per capita remains a useful proxy for material living standards and when the omission is likely to be large.",
+          "Replace the unsupported final conclusion with a clear judgement about its usefulness as a partial indicator, rather than saying simply that it is both useful and not useful."
+        ],
+        "mistakes": [
+          "Underdeveloped evaluation",
+          "No real-world example",
+          "Unsupported judgement"
+        ],
+        "examinerComment": "Estimated practice mark: the response shows sound knowledge and several relevant limitations, with a clear explanation of what real GDP per capita can indicate about material consumption and public-service capacity. However, the question explicitly requires real-world examples, and none are provided. Evaluation is present but mostly takes the form of a list; the conclusion does not weigh the conditions under which the measure is more or less useful. This fits the 7–9 band.",
+        "studyNext": "Add one or two named country examples, then make a conditional judgement: real GDP per capita is most useful for comparing average material output/income, but less useful where inequality, non-market production or environmental costs are substantial.",
+        "assessmentFormat": "paper_1_b",
+        "paper": "paper_1",
+        "questionPart": "b",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "economic_analysis",
+          "application",
+          "evaluation"
+        ],
+        "commandTerm": "evaluate",
+        "commandTermLabel": "Evaluate",
+        "syllabusUnit": "unit_4",
+        "syllabusTopic": "4.8",
+        "topicLabel": "Measuring development",
+        "classificationConfidence": "high",
+        "markingConfidence": "high",
+        "diagramExpected": false,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_relevant",
+        "workingsExpected": false,
+        "workingsSubmitted": false,
+        "workingsAssessmentStatus": "not_relevant",
+        "attachmentContent": "none",
+        "assessableEarned": 8,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 3,
+            "available": 4,
+            "reason": "Accurate explanation of GDP, real GDP and the per-capita adjustment, although the focus could be tied more explicitly to living standards."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 3,
+            "available": 4,
+            "reason": "Explains consumption and tax-base channels and identifies relevant ways GDP per capita can misrepresent welfare; some points remain briefly asserted rather than fully developed."
+          },
+          {
+            "label": "Application to context",
+            "awarded": 0,
+            "available": 4,
+            "reason": "No named real-world country, event, policy or evidence is used despite the explicit requirement for real-world examples."
+          },
+          {
+            "label": "Evaluation and judgment",
+            "awarded": 2,
+            "available": 4,
+            "reason": "Recognises qualifications such as time horizon, distribution and environmental costs, but does not weigh them in a developed conditional judgement; the final conclusion is unsupported."
+          },
+          {
+            "label": "Structure and clarity",
+            "awarded": 3,
+            "available": 4,
+            "reason": "The answer is concise and logically sequenced from usefulness to limitations, though the ending is generic."
+          }
+        ],
+        "bandRationale": "Best fit: 7–9, middle. The response contains accurate, relevant theory and several valid limitations, with some evaluative awareness. Its lack of required real-world application and only partly developed weighing/judgement prevent the developed, supported evaluation expected in the 10–12 band.",
+        "limitations": [
+          "No real-world examples are supplied.",
+          "The final judgement does not explain how the relative importance of the limitations affects the overall usefulness of real GDP per capita."
+        ],
+        "examinerJudgment": {
+          "task": "Evaluate the usefulness of real GDP per capita as an indicator of living standards using real-world examples.",
+          "demonstrated": "Accurate explanation of inflation and population adjustment, material-living-standard channels, and valid limitations involving distribution, unpaid work, environmental costs and defensive expenditure.",
+          "materialLimitations": [
+            "No real-world example is used.",
+            "Evaluation is largely a list of caveats rather than a developed weighing of when the indicator is reliable.",
+            "The conclusion is generic and not supported by the preceding analysis."
+          ],
+          "selectedBand": "7-9",
+          "withinBand": "middle",
+          "diagramEffect": "not_required",
+          "summary": "Relevant theory and limited evaluation are securely demonstrated, but required application and a supported overall judgement are missing."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 8,
+    "finalMark": 8,
+    "componentDecision": null,
+    "finalBand": "7-9",
+    "withinBand": "middle",
+    "diagnostics": [
+      {
+        "label": "Knowledge and terminology",
+        "reason": "Accurate explanation of GDP, real GDP and the per-capita adjustment, although the focus could be tied more explicitly to living standards.",
+        "awarded": 3,
+        "available": 4
+      },
+      {
+        "label": "Economic analysis",
+        "reason": "Explains consumption and tax-base channels and identifies relevant ways GDP per capita can misrepresent welfare; some points remain briefly asserted rather than fully developed.",
+        "awarded": 3,
+        "available": 4
+      },
+      {
+        "label": "Application to context",
+        "reason": "No named real-world country, event, policy or evidence is used despite the explicit requirement for real-world examples.",
+        "awarded": 0,
+        "available": 4
+      },
+      {
+        "label": "Evaluation and judgment",
+        "reason": "Recognises qualifications such as time horizon, distribution and environmental costs, but does not weigh them in a developed conditional judgement; the final conclusion is unsupported.",
+        "awarded": 2,
+        "available": 4
+      },
+      {
+        "label": "Structure and clarity",
+        "reason": "The answer is concise and logically sequenced from usefulness to limitations, though the ending is generic.",
+        "awarded": 3,
+        "available": 4
+      }
+    ],
+    "feedback": {
+      "band": "Developing 4",
+      "score": 4,
+      "mistakes": [
+        "Underdeveloped evaluation",
+        "No real-world example",
+        "Unsupported judgement"
+      ],
+      "strengths": [
+        "Accurately explains why real GDP per capita improves cross-country comparability: it adjusts for inflation and population size.",
+        "Develops relevant mechanisms through which higher output per person can support consumption and fund public services.",
+        "Identifies several major limitations: inequality, unpaid work, environmental damage/resource depletion and defensive expenditure."
+      ],
+      "studyNext": "Add one or two named country examples, then make a conditional judgement: real GDP per capita is most useful for comparing average material output/income, but less useful where inequality, non-market production or environmental costs are substantial.",
+      "improvements": [
+        "Use genuine real-world examples and connect each one to the limitation being evaluated—for example, contrast GDP per capita with income distribution or environmental outcomes in a named country.",
+        "Turn the listed limitations into evaluation: explain when real GDP per capita remains a useful proxy for material living standards and when the omission is likely to be large.",
+        "Replace the unsupported final conclusion with a clear judgement about its usefulness as a partial indicator, rather than saying simply that it is both useful and not useful."
+      ],
+      "examinerComment": "Estimated practice mark: the response shows sound knowledge and several relevant limitations, with a clear explanation of what real GDP per capita can indicate about material consumption and public-service capacity. However, the question explicitly requires real-world examples, and none are provided. Evaluation is present but mostly takes the form of a list; the conclusion does not weigh the conditions under which the measure is more or less useful. This fits the 7–9 band."
+    }
+  },
+  "judgment": {
+    "task": "Evaluate the usefulness of real GDP per capita as an indicator of living standards using real-world examples.",
+    "summary": "Relevant theory and limited evaluation are securely demonstrated, but required application and a supported overall judgement are missing.",
+    "withinBand": "middle",
+    "demonstrated": "Accurate explanation of inflation and population adjustment, material-living-standard channels, and valid limitations involving distribution, unpaid work, environmental costs and defensive expenditure.",
+    "selectedBand": "7-9",
+    "diagramEffect": "not_required",
+    "materialLimitations": [
+      "No real-world example is used.",
+      "Evaluation is largely a list of caveats rather than a developed weighing of when the indicator is reliable.",
+      "The conclusion is generic and not supported by the preceding analysis."
+    ]
+  },
+  "latencyMs": 18850,
+  "estimatedUSD": 0.0295939,
+  "engineeringReview": "Credits relevant indicator analysis while identifying missing real-world application and superficial weighing. The numeric result is a defensible engineering observation, not an official mark or target.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

@@ -1,0 +1,289 @@
+{
+  "number": 6,
+  "caseId": "evaluation-integrated",
+  "status": "complete",
+  "httpStatus": 200,
+  "question": "Using real-world examples, evaluate the usefulness of real GDP per capita as an indicator of living standards. [15 marks]",
+  "submittedAnswer": "Real GDP per capita is inflation-adjusted domestic output divided by population. It is useful for the material capacity underlying living standards, but it is an incomplete measure of the welfare people actually obtain. Removing price changes matters because a rise in nominal GDP caused only by inflation does not mean more goods are available; using a per-person figure avoids confusing a larger population with a richer average resident. Higher real output can support consumption, employment incomes and the tax base for health and education. During the UK's 2020 pandemic contraction, the fall in measured output reflected substantial disruption to paid activity and the services available to people. GDP therefore captured a real material deterioration, even though it could not itself measure lost health or social contact.\n\nThe strength of the relationship depends on where income goes. GDP per capita is a mean: extra output accruing mainly to high-income households can coexist with little change in median consumption. Transfers and public provision may convert similar GDP levels into very different access to essentials. Nor does domestic production necessarily correspond to residents' command over resources. Ireland's CSO initially reported 26.3% real GDP growth for 2015 after multinational balance-sheet relocations. Such changes in the location of recorded capital and activity did not imply a comparable improvement in the daily consumption of Irish households. In this kind of economy, national-income measures adjusted for globalisation and household disposable income are more informative complements than simply accepting the GDP growth figure as welfare growth. This is a particularly serious limitation for comparisons of countries with very different multinational sectors; it does not make normal domestic production data worthless.\n\nGDP also excludes unpaid care, does not subtract environmental damage, and does not value leisure directly. Paid reconstruction after a disaster adds output while restoring lost assets, so a recovery in GDP need not restore the previous stock of wealth or well-being. More working hours can increase output but reduce leisure; whether living standards improve depends on whether people value the additional consumption more than the time given up. These are reasons to examine the composition and costs of growth, rather than assume every increase is beneficial.\n\nOverall, real GDP per capita is a useful starting indicator of material productive capacity and changes within a broadly stable economic structure. For cross-country comparisons, purchasing-power adjustments are also needed because exchange rates alone do not reflect local buying power. For actual living standards it should be read alongside median household income, distribution, health and environmental indicators. The Irish case makes the domestic-versus-resident-income distinction decisive; the UK pandemic example shows why even a sound output measure cannot capture all welfare losses. No single index removes all value judgments, so the defensible conclusion is to retain GDP for the production dimension while avoiding an unsupported inference that it is a complete ranking of people's lives.",
+  "sourceMaterial": null,
+  "image": {
+    "path": null,
+    "hash": null,
+    "state": "not_provided"
+  },
+  "framework": "paper1b_15_mark",
+  "finalContract": {
+    "mode": "holistic_diagram",
+    "part": "b",
+    "level": "unknown",
+    "paper": "1",
+    "scope": "same_question_part",
+    "topic": "unknown",
+    "total": 15,
+    "diagram": null,
+    "version": "economics-diagram-contract-v1",
+    "framework": "paper1b_15_mark",
+    "provenance": "inferred_practice",
+    "diagramRole": "appropriate_support",
+    "diagramReason": "The reviewed task demands can be fully met in prose. A relevant diagram can support the explanation, but omission alone is not a missing requirement.",
+    "sourceRequired": false,
+    "essayResolution": {
+      "basis": [
+        "docs/ib-marker-behavior-model.md",
+        "G22:3.1,3.4,4.8",
+        "M25-P1-SL-TZ3:Q2b; Aptly task judgment"
+      ],
+      "method": "constrained_interpretation",
+      "ruleId": "indicator-appraisal",
+      "families": [],
+      "confidence": "mechanism_matched",
+      "taskDemands": [
+        "Appraise what real GDP per capita captures about average inflation-adjusted output/income and the limitations that can make it diverge from living standards, using real-world examples."
+      ],
+      "interpretation": {
+        "matches": [
+          {
+            "ruleId": "indicator-appraisal",
+            "mechanism": "Appraise what real GDP per capita captures about average inflation-adjusted output/income and the limitations that can make it diverge from living standards, using real-world examples.",
+            "demandQuote": "“evaluate the usefulness of real GDP per capita as an indicator of living standards”"
+          }
+        ],
+        "coverage": "complete",
+        "confidence": "high",
+        "uncertainty": null
+      },
+      "registryVersion": "ib-task-families-2026-v1",
+      "diagramExpectations": []
+    },
+    "syllabusVersion": "economics-2022-v1",
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "blueprintVersion": "inferred-essay-contract-v2"
+  },
+  "initialContract": {
+    "version": "economics-diagram-contract-v1",
+    "mode": "holistic_diagram",
+    "diagramRole": "unresolved",
+    "diagramReason": "The diagram role of this custom task could not be established confidently from verified task guidance. Treat the estimate as provisional; this is not a finding that no diagram is required.",
+    "provenance": "inferred_practice",
+    "framework": "paper1b_15_mark",
+    "paper": "1",
+    "part": "b",
+    "total": 15,
+    "topic": "unknown",
+    "syllabusVersion": "economics-2022-v1",
+    "level": "shared_sl_hl",
+    "blueprintVersion": "inferred-essay-contract-v2",
+    "diagram": null,
+    "writtenCriteria": [
+      "Credit the exact command demand, causal reasoning and supplied context, accepting valid alternatives. No universal four-mark essay rubric; no evaluation, conclusion or outside example unless this task asks for it."
+    ],
+    "sourceRequired": false,
+    "scope": "same_question_part",
+    "essayResolution": {
+      "ruleId": "unrecognized-task-demand",
+      "confidence": "unresolved",
+      "basis": [
+        "2026 Economics examiner instructions, Paper 1: diagrams when necessary; holistic best fit; no arbitrary deductions."
+      ]
+    }
+  },
+  "stages": [
+    {
+      "stage": "task-resolution",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 2093,
+      "usage": {
+        "input_tokens": 2869,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 2866
+        },
+        "output_tokens": 98,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2967
+      },
+      "estimatedUSD": 0.0017552,
+      "structuredOutput": {
+        "confidence": "high",
+        "coverage": "complete",
+        "matches": [
+          {
+            "ruleId": "indicator-appraisal",
+            "demandQuote": "“evaluate the usefulness of real GDP per capita as an indicator of living standards”",
+            "mechanism": "Appraise what real GDP per capita captures about average inflation-adjusted output/income and the limitations that can make it diverge from living standards, using real-world examples."
+          }
+        ],
+        "uncertainty": null
+      }
+    },
+    {
+      "stage": "grader",
+      "model": "gpt-5.6-terra",
+      "serviceTier": "default",
+      "latencyMs": 14542,
+      "usage": {
+        "input_tokens": 6132,
+        "input_tokens_details": {
+          "cache_write_tokens": 6129,
+          "cached_tokens": 0
+        },
+        "output_tokens": 874,
+        "output_tokens_details": {
+          "reasoning_tokens": 101
+        },
+        "total_tokens": 7006
+      },
+      "estimatedUSD": 0.0258165,
+      "structuredOutput": {
+        "strengths": [
+          "Precisely defines real GDP per capita and explains why inflation adjustment and population adjustment improve its usefulness as a material indicator.",
+          "Develops a sustained, balanced evaluation: distribution, multinational accounting, unpaid work, environmental costs, leisure and reconstruction are linked clearly to possible divergences between output and living standards.",
+          "Integrates well-chosen real-world evidence from Ireland in 2015 and the UK pandemic contraction, then reaches a qualified and supported overall judgement."
+        ],
+        "improvements": [],
+        "mistakes": [],
+        "examinerComment": "Estimated practice mark: this is a highly focused and well-developed response. It evaluates both what real GDP per capita captures—average inflation-adjusted productive and consumption capacity—and why it can diverge from lived welfare. The Ireland example is particularly effective because it directly tests whether recorded domestic output represents residents’ income and consumption. The conclusion is appropriately qualified rather than treating GDP as either worthless or complete.",
+        "studyNext": "Optional extension (not needed for credit): practise producing this same quality of evaluation in a slightly tighter time-controlled structure, preserving the direct link from each limitation to how the indicator may misstate living standards.",
+        "assessmentFormat": "paper_1_b",
+        "paper": "paper_1",
+        "questionPart": "b",
+        "levelRelevance": "shared_sl_hl",
+        "assessmentSkills": [
+          "economic_analysis",
+          "application",
+          "evaluation"
+        ],
+        "commandTerm": "evaluate",
+        "commandTermLabel": "Evaluate",
+        "syllabusUnit": "unit_4",
+        "syllabusTopic": "4.8",
+        "topicLabel": "Measuring development",
+        "classificationConfidence": "high",
+        "markingConfidence": "high",
+        "diagramExpected": false,
+        "diagramSubmitted": false,
+        "diagramAssessmentStatus": "not_relevant",
+        "workingsExpected": false,
+        "workingsSubmitted": false,
+        "workingsAssessmentStatus": "not_relevant",
+        "attachmentContent": "none",
+        "assessableEarned": 15,
+        "markBreakdown": [
+          {
+            "label": "Knowledge and terminology",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Accurate, concise use of real GDP per capita, nominal GDP, purchasing-power adjustments, household disposable income and national-income concepts."
+          },
+          {
+            "label": "Economic analysis",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Explains clear causal links from output to material living standards and from distribution, accounting boundaries, external costs and leisure to divergence from welfare."
+          },
+          {
+            "label": "Application to context",
+            "awarded": 4,
+            "available": 4,
+            "reason": "The UK 2020 contraction and Ireland's reported 2015 GDP growth are relevant, accurate applications used to advance the argument rather than simply named."
+          },
+          {
+            "label": "Evaluation and judgment",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Consistently weighs usefulness against limitations, identifies relevant conditions for reliability, and gives a clear qualified final judgment."
+          },
+          {
+            "label": "Structure and clarity",
+            "awarded": 4,
+            "available": 4,
+            "reason": "Logically sequenced paragraphs maintain focus on the precise indicator and directly answer the evaluative demand."
+          }
+        ],
+        "bandRationale": "The response securely fits the 13–15 band: it offers accurate and fully focused analysis, integrated real-world evidence, sustained balanced evaluation and a supported conclusion. It distinguishes material productive capacity from broader living standards and explains when this distinction matters most.",
+        "limitations": [],
+        "examinerJudgment": {
+          "task": "Evaluate the usefulness of real GDP per capita as an indicator of living standards using real-world examples.",
+          "demonstrated": "Explains the indicator’s value for inflation-adjusted average material capacity, evaluates major conceptual limitations, and applies the analysis effectively to the UK pandemic contraction and Ireland's multinational-accounting distortion.",
+          "materialLimitations": [],
+          "selectedBand": "13-15",
+          "withinBand": "upper",
+          "diagramEffect": "not_required",
+          "summary": "A comprehensive, balanced and well-supported appraisal with a nuanced final judgement; it meets the highest-band characteristics to a great extent."
+        },
+        "componentEvaluation": null
+      }
+    }
+  ],
+  "deterministicProcessing": {
+    "rawProposedMark": 15,
+    "finalMark": 15,
+    "componentDecision": null,
+    "finalBand": "13-15",
+    "withinBand": "upper",
+    "diagnostics": [
+      {
+        "label": "Knowledge and terminology",
+        "reason": "Accurate, concise use of real GDP per capita, nominal GDP, purchasing-power adjustments, household disposable income and national-income concepts.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Economic analysis",
+        "reason": "Explains clear causal links from output to material living standards and from distribution, accounting boundaries, external costs and leisure to divergence from welfare.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Application to context",
+        "reason": "The UK 2020 contraction and Ireland's reported 2015 GDP growth are relevant, accurate applications used to advance the argument rather than simply named.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Evaluation and judgment",
+        "reason": "Consistently weighs usefulness against limitations, identifies relevant conditions for reliability, and gives a clear qualified final judgment.",
+        "awarded": 4,
+        "available": 4
+      },
+      {
+        "label": "Structure and clarity",
+        "reason": "Logically sequenced paragraphs maintain focus on the precise indicator and directly answer the evaluative demand.",
+        "awarded": 4,
+        "available": 4
+      }
+    ],
+    "feedback": {
+      "band": "Excellent 7",
+      "score": 7,
+      "mistakes": [],
+      "strengths": [
+        "Precisely defines real GDP per capita and explains why inflation adjustment and population adjustment improve its usefulness as a material indicator.",
+        "Develops a sustained, balanced evaluation: distribution, multinational accounting, unpaid work, environmental costs, leisure and reconstruction are linked clearly to possible divergences between output and living standards.",
+        "Integrates well-chosen real-world evidence from Ireland in 2015 and the UK pandemic contraction, then reaches a qualified and supported overall judgement."
+      ],
+      "studyNext": "Optional extension (not needed for credit): practise producing this same quality of evaluation in a slightly tighter time-controlled structure, preserving the direct link from each limitation to how the indicator may misstate living standards.",
+      "improvements": [],
+      "examinerComment": "Estimated practice mark: this is a highly focused and well-developed response. It evaluates both what real GDP per capita captures—average inflation-adjusted productive and consumption capacity—and why it can diverge from lived welfare. The Ireland example is particularly effective because it directly tests whether recorded domestic output represents residents’ income and consumption. The conclusion is appropriately qualified rather than treating GDP as either worthless or complete."
+    }
+  },
+  "judgment": {
+    "task": "Evaluate the usefulness of real GDP per capita as an indicator of living standards using real-world examples.",
+    "summary": "A comprehensive, balanced and well-supported appraisal with a nuanced final judgement; it meets the highest-band characteristics to a great extent.",
+    "withinBand": "upper",
+    "demonstrated": "Explains the indicator’s value for inflation-adjusted average material capacity, evaluates major conceptual limitations, and applies the analysis effectively to the UK pandemic contraction and Ireland's multinational-accounting distortion.",
+    "selectedBand": "13-15",
+    "diagramEffect": "not_required",
+    "materialLimitations": []
+  },
+  "latencyMs": 16743,
+  "estimatedUSD": 0.027571699999999998,
+  "engineeringReview": "Country examples develop the argument, limitations are weighted and the conclusion is conditional. Top band without a diagram is coherent for this conceptual indicator appraisal; no policy recommendation is invented.",
+  "officialMark": null,
+  "independentTeacherReview": false
+}

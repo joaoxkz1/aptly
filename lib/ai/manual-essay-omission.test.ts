@@ -84,7 +84,7 @@ describe("manual Paper 1 task-specific diagram roles", () => {
     const { contract, policy } = manual();
     expect(contract).toMatchObject({
       mode: "holistic_diagram", diagramRole: "necessary_for_task", provenance: "inferred_practice",
-      blueprintVersion: "inferred-essay-contract-v1", diagram: { family: "externality" },
+      blueprintVersion: "inferred-essay-contract-v2", diagram: { family: "externality" },
     });
     const criteria = JSON.stringify(contract.diagram);
     expect(criteria).toMatch(/MSC/);
